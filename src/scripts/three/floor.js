@@ -1,6 +1,6 @@
 import {EventDispatcher, TextureLoader, RepeatWrapping, MeshBasicMaterial, MeshPhongMaterial,  FrontSide, DoubleSide, Vector2, Shape, ShapeGeometry, Mesh} from 'three';
 import {EVENT_CHANGED} from '../core/events.js';
-
+import {Configuration, configWallHeight} from '../core/configuration.js';
 
 export class Floor extends EventDispatcher
 {
@@ -22,7 +22,7 @@ export class Floor extends EventDispatcher
 
 		this.floorPlane = this.buildFloor();
 		// roofs look weird, so commented out
-		//this.roofPlane = this.buildRoof();
+		this.roofPlane = this.buildRoof();
 	}
 
 	redraw() 
@@ -80,13 +80,14 @@ export class Floor extends EventDispatcher
 		var geometry = new ShapeGeometry(shape);
 		var roof = new Mesh(geometry, roofMaterial);
 		roof.rotation.set(Math.PI / 2, 0, 0);
-		roof.position.y = 250;
+		roof.position.y = Configuration.getNumericValue(configWallHeight);
 		return roof;
 	} 
 
 	addToScene() 
 	{
 		this.scene.add(this.floorPlane);
+		this.scene.add(this.roofPlane);
 		//scene.add(roofPlane);
 		// hack so we can do intersect testing
 		this.scene.add(this.room.floorPlane);
@@ -98,4 +99,9 @@ export class Floor extends EventDispatcher
 		//scene.remove(roofPlane);
 		this.scene.remove(this.room.floorPlane);
 	}	
+	
+	showRoof(flag)
+	{
+		this.roofPlane.visible = flag;
+	}
 }

@@ -50,4 +50,12 @@ export class Floorplan extends EventDispatcher
 			this.edges.push(threeEdge);
 		});
 	}
+	
+	showRoof(flag)
+	{
+		// draw floors
+		this.floors.forEach((threeFloor) => {
+			threeFloor.showRoof(flag);
+		});
+	}
 }
