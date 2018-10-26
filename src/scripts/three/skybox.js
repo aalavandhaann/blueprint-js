@@ -6,6 +6,7 @@ export class Skybox extends EventDispatcher
 	{
 		super();
 		
+		this.useEnvironment = false;
 		this.topColor = 0xffffff;//0xD8ECF9
 		this.bottomColor = 0xe9e9e9; //0xf9f9f9;//0x565e63
 		this.verticalOffset = 500;
@@ -26,16 +27,19 @@ export class Skybox extends EventDispatcher
 		this.fragmentShader = ['uniform sampler2D texture;', 'varying vec2 vUV;', 'void main() {  ', 'vec4 sample = texture2D(texture, vUV);', 'gl_FragColor = vec4(sample.xyz, sample.w);' ,'}'].join('\n');
 		
 		this.texture = new TextureLoader();
-		this.skyGeo = undefined;
-		this.skyMat = undefined;
 		this.plainSkyMat = new ShaderMaterial({vertexShader: this.plainvertexShader,fragmentShader: this.plainfragmentShader,uniforms: uniforms, side: BackSide});
-		this.sky = undefined;
+		this.skyMat = undefined;
 		
+		this.skyGeo = new SphereGeometry(this.sphereRadius, this.widthSegments, this.heightSegments);
+		this.sky = new Mesh(this.skyGeo, this.skyMat);
+		this.sky.position.x += this.sphereRadius*0.5;
+		this.scene.add(this.sky);
 		this.init();
 	}
 	
 	toggleEnvironment(flag)
 	{
+		this.useEnvironment = flag;
 		if(!flag)
 		{
 			this.sky.material = this.plainSkyMat;
@@ -44,7 +48,6 @@ export class Skybox extends EventDispatcher
 		{
 			this.sky.material = this.skyMat;
 		}
-		this.sky.visible = flag;
 		this.scene.needsUpdate = true;
 	}
 	
@@ -53,18 +56,10 @@ export class Skybox extends EventDispatcher
 		var scope = this;
 		scope.texture.load(url, function (t)
 		{
-			console.log('SKYBOX BACKGROUND LOADED');
-			if(scope.sky)
-			{
-				scope.scene.remove(scope.sky);
-			}
 			var textureUniform = {type: 't', value: t};
 			var uniforms = {texture: textureUniform};
-			scope.skyGeo = new SphereGeometry(scope.sphereRadius, scope.widthSegments, scope.heightSegments);
 			scope.skyMat = new ShaderMaterial({vertexShader: scope.vertexShader, fragmentShader: scope.fragmentShader, uniforms: uniforms, side: DoubleSide});
-			scope.sky = new Mesh(scope.skyGeo, scope.skyMat);
-			scope.sky.position.x += scope.sphereRadius*0.5;
-			scope.scene.add(scope.sky);
+			scope.toggleEnvironment(scope.useEnvironment);
 		}, undefined, function()
 		{
 			console.log('ERROR LOADEING FILE');
@@ -73,7 +68,6 @@ export class Skybox extends EventDispatcher
 	
 	init() 
 	{		
-		this.setEnvironmentMap('rooms/textures/envs/Garden.png');
 		this.toggleEnvironment(false);
 	}
 }
