@@ -1,6 +1,6 @@
 # README #
 
-This is a javascript floorplanner tool based on the existing typescript based project [blueprint3d] [https://github.com/furnishup/blueprint3d]
+This is a javascript floorplanner tool based on the existing typescript based project [blueprint3d](https://github.com/furnishup/blueprint3d)
 
 ### What is this repository for? ###
 
