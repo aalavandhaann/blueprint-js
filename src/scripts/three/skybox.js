@@ -48,6 +48,7 @@ export class Skybox extends EventDispatcher
 		{
 			this.sky.material = this.skyMat;
 		}
+		console.log('NOW UPDATE THE SCENE');
 		this.scene.needsUpdate = true;
 	}
 	
