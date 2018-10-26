@@ -45,6 +45,7 @@ export class Skybox extends EventDispatcher
 			this.sky.material = this.skyMat;
 		}
 		this.sky.visible = flag;
+		this.scene.needsUpdate = true;
 	}
 	
 	setEnvironmentMap(url)
@@ -72,6 +73,7 @@ export class Skybox extends EventDispatcher
 	
 	init() 
 	{		
+		this.setEnvironmentMap('rooms/textures/envs/Garden.png');
 		this.toggleEnvironment(false);
 	}
 }
