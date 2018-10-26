@@ -1,4 +1,4 @@
-import {EventDispatcher, JSONLoader} from 'three';
+import {EventDispatcher, JSONLoader, Color} from 'three';
 import {Scene as ThreeScene} from 'three';
 import {Utils} from '../core/utils.js';
 import {Factory} from '../items/factory.js';
@@ -21,6 +21,7 @@ export class Scene extends EventDispatcher
 		this.textureDir = textureDir;
 		
 		this.scene = new ThreeScene();
+		this.scene.background = new Color(0xffffff);
 		this.items = [];
 		this.needsUpdate = false;
 		// init item loader

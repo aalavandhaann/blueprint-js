@@ -82,6 +82,7 @@ export class Main extends EventDispatcher
 		scope.renderer.shadowMap.enabled = true;
 		scope.renderer.shadowMapSoft = true;
 		scope.renderer.shadowMap.type = PCFSoftShadowMap;
+		scope.renderer.setClearColor( 0xFFFFFF, 1 );
 
 		scope.skybox = new Skybox(scope.scene);
 		

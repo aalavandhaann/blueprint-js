@@ -44,6 +44,7 @@ export class Skybox extends EventDispatcher
 		if(!flag)
 		{
 			this.sky.material = this.plainSkyMat;
+			this.sky.material.needsUpdate = true;
 		}
 		else
 		{
