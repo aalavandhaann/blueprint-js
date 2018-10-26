@@ -96,7 +96,7 @@ export class Floor extends EventDispatcher
 	removeFromScene() 
 	{
 		this.scene.remove(this.floorPlane);
-		//scene.remove(roofPlane);
+		this.scene.remove(this.roofPlane);
 		this.scene.remove(this.room.floorPlane);
 	}	
 	
