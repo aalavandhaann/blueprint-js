@@ -20,7 +20,7 @@ export class Scene extends EventDispatcher
 		this.model = model;
 		this.textureDir = textureDir;
 		
-		var grid = new GridHelper(4000, 5);
+		var grid = new GridHelper(1000, 1);
 		
 		this.scene = new ThreeScene();
 		this.scene.background = new Color(0xffffff);
