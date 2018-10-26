@@ -6,6 +6,7 @@ export class Skybox extends EventDispatcher
 	{
 		super();
 		
+		this.defaultEnvironment = 'rooms/textures/envs/Garden.png';
 		this.useEnvironment = false;
 		this.topColor = 0xffffff;//0xD8ECF9
 		this.bottomColor = 0xe9e9e9; //0xf9f9f9;//0x565e63
@@ -46,7 +47,15 @@ export class Skybox extends EventDispatcher
 		}
 		else
 		{
-			this.sky.material = this.skyMat;
+			if(!this.skyMat)
+			{
+				this.setEnvironmentMap(this.defaultEnvironment);
+			}
+			else
+			{
+				this.sky.material = this.skyMat;
+			}
+			
 		}
 		console.log('NOW UPDATE THE SCENE');
 		this.scene.needsUpdate = true;
