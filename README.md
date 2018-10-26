@@ -20,19 +20,16 @@ This is a customizable application built on three.js that allows users to design
 
 ## Developing and Running Locally
 
-To get started, clone the repository and ensure you npm >= 3 and grunt installed, then run:
+To get started, clone the repository and ensure you npm >= 3 and rollup installed, then run:
 
     npm install
-    grunt
+    rollup -c
 
-The latter command generates `example/js/blueprint3d.js` from `src`.
+The latter command generates `build/js/bp3djs.min.js` from `src`.
 
-The easiest way to run locally is to run a local server from the `example` directory. There are plenty of options. One uses Python's built in webserver:
+The easiest way to run locally is to run a local server from the `build` directory. There are plenty of options. One uses Python's built in webserver:
 
-    cd example
-
-    # Python 2.x
-    python -m SimpleHTTPServer
+    cd build
 
     # Python 3.x
     python -m http.server
@@ -41,25 +38,24 @@ Then, visit `http://localhost:8000` in your browser.
 
 ## Contribute!
 
-This project requires a lot more work. In general, it was rushed through various prototype stages, and never refactored as much as it probably should be. We need your help!
+This project and the [original project](https://github.com/furnishup/blueprint3d) requires a lot more work. If you are someone like yodha of typescript then kindly visit the original project, the author is a wonderful human being who facilitated this idea, efforts, and materials in the first place. Else you are someone like me who likes to play around with es6 then you can use this one.
 
 Please contact us if you are interested in contributing.
 
-### Todos
+### Todos and hurrays on completed ones
 
-- More complete documentation (based on the TypeDoc comments)
-- Test suite (e.g. jasmine)
+- More complete documentation of classes (This is necessary and must do for others to contribute)
 - Make it easier to build a complete application using blueprint3d (cleaner API, more inclusive base, easier integration with a backend)
 - Better serialization format for saving/loading "designs"
-- Remove the dependency on jquery from the core source!
+- JQuery is not used at all, instead I used the eventdispatcher from threejs (hurray)
 - Better use of npm conventions and packaging
-- Various bug fixes
-- refactor three/* - use of classes, lambdas
-- update to current threejs
+- Various bug fixes  (hurray for items that are stuck and don't move) 
+- refactor three/*
+- update to current threejs  (hurray)
 - introduce a more formal persistency format
 - put all relevant settings into Core.Configuration to make them read-/writeable, User settings?
 - complete type docs for all entities
-- there're a few TODO_Ekki's left, kill them all
+- there're a few TODO_Ekki's left, kill them all (let me know Yodha)
 
 ## Directory Structure
 
