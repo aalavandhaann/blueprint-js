@@ -10,7 +10,7 @@ export class Skybox extends EventDispatcher
 		this.useEnvironment = false;
 		this.topColor = 0xffffff;//0xD8ECF9
 		this.bottomColor = 0xe9e9e9; //0xf9f9f9;//0x565e63
-		this.verticalOffset = 500;
+		this.verticalOffset = 100;
 		
 		var uniforms = {topColor: {type: 'c',value: new Color(this.topColor)},bottomColor: {type: 'c',value: new Color(this.bottomColor)},offset: {type: 'f',value: this.verticalOffset}};
 		
@@ -33,7 +33,7 @@ export class Skybox extends EventDispatcher
 		
 		this.skyGeo = new SphereGeometry(this.sphereRadius, this.widthSegments, this.heightSegments);
 		this.sky = new Mesh(this.skyGeo, this.skyMat);
-		this.sky.position.x += this.sphereRadius*0.5;
+//		this.sky.position.x += this.sphereRadius*0.5;
 		this.scene.add(this.sky);
 		this.init();
 	}
@@ -45,6 +45,7 @@ export class Skybox extends EventDispatcher
 		{
 			this.sky.material = this.plainSkyMat;
 			this.sky.material.needsUpdate = true;
+			this.sky.visible = false;
 		}
 		else
 		{
@@ -56,7 +57,7 @@ export class Skybox extends EventDispatcher
 			{
 				this.sky.material = this.skyMat;
 			}
-			
+			this.sky.visible = true;
 		}
 		console.log('NOW UPDATE THE SCENE');
 		this.scene.needsUpdate = true;
@@ -70,7 +71,7 @@ export class Skybox extends EventDispatcher
 			var textureUniform = {type: 't', value: t};
 			var uniforms = {texture: textureUniform};
 			scope.skyMat = new ShaderMaterial({vertexShader: scope.vertexShader, fragmentShader: scope.fragmentShader, uniforms: uniforms, side: DoubleSide});
-			scope.toggleEnvironment(scope.useEnvironment);
+			scope.toggleEnvironment(scope.useEnvironment);			
 		}, undefined, function()
 		{
 			console.log('ERROR LOADEING FILE');
