@@ -2,5 +2,5 @@
 echo "\"$1\"";
 git add .;
 git commit -m "\"$1\"";
-git pull origin master;
+git push origin master;
 git subtree push --prefix build origin gh-pages;
