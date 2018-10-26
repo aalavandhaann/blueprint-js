@@ -33,6 +33,7 @@ export class Scene extends EventDispatcher
 		this.itemLoadingCallbacks = null;
 		this.itemLoadedCallbacks = null;
 		this.itemRemovedCallbacks = null;
+		console.log('ADDING GRID FLOOR');
 		this.add(grid);
 		
 	}
