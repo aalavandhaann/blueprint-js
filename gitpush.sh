@@ -9,7 +9,7 @@ git status
 git commit -m "\"$1\""
 git push origin master
 
-git subtree push --prefix $1 origin gh-pages
+git subtree push --prefix build origin gh-pages
 
 #cd ./build
 #go to the gh-pages branch
