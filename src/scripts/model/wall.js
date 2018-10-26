@@ -5,7 +5,7 @@ import {Utils} from '../core/utils.js';
 
 
 /** The default wall texture. */
-export const defaultWallTexture = {url: '../../rooms/textures/wallmap.png', stretch: true, scale: 0};
+export const defaultWallTexture = {url: 'rooms/textures/wallmap.png', stretch: true, scale: 0};
 
 /** 
  * A Wall is the basic element to create Rooms.

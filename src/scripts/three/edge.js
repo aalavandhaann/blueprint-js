@@ -36,8 +36,8 @@ export class Edge extends EventDispatcher
 	
 	remove()
 	{
-//		edge.redrawCallbacks.remove(redraw);
-//		controls.cameraMovedCallbacks.remove(updateVisibility);
+// edge.redrawCallbacks.remove(redraw);
+// controls.cameraMovedCallbacks.remove(updateVisibility);
 		this.edge.removeEventListener(EVENT_REDRAW, this.redrawevent);
 		this.controls.removeEventListener(EVENT_CAMERA_MOVED, this.visibilityevent);
 		this.removeFromScene();
@@ -45,8 +45,8 @@ export class Edge extends EventDispatcher
 
 	init()
 	{
-//		edge.redrawCallbacks.add(redraw);
-//		controls.cameraMovedCallbacks.add(updateVisibility);
+// edge.redrawCallbacks.add(redraw);
+// controls.cameraMovedCallbacks.add(updateVisibility);
 		
 		this.edge.addEventListener(EVENT_REDRAW, this.redrawevent);
 		this.controls.addEventListener(EVENT_CAMERA_MOVED, this.visibilityevent);
@@ -160,7 +160,7 @@ export class Edge extends EventDispatcher
 			color: color,
 			wireframe: wireframe,
 			// ambientColor: 0xffffff, TODO_Ekki
-			//ambient: scope.wall.color,
+			// ambient: scope.wall.color,
 			side: FrontSide,
 			map: this.texture,
 			lightMap: this.lightMap,
