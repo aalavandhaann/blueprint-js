@@ -9,15 +9,17 @@ git status
 git commit -m "\"$1\""
 git push origin master
 
-cd ./build
+git subtree push --prefix $1 origin gh-pages
+
+#cd ./build
 #go to the gh-pages branch
-git checkout gh-pages 
+#git checkout gh-pages 
 
 #bring gh-pages up to date with master
-git rebase master
+#git rebase master
 
 #commit the changes
-git push origin gh-pages
+#git push origin gh-pages
 
 #return to the master branch
-git checkout master
+#git checkout master
