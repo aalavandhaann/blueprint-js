@@ -70,12 +70,8 @@ export class Main extends EventDispatcher
 		var scope = this;		
 		ImageUtils.crossOrigin = '';
 
-		scope.domElement = scope.element.get(0) ;// Container
-//		scope.perspcamera = new PerspectiveCamera(45, 1, 1, 10000);
-//		scope.orthocamera = new OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 10000);
-		
+		scope.domElement = scope.element.get(0) ;		
 		scope.camera = new PerspectiveCamera(45, 1, 1, 10000);
-//		scope.camera = scope.perspcamera;
 		scope.renderer = new WebGLRenderer({antialias: true, preserveDrawingBuffer: true}); // preserveDrawingBuffer:true - required to support .toDataURL()
 
 		scope.renderer.autoClear = false;

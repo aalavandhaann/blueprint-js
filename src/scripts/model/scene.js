@@ -1,4 +1,4 @@
-import {EventDispatcher, JSONLoader, Color} from 'three';
+import {EventDispatcher, JSONLoader, Color, GridHelper} from 'three';
 import {Scene as ThreeScene} from 'three';
 import {Utils} from '../core/utils.js';
 import {Factory} from '../items/factory.js';
@@ -20,6 +20,8 @@ export class Scene extends EventDispatcher
 		this.model = model;
 		this.textureDir = textureDir;
 		
+		var grid = new GridHelper(100, 5);
+		
 		this.scene = new ThreeScene();
 		this.scene.background = new Color(0xffffff);
 		this.items = [];
@@ -31,6 +33,8 @@ export class Scene extends EventDispatcher
 		this.itemLoadingCallbacks = null;
 		this.itemLoadedCallbacks = null;
 		this.itemRemovedCallbacks = null;
+		this.add(grid);
+		
 	}
 
 	/** Adds a non-item, basically a mesh, to the scene.
