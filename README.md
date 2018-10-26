@@ -72,3 +72,8 @@ The `src` directory contains the core of the project. Here is a description of t
 `model` - Data model representing both the 2D floorplan and all of the items in it
 
 `three` - 3D view/controller for viewing and modifying item placement
+
+## Notes about changes from the original
+- Adding routines to modify the skybox images as environment (a crude implementation)
+- Otherwise the api is ditto and the same
+- Adding a BoxHelper to show selected states of items
