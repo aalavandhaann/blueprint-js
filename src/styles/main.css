@@ -1,0 +1,75 @@
+/*
+ * PostCSS styles to test Rollup’s handling of them.
+ */
+
+/* Variables */
+$color-heading: #111;
+$color-text: #444;
+$color-gradient-start: #efefff;
+$color-lightest: #fff;
+$font-family: sans-serif;
+
+/* Simple reset. */
+body,* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+body {
+  padding: 2rem;
+  color: $color-text;
+  font-family: $font-family;
+  font-size: 18px;
+
+  /* Add some CSS3 stuff. */
+  background-image: linear-gradient(to bottom,
+    $color-gradient-start 0%,
+    $color-lightest 100%
+  );
+  background-repeat: no-repeat;
+
+  /* Lobotomize the owls, because they were starting to organize. */
+  *+* {
+    margin-top: 1rem;
+  }
+}
+
+h1 {
+  color: $color-heading;
+}
+
+/* Style the JS-generated output. */
+.debug {
+
+  /* Pseudo-elements, like a goddamn boss. */
+  &::before {
+    content: 'Script Output:';
+    display: block;
+    font-family: $font-family;
+    font-size: 50%;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* This is a nested approach to BEM-style selectors. */
+  &__output {
+    display: block;
+    margin-top: 0.25rem;
+    padding: 1rem;
+    background-color: $color-lightest;
+
+    /* The color() function works thanks to `postcss-cssnext`. */
+    border: 1px solid color( $color-text tint(75%) );
+    font-size: 80%;
+  }
+}
+
+.credits {
+  color: color( $color-text tint(50%) );
+  font-size: 75%;
+  text-align: center;
+
+  a {
+    color: inherit;
+  }
+}
