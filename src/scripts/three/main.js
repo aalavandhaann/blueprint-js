@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import {EventDispatcher, Vector2, Vector3, WebGLRenderer,ImageUtils, PerspectiveCamera, PCFSoftShadowMap} from 'three';
+import {EventDispatcher, Vector2, Vector3, WebGLRenderer,ImageUtils, PerspectiveCamera, OrthographicCamera, PCFSoftShadowMap} from 'three';
 import {EVENT_UPDATED, EVENT_WALL_CLICKED, EVENT_NOTHING_CLICKED, EVENT_FLOOR_CLICKED, EVENT_ITEM_SELECTED, EVENT_ITEM_UNSELECTED} from '../core/events.js';
 
 
@@ -32,6 +32,8 @@ export class Main extends EventDispatcher
 		this.options = options;		
 
 		this.domElement = null;
+		this.orthocamera = null;
+		this.perspectivecamera = null;
 		this.camera = null;
 		this.renderer = null;
 		this.controller = null;
@@ -69,9 +71,20 @@ export class Main extends EventDispatcher
 	{
 		var scope = this;		
 		ImageUtils.crossOrigin = '';
+		
+		var orthoScale = 100;
+		var orthoWidth = window.innerWidth;
+		var orthoHeight = window.innerHeight;
 
-		scope.domElement = scope.element.get(0) ;		
-		scope.camera = new PerspectiveCamera(45, 1, 1, 10000);
+		scope.domElement = scope.element.get(0);
+		
+		scope.perspectivecamera = new PerspectiveCamera(45, 1, 1, 10000);
+		scope.orthocamera = new OrthographicCamera(orthoWidth / -orthoScale, orthoWidth /orthoScale, orthoHeight /orthoScale, orthoHeight / -orthoScale, 1, 1000);
+		
+		scope.camera = scope.perspectivecamera;
+//		scope.camera = scope.orthocamera;
+		
+		console.log('ORTHO DETAILS ::: ', orthoWidth, orthoHeight);
 		scope.renderer = new WebGLRenderer({antialias: true, preserveDrawingBuffer: true}); // preserveDrawingBuffer:true - required to support .toDataURL()
 
 		scope.renderer.autoClear = false;
@@ -229,8 +242,18 @@ export class Main extends EventDispatcher
 		{
 			scope.elementHeight = scope.element.innerHeight();
 		}		
-		scope.camera.aspect = scope.elementWidth / scope.elementHeight;
-		scope.camera.updateProjectionMatrix();
+		
+		scope.orthocamera.left = -window.innerWidth / 2.0;
+		scope.orthocamera.right = -window.innerWidth / 2.0;
+		scope.orthocamera.top = -window.innerHeight / 2.0;
+		scope.orthocamera.bottom = -window.innerHeight / 2.0;
+		scope.orthocamera.updateProjectionMatrix();
+		
+		scope.perspectivecamera.aspect = scope.elementWidth / scope.elementHeight;
+		scope.perspectivecamera.updateProjectionMatrix();
+		
+		
+		
 		scope.renderer.setSize(scope.elementWidth, scope.elementHeight);
 		scope.needsUpdate = true;
 	}
