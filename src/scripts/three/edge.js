@@ -110,13 +110,10 @@ export class Edge extends EventDispatcher
 		var dot = normal.dot(direction);
 		// update visible
 //		scope.visible = (dot >= 0);
-		if(scope.material)
-		{
-			scope.material.opacity = dot;
-		}
 		// show or hide planes
 		scope.planes.forEach((plane) => {
 //			plane.visible = (dot >= 0);
+			plane.material.transparent = !(dot >= 0);
 			plane.material.opacity = (0.5 + (0.5*(dot >= 0)));
 			
 		});
