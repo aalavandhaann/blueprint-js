@@ -108,13 +108,17 @@ export class Edge extends EventDispatcher
 
 		// find dot
 		var dot = normal.dot(direction);
-
 		// update visible
-		scope.visible = (dot >= 0);
-		
+//		scope.visible = (dot >= 0);
+		if(scope.material)
+		{
+			scope.material.opacity = dot;
+		}
 		// show or hide planes
 		scope.planes.forEach((plane) => {
-			plane.visible = scope.visible;
+//			plane.visible = (dot >= 0);
+			plane.material.opacity = (0.5 + (0.5*(dot >= 0)));
+			
 		});
 		scope.updateObjectVisibility();
 	}
@@ -164,11 +168,15 @@ export class Edge extends EventDispatcher
 			side: FrontSide,
 			map: this.texture,
 			lightMap: this.lightMap,
+			transparent: true,
+			opacity: 1.0,
 		});
 
 		var fillerMaterial = new MeshBasicMaterial({
 			color: this.fillerColor,
 			side: DoubleSide,
+			transparent: true,
+			opacity: 1.0,
 		});
 
 		// exterior plane
