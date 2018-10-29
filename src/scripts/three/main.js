@@ -78,7 +78,7 @@ export class Main extends EventDispatcher
 
 		scope.domElement = scope.element.get(0);
 		
-		scope.perspectivecamera = new PerspectiveCamera(45, 1, 1, 10000);
+		scope.perspectivecamera = new PerspectiveCamera(45, 1, 100, 10000);
 		scope.orthocamera = new OrthographicCamera(orthoWidth / -orthoScale, orthoWidth /orthoScale, orthoHeight /orthoScale, orthoHeight / -orthoScale, 1, 1000);
 		
 		scope.camera = scope.perspectivecamera;
@@ -92,6 +92,7 @@ export class Main extends EventDispatcher
 		scope.renderer.shadowMapSoft = true;
 		scope.renderer.shadowMap.type = PCFSoftShadowMap;
 		scope.renderer.setClearColor( 0xFFFFFF, 1 );
+		scope.renderer.sortOrder = false;
 
 		scope.skybox = new Skybox(scope.scene);
 		

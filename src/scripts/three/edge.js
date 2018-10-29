@@ -114,7 +114,7 @@ export class Edge extends EventDispatcher
 		scope.planes.forEach((plane) => {
 //			plane.visible = (dot >= 0);
 			plane.material.transparent = !(dot >= 0);
-			plane.material.opacity = (0.7 + (0.3*(dot >= 0)));
+			plane.material.opacity = (0.5 + (0.5*(dot >= 0)));
 			
 		});
 		scope.updateObjectVisibility();
