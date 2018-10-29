@@ -120,10 +120,6 @@ export class Item extends Mesh
 	/** */
 	setFixed(fixed)
 	{
-		if(this.fixed != fixed)
-		{
-			
-		}		
 		this.fixed = fixed;
 	}
 
