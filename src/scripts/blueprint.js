@@ -38,6 +38,7 @@ export {InWallFloorItem} from './items/in_wall_floor_item.js';
 
 //Classes from three module
 export {states, Controller} from './three/controller.js';
+export {OrbitControls} from './three/orbitcontrols.js';
 export {STATE, Controls} from './three/controls.js';
 export {Edge} from './three/edge.js';
 export {Floor} from './three/floor.js';

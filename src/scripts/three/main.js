@@ -1,9 +1,11 @@
 import $ from 'jquery';
-import {EventDispatcher, Vector2, Vector3, WebGLRenderer,ImageUtils, PerspectiveCamera, OrthographicCamera, PCFSoftShadowMap} from 'three';
+import {EventDispatcher, Vector2, Vector3, WebGLRenderer,ImageUtils, PerspectiveCamera, OrthographicCamera} from 'three';
+import {PCFSoftShadowMap} from 'three';
 import {EVENT_UPDATED, EVENT_WALL_CLICKED, EVENT_NOTHING_CLICKED, EVENT_FLOOR_CLICKED, EVENT_ITEM_SELECTED, EVENT_ITEM_UNSELECTED} from '../core/events.js';
 
+import {OrbitControls} from './orbitcontrols.js';
 
-import {Controls} from './controls.js';
+// import {Controls} from './controls.js';
 import {Controller} from './controller.js';
 import {HUD} from './hud.js';
 import {Floorplan} from './floorPlan.js';
@@ -69,15 +71,17 @@ export class Main extends EventDispatcher
 	
 	getARenderer()
 	{
-//		scope.renderer = new WebGLRenderer({antialias: true, preserveDrawingBuffer: true, alpha:true}); // preserveDrawingBuffer:true - required to support .toDataURL()
+// scope.renderer = new WebGLRenderer({antialias: true, preserveDrawingBuffer:
+// true, alpha:true}); // preserveDrawingBuffer:true - required to support
+// .toDataURL()
 		var renderer = new WebGLRenderer({antialias: true, alpha:true});
 		
-//		scope.renderer.autoClear = false;
+// scope.renderer.autoClear = false;
 		renderer.shadowMap.enabled = true;
 		renderer.shadowMapSoft = true;
 		renderer.shadowMap.type = PCFSoftShadowMap;
 		renderer.setClearColor( 0xFFFFFF, 1 );
-//		scope.renderer.sortOrder = false;
+		renderer.sortOrder = false;
 		
 		return renderer;
 	}
@@ -94,7 +98,7 @@ export class Main extends EventDispatcher
 		scope.domElement = scope.element.get(0);
 		
 		scope.perspectivecamera = new PerspectiveCamera(45, 1, 100, 10000);
-		scope.orthocamera = new OrthographicCamera(orthoWidth / -orthoScale, orthoWidth /orthoScale, orthoHeight /orthoScale, orthoHeight / -orthoScale, 1, 1000);
+		scope.orthocamera = new OrthographicCamera(orthoWidth / -orthoScale, orthoWidth /orthoScale, orthoHeight /orthoScale, orthoHeight / -orthoScale, 1, 10000);
 		
 		scope.camera = scope.perspectivecamera;
 //		scope.camera = scope.orthocamera;
@@ -104,11 +108,14 @@ export class Main extends EventDispatcher
 		
 		scope.skybox = new Skybox(scope.scene);
 		
-		scope.controls = new Controls(scope.camera, scope.domElement);
+		scope.controls = new OrbitControls(scope.camera, scope.domElement);
+		scope.controls.autoRotate = this.options['spin'];
+		scope.controls.enableDamping = true;
+		
+// scope.controls2 = new Controls(scope.camera, scope.domElement);
+		
 		scope.hud = new HUD(scope, scope.scene);
 		scope.controller = new Controller(scope, scope.model, scope.camera, scope.element, scope.controls, scope.hud);
-
-
 
 		// handle window resizing
 		scope.updateWindowSize();
@@ -120,7 +127,7 @@ export class Main extends EventDispatcher
 		// setup camera nicely
 		scope.centerCamera();
 
-//		model.floorplan.fireOnUpdatedRooms(scope.centerCamera);
+// model.floorplan.fireOnUpdatedRooms(scope.centerCamera);
 		scope.model.floorplan.addEventListener(EVENT_UPDATED, this.updatedevent);
 		
 		scope.lights = new Lights(scope.scene, scope.model.floorplan);
@@ -164,12 +171,7 @@ export class Main extends EventDispatcher
 	spin() 
 	{
 		var scope = this;
-		if (scope.options.spin && !scope.mouseOver && !scope.hasClicked) 
-		{
-			var theta = 2 * Math.PI * scope.options.spinSpeed * (Date.now() - scope.lastRender);
-			scope.controls.rotateLeft(theta);
-			scope.controls.update();
-		}
+		scope.controls.autoRotate = scope.options.spin && !scope.mouseOver && !scope.hasClicked;
 	}
 
 	dataUrl() 
@@ -181,6 +183,7 @@ export class Main extends EventDispatcher
 	stopSpin()
 	{
 		this.hasClicked = true;
+		this.controls.autoRotate = false;
 	}
 
 	options()
@@ -210,12 +213,9 @@ export class Main extends EventDispatcher
 
 	
 	/*
-	 * This method name conflicts with a variable so changing it to a different name
-		needsUpdate() 
-		{
-			this.needsUpdate = true;
-		}
-	*/
+	 * This method name conflicts with a variable so changing it to a different
+	 * name needsUpdate() { this.needsUpdate = true; }
+	 */
 	
 	ensureNeedsUpdate() 
 	{
@@ -255,8 +255,8 @@ export class Main extends EventDispatcher
 		}		
 		
 		scope.orthocamera.left = -window.innerWidth / 2.0;
-		scope.orthocamera.right = -window.innerWidth / 2.0;
-		scope.orthocamera.top = -window.innerHeight / 2.0;
+		scope.orthocamera.right = window.innerWidth / 2.0;
+		scope.orthocamera.top = window.innerHeight / 2.0;
 		scope.orthocamera.bottom = -window.innerHeight / 2.0;
 		scope.orthocamera.updateProjectionMatrix();
 		
@@ -269,6 +269,7 @@ export class Main extends EventDispatcher
 
 	centerCamera() 
 	{
+		console.log('CENTER CAMERA');
 		var scope = this;
 		var yOffset = 150.0;
 		var pan = scope.model.floorplan.getCenter();
@@ -276,7 +277,7 @@ export class Main extends EventDispatcher
 		scope.controls.target = pan;
 		var distance = scope.model.floorplan.getSize().z * 1.5;
 		var offset = pan.clone().add(new Vector3(0, distance, distance));
-		//scope.controls.setOffset(offset);
+		// scope.controls.setOffset(offset);
 		scope.camera.position.copy(offset);
 		scope.controls.update();
 	}
@@ -333,10 +334,8 @@ export class Main extends EventDispatcher
 	{
 		var scope = this;
 		scope.spin();
-		if (scope.shouldRender()) 
-		{
-			scope.renderer.render(scope.scene.getScene(), scope.camera);
-		}
+		scope.controls.update();
+		scope.renderer.render(scope.scene.getScene(), scope.camera);
 		scope.lastRender = Date.now();
 	}
 }

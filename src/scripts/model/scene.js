@@ -1,4 +1,4 @@
-import {EventDispatcher, JSONLoader, Color, Fog} from 'three';
+import {EventDispatcher, JSONLoader, Color} from 'three';
 import {Scene as ThreeScene} from 'three';
 import {Utils} from '../core/utils.js';
 import {Factory} from '../items/factory.js';
@@ -24,7 +24,7 @@ export class Scene extends EventDispatcher
 		
 		this.scene = new ThreeScene();
 		this.scene.background = new Color(0xffffff);
-		this.scene.fog = new Fog(0xFAFAFA, 0.001, 6000);
+//		this.scene.fog = new Fog(0xFAFAFA, 0.001, 6000);
 		this.items = [];
 		this.needsUpdate = false;
 		// init item loader
@@ -34,7 +34,6 @@ export class Scene extends EventDispatcher
 		this.itemLoadingCallbacks = null;
 		this.itemLoadedCallbacks = null;
 		this.itemRemovedCallbacks = null;
-		console.log('ADDING GRID FLOOR');
 //		this.add(grid);
 		
 	}

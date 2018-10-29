@@ -16,6 +16,7 @@ export class Edge extends EventDispatcher
 		this.front = edge.front;
 
 		this.planes = [];
+		this.phantomPlanes = [];
 		this.basePlanes = []; // always visible
 		this.texture = new TextureLoader();
 		
@@ -109,26 +110,23 @@ export class Edge extends EventDispatcher
 		// find dot
 		var dot = normal.dot(direction);
 		// update visible
-//		scope.visible = (dot >= 0);
+		scope.visible = (dot >= 0);
 		// show or hide planes
 		scope.planes.forEach((plane) => {
-//			plane.visible = (dot >= 0);
-			plane.material.transparent = !(dot >= 0);
-			plane.material.opacity = (0.5 + (0.5*(dot >= 0)));
-			
-		});
+			plane.visible = scope.visible;
+		});		
 		scope.updateObjectVisibility();
 	}
 
 	updateObjectVisibility() 
 	{
-//		var scope = this;
-//		this.wall.items.forEach((item) => {
-//			item.updateEdgeVisibility(scope.visible, scope.front);
-//		});
-//		this.wall.onItems.forEach((item) => {
-//			item.updateEdgeVisibility(scope.visible, scope.front);
-//		});
+		var scope = this;
+		this.wall.items.forEach((item) => {
+			item.updateEdgeVisibility(scope.visible, scope.front);
+		});
+		this.wall.onItems.forEach((item) => {
+			item.updateEdgeVisibility(scope.visible, scope.front);
+		});
 	}
 
 	updateTexture(callback)
@@ -165,17 +163,16 @@ export class Edge extends EventDispatcher
 			side: FrontSide,
 			map: this.texture,
 			lightMap: this.lightMap,
-			transparent: true,
-			opacity: 1.0,
+			transparent: false,
 		});
 
 		var fillerMaterial = new MeshBasicMaterial({
 			color: this.fillerColor,
+			wireframe: wireframe,
 			side: DoubleSide,
-			transparent: true,
-			opacity: 1.0,
+			transparent: false,
 		});
-
+		
 		// exterior plane
 		this.planes.push(this.makeWall(this.edge.exteriorStart(), this.edge.exteriorEnd(), this.edge.exteriorTransform, this.edge.invExteriorTransform, fillerMaterial));
 		// interior plane
@@ -187,7 +184,7 @@ export class Edge extends EventDispatcher
 		this.planes.push(this.buildFiller(this.edge, this.wall.height, DoubleSide, this.fillerColor));
 		// sides
 		this.planes.push(this.buildSideFillter(this.edge.interiorStart(), this.edge.exteriorStart(), this.wall.height, this.sideColor));
-		this.planes.push(this.buildSideFillter(this.edge.interiorEnd(), this.edge.exteriorEnd(), this.wall.height, this.sideColor));
+		this.planes.push(this.buildSideFillter(this.edge.interiorEnd(), this.edge.exteriorEnd(), this.wall.height, this.sideColor));		
 	}
 
 	// start, end have x and y attributes (i.e. corners)
