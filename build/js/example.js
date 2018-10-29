@@ -123,6 +123,7 @@ var ContextMenu = function(blueprint3d) {
     $("#fixed").click(function() {
         var checked = $(this).prop('checked');
         selectedItem.setFixed(checked);
+        three.itemIsSelected(selectedItem);
     });
   }
 

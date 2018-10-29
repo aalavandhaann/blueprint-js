@@ -67,6 +67,21 @@ export class Main extends EventDispatcher
 		this.init();
 	}
 	
+	getARenderer()
+	{
+//		scope.renderer = new WebGLRenderer({antialias: true, preserveDrawingBuffer: true, alpha:true}); // preserveDrawingBuffer:true - required to support .toDataURL()
+		var renderer = new WebGLRenderer({antialias: true, alpha:true});
+		
+//		scope.renderer.autoClear = false;
+		renderer.shadowMap.enabled = true;
+		renderer.shadowMapSoft = true;
+		renderer.shadowMap.type = PCFSoftShadowMap;
+		renderer.setClearColor( 0xFFFFFF, 1 );
+//		scope.renderer.sortOrder = false;
+		
+		return renderer;
+	}
+	
 	init()
 	{
 		var scope = this;		
@@ -83,24 +98,17 @@ export class Main extends EventDispatcher
 		
 		scope.camera = scope.perspectivecamera;
 //		scope.camera = scope.orthocamera;
+
+		scope.renderer = scope.getARenderer(); 		
+		scope.domElement.appendChild(scope.renderer.domElement);
 		
-		console.log('ORTHO DETAILS ::: ', orthoWidth, orthoHeight);
-		scope.renderer = new WebGLRenderer({antialias: true, preserveDrawingBuffer: true, alpha:true}); // preserveDrawingBuffer:true - required to support .toDataURL()
-
-		scope.renderer.autoClear = false;
-		scope.renderer.shadowMap.enabled = true;
-		scope.renderer.shadowMapSoft = true;
-		scope.renderer.shadowMap.type = PCFSoftShadowMap;
-		scope.renderer.setClearColor( 0xFFFFFF, 1 );
-		scope.renderer.sortOrder = false;
-
 		scope.skybox = new Skybox(scope.scene);
 		
 		scope.controls = new Controls(scope.camera, scope.domElement);
-		scope.hud = new HUD(scope);
+		scope.hud = new HUD(scope, scope.scene);
 		scope.controller = new Controller(scope, scope.model, scope.camera, scope.element, scope.controls, scope.hud);
 
-		scope.domElement.appendChild(scope.renderer.domElement);
+
 
 		// handle window resizing
 		scope.updateWindowSize();
@@ -232,9 +240,11 @@ export class Main extends EventDispatcher
 	updateWindowSize() 
 	{
 		var scope = this;
+		
 		scope.heightMargin = scope.element.offset().top;
 		scope.widthMargin = scope.element.offset().left;
 		scope.elementWidth = scope.element.innerWidth();
+		
 		if (scope.options.resize) 
 		{
 			scope.elementHeight = window.innerHeight - scope.heightMargin;
@@ -251,11 +261,9 @@ export class Main extends EventDispatcher
 		scope.orthocamera.updateProjectionMatrix();
 		
 		scope.perspectivecamera.aspect = scope.elementWidth / scope.elementHeight;
-		scope.perspectivecamera.updateProjectionMatrix();
+		scope.perspectivecamera.updateProjectionMatrix();		
 		
-		
-		
-		scope.renderer.setSize(scope.elementWidth, scope.elementHeight);
+		scope.renderer.setSize(scope.elementWidth, scope.elementHeight);		
 		scope.needsUpdate = true;
 	}
 
@@ -327,12 +335,8 @@ export class Main extends EventDispatcher
 		scope.spin();
 		if (scope.shouldRender()) 
 		{
-			scope.renderer.clear();
 			scope.renderer.render(scope.scene.getScene(), scope.camera);
-			scope.renderer.clearDepth();
-			scope.renderer.render(scope.hud.getScene(), scope.camera);
 		}
-		scope.lastRender = Date.now();		
-//		console.log('TOTaL OBJECTS IN THE SCENE ::: ', scope.scene.getScene().children.length);
+		scope.lastRender = Date.now();
 	}
 }

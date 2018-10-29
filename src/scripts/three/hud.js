@@ -2,13 +2,23 @@ import {EventDispatcher, Scene as ThreeScene, Geometry, Vector3, LineBasicMateri
 
 import {EVENT_ITEM_SELECTED, EVENT_ITEM_UNSELECTED} from '../core/events.js';
 
+//As far as I understand the HUD is here to show a rotation control on every item
+//If this idea is correct then it seriously sucks. A whole rendering to show just cones and lines as arrows?
 export class HUD extends EventDispatcher
 {
-	constructor(three)
+	constructor(three, scene)
 	{
 		super();
 		this.three = three;
-		this.scene = new ThreeScene();
+		if(!scene)
+		{
+			this.scene = new ThreeScene();
+		}
+			
+		else
+		{
+			this.scene = scene;
+		}
 		
 		this.selectedItem = null;
 		
@@ -24,8 +34,9 @@ export class HUD extends EventDispatcher
 		
 		this.activeObject = null;
 		
-		this.itemselectedevent = (o) => {this.itemSelected(o.item);};
-		this.itemunselectedevent = () => {this.itemUnselected();};
+		var scope = this;
+		this.itemselectedevent = (o) => {scope.itemSelected(o.item);};
+		this.itemunselectedevent = () => {scope.itemUnselected();};
 		
 		this.init();
 	}
@@ -93,12 +104,12 @@ export class HUD extends EventDispatcher
 	setColor() 
 	{
 		var scope = this;
-		if (this.activeObject) 
+		if (scope.activeObject) 
 		{
-			this.activeObject.children.forEach((obj) => {obj.material.color.set(scope.getColor());});
+			scope.activeObject.children.forEach((obj) => {obj.material.color.set(scope.getColor());});
 		}
 //		this.three.needsUpdate();
-		this.three.ensureNeedsUpdate();
+		scope.three.ensureNeedsUpdate();
 	}
 
 	getColor()
