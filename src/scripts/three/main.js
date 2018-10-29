@@ -85,7 +85,7 @@ export class Main extends EventDispatcher
 //		scope.camera = scope.orthocamera;
 		
 		console.log('ORTHO DETAILS ::: ', orthoWidth, orthoHeight);
-		scope.renderer = new WebGLRenderer({antialias: true, preserveDrawingBuffer: true}); // preserveDrawingBuffer:true - required to support .toDataURL()
+		scope.renderer = new WebGLRenderer({antialias: true, preserveDrawingBuffer: true, alpha:true}); // preserveDrawingBuffer:true - required to support .toDataURL()
 
 		scope.renderer.autoClear = false;
 		scope.renderer.shadowMap.enabled = true;
