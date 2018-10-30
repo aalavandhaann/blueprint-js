@@ -5,7 +5,8 @@ import { Utils } from '../core/utils.js';
 
 export const states = {UNSELECTED: 0, SELECTED: 1, DRAGGING: 2, ROTATING: 3,  ROTATING_FREE: 4, PANNING: 5};
 
-//Controller is the class that maintains the items, floors, walls selection in the 3d scene
+// Controller is the class that maintains the items, floors, walls selection in
+// the 3d scene
 export class Controller extends EventDispatcher
 {
 	constructor(three, model, camera, element, controls, hud)
@@ -49,13 +50,16 @@ export class Controller extends EventDispatcher
 	init() 
 	{
 		this.element.mousedown(this.mousedownevent);
-		this.element.get(0).addEventListener('touchstart', this.mousedownevent);
+// this.element.get(0).addEventListener('touchstart', this.mousedownevent);
+//		this.element.on('touchstart', this.mousedownevent);
 		
 		this.element.mouseup(this.mouseupevent);
-		this.element.get(0).addEventListener('touchend', this.mouseupevent);
+// this.element.get(0).addEventListener('touchend', this.mouseupevent);
+//		this.element.on('touchend', this.mouseupevent);
 		
 		this.element.mousemove(this.mousemoveevent);
-		this.element.get(0).addEventListener('touchmove', this.mouseupevent);
+// this.element.get(0).addEventListener('touchmove', this.mousemoveevent);
+//		this.element.on('touchmove', this.mousemoveevent);
 		
 
 		// scene.itemRemovedCallbacks.add(itemRemoved);
@@ -125,9 +129,9 @@ export class Controller extends EventDispatcher
 		// ground plane used to find intersections
 		var size = 10000;
 		
-		//The below line was originally setting the plane visibility to false
-		//Now its setting visibility to true. This is necessary to be detected
-		//with the raycaster objects to click walls and floors.
+		// The below line was originally setting the plane visibility to false
+		// Now its setting visibility to true. This is necessary to be detected
+		// with the raycaster objects to click walls and floors.
 		this.plane = new Mesh(new PlaneGeometry(size, size), new MeshBasicMaterial({visible:false}));
 		this.plane.rotation.x = -Math.PI / 2;
 		this.plane.visible = true;
@@ -176,6 +180,7 @@ export class Controller extends EventDispatcher
 		{
 			event.preventDefault();
 			this.mouseMoved = true;
+			
 			this.mouse.x = event.clientX;
 			this.mouse.y = event.clientY;
 
