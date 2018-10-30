@@ -26,7 +26,7 @@ export class Lights extends EventDispatcher
 		light.position.set(0, this.height, 0);
 		this.scene.add(light);
 
-		this.dirLight = new DirectionalLight(0xffffff, 0);
+		this.dirLight = new DirectionalLight(0xffffff, 0.5);
 		this.dirLight.color.setHSL(1, 1, 0.1);
 
 		this.dirLight.castShadow = true;
@@ -36,9 +36,9 @@ export class Lights extends EventDispatcher
 
 		this.dirLight.shadow.camera.far = this.height + this.tol;
 		this.dirLight.shadow.bias = -0.0001;
-//		this.dirLight.shadowDarkness = 0.2;
+		this.dirLight.shadowDarkness = 0.2;
 		this.dirLight.visible = true;
-//		this.dirLight.shadowCameraVisible = false;
+		this.dirLight.shadowCameraVisible = false;
 
 		this.scene.add(this.dirLight);
 		this.scene.add(this.dirLight.target);

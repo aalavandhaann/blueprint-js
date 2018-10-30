@@ -37,18 +37,13 @@ export class Edge extends EventDispatcher
 	
 	remove()
 	{
-// edge.redrawCallbacks.remove(redraw);
-// controls.cameraMovedCallbacks.remove(updateVisibility);
 		this.edge.removeEventListener(EVENT_REDRAW, this.redrawevent);
 		this.controls.removeEventListener(EVENT_CAMERA_MOVED, this.visibilityevent);
 		this.removeFromScene();
 	}
 
 	init()
-	{
-// edge.redrawCallbacks.add(redraw);
-// controls.cameraMovedCallbacks.add(updateVisibility);
-		
+	{		
 		this.edge.addEventListener(EVENT_REDRAW, this.redrawevent);
 		this.controls.addEventListener(EVENT_CAMERA_MOVED, this.visibilityevent);
 		
@@ -146,31 +141,24 @@ export class Edge extends EventDispatcher
 			var width = this.edge.interiorDistance();
 			this.texture.wrapT = RepeatWrapping;
 			this.texture.wrapS = RepeatWrapping;
-			this.texture.repeat.set(width / scale, height / scale);
+			this.texture.repeat.set(width / scale, height / scale);			
 			this.texture.needsUpdate = true;
 		}
 	}
 
 	updatePlanes() 
 	{
-		var wireframe = false;
-		var color = 0xffffff;
+		var color = 0xFFFFFF;
 		var wallMaterial = new MeshBasicMaterial({
 			color: color,
-			wireframe: wireframe,
-			// ambientColor: 0xffffff, TODO_Ekki
-			// ambient: scope.wall.color,
 			side: FrontSide,
 			map: this.texture,
-			lightMap: this.lightMap,
-			transparent: false,
+//			lightMap: this.lightMap,
 		});
 
 		var fillerMaterial = new MeshBasicMaterial({
 			color: this.fillerColor,
-			wireframe: wireframe,
-			side: DoubleSide,
-			transparent: false,
+			side: DoubleSide
 		});
 		
 		// exterior plane
@@ -247,7 +235,7 @@ export class Edge extends EventDispatcher
 		}
 		
 		var mesh = new Mesh(geometry, material);
-		mesh.name = this.name+'_plane';
+		mesh.name = 'wall';
 		return mesh;
 	}	
 

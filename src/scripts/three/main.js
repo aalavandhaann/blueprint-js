@@ -1,6 +1,10 @@
 import $ from 'jquery';
 import {EventDispatcher, Vector2, Vector3, WebGLRenderer,ImageUtils, PerspectiveCamera, OrthographicCamera} from 'three';
 import {PCFSoftShadowMap} from 'three';
+import {Clock} from 'three';
+//import {FirstPersonControls} from './first-person-controls.js';
+import {PointerLockControls} from './pointerlockcontrols.js';
+
 import {EVENT_UPDATED, EVENT_WALL_CLICKED, EVENT_NOTHING_CLICKED, EVENT_FLOOR_CLICKED, EVENT_ITEM_SELECTED, EVENT_ITEM_UNSELECTED} from '../core/events.js';
 
 import {OrbitControls} from './orbitcontrols.js';
@@ -37,6 +41,13 @@ export class Main extends EventDispatcher
 		this.orthocamera = null;
 		this.perspectivecamera = null;
 		this.camera = null;
+		this.fpscamera = null;
+		
+		this.controls = null;		
+		this.fpscontrols = null;
+		this.fpsclock = new Clock(true);
+		this.firstpersonmode = false;
+		
 		this.renderer = null;
 		this.controller = null;
 
@@ -48,11 +59,12 @@ export class Main extends EventDispatcher
 
 		this.hud = null;
 
-		this.controls = null;
 		this.heightMargin = null;
 		this.widthMargin = null;
 		this.elementHeight = null;
 		this.elementWidth = null;
+		
+		
 
 		this.itemSelectedCallbacks = $.Callbacks(); // item
 		this.itemUnselectedCallbacks = $.Callbacks();
@@ -81,7 +93,7 @@ export class Main extends EventDispatcher
 		renderer.shadowMapSoft = true;
 		renderer.shadowMap.type = PCFSoftShadowMap;
 		renderer.setClearColor( 0xFFFFFF, 1 );
-		renderer.sortOrder = false;
+//		renderer.sortOrder = true;
 		
 		return renderer;
 	}
@@ -97,6 +109,7 @@ export class Main extends EventDispatcher
 
 		scope.domElement = scope.element.get(0);
 		
+		scope.fpscamera = new PerspectiveCamera(75, 1, 1, 10000 );
 		scope.perspectivecamera = new PerspectiveCamera(45, 1, 100, 10000);
 		scope.orthocamera = new OrthographicCamera(orthoWidth / -orthoScale, orthoWidth /orthoScale, orthoHeight /orthoScale, orthoHeight / -orthoScale, 1, 10000);
 		
@@ -111,7 +124,16 @@ export class Main extends EventDispatcher
 		scope.controls = new OrbitControls(scope.camera, scope.domElement);
 		scope.controls.autoRotate = this.options['spin'];
 		scope.controls.enableDamping = true;
+		scope.controls.maxPolarAngle = Math.PI * 0.5;
 		
+		scope.fpscontrols = new PointerLockControls(scope.fpscamera, scope.domElement);
+//		scope.fpscontrols.lookSpeed = 0.1;
+//		scope.fpscontrols.movementSpeed = 100;
+//		scope.fpscontrols.activeLook = false;
+		
+		this.scene.add(scope.fpscontrols.getObject());
+		scope.fpscamera.position.set(0, 125, 0);
+				
 // scope.controls2 = new Controls(scope.camera, scope.domElement);
 		
 		scope.hud = new HUD(scope, scope.scene);
@@ -133,12 +155,14 @@ export class Main extends EventDispatcher
 		scope.lights = new Lights(scope.scene, scope.model.floorplan);
 		scope.floorplan = new Floorplan(scope.scene, scope.model.floorplan, scope.controls);
 		
-		var delay = 50;
+//		var delay = 50;
 		function animate() 
 		{			
-			setTimeout(function () {requestAnimationFrame(animate);}, delay);
+//			setTimeout(function () {requestAnimationFrame(animate);}, delay);
+			requestAnimationFrame(animate);
 			scope.render();
 		}
+		scope.switchFPSMode(false);
 		animate();
 		scope.element.mouseenter(function () {scope.mouseOver = true;}).mouseleave(function () {scope.mouseOver = false;}).click(function () {scope.hasClicked = true;});
 	}
@@ -263,13 +287,15 @@ export class Main extends EventDispatcher
 		scope.perspectivecamera.aspect = scope.elementWidth / scope.elementHeight;
 		scope.perspectivecamera.updateProjectionMatrix();		
 		
+		scope.fpscamera.aspect = scope.elementWidth / scope.elementHeight;
+		scope.fpscamera.updateProjectionMatrix();
+		
 		scope.renderer.setSize(scope.elementWidth, scope.elementHeight);		
 		scope.needsUpdate = true;
 	}
 
 	centerCamera() 
 	{
-		console.log('CENTER CAMERA');
 		var scope = this;
 		var yOffset = 150.0;
 		var pan = scope.model.floorplan.getCenter();
@@ -329,13 +355,30 @@ export class Main extends EventDispatcher
 		obj.children.forEach( this.sceneGraph );
 		console.groupEnd();
 	}
+	
+	switchFPSMode(flag)
+	{
+		this.firstpersonmode = flag;
+		this.fpscontrols.enabled = flag;
+		this.controls.enabled = !flag;
+		this.controller.enabled = !flag;
+	}
 
 	render() 
 	{
 		var scope = this;
 		scope.spin();
-		scope.controls.update();
-		scope.renderer.render(scope.scene.getScene(), scope.camera);
+		
+		if(scope.firstpersonmode)
+		{
+			scope.fpscontrols.update(scope.fpsclock.getDelta());
+			scope.renderer.render(scope.scene.getScene(), scope.fpscamera);
+		}
+		else
+		{
+			scope.controls.update();
+			scope.renderer.render(scope.scene.getScene(), scope.camera);
+		}
 		scope.lastRender = Date.now();
 	}
 }

@@ -43,7 +43,7 @@ export class Skybox extends EventDispatcher
 		this.groundMat = new MeshBasicMaterial({color: 0xEAEAEA, side: DoubleSide});
 		this.ground = new Mesh(this.groundGeo, this.groundMat);
 		this.ground.rotateX(-Math.PI * 0.5);
-		this.ground.position.y = -0.01;
+		this.ground.position.y = -1;
 		this.scene.add(this.ground);
 		
 		var axesHelper = new AxesHelper( 100 );
