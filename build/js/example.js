@@ -509,7 +509,7 @@ var ViewerFloorplanner = function(blueprint3d) {
   };
 
   init();
-}; 
+};
 
 var mainControls = function(blueprint3d) {
   var blueprint3d = blueprint3d;

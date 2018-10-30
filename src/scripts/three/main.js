@@ -31,6 +31,7 @@ export class Main extends EventDispatcher
 			}
 		}
 
+		this.pauseRender = true;
 		this.model = model;
 		this.scene = model.scene;
 		this.element = $(element);
@@ -356,6 +357,11 @@ export class Main extends EventDispatcher
 		console.groupEnd();
 	}
 	
+	pauseTheRendering(flag)
+	{
+		this.pauseRender = flag;
+	}
+	
 	switchFPSMode(flag)
 	{
 		this.firstpersonmode = flag;
@@ -367,8 +373,12 @@ export class Main extends EventDispatcher
 	render() 
 	{
 		var scope = this;
-		scope.spin();
+		if(this.pauseRender)
+		{
+			return;
+		}
 		
+		scope.spin();		
 		if(scope.firstpersonmode)
 		{
 			scope.fpscontrols.update(scope.fpsclock.getDelta());

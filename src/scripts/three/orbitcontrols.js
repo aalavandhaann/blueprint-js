@@ -27,6 +27,7 @@ function OrbitControls( object, domElement )
 
 	// Set to false to disable this control
 	this.enabled = true;
+	this.needsUpdate = true;
 
 	// "target" sets the location of focus, where the object orbits around
 	this.target = new Vector3();
@@ -218,9 +219,12 @@ function OrbitControls( object, domElement )
 				lastPosition.copy( scope.object.position );
 				lastQuaternion.copy( scope.object.quaternion );
 				zoomChanged = false;
-
+				this.needsUpdate = true;
 				return true;
-
+			}
+			else
+			{
+				this.needsUpdate = false;
 			}
 
 			return false;
