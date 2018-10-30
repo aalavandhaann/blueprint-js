@@ -3,14 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <title>Blueprint JS - Floorplan</title>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link href="css/bootstrap.css" rel="stylesheet">
 <link href="css/app.css" rel="stylesheet">
 
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="https://cdn.rawgit.com/nnattawat/flip/master/dist/jquery.flip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.3/dat.gui.min.js"></script>
 
 <script src="js/bp3djs.min.js"></script>
+<script src="js/items.js"></script>
 <script src="js/app.js"></script>
 </head>
 
@@ -39,6 +42,14 @@
 	<div id='interface-controls'>
 		<button id="showFloorPlan" class="btn btn-sm btn-default active"> <span class="glyphicon glyphicon-move"></span> Floor Plan</button>
 		<button id="showDesign" class="btn btn-sm btn-default"> <span class="glyphicon glyphicon-move"></span> 3D</button>
+		<button id="showAddItems" class="btn btn-sm btn-default"> <span class="glyphicon glyphicon-plus"></span></button>
+		<button id="showFirstPerson" class="btn btn-sm btn-default"> <span class="glyphicon glyphicon-eye-open"></span></button>
 	</div>
+	<!-- Add Items -->
+    <div id="add-items">
+      <div class="row" id="items-wrapper">
+        <!-- Items added here by items.js -->
+      </div>
+    </div>
 </body>
 </html>

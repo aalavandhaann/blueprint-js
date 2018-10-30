@@ -170,8 +170,9 @@ $(document).ready(function() {
 
 
 
-  var itemsDiv = $("#items-wrapper")
-  for (var i = 0; i < items.length; i++) {
+  var itemsDiv = $("#items-wrapper");
+  for (var i = 0; i < items.length; i++) 
+  {
     var item = items[i];
     var html = '<div class="col-sm-4">' +
                 '<a class="thumbnail add-item" model-name="' + 

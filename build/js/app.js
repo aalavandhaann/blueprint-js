@@ -80,7 +80,8 @@ var mainControls = function(blueprint3d)
 {
 	  var blueprint3d = blueprint3d;
 
-	  function newDesign() {
+	  function newDesign() 
+	  {
 	    blueprint3d.model.loadSerialized('{"floorplan":{"corners":{"f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"x":204.85099999999989,"y":289.052},"da026c08-d76a-a944-8e7b-096b752da9ed":{"x":672.2109999999999,"y":289.052},"4e3d65cb-54c0-0681-28bf-bddcc7bdb571":{"x":672.2109999999999,"y":-178.308},"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2":{"x":204.85099999999989,"y":-178.308}},"walls":[{"corner1":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","corner2":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0}},{"corner1":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","corner2":"da026c08-d76a-a944-8e7b-096b752da9ed","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0}},{"corner1":"da026c08-d76a-a944-8e7b-096b752da9ed","corner2":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0}},{"corner1":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","corner2":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0}}],"wallTextures":[],"floorTextures":{},"newFloorTextures":{}},"items":[]}');
 	  }
 
@@ -247,23 +248,82 @@ $(document).ready(function()
 	
 	addBlueprintListeners(blueprint3d);
 	datGUI();
-
+	blueprint3d.three.stopSpin();
+	
+	$('#add-items').dialog({autoOpen:false, modal:true, resizable:false, title: 'Shop'});
+//	$('#add-items').hide();
+	
+	$(window).resize(function()
+	{
+		console.log('WINDOW RESIZE INVOKE');
+		$('.ui-dialog, .ui-dialog-content, .ui-widget-content').css({
+	        'width': $(window).width() * 0.5,
+	        'height': $(window).height() * 0.5,
+	        'left': '0px',
+	        'top':'0px'
+	   });
+	}).resize();
+	
+	$('#showAddItems').hide();
 	$('.card').flip({trigger:'manual', axis:'x'});  
 	$('#showFloorPlan').click(function()
 	{
 		$('.card').flip(false);
 		$(this).addClass('active');
 		$('#showDesign').removeClass('active');
+		$('#showFirstPerson').removeClass('active');
+		$('#showAddItems').hide();
+		
 		blueprint3d.three.pauseTheRendering(true);
 		blueprint3d.three.getController().setSelectedObject(null);
 	});
-
+	
 	$('#showDesign').click(function()
 	{ 
 		blueprint3d.model.floorplan.update();
 		$('.card').flip(true);
+		
 		$(this).addClass('active');
 		$('#showFloorPlan').removeClass('active');
+		$('#showFirstPerson').removeClass('active');		
+		$('#showAddItems').show();
+		
 		blueprint3d.three.pauseTheRendering(false);
+		blueprint3d.three.switchFPSMode(false);
 	});
+	$('#showFirstPerson').click(function()
+	{ 
+		blueprint3d.model.floorplan.update();
+		$('.card').flip(true);
+		
+		$(this).addClass('active');
+		$('#showFloorPlan').removeClass('active');
+		$('#showDesign').removeClass('active');
+		$('#showAddItems').hide();
+		
+		blueprint3d.three.pauseTheRendering(false);
+		blueprint3d.three.switchFPSMode(true);
+	});
+	
+	$('#showAddItems').click(function()
+	{
+		$('#add-items').dialog('open');
+//		$('#add-items').show();
+	});
+	
+	$("#add-items").find(".add-item").mousedown(function(e) {
+	      var modelUrl = $(this).attr("model-url");
+	      var itemType = parseInt($(this).attr("model-type"));
+	      var metadata = {
+	        itemName: $(this).attr("model-name"),
+	        resizable: true,
+	        modelUrl: modelUrl,
+	        itemType: itemType
+	      }
+	      console.log(itemType, modelUrl, metadata);
+	      blueprint3d.model.scene.addItem(itemType, modelUrl, metadata);
+	      $('#add-items').dialog('close');
+	    });
+	
+	
 });

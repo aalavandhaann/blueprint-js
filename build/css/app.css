@@ -52,7 +52,6 @@ div {
   padding: 0;  
 }
 
-
 .btn-file {
   display: inline-block;
   cursor: pointer;
@@ -91,3 +90,26 @@ div {
   color: #fff;
   background-color: #428bca;
 }
+
+
+/* #add-items, #items-wrapper */
+/* { */
+/* 	position: absolute; */
+/* 	width: 500px; */
+/* 	height: 500px; */
+/* 	left: 0; */
+/* 	top: 0; */
+/*   	padding: 20px; */
+/*   	overflow: auto; */
+/* } */
+
+.ui-dialog, .ui-dialog-content, .ui-widget-content
+{
+	min-width: 50%;
+	max-height: 500px;
+	height: 500px;
+    overflow: auto;
+    position: relative;
+    padding: 0 !important;
+}
+
