@@ -49,13 +49,13 @@ export class Controller extends EventDispatcher
 	init() 
 	{
 		this.element.mousedown(this.mousedownevent);
-		this.element[0].touchstart(this.mousedownevent);
+		this.element.get(0).addEventListener('touchstart', this.mousedownevent);
 		
 		this.element.mouseup(this.mouseupevent);
-		this.element[0].touchend(this.mouseupevent);
+		this.element.get(0).addEventListener('touchend', this.mouseupevent);
 		
 		this.element.mousemove(this.mousemoveevent);
-		this.element[0].touchmove(this.mouseupevent);
+		this.element.get(0).addEventListener('touchmove', this.mouseupevent);
 		
 
 		// scene.itemRemovedCallbacks.add(itemRemoved);
