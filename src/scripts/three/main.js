@@ -370,10 +370,12 @@ export class Main extends EventDispatcher
 		this.controls.dispatchEvent({type:EVENT_CAMERA_ACTIVE_STATUS});
 		if(flag)
 		{
+			this.skybox.toggleEnvironment(true);
 			this.fpscontrols.lock();
 		}
 		else
 		{
+			this.skybox.toggleEnvironment(false);
 			this.fpscontrols.unlock();
 		}
 	}

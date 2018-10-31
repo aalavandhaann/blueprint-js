@@ -57,11 +57,13 @@ export class Skybox extends EventDispatcher
 		this.useEnvironment = flag;
 		if(!flag)
 		{
+			this.ground.visible = true;
 			this.sky.material = this.plainSkyMat;
 			this.sky.material.needsUpdate = true;
 		}
 		else
 		{
+			this.ground.visible = false;
 			if(!this.skyMat)
 			{
 				this.setEnvironmentMap(this.defaultEnvironment);
