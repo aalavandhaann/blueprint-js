@@ -35,11 +35,19 @@ function PointerLockControls( camera, domElement ) {
 	
 	var velocity = new THREE.Vector3();
 	var direction = new THREE.Vector3();
-
+	
+	function onMouseDown( ) 
+	{
+		if(scope.enabled && !scope.isLocked)
+		{
+//			scope.lock();
+		}
+	}
+	
 	function onMouseMove( event ) 
 	{
 
-		if ( scope.isLocked === false ) return;
+		if ( scope.enabled === false ) return;
 
 		var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
 		var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
@@ -166,6 +174,7 @@ function PointerLockControls( camera, domElement ) {
 		
 		document.addEventListener( 'keydown', onKeyDown, false );
 		document.addEventListener( 'keyup', onKeyUp, false );
+		document.addEventListener( 'mousedown', onMouseDown, false );
 		document.addEventListener( 'mousemove', onMouseMove, false );
 		document.addEventListener( 'pointerlockchange', onPointerlockChange, false );
 		document.addEventListener( 'pointerlockerror', onPointerlockError, false );
@@ -175,6 +184,7 @@ function PointerLockControls( camera, domElement ) {
 	this.disconnect = function () {
 		document.addEventListener( 'keydown', onKeyDown, false );
 		document.addEventListener( 'keyup', onKeyUp, false );
+		document.removeEventListener( 'mousedown', onMouseDown, false );
 		document.removeEventListener( 'mousemove', onMouseMove, false );
 		document.removeEventListener( 'pointerlockchange', onPointerlockChange, false );
 		document.removeEventListener( 'pointerlockerror', onPointerlockError, false );

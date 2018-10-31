@@ -1,6 +1,6 @@
 import {EventDispatcher, TextureLoader, RepeatWrapping, Vector2, Vector3, MeshBasicMaterial, FrontSide, DoubleSide, BackSide, Shape, Path, ShapeGeometry, Mesh, Geometry, Face3} from 'three';
 import {Utils} from '../core/utils.js';
-import {EVENT_REDRAW, EVENT_CAMERA_MOVED} from '../core/events.js';
+import {EVENT_REDRAW, EVENT_CAMERA_MOVED, EVENT_CAMERA_ACTIVE_STATUS} from '../core/events.js';
 
 export class Edge extends EventDispatcher
 {
@@ -30,6 +30,7 @@ export class Edge extends EventDispatcher
 		
 		this.redrawevent = ()=>{scope.redraw();};
 		this.visibilityevent = ()=>{scope.updateVisibility();};
+		this.showallevent =  ()=>{scope.showAll();};
 		
 		this.visibilityfactor = true;		
 		this.init();
@@ -39,6 +40,7 @@ export class Edge extends EventDispatcher
 	{
 		this.edge.removeEventListener(EVENT_REDRAW, this.redrawevent);
 		this.controls.removeEventListener(EVENT_CAMERA_MOVED, this.visibilityevent);
+		this.controls.removeEventListener(EVENT_CAMERA_ACTIVE_STATUS, this.showallevent);
 		this.removeFromScene();
 	}
 
@@ -46,6 +48,7 @@ export class Edge extends EventDispatcher
 	{		
 		this.edge.addEventListener(EVENT_REDRAW, this.redrawevent);
 		this.controls.addEventListener(EVENT_CAMERA_MOVED, this.visibilityevent);
+		this.controls.addEventListener(EVENT_CAMERA_ACTIVE_STATUS, this.showallevent);
 		
 		this.updateTexture();
 		this.updatePlanes();
@@ -83,6 +86,16 @@ export class Edge extends EventDispatcher
 			scope.scene.add(plane);
 		});
 		this.updateVisibility();
+	}
+	
+	showAll()
+	{
+		var scope = this;
+		scope.visible = true;
+		scope.planes.forEach((plane) => 
+		{
+			plane.visible = scope.visible;
+		});		
 	}
 
 	updateVisibility() 
@@ -153,12 +166,14 @@ export class Edge extends EventDispatcher
 			color: color,
 			side: FrontSide,
 			map: this.texture,
-//			lightMap: this.lightMap,
+			transparent: false,
+			lightMap: this.lightMap,
 		});
 
 		var fillerMaterial = new MeshBasicMaterial({
 			color: this.fillerColor,
-			side: DoubleSide
+			side: DoubleSide,
+			transparent: false,
 		});
 		
 		// exterior plane
@@ -172,7 +187,7 @@ export class Edge extends EventDispatcher
 		this.planes.push(this.buildFiller(this.edge, this.wall.height, DoubleSide, this.fillerColor));
 		// sides
 		this.planes.push(this.buildSideFillter(this.edge.interiorStart(), this.edge.exteriorStart(), this.wall.height, this.sideColor));
-		this.planes.push(this.buildSideFillter(this.edge.interiorEnd(), this.edge.exteriorEnd(), this.wall.height, this.sideColor));		
+		this.planes.push(this.buildSideFillter(this.edge.interiorEnd(), this.edge.exteriorEnd(), this.wall.height, this.sideColor));
 	}
 
 	// start, end have x and y attributes (i.e. corners)

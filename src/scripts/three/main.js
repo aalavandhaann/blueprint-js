@@ -6,6 +6,7 @@ import {Clock} from 'three';
 import {PointerLockControls} from './pointerlockcontrols.js';
 
 import {EVENT_UPDATED, EVENT_WALL_CLICKED, EVENT_NOTHING_CLICKED, EVENT_FLOOR_CLICKED, EVENT_ITEM_SELECTED, EVENT_ITEM_UNSELECTED} from '../core/events.js';
+import {EVENT_CAMERA_ACTIVE_STATUS} from '../core/events.js';
 
 import {OrbitControls} from './orbitcontrols.js';
 
@@ -94,7 +95,7 @@ export class Main extends EventDispatcher
 		renderer.shadowMapSoft = true;
 		renderer.shadowMap.type = PCFSoftShadowMap;
 		renderer.setClearColor( 0xFFFFFF, 1 );
-//		renderer.sortOrder = true;
+		renderer.sortObjects = false;
 		
 		return renderer;
 	}
@@ -128,9 +129,6 @@ export class Main extends EventDispatcher
 		scope.controls.maxPolarAngle = Math.PI * 0.5;
 		
 		scope.fpscontrols = new PointerLockControls(scope.fpscamera);
-//		scope.fpscontrols.lookSpeed = 0.1;
-//		scope.fpscontrols.movementSpeed = 100;
-//		scope.fpscontrols.activeLook = false;
 		
 		this.scene.add(scope.fpscontrols.getObject());
 //		this.fpscamera.position.set(0, 125, 0);
@@ -369,6 +367,15 @@ export class Main extends EventDispatcher
 		this.fpscontrols.enabled = flag;
 		this.controls.enabled = !flag;
 		this.controller.enabled = !flag;
+		this.controls.dispatchEvent({type:EVENT_CAMERA_ACTIVE_STATUS});
+		if(flag)
+		{
+			this.fpscontrols.lock();
+		}
+		else
+		{
+			this.fpscontrols.unlock();
+		}
 	}
 
 	render() 
