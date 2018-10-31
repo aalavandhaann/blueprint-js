@@ -127,13 +127,14 @@ export class Main extends EventDispatcher
 		scope.controls.enableDamping = true;
 		scope.controls.maxPolarAngle = Math.PI * 0.5;
 		
-		scope.fpscontrols = new PointerLockControls(scope.fpscamera, scope.domElement);
+		scope.fpscontrols = new PointerLockControls(scope.fpscamera);
 //		scope.fpscontrols.lookSpeed = 0.1;
 //		scope.fpscontrols.movementSpeed = 100;
 //		scope.fpscontrols.activeLook = false;
 		
 		this.scene.add(scope.fpscontrols.getObject());
-		scope.fpscamera.position.set(0, 125, 0);
+//		this.fpscamera.position.set(0, 125, 0);
+		this.fpscontrols.getObject().position.set(0, 200, 0);
 				
 // scope.controls2 = new Controls(scope.camera, scope.domElement);
 		

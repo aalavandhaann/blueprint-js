@@ -12,8 +12,9 @@ function PointerLockControls( camera, domElement ) {
 	this.domElement = domElement || document.body;
 	this.enabled = false;
 	this.isLocked = true;
-	this.walkspeed = 1000;
+	this.walkspeed = 3000;
 	this.lookspeed = 0.002;
+	this.characterHeight = 125;
 
 	camera.rotation.set( 0, 0, 0 );
 
@@ -21,7 +22,7 @@ function PointerLockControls( camera, domElement ) {
 	pitchObject.add( camera );
 
 	var yawObject = new THREE.Object3D();
-	yawObject.position.y = 10;
+	yawObject.position.y = this.characterHeight;
 	yawObject.add( pitchObject );
 
 	var PI_2 = Math.PI / 2;
@@ -109,8 +110,6 @@ function PointerLockControls( camera, domElement ) {
 		}
 	}
 	
-	
-	
 	this.update = function(delta2)
 	{
 		var delta = delta2;
@@ -128,13 +127,13 @@ function PointerLockControls( camera, domElement ) {
 		if ( moveLeft || moveRight ) velocity.x -= direction.x * this.walkspeed * delta;
 
 		scope.getObject().translateX( velocity.x * delta );
-		scope.getObject().translateY( velocity.y * delta );
+		scope.getObject().translateY( (velocity.y * delta));
 		scope.getObject().translateZ( velocity.z * delta );
 
-		if ( scope.getObject().position.y < 10 ) {
-
+		if ( scope.getObject().position.y <  scope.characterHeight ) 
+		{
 			velocity.y = 0;
-			scope.getObject().position.y = 10;
+			scope.getObject().position.y = scope.characterHeight; 
 			canJump = true;
 		}
 	};
