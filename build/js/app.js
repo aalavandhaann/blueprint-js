@@ -180,6 +180,14 @@ var ItemProperties = function()
 			this.currentItem.setFixed(this.fixed);
 		}		
 	}
+	
+	this.deleteItem = function()
+	{
+		if(this.currentItem)
+		{
+			this.currentItem.remove();
+		}
+	}
 }
 
 var anItem = null;
@@ -211,11 +219,12 @@ function addBlueprintListeners(blueprint3d)
 function getItemPropertyFolder(gui, anItem)
 {
 	var f = gui.addFolder('Current Item');
-	var iname = f.add(anItem, 'name', 0.1, 100.1).listen();
-	var wcontrol = f.add(anItem, 'width', 0.1, 100.1).listen();
-	var hcontrol = f.add(anItem, 'height', 0.1, 100.1).listen();
-	var dcontrol = f.add(anItem, 'depth', 0.1, 100.1).listen();
-	var lockcontrol = f.add(anItem, 'fixed').listen();
+	var iname = f.add(anItem, 'name', 0.1, 100.1);
+	var wcontrol = f.add(anItem, 'width', 0.1, 100.1);
+	var hcontrol = f.add(anItem, 'height', 0.1, 100.1);
+	var dcontrol = f.add(anItem, 'depth', 0.1, 100.1);
+	var lockcontrol = f.add(anItem, 'fixed').name('Locked in place');
+	var deleteItemControl = f.add(anItem, 'deleteItem').name('Delete Item');
 	
 	function changed()
 	{
@@ -264,6 +273,8 @@ $(document).ready(function()
 	blueprint3d.three.stopSpin();
 	
 	$('#add-items').dialog({autoOpen:false, modal:true, resizable:false, title: 'Shop'});
+	
+//	$("select").imagepicker({initialized:function(){console.log('IMAGEPICKER INITIALIZED');}});
 //	$('#add-items').hide();
 	
 	$(window).resize(function()

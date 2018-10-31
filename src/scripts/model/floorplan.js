@@ -106,14 +106,14 @@ export class Floorplans extends EventDispatcher
 	 */
 	newWall(start, end) 
 	{
-		for (var i=0;i<this.walls.length;i++)
-		{
-			var twall = this.walls[i];
-			var bstart = {x:twall.getStartX(), y:twall.getStartY()};
-			var bend = {x:twall.getEndX(), y:twall.getEndY()};
-			var intersects = Utils.lineLineIntersect(start, end, bstart, bend);
-			console.log('INTERSECTION RESULT :: ', intersects);
-		}
+//		for (var i=0;i<this.walls.length;i++)
+//		{
+//			var twall = this.walls[i];
+//			var bstart = {x:twall.getStartX(), y:twall.getStartY()};
+//			var bend = {x:twall.getEndX(), y:twall.getEndY()};
+//			var intersects = Utils.lineLineIntersect(start, end, bstart, bend);
+//			console.log('INTERSECTION RESULT :: ', intersects);
+//		}
 		//This is a bug in the logic
 		//When creating a new wall with a start and end
 		//it needs to be checked if it is cutting other walls

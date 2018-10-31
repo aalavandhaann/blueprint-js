@@ -58,6 +58,13 @@ div {
   padding: 0;  
 }
 
+#walltextures
+{
+	position: absolute;
+	right: 100px;
+	top: 100px;
+}
+
 .btn-file {
   display: inline-block;
   cursor: pointer;
