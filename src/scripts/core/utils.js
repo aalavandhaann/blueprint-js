@@ -176,7 +176,7 @@ export class Utils
 			{
 				tSecondCorner = corners[tI + 1];
 			}
-			if (Utils.lineLineIntersect(point, point2, tFirstCorner.x, tFirstCorner.y, tSecondCorner.x, tSecondCorner.y)) 
+			if (Utils.lineLineIntersect(point, point2, {x:tFirstCorner.x, y:tFirstCorner.y}, {x:tSecondCorner.x, y:tSecondCorner.y})) 
 			{
 				return true;
 			}

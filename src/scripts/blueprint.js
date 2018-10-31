@@ -50,6 +50,10 @@ export {Lights} from './three/lights.js';
 export {Main} from './three/main.js';
 export {Skybox} from './three/skybox.js';
 
+export {OBJExporter} from './exporters/OBJExporter.js';
+
+
+
 import {Model} from './model/model.js';
 import {Main} from './three/main.js';
 import {Floorplanner} from './floorplanner/floorplanner.js';

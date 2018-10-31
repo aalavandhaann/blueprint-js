@@ -15,6 +15,12 @@ div {
   padding: 0;
 }
 
+.ui-toolip
+{
+	width: auto;
+	height: auto;
+}
+
 #interfaces, #interface-controls
 {
 	position: absolute; 

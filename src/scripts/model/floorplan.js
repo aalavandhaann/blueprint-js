@@ -106,6 +106,19 @@ export class Floorplans extends EventDispatcher
 	 */
 	newWall(start, end) 
 	{
+		for (var i=0;i<this.walls.length;i++)
+		{
+			var twall = this.walls[i];
+			var bstart = {x:twall.getStartX(), y:twall.getStartY()};
+			var bend = {x:twall.getEndX(), y:twall.getEndY()};
+			var intersects = Utils.lineLineIntersect(start, end, bstart, bend);
+			console.log('INTERSECTION RESULT :: ', intersects);
+		}
+		//This is a bug in the logic
+		//When creating a new wall with a start and end
+		//it needs to be checked if it is cutting other walls
+		//If it cuts then all those walls have to removed and introduced as 
+		//new walls along with this new wall
 		var wall = new Wall(start, end);
 		this.walls.push(wall);
 		var scope = this;
@@ -120,16 +133,7 @@ export class Floorplans extends EventDispatcher
 		this.update();
 		return wall;
 	}
-
-	/** Removes a wall.
-	 * @param wall The wall to be removed.
-	 */
-	removeWall(wall)
-	{
-		Utils.removeValue(this.walls, wall);
-		this.update();
-	}
-
+	
 	/**
 	 * Creates a new corner.
 	 * @param x The x coordinate.
@@ -152,6 +156,15 @@ export class Floorplans extends EventDispatcher
 //		this.new_corner_callbacks.fire(corner);
 		return corner;
 	}
+
+	/** Removes a wall.
+	 * @param wall The wall to be removed.
+	 */
+	removeWall(wall)
+	{
+		Utils.removeValue(this.walls, wall);
+		this.update();
+	}	
 
 	/** Removes a corner.
 	 * @param corner The corner to be removed.

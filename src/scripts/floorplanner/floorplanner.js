@@ -247,6 +247,7 @@ export class Floorplanner extends EventDispatcher
 			var corner = this.floorplan.newCorner(this.targetX, this.targetY);
 			if (this.lastNode != null) 
 			{
+				console.log('NEW CORNER AROUND THE CORNER ');
 				this.floorplan.newWall(this.lastNode, corner);
 			}
 			if (corner.mergeWithIntersected() && this.lastNode != null) 

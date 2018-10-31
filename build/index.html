@@ -21,9 +21,10 @@
 	<div id='interfaces' class='card'>
 		<div id="floorplanner" class='front'>
 			<div id="floorplanner-controls">
-				<button id="move" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-move"></span></button>
-				<button id="draw" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-pencil"></span></button>
-				<button id="delete" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-remove"></span></button>
+				<a href="#" class="btn btn-default btn-sm glyphicon glyphicon-floppy-disk" id="new2d" title="New Layout"></a>
+				<button id="move" class="btn btn-sm btn-default"  title="Move Walls"><span class="glyphicon glyphicon-move"></span></button>
+				<button id="draw" class="btn btn-sm btn-default" title="Draw New Walls"><span class="glyphicon glyphicon-pencil"></span></button>
+				<button id="delete" class="btn btn-sm btn-default" title="Delete Walls"><span class="glyphicon glyphicon-remove"></span></button>
 				<span class="pull-right"><button class="btn btn-primary btn-sm" id="update-floorplan">Done &raquo;</button>
 				</span>
 			</div>
@@ -33,9 +34,10 @@
 
 		<div id="viewer" class='back'>
 			<div id="main-controls">
-				<a href="#" class="btn btn-default btn-sm glyphicon glyphicon-floppy-disk" id="new"></a>
-				<a href="#" class="btn btn-default btn-sm glyphicon glyphicon-floppy-save" id="saveFile"></a> 
+				<a href="#" class="btn btn-default btn-sm glyphicon glyphicon-floppy-disk" id="new" title="New Layout"></a>
+				<a href="#" class="btn btn-default btn-sm glyphicon glyphicon-floppy-save" id="saveFile" title="Save Layout"></a> 
 				<a class="btn btn-sm btn-default btn-file glyphicon glyphicon-floppy-open"> <input type="file" class="hidden-input" id="loadFile"></a>
+				<a href="#" class="btn btn-default btn-sm glyphicon glyphicon-asterisk" id="saveMesh" title="Save Scene as a mesh"></a>
 			</div>
 		</div>
 	</div>

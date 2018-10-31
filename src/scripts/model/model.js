@@ -3,6 +3,8 @@ import {EventDispatcher, Vector3} from 'three';
 import {Floorplans} from './floorplan.js';
 import {Scene} from './scene.js';
 
+import {OBJExporter} from '../exporters/OBJExporter.js';
+
 /** 
  * A Model connects a Floorplan and a Scene. 
  */
@@ -35,6 +37,12 @@ export class Model extends EventDispatcher
 
 		this.dispatchEvent({type: EVENT_LOADED, item: this});
 		//      this.roomLoadedCallbacks.fire();
+	}
+	
+	exportMeshAsObj()
+	{
+		var exporter = new OBJExporter();
+		return exporter.parse(this.scene.getScene()); 
 	}
 
 	exportSerialized() 

@@ -106,11 +106,24 @@ var mainControls = function(blueprint3d)
 	    a.click();
 	    document.body.removeChild(a)
 	  }
+	  
+	  function saveMesh() {
+		    var data = blueprint3d.model.exportMeshAsObj();
+		    var a = window.document.createElement('a');
+		    var blob = new Blob([data], {type : 'text'});
+		    a.href = window.URL.createObjectURL(blob);
+		    a.download = 'design.obj';
+		    document.body.appendChild(a)
+		    a.click();
+		    document.body.removeChild(a)
+		  }
 
 	  function init() {
 	    $("#new").click(newDesign);
+	    $("#new2d").click(newDesign);
 	    $("#loadFile").change(loadDesign);
 	    $("#saveFile").click(saveDesign);
+	    $("#saveMesh").click(saveMesh);
 	  }
 
 	  init();

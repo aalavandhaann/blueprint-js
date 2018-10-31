@@ -176,6 +176,9 @@ export class Edge extends EventDispatcher
 			transparent: false,
 		});
 		
+//		console.log('INTERIORS ::: ', this.edge.interiorStart(), this.edge.interiorEnd());
+//		console.log('EXTERIORS ::: ', this.edge.exteriorStart(), this.edge.exteriorEnd());
+		
 		// exterior plane
 		this.planes.push(this.makeWall(this.edge.exteriorStart(), this.edge.exteriorEnd(), this.edge.exteriorTransform, this.edge.invExteriorTransform, fillerMaterial));
 		// interior plane
