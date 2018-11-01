@@ -382,7 +382,7 @@ var TextureSelector = function (blueprint3d, sideMenu) {
   function initTextureSelectors() 
   {
 	 $('#environments :checkbox').change(function()
-			 {
+	 {
 		 console.log(this.checked)
 		 three.skybox.toggleEnvironment(this.checked);
 	 });

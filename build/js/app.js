@@ -1,3 +1,11 @@
+var anItem = null;
+var aWall = null;
+var aFloor = null;
+var gui = null;
+var itemPropFolder = null;
+var wallPropFolder = null;
+var floorPropFolder = null;
+
 /*
  * Floorplanner controls
  */
@@ -75,7 +83,6 @@ var ViewerFloorplanner = function(blueprint3d)
   init();
 };
 
-
 var mainControls = function(blueprint3d) 
 {
 	  var blueprint3d = blueprint3d;
@@ -138,6 +145,7 @@ var ItemProperties = function()
 	this.fixed = false;
 	this.currentItem = null;
 	this.guiControllers = null;
+	this.gui = null;
 	
 	this.cmToIn = function(cm) 
 	{
@@ -203,33 +211,95 @@ var ItemProperties = function()
 	}
 }
 
-var anItem = null;
-var gui = null;
-var itemPropFolder = null;
-
+var WallProperties = function()
+{
+	this.textures = [
+		['rooms/textures/wallmap.png', true, 1], ['rooms/textures/wallmap_yellow.png', true, 1], 
+		['rooms/textures/light_brick.jpg', false, 50], ['rooms/textures/marbletiles.jpg', false, 300], 
+		['rooms/textures/light_brick.jpg', false, 100], ['rooms/textures/light_fine_wood.jpg', false, 300], 
+		['rooms/textures/hardwood.png', false, 300]];
+	
+	this.floormaterialname = 0;
+	this.wallmaterialname = 0;
+	
+	this.forAllWalls = false;
+	
+	this.currentWall = null;
+	this.currentFloor = null;
+	
+	this.wchanged = function()
+	{
+		if(this.currentWall)
+		{
+			this.currentWall.setTexture(this.textures[this.wallmaterialname][0], this.textures[this.wallmaterialname][1], this.textures[this.wallmaterialname][2]);
+		}
+		if(this.currentFloor && this.forAllWalls)
+		{
+			this.currentFloor.setRoomWallsTexture(this.textures[this.wallmaterialname][0], this.textures[this.wallmaterialname][1], this.textures[this.wallmaterialname][2]);
+		}		
+	}
+	
+	this.fchanged = function()
+	{
+		if(this.currentFloor)
+		{
+			this.currentFloor.setTexture(this.textures[this.floormaterialname][0], this.textures[this.floormaterialname][1], this.textures[this.floormaterialname][2]);
+		}
+	}
+	
+	
+	this.setWall = function(wall)
+	{
+		this.currentWall = wall;
+	}
+	
+	this.setFloor = function(floor)
+	{
+		this.currentFloor = floor;
+	}
+}
 
 function addBlueprintListeners(blueprint3d)
 {
 	var three = blueprint3d.three;
 	
+	function wallClicked(wall)
+	{
+		aWall.setWall(wall);
+		itemPropFolder.close();
+		wallPropFolder.open();		
+	}
+	
+	function floorClicked(floor)
+	{
+		aWall.setFloor(floor);
+		itemPropFolder.close();
+		wallPropFolder.open();
+	}
+	
 	function itemSelected(item)
 	{
-		console.log(anItem);
 		anItem.setItem(item);
 		itemPropFolder.open();
+		wallPropFolder.close();
 	}
 	function itemUnselected()
 	{
 		anItem.setItem(undefined);
+		aWall.setItem(undefined);
 		itemPropFolder.close();
 	}
 	three.addEventListener(BP3DJS.EVENT_ITEM_SELECTED, function(o){itemSelected(o.item);});
-	three.addEventListener(BP3DJS.EVENT_ITEM_UNSELECTED, function(o){itemUnselected();});
+	three.addEventListener(BP3DJS.EVENT_ITEM_UNSELECTED, function(o){itemUnselected();});	
+	three.addEventListener(BP3DJS.EVENT_WALL_CLICKED, (o)=>{wallClicked(o.item);});
+    three.addEventListener(BP3DJS.EVENT_FLOOR_CLICKED, (o)=>{floorClicked(o.item);});
+    
+//	  three.skybox.toggleEnvironment(this.checked);
+//	  currentTarget.setTexture(textureUrl, textureStretch, textureScale);
+//	  three.skybox.setEnvironmentMap(textureUrl);
 }
 
-
-
-function getItemPropertyFolder(gui, anItem)
+function getItemPropertiesFolder(gui, anItem)
 {
 	var f = gui.addFolder('Current Item');
 	var inamecontrol = f.add(anItem, 'name', 0.1, 100.1);
@@ -257,11 +327,35 @@ function getItemPropertyFolder(gui, anItem)
 	return f;
 }
 
+function getWallAndFloorPropertiesFolder(gui, aWall)
+{
+	var f = gui.addFolder('Wall and Floor');	
+	var wcontrol = f.add(aWall, 'wallmaterialname', {Grey: 0, Yellow: 1, Checker: 2, Marble: 3, Bricks: 4}).name('Wall');
+	var fcontrol = f.add(aWall, 'floormaterialname', {'Fine Wood': 5, 'Hard Wood': 6}).name('Floor');
+	var multicontrol = f.add(aWall, 'forAllWalls').name('All Walls In Room');
+	function wchanged()
+	{
+		aWall.wchanged();
+	}
+	
+	function fchanged()
+	{
+		aWall.fchanged();
+	}	
+	
+	wcontrol.onChange(wchanged);
+	fcontrol.onChange(fchanged);
+	return f;
+}
+
 function datGUI()
 {
 	anItem = new ItemProperties();
+	aWall = new WallProperties();
 	gui = new dat.GUI();
-	itemPropFolder = getItemPropertyFolder(gui, anItem);	
+	
+	itemPropFolder = getItemPropertiesFolder(gui, anItem);	
+	wallPropFolder = getWallAndFloorPropertiesFolder(gui, aWall);
 }
 
 
@@ -289,9 +383,6 @@ $(document).ready(function()
 	blueprint3d.three.stopSpin();
 	
 	$('#add-items').dialog({autoOpen:false, modal:true, resizable:false, title: 'Shop'});
-	
-//	$("select").imagepicker({initialized:function(){console.log('IMAGEPICKER INITIALIZED');}});
-//	$('#add-items').hide();
 	
 	$(window).resize(function()
 	{

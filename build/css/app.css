@@ -104,18 +104,6 @@ div {
   background-color: #428bca;
 }
 
-
-/* #add-items, #items-wrapper */
-/* { */
-/* 	position: absolute; */
-/* 	width: 500px; */
-/* 	height: 500px; */
-/* 	left: 0; */
-/* 	top: 0; */
-/*   	padding: 20px; */
-/*   	overflow: auto; */
-/* } */
-
 .ui-dialog, .ui-dialog-content, .ui-widget-content
 {
 	min-width: 50%;
@@ -131,3 +119,7 @@ div {
     white-space:pre-wrap;
 }
 
+.dg select
+{
+	color: #000000;
+}

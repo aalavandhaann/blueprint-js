@@ -47,13 +47,32 @@ export class Room extends EventDispatcher
 		var tex = this.floorplan.getFloorTexture(uuid);
 		return tex || defaultRoomTexture;
 	}
+	
+	setRoomWallsTexture(textureUrl, textureStretch, textureScale)
+	{
+		var edge = this.edgePointer;
+		var iterateWhile = true;
+		edge.setTexture(textureUrl, textureStretch, textureScale);
+		while (iterateWhile) 
+		{
+			if (edge.next === this.edgePointer) 
+			{
+				break;
+			} 
+			else 
+			{
+				edge = edge.next;
+			}
+			edge.setTexture(textureUrl, textureStretch, textureScale);
+		}
+	}
 
 	/** 
 	 * textureStretch always true, just an argument for consistency with walls
 	 */
 	setTexture(textureUrl, textureStretch, textureScale) 
 	{
-		var uuid = this.getUuid();
+		var uuid = this.getUuid();	
 		this.floorplan.setFloorTexture(uuid, textureUrl, textureScale);
 		this.dispatchEvent({type:EVENT_CHANGED, item: this});
 //		this.floorChangeCallbacks.fire();
