@@ -266,6 +266,7 @@ function addBlueprintListeners(blueprint3d)
 	function wallClicked(wall)
 	{
 		aWall.setWall(wall);
+		aWall.setFloor(null);
 		itemPropFolder.close();
 		wallPropFolder.open();		
 	}
@@ -273,6 +274,7 @@ function addBlueprintListeners(blueprint3d)
 	function floorClicked(floor)
 	{
 		aWall.setFloor(floor);
+		aWall.setWall(null);
 		itemPropFolder.close();
 		wallPropFolder.open();
 	}
