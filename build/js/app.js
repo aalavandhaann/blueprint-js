@@ -173,7 +173,8 @@ var ItemProperties = function()
 			this.depth = this.cmToIn(item.getDepth());
 			this.fixed = item.fixed;
 			console.log('UPDATE GUI CONTROLLERS ', this.guiControllers.length);
-			for (var i in this.guiControllers) // Iterate over gui controllers to update the values
+			for (var i in this.guiControllers) // Iterate over gui controllers
+												// to update the values
 			{
 				this.guiControllers[i].updateDisplay();
 		    }
@@ -288,7 +289,6 @@ function addBlueprintListeners(blueprint3d)
 	function itemUnselected()
 	{
 		anItem.setItem(undefined);
-		aWall.setItem(undefined);
 		itemPropFolder.close();
 	}
 	three.addEventListener(BP3DJS.EVENT_ITEM_SELECTED, function(o){itemSelected(o.item);});
@@ -296,9 +296,9 @@ function addBlueprintListeners(blueprint3d)
 	three.addEventListener(BP3DJS.EVENT_WALL_CLICKED, (o)=>{wallClicked(o.item);});
     three.addEventListener(BP3DJS.EVENT_FLOOR_CLICKED, (o)=>{floorClicked(o.item);});
     
-//	  three.skybox.toggleEnvironment(this.checked);
-//	  currentTarget.setTexture(textureUrl, textureStretch, textureScale);
-//	  three.skybox.setEnvironmentMap(textureUrl);
+// three.skybox.toggleEnvironment(this.checked);
+// currentTarget.setTexture(textureUrl, textureStretch, textureScale);
+// three.skybox.setEnvironmentMap(textureUrl);
 }
 
 function getItemPropertiesFolder(gui, anItem)
@@ -383,6 +383,7 @@ $(document).ready(function()
 	addBlueprintListeners(blueprint3d);
 	datGUI();
 	blueprint3d.three.stopSpin();
+	gui.closed = true;
 	
 	$('#add-items').dialog({autoOpen:false, modal:true, resizable:false, title: 'Shop'});
 	
@@ -406,7 +407,7 @@ $(document).ready(function()
 		$('#showDesign').removeClass('active');
 		$('#showFirstPerson').removeClass('active');
 		$('#showAddItems').hide();
-		
+		gui.closed = true;
 		blueprint3d.three.pauseTheRendering(true);
 		blueprint3d.three.getController().setSelectedObject(null);
 	});
@@ -415,7 +416,7 @@ $(document).ready(function()
 	{ 
 		blueprint3d.model.floorplan.update();
 		$('.card').flip(true);
-		
+		gui.closed = false;
 		$(this).addClass('active');
 		$('#showFloorPlan').removeClass('active');
 		$('#showFirstPerson').removeClass('active');		
@@ -428,7 +429,7 @@ $(document).ready(function()
 	{ 
 		blueprint3d.model.floorplan.update();
 		$('.card').flip(true);
-		
+		gui.closed = true;
 		$(this).addClass('active');
 		$('#showFloorPlan').removeClass('active');
 		$('#showDesign').removeClass('active');
@@ -441,7 +442,7 @@ $(document).ready(function()
 	$('#showAddItems').click(function()
 	{
 		$('#add-items').dialog('open');
-//		$('#add-items').show();
+// $('#add-items').show();
 	});
 	
 	$("#add-items").find(".add-item").mousedown(function(e) {
