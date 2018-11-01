@@ -2,6 +2,9 @@ import {Configuration, configDimUnit} from './configuration.js';
 /** Dimensioning in Inch. */
 export const dimInch = 'inch';
 
+/** Dimensioning in Inch. */
+export const dimFeetAndInch = 'feetAndInch';
+
 /** Dimensioning in Meter. */
 export const dimMeter = 'm';
 
@@ -22,11 +25,15 @@ export class Dimensioning
 	{
 		switch (Configuration.getStringValue(configDimUnit)) 
 		{
-		case dimInch:
+		case dimFeetAndInch:
 			var realFeet = ((cm * 0.393700) / 12);
 			var feet = Math.floor(realFeet);
 			var inches = Math.round((realFeet - feet) * 12);
 			return feet + '`' + inches + '"';
+		case dimInch:
+			realFeet = ((cm * 0.393700) / 12);
+			inches = Math.round(realFeet * 12);
+			return inches + '"';
 		case dimMilliMeter:
 			return '' + Math.round(10 * cm) + ' mm';
 		case dimCentiMeter:

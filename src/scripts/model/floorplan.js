@@ -97,6 +97,61 @@ export class Floorplans extends EventDispatcher
 	{
 		this.updated_rooms.add(callback);
 	}
+	
+	//This method needs to be called from the 2d floorplan whenever
+	// the other method newWall is called. 
+	//This is to ensure that there are no floating walls going across 
+	// other walls. If two walls are intersecting then the intersection point
+	// has to create a new wall.
+	
+	newWallsForIntersections(start, end)
+	{
+		var intersections = false;
+		//This is a bug in the logic
+		//When creating a new wall with a start and end
+		//it needs to be checked if it is cutting other walls
+		//If it cuts then all those walls have to removed and introduced as 
+		//new walls along with this new wall
+		var cStart = new Vector2(start.getX(), start.getY());
+		var cEnd = new Vector2(end.getX(), end.getY());
+		var newCorners = [];
+		
+		for (var i=0;i<this.walls.length;i++)
+		{
+			var twall = this.walls[i];
+			var bstart = {x:twall.getStartX(), y:twall.getStartY()};
+			var bend = {x:twall.getEndX(), y:twall.getEndY()};			
+			var iPoint = Utils.lineLineIntersectPoint(cStart, cEnd, bstart, bend);			
+			if(iPoint)
+			{
+				var nCorner = this.newCorner(iPoint.x, iPoint.y);
+				newCorners.push(nCorner);
+				intersections = true;
+			}
+		}
+		for( i=0;i<this.corners.length;i++)
+		{
+			var aCorner = this.corners[i];
+			if(aCorner)
+			{
+				aCorner.relativeMove(0, 0);
+				aCorner.snapToAxis(25);
+			}
+		}
+		this.update();
+		for( i=0;i<this.corners.length;i++)
+		{
+			aCorner = this.corners[i];
+			if(aCorner)
+			{
+				aCorner.relativeMove(0, 0);
+				aCorner.snapToAxis(25);
+			}
+		}
+		
+		this.update();
+		return intersections;		
+	}
 
 	/**
 	 * Creates a new wall.
@@ -105,34 +160,17 @@ export class Floorplans extends EventDispatcher
 	 * @returns The new wall.
 	 */
 	newWall(start, end) 
-	{
-//		for (var i=0;i<this.walls.length;i++)
-//		{
-//			var twall = this.walls[i];
-//			var bstart = {x:twall.getStartX(), y:twall.getStartY()};
-//			var bend = {x:twall.getEndX(), y:twall.getEndY()};
-//			var intersects = Utils.lineLineIntersect(start, end, bstart, bend);
-//			console.log('INTERSECTION RESULT :: ', intersects);
-//		}
-		//This is a bug in the logic
-		//When creating a new wall with a start and end
-		//it needs to be checked if it is cutting other walls
-		//If it cuts then all those walls have to removed and introduced as 
-		//new walls along with this new wall
+	{		
 		var wall = new Wall(start, end);
 		this.walls.push(wall);
 		var scope = this;
 		wall.addEventListener(EVENT_DELETED, function(o){scope.removeWall(o.item);});
-//		wall.fireOnDelete(() => {
-//		scope.removeWall(wall);
-//		});
-
 		this.dispatchEvent({type: EVENT_NEW, item: this, newItem: wall});
-//		this.new_wall_callbacks.fire(wall);
-
 		this.update();
 		return wall;
 	}
+	
+	
 	
 	/**
 	 * Creates a new corner.
@@ -148,12 +186,11 @@ export class Floorplans extends EventDispatcher
 		this.corners.push(corner);
 
 		corner.addEventListener(EVENT_DELETED, function(o){scope.removeCorner(o.item);});
-//		corner.fireOnDelete(() => {
-//		this.removeCorner;
-//		});
-
 		this.dispatchEvent({type: EVENT_NEW, item: this, newItem: corner});
-//		this.new_corner_callbacks.fire(corner);
+		
+		//This code has been added by #0K. There should be an update whenever a new corner is inserted
+//		this.update();
+
 		return corner;
 	}
 

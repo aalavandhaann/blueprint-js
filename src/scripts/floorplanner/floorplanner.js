@@ -5,8 +5,9 @@ import {FloorplannerView, floorplannerModes} from './floorplanner_view.js';
 
 /** how much will we move a corner to make a wall axis aligned (cm) */
 export const snapTolerance = 25;
-/** 
- * The Floorplanner implements an interactive tool for creation of floorplans in 2D.
+/**
+ * The Floorplanner implements an interactive tool for creation of floorplans in
+ * 2D.
  */
 export class Floorplanner extends EventDispatcher
 {
@@ -63,7 +64,7 @@ export class Floorplanner extends EventDispatcher
 		this.wallWidth = 10.0 * this.pixelsPerCm;
 		
 		this.gridsnapmode = false;
-
+		this.shiftkey = false;
 		// Initialization:
 
 		this.setMode(floorplannerModes.MOVE);
@@ -80,19 +81,17 @@ export class Floorplanner extends EventDispatcher
 				scope.escapeKey();
 			}
 			scope.gridsnapmode = false;
+			scope.shiftkey = false;
 		});
 		
-		$(document).keydown((e) => {
+		$(document).keydown((e) => 
+		{
+			if(e.shiftKey || e.keyCode == 65)
+			{
+				scope.shiftkey = true;
+			}
 			scope.gridsnapmode = e.shiftKey;			
 		});
-		
-		
-
-//		floorplan.roomLoadedCallbacks.add(() => 
-//		{
-//			scope.reset();
-//		});
-		
 		floorplan.addEventListener(EVENT_LOADED, function(){scope.reset();});
 	}
 
@@ -223,12 +222,18 @@ export class Floorplanner extends EventDispatcher
 			if (this.activeCorner) 
 			{
 				this.activeCorner.move(this.mouseX, this.mouseY);
-				this.activeCorner.snapToAxis(snapTolerance);
+				if(this.shiftkey)
+				{
+					this.activeCorner.snapToAxis(snapTolerance);
+				}				
 			} 
 			else if (this.activeWall) 
 			{
 				this.activeWall.relativeMove((this.rawMouseX - this.lastX) * this.cmPerPixel, (this.rawMouseY - this.lastY) * this.cmPerPixel);
-				this.activeWall.snapToAxis(snapTolerance);
+				if(this.shiftkey)
+				{
+					this.activeWall.snapToAxis(snapTolerance);
+				}				
 				this.lastX = this.rawMouseX;
 				this.lastY = this.rawMouseY;
 			}
@@ -244,11 +249,17 @@ export class Floorplanner extends EventDispatcher
 		// drawing
 		if (this.mode == floorplannerModes.DRAW && !this.mouseMoved) 
 		{
+			// This creates the corner already
 			var corner = this.floorplan.newCorner(this.targetX, this.targetY);
+			
+			// further create a newWall based on the newly inserted corners
+			// (one in the above line and the other in the previous mouse action
+			// of start drawing a new wall)
 			if (this.lastNode != null) 
 			{
-				console.log('NEW CORNER AROUND THE CORNER ');
 				this.floorplan.newWall(this.lastNode, corner);
+				this.floorplan.newWallsForIntersections(this.lastNode, corner);
+				this.view.draw();
 			}
 			if (corner.mergeWithIntersected() && this.lastNode != null) 
 			{
@@ -262,7 +273,7 @@ export class Floorplanner extends EventDispatcher
 	mouseleave() 
 	{
 		this.mouseDown = false;
-		//scope.setMode(scope.modes.MOVE);
+		// scope.setMode(scope.modes.MOVE);
 	}
 
 	/** */
@@ -286,7 +297,7 @@ export class Floorplanner extends EventDispatcher
 		this.lastNode = null;
 		this.mode = mode;
 		this.dispatchEvent({type:EVENT_MODE_RESET, mode: mode});
-		//this.modeResetCallbacks.fire(mode);
+		// this.modeResetCallbacks.fire(mode);
 		this.updateTarget();
 	}
 

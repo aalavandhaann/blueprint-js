@@ -126,3 +126,8 @@ div {
     padding: 0 !important;
 }
 
+/* Enable multiple lines in bootstrap tooltips */
+.tooltip-inner {
+    white-space:pre-wrap;
+}
+

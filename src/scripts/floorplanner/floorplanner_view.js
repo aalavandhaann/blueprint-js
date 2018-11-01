@@ -2,16 +2,6 @@ import $ from 'jquery';
 import {Utils} from '../core/utils.js';
 import {Dimensioning} from '../core/dimensioning.js';
 
-/// <reference path="../../lib/jQuery.d.ts" />
-/// <reference path="../core/configuration.ts" />
-/// <reference path="../core/dimensioning.ts" />
-/// <reference path="../core/utils.ts" />
-/// <reference path="../model/floorplan.ts" />
-/// <reference path="../model/half_edge.ts" />
-/// <reference path="../model/model.ts" />
-/// <reference path="../model/wall.ts" />
-/// <reference path="floorplanner.ts" />
-
 /** */
 export const floorplannerModes = {MOVE: 0,DRAW: 1,DELETE: 2};
 

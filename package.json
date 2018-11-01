@@ -26,6 +26,7 @@
     "babel-preset-es2015-rollup": "^3.0.0",
     "cssnano": "^3.10.0",
     "jquery": "^3.3.1",
+    "line-intersect": "^2.1.1",
     "livereload": "^0.6.3",
     "npm-run-all": "^3.1.2",
     "postcss-cssnext": "^2.11.0",

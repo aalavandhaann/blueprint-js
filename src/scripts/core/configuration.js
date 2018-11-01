@@ -1,4 +1,4 @@
-import {dimInch} from './dimensioning.js';
+import {dimCentiMeter} from './dimensioning.js';
 
 // GENERAL:
 /** The dimensioning unit for 2D floorplan measurements. */
@@ -9,6 +9,8 @@ export const configWallHeight = 'wallHeight';
 /** The initial wall thickness in cm. */
 export const configWallThickness = 'wallThickness';
 
+
+
 /** Global configuration to customize the whole system.  */
 export class Configuration 
 {
@@ -16,12 +18,12 @@ export class Configuration
 	constructor()
 	{
 		/** Configuration data loaded from/stored to extern. */
-		this.data = {dimUnit: dimInch,wallHeight: 250, wallThickness: 10};
+		this.data = {dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 10};
 	}
 	
 	static getData()
 	{
-		return {dimUnit: dimInch,wallHeight: 250, wallThickness: 10};
+		return {dimUnit: dimCentiMeter,wallHeight: 250, wallThickness: 10};
 	}
 
 	/** Set a configuration parameter. */

@@ -122,7 +122,6 @@ export class Wall extends EventDispatcher
 	fireMoved() 
 	{
 		this.dispatchEvent({type: EVENT_MOVED, position: null});
-		//this.moved_callbacks.fire();
 	}
 
 	fireRedraw() 

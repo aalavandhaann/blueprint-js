@@ -137,10 +137,16 @@ var ItemProperties = function()
 	this.depth = 10;
 	this.fixed = false;
 	this.currentItem = null;
+	this.guiControllers = null;
 	
 	this.cmToIn = function(cm) 
 	{
 		return cm / 2.54;
+	}
+	
+	this.setGUIControllers = function(guiControls)
+	{
+		this.guiControllers = guiControls;
 	}
 
 	this.inToCm = function(inches) 
@@ -158,6 +164,12 @@ var ItemProperties = function()
 			this.height = this.cmToIn(item.getHeight());
 			this.depth = this.cmToIn(item.getDepth());
 			this.fixed = item.fixed;
+			console.log('UPDATE GUI CONTROLLERS ', this.guiControllers.length);
+			for (var i in this.guiControllers) // Iterate over gui controllers to update the values
+			{
+				this.guiControllers[i].updateDisplay();
+		    }
+			
 			return;
 		}
 		this.name = 'None';
@@ -186,6 +198,7 @@ var ItemProperties = function()
 		if(this.currentItem)
 		{
 			this.currentItem.remove();
+			this.setItem(null);
 		}
 	}
 }
@@ -219,7 +232,7 @@ function addBlueprintListeners(blueprint3d)
 function getItemPropertyFolder(gui, anItem)
 {
 	var f = gui.addFolder('Current Item');
-	var iname = f.add(anItem, 'name', 0.1, 100.1);
+	var inamecontrol = f.add(anItem, 'name', 0.1, 100.1);
 	var wcontrol = f.add(anItem, 'width', 0.1, 100.1);
 	var hcontrol = f.add(anItem, 'height', 0.1, 100.1);
 	var dcontrol = f.add(anItem, 'depth', 0.1, 100.1);
@@ -238,6 +251,9 @@ function getItemPropertyFolder(gui, anItem)
 	hcontrol.onChange(changed);
 	dcontrol.onChange(changed);
 	lockcontrol.onChange(lockChanged);	
+	
+	anItem.setGUIControllers([inamecontrol, wcontrol, hcontrol, dcontrol, lockcontrol, deleteItemControl]);
+	
 	return f;
 }
 

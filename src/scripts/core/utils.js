@@ -1,4 +1,5 @@
 import {Vector2} from 'three';
+import {checkIntersection} from 'line-intersect';
 
 export class Utils
 {
@@ -182,6 +183,18 @@ export class Utils
 			}
 		}
 		return false;
+	}
+	
+	/** */
+	static lineLineIntersectPoint(aStart, aEnd, bStart, bEnd)
+	{
+		var result = checkIntersection(aStart.x, aStart.y, aEnd.x, aEnd.y, bStart.x, bStart.y, bEnd.x, bEnd.y);
+		if(result.point)
+		{
+			return new Vector2(result.point.x, result.point.y);
+		}
+		return undefined;
+		
 	}
 
 	/** */

@@ -9,7 +9,7 @@ export {EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED, EVENT_NOTHING_CLICKED, EVENT_FLO
 
 export {Utils} from './core/utils.js';
 export {ELogContext, ELogLevel, logContext, isLogging, log} from './core/log.js';
-export {dimInch, dimMeter, dimCentiMeter, Dimensioning} from './core/dimensioning.js';
+export {dimInch, dimFeetAndInch, dimMeter, dimCentiMeter, Dimensioning} from './core/dimensioning.js';
 export {configDimUnit, configWallHeight, configWallThickness, Configuration} from './core/configuration.js';
 
 //Classes from model module

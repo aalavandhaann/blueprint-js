@@ -25,8 +25,7 @@
 				<button id="move" class="btn btn-sm btn-default"  title="Move Walls"><span class="glyphicon glyphicon-move"></span></button>
 				<button id="draw" class="btn btn-sm btn-default" title="Draw New Walls"><span class="glyphicon glyphicon-pencil"></span></button>
 				<button id="delete" class="btn btn-sm btn-default" title="Delete Walls"><span class="glyphicon glyphicon-remove"></span></button>
-				<span class="pull-right"><button class="btn btn-primary btn-sm" id="update-floorplan">Done &raquo;</button>
-				</span>
+				<button id="help2d" class="btn btn-sm btn-default" title="Tip&#10;Shift Key: Snap To Axis"><span class="glyphicon glyphicon-info-sign"></span></button>
 			</div>
 			<div class="btn-hint ">Press the "Esc" key to stop drawing walls</div>
 			<canvas id="floorplanner-canvas"></canvas>
@@ -42,10 +41,10 @@
 		</div>
 	</div>
 	<div id='interface-controls'>
-		<button id="showFloorPlan" class="btn btn-sm btn-default active"> <span class="glyphicon glyphicon-move"></span> Floor Plan</button>
-		<button id="showDesign" class="btn btn-sm btn-default"> <span class="glyphicon glyphicon-move"></span> 3D</button>
-		<button id="showAddItems" class="btn btn-sm btn-default"> <span class="glyphicon glyphicon-plus"></span></button>
-		<button id="showFirstPerson" class="btn btn-sm btn-default"> <span class="glyphicon glyphicon-eye-open"></span></button>
+		<button id="showFloorPlan" class="btn btn-sm btn-default active" title="Edit 2D floorplan"> <span class="glyphicon glyphicon-move"></span> Floor Plan</button>
+		<button id="showDesign" class="btn btn-sm btn-default" title="Edit 3D floorplan"> <span class="glyphicon glyphicon-move"></span> 3D</button>
+		<button id="showAddItems" class="btn btn-sm btn-default" title="Add/Remove items in 3D"> <span class="glyphicon glyphicon-plus"></span></button>
+		<button id="showFirstPerson" class="btn btn-sm btn-default" title="Walk through"> <span class="glyphicon glyphicon-eye-open"></span></button>
 	</div>
 	<!-- Add Items -->
     <div id="add-items">

@@ -126,7 +126,9 @@ export class Main extends EventDispatcher
 		scope.controls = new OrbitControls(scope.camera, scope.domElement);
 		scope.controls.autoRotate = this.options['spin'];
 		scope.controls.enableDamping = true;
+		scope.controls.dampingFactor = 0.1;
 		scope.controls.maxPolarAngle = Math.PI * 0.5;
+		scope.controls.maxDistance = 3500;
 		
 		scope.fpscontrols = new PointerLockControls(scope.fpscamera);
 		
