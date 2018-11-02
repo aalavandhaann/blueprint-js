@@ -99,10 +99,10 @@ export class Edge extends EventDispatcher
 		});		
 		
 		this.wall.items.forEach((item) => {
-			item.updateEdgeVisibility(true, scope.front);
+			item.updateEdgeVisibility(scope.visible, scope.front);
 		});
 		this.wall.onItems.forEach((item) => {
-			item.updateEdgeVisibility(true, scope.front);
+			item.updateEdgeVisibility(scope.visible, scope.front);
 		});
 	}
 
