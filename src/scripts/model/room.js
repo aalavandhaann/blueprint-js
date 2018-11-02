@@ -27,6 +27,11 @@ export class Room extends EventDispatcher
 		this.updateWalls();
 		this.updateInteriorCorners();
 		this.generatePlane();
+		
+		this.corners.forEach((corner)=>{
+			corner.attachRoom(this);
+		});
+		
 	}
 
 	getUuid() 

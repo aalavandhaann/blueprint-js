@@ -29,6 +29,25 @@ export class Corner extends EventDispatcher
 		this.x = x;
 		this.y = y;      
 		this.id = id || Utils.guide();
+		this.attachedRooms = [];
+	}
+	
+	attachRoom(room)
+	{
+		if(room)
+		{
+			this.attachedRooms.push(room);
+		}
+	}
+	
+	getAttachedRooms()
+	{
+		return this.attachedRooms;
+	}
+	
+	clearAttachedRooms()
+	{
+		this.attachedRooms = [];
 	}
 
 	/** Add function to moved callbacks.

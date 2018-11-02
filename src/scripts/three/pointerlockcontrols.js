@@ -151,7 +151,6 @@ function PointerLockControls( camera, domElement ) {
 		if ( document.pointerLockElement === scope.domElement ) {
 
 			scope.dispatchEvent( { type: 'lock' } );
-
 			scope.isLocked = true;
 
 		} else {
@@ -222,8 +221,17 @@ function PointerLockControls( camera, domElement ) {
 
 	}();
 	this.lock = function () {
-
 		this.domElement.requestPointerLock();
+		var i = this.domElement;
+		if (i.requestFullscreen) {
+			i.requestFullscreen();
+		} else if (i.webkitRequestFullscreen) {
+			i.webkitRequestFullscreen();
+		} else if (i.mozRequestFullScreen) {
+			i.mozRequestFullScreen();
+		} else if (i.msRequestFullscreen) {
+			i.msRequestFullscreen();
+		}
 
 	};
 

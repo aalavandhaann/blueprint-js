@@ -95,7 +95,7 @@ export class Main extends EventDispatcher
 		renderer.shadowMapSoft = true;
 		renderer.shadowMap.type = PCFSoftShadowMap;
 		renderer.setClearColor( 0xFFFFFF, 1 );
-		renderer.sortObjects = false;
+//		renderer.sortObjects = false;
 		
 		return renderer;
 	}

@@ -94,6 +94,7 @@ export class Edge extends EventDispatcher
 		scope.visible = true;
 		scope.planes.forEach((plane) => 
 		{
+			plane.material.opacity = 1.0;
 			plane.visible = scope.visible;
 		});		
 	}
@@ -121,7 +122,8 @@ export class Edge extends EventDispatcher
 		scope.visible = (dot >= 0);
 		// show or hide planes
 		scope.planes.forEach((plane) => {
-			plane.visible = scope.visible;
+			plane.material.opacity = (scope.visible)? 1.0 : 0.7;
+//			plane.visible = scope.visible;
 		});		
 		scope.updateObjectVisibility();
 	}
@@ -166,28 +168,37 @@ export class Edge extends EventDispatcher
 			color: color,
 			side: FrontSide,
 			map: this.texture,
-			transparent: false,
+			transparent: true,
 			lightMap: this.lightMap,
+			opacity: 1.0,
 		});
 
 		var fillerMaterial = new MeshBasicMaterial({
 			color: this.fillerColor,
 			side: DoubleSide,
-			transparent: false,
+			transparent: true,
+			opacity: 1.0,
 		});
 		
-//		console.log('INTERIORS ::: ', this.edge.interiorStart(), this.edge.interiorEnd());
-//		console.log('EXTERIORS ::: ', this.edge.exteriorStart(), this.edge.exteriorEnd());
-		
-		// exterior plane
-		this.planes.push(this.makeWall(this.edge.exteriorStart(), this.edge.exteriorEnd(), this.edge.exteriorTransform, this.edge.invExteriorTransform, fillerMaterial));
+		// exterior plane for real exterior walls
+		//If the walls have corners that have more than one room attached
+		//Then there is no need to construct an exterior wall
+		if(this.edge.wall.start.getAttachedRooms().length ==1 || this.edge.wall.end.getAttachedRooms().length == 1)
+		{
+			this.planes.push(this.makeWall(this.edge.exteriorStart(), this.edge.exteriorEnd(), this.edge.exteriorTransform, this.edge.invExteriorTransform, fillerMaterial));
+		}
 		// interior plane
 		this.planes.push(this.makeWall(this.edge.interiorStart(), this.edge.interiorEnd(), this.edge.interiorTransform, this.edge.invInteriorTransform, wallMaterial));
 		// bottom
 		// put into basePlanes since this is always visible
 		this.basePlanes.push(this.buildFiller(this.edge, 0, BackSide, this.baseColor));
-		// top
-		this.planes.push(this.buildFiller(this.edge, this.wall.height, DoubleSide, this.fillerColor));
+		
+		if(this.edge.wall.start.getAttachedRooms().length ==1 || this.edge.wall.end.getAttachedRooms().length == 1)
+		{
+			// top
+			this.planes.push(this.buildFiller(this.edge, this.wall.height, DoubleSide, this.fillerColor));
+		}
+		
 		// sides
 		this.planes.push(this.buildSideFillter(this.edge.interiorStart(), this.edge.exteriorStart(), this.wall.height, this.sideColor));
 		this.planes.push(this.buildSideFillter(this.edge.interiorEnd(), this.edge.exteriorEnd(), this.wall.height, this.sideColor));

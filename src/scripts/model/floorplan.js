@@ -364,13 +364,19 @@ export class Floorplans extends EventDispatcher
 		this.walls.forEach((wall) => {
 			wall.resetFrontBack();
 		});
-
+		
 		var roomCorners = this.findRooms(this.corners);
 		this.rooms = [];
 		var scope = this;
+		
+		this.corners.forEach((corner)=>{
+			corner.clearAttachedRooms();
+		});
+		
 		roomCorners.forEach((corners) => {
 			scope.rooms.push(new Room(scope, corners));
 		});
+		
 		this.assignOrphanEdges();
 		this.updateFloorTextures();
 		this.dispatchEvent({type: EVENT_UPDATED, item: this});
