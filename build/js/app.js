@@ -1,7 +1,9 @@
+var aGlobal = null;
 var anItem = null;
 var aWall = null;
 var aFloor = null;
 var gui = null;
+var globalPropFolder = null;
 var itemPropFolder = null;
 var wallPropFolder = null;
 var floorPropFolder = null;
@@ -136,6 +138,38 @@ var mainControls = function(blueprint3d)
 	  init();
 }
 
+var GlobalProperties = function()
+{
+	this.name = 'Global';
+	//a - feet and inches, b = inches, c - cms, d - millimeters, e - meters
+	this.units = {a:false, b:false, c:true, d:false, e:false};	
+	this.unitslabel = {a:BP3DJS.dimFeetAndInch, b:BP3DJS.dimInch, c:BP3DJS.dimCentiMeter, d:BP3DJS.dimMilliMeter, e:BP3DJS.dimMeter};
+	this.guicontrollers = null;
+	
+	this.setUnit = function(unit)
+	{
+		for (let param in this.units)
+		{
+			this.units[param] = false;
+		}
+		this.units[unit] = true;
+		
+		BP3DJS.Configuration.setValue(BP3DJS.configDimUnit, this.unitslabel[unit]);
+		
+		console.log(this.units, this.unitslabel[unit], BP3DJS.Configuration.getStringValue(BP3DJS.configDimUnit));
+		
+		for (var i in this.guiControllers) // Iterate over gui controllers to update the values
+		{
+			this.guiControllers[i].updateDisplay();
+	    }
+	}	
+	
+	this.setGUIControllers = function(guiControls)
+	{
+		this.guiControllers = guiControls;
+	}
+}
+
 var ItemProperties = function()
 {
 	this.name = 'an item';
@@ -147,19 +181,9 @@ var ItemProperties = function()
 	this.guiControllers = null;
 	this.gui = null;
 	
-	this.cmToIn = function(cm) 
-	{
-		return cm / 2.54;
-	}
-	
 	this.setGUIControllers = function(guiControls)
 	{
 		this.guiControllers = guiControls;
-	}
-
-	this.inToCm = function(inches) 
-	{
-		return inches * 2.54;
 	}
 	
 	this.setItem = function(item)
@@ -168,13 +192,14 @@ var ItemProperties = function()
 		if(item)
 		{
 			this.name = item.metadata.itemName;
-			this.width = this.cmToIn(item.getWidth());
-			this.height = this.cmToIn(item.getHeight());
-			this.depth = this.cmToIn(item.getDepth());
+			
+			this.width = BP3DJS.Dimensioning.cmToMeasureRaw(item.getWidth());
+			this.height = BP3DJS.Dimensioning.cmToMeasureRaw(item.getHeight());
+			this.depth = BP3DJS.Dimensioning.cmToMeasureRaw(item.getDepth());
+			
 			this.fixed = item.fixed;
 			console.log('UPDATE GUI CONTROLLERS ', this.guiControllers.length);
-			for (var i in this.guiControllers) // Iterate over gui controllers
-												// to update the values
+			for (var i in this.guiControllers) // Iterate over gui controllers to update the values
 			{
 				this.guiControllers[i].updateDisplay();
 		    }
@@ -189,13 +214,15 @@ var ItemProperties = function()
 	{
 		if(this.currentItem)
 		{
-			this.currentItem.resize(this.inToCm(this.height),this.inToCm(this.width),this.inToCm(this.depth));
+			var h = BP3DJS.Dimensioning.cmFromMeasure(this.height);
+			var w = BP3DJS.Dimensioning.cmFromMeasure(this.width);
+			var d = BP3DJS.Dimensioning.cmFromMeasure(this.depth);
+			this.currentItem.resize(h,w,d);
 		}
 	}
 	
 	this.lockFlagChanged = function()
 	{
-		console.log('LOCK FLAG HAVE CHANGED');
 		if(this.currentItem)
 		{
 			this.currentItem.setFixed(this.fixed);
@@ -301,13 +328,26 @@ function addBlueprintListeners(blueprint3d)
 // three.skybox.setEnvironmentMap(textureUrl);
 }
 
+
+function getGlobalPropertiesFolder(gui, global)
+{
+	var f = gui.addFolder('Global');
+	var ficontrol = f.add(global.units, 'a',).name("Feets'' Inches'").onChange(function(){global.setUnit("a")});
+	var icontrol = f.add(global.units, 'b',).name("Inches'").onChange(function(){global.setUnit("b")});
+	var ccontrol = f.add(global.units, 'c',).name('Cm').onChange(function(){global.setUnit("c")});
+	var mmcontrol = f.add(global.units, 'd',).name('mm').onChange(function(){global.setUnit("d")});
+	var mcontrol = f.add(global.units, 'e',).name('m').onChange(function(){global.setUnit("e")});	
+	global.setGUIControllers([ficontrol, icontrol, ccontrol, mmcontrol, mcontrol]);
+	return f;
+}
+
 function getItemPropertiesFolder(gui, anItem)
 {
 	var f = gui.addFolder('Current Item');
-	var inamecontrol = f.add(anItem, 'name', 0.1, 100.1);
-	var wcontrol = f.add(anItem, 'width', 0.1, 100.1);
-	var hcontrol = f.add(anItem, 'height', 0.1, 100.1);
-	var dcontrol = f.add(anItem, 'depth', 0.1, 100.1);
+	var inamecontrol = f.add(anItem, 'name', 0.1, 1000.1);
+	var wcontrol = f.add(anItem, 'width', 0.1, 1000.1);
+	var hcontrol = f.add(anItem, 'height', 0.1, 1000.1);
+	var dcontrol = f.add(anItem, 'depth', 0.1, 1000.1);
 	var lockcontrol = f.add(anItem, 'fixed').name('Locked in place');
 	var deleteItemControl = f.add(anItem, 'deleteItem').name('Delete Item');
 	
@@ -352,10 +392,12 @@ function getWallAndFloorPropertiesFolder(gui, aWall)
 
 function datGUI()
 {
+	aGlobal = new GlobalProperties();
 	anItem = new ItemProperties();
 	aWall = new WallProperties();
 	gui = new dat.GUI();
 	
+	globalPropFolder = getGlobalPropertiesFolder(gui, aGlobal);
 	itemPropFolder = getItemPropertiesFolder(gui, anItem);	
 	wallPropFolder = getWallAndFloorPropertiesFolder(gui, aWall);
 }
