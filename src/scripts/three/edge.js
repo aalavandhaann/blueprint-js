@@ -97,6 +97,13 @@ export class Edge extends EventDispatcher
 			plane.material.opacity = 1.0;
 			plane.visible = scope.visible;
 		});		
+		
+		this.wall.items.forEach((item) => {
+			item.updateEdgeVisibility(true, scope.front);
+		});
+		this.wall.onItems.forEach((item) => {
+			item.updateEdgeVisibility(true, scope.front);
+		});
 	}
 
 	updateVisibility() 
