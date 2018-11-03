@@ -403,9 +403,9 @@ export class Main extends EventDispatcher
 		this.controls.update();
 	}
 	
-	getRoomSize()
+	lockView(locked)
 	{
-		return this.model.floorplan.getSize();
+		this.controls.enabled = locked;
 	}
 	
 	// Send in a value between -1 to 1

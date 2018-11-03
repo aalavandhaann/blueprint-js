@@ -174,6 +174,7 @@ var GlobalProperties = function()
 var CameraProperties = function()
 {
 	this.ratio = 1;
+	this.locked = false;
 	this.three = null;
 	
 	this.change = function()
@@ -181,6 +182,14 @@ var CameraProperties = function()
 		if(this.three)
 		{
 			this.three.changeClippingPlanes(this.ratio);
+		}
+	}
+	
+	this.changeLock = function()
+	{
+		if(this.three)
+		{
+			this.three.lockView(!this.locked);
 		}
 	}
 	
@@ -358,6 +367,7 @@ function getCameraRangePropertiesFolder(gui, camerarange)
 {
 	var f = gui.addFolder('Camera Limits');
 	var ficontrol = f.add(camerarange, 'ratio', -1, 1).name("Range").step(0.01).onChange(function(){camerarange.change()});
+	var flockcontrol = f.add(camerarange, 'locked').name("Lock View").onChange(function(){camerarange.changeLock()});
 	var resetControl = f.add(camerarange, 'reset').name('Reset');	
 	return f;
 	
