@@ -1,12 +1,13 @@
 import $ from 'jquery';
 import {EventDispatcher, Vector2, Vector3, WebGLRenderer,ImageUtils, PerspectiveCamera, OrthographicCamera} from 'three';
+import {Plane} from 'three';
 import {PCFSoftShadowMap} from 'three';
 import {Clock} from 'three';
 //import {FirstPersonControls} from './first-person-controls.js';
 import {PointerLockControls} from './pointerlockcontrols.js';
 
 import {EVENT_UPDATED, EVENT_WALL_CLICKED, EVENT_NOTHING_CLICKED, EVENT_FLOOR_CLICKED, EVENT_ITEM_SELECTED, EVENT_ITEM_UNSELECTED} from '../core/events.js';
-import {EVENT_CAMERA_ACTIVE_STATUS, EVENT_FPS_EXIT} from '../core/events.js';
+import {EVENT_CAMERA_ACTIVE_STATUS, EVENT_FPS_EXIT, EVENT_CAMERA_VIEW_CHANGE} from '../core/events.js';
 import {VIEW_TOP, VIEW_FRONT, VIEW_RIGHT, VIEW_LEFT, VIEW_ISOMETRY} from '../core/constants.js';
 
 import {OrbitControls} from './orbitcontrols.js';
@@ -47,6 +48,9 @@ export class Main extends EventDispatcher
 		this.savedcameraposition = null;
 		this.fpscamera = null;
 		
+		this.cameraNear = 10;
+		this.cameraFar = 10000;
+		
 		this.controls = null;		
 		this.fpscontrols = null;
 		this.fpsclock = new Clock(true);
@@ -66,8 +70,7 @@ export class Main extends EventDispatcher
 		this.heightMargin = null;
 		this.widthMargin = null;
 		this.elementHeight = null;
-		this.elementWidth = null;
-		
+		this.elementWidth = null;	
 		
 
 		this.itemSelectedCallbacks = $.Callbacks(); // item
@@ -81,6 +84,11 @@ export class Main extends EventDispatcher
 		
 		var scope = this;
 		this.updatedevent = ()=>{scope.centerCamera();};
+		
+		this.clippingPlaneActive = new Plane(new Vector3(0, 0, 1), 0.0);
+		this.globalClippingPlane = [this.clippingPlaneActive];
+		this.clippingEmpty = Object.freeze([]);
+		this.clippingEnabled = false;
 		
 		this.init();
 	}
@@ -97,6 +105,8 @@ export class Main extends EventDispatcher
 		renderer.shadowMapSoft = true;
 		renderer.shadowMap.type = PCFSoftShadowMap;
 		renderer.setClearColor( 0xFFFFFF, 1 );
+		renderer.clippingPlanes = this.clippingEmpty;
+		renderer.localClippingEnabled = false;
 //		renderer.sortObjects = false;
 		
 		return renderer;
@@ -114,8 +124,8 @@ export class Main extends EventDispatcher
 		scope.domElement = scope.element.get(0);
 		
 		scope.fpscamera = new PerspectiveCamera(75, 1, 1, 10000 );
-		scope.perspectivecamera = new PerspectiveCamera(45, 10, 10, 10000);
-		scope.orthocamera = new OrthographicCamera(orthoWidth / -orthoScale, orthoWidth /orthoScale, orthoHeight /orthoScale, orthoHeight / -orthoScale, 10, 10000);
+		scope.perspectivecamera = new PerspectiveCamera(45, 10, scope.cameraNear, scope.cameraFar);
+		scope.orthocamera = new OrthographicCamera(orthoWidth / -orthoScale, orthoWidth /orthoScale, orthoHeight /orthoScale, orthoHeight / -orthoScale, scope.cameraNear, scope.cameraFar);
 		
 		scope.camera = scope.perspectivecamera;
 //		scope.camera = scope.orthocamera;
@@ -384,23 +394,56 @@ export class Main extends EventDispatcher
 		{
 		case VIEW_TOP:
 			center.y = 1000;
+			this.dispatchEvent({type:EVENT_CAMERA_VIEW_CHANGE, view: VIEW_TOP});			
 			break;
 		case VIEW_FRONT:
 			center.z = center.z - (size.z*0.5) - distance;
+			this.dispatchEvent({type:EVENT_CAMERA_VIEW_CHANGE, view: VIEW_FRONT});
 			break;
 		case VIEW_RIGHT:
 			center.x = center.x + (size.x*0.5) + distance;
+			this.dispatchEvent({type:EVENT_CAMERA_VIEW_CHANGE, view: VIEW_RIGHT});
 			break;
 		case VIEW_LEFT:
 			center.x = center.x - (size.x*0.5) - distance;
+			this.dispatchEvent({type:EVENT_CAMERA_VIEW_CHANGE, view: VIEW_LEFT});
 			break;
 		case VIEW_ISOMETRY:
 		default:
 			center.x += distance;
 			center.y += distance;
 			center.z += distance;
+			this.dispatchEvent({type:EVENT_CAMERA_VIEW_CHANGE, view: VIEW_ISOMETRY});
 		}
 		this.camera.position.copy(center);
+		this.controls.dispatchEvent({type:EVENT_CAMERA_ACTIVE_STATUS});
+	}
+	
+	getRoomSize()
+	{
+		return this.model.floorplan.getSize();
+	}
+	
+	//Send in a value between -1 to 1
+	changeClippingPlanes(clipRatio)
+	{
+		var size = this.model.floorplan.getSize();
+		size.z = size.z + (size.z * 0.25);
+		size.z = size.z * 0.5;
+		this.clippingPlaneActive.constant = (this.model.floorplan.getSize().z * clipRatio);
+		
+		if(!this.clippingEnabled)
+		{
+			this.clippingEnabled = true;
+			this.renderer.clippingPlanes = this.globalClippingPlane;
+		}
+		this.controls.dispatchEvent({type:EVENT_CAMERA_ACTIVE_STATUS});
+	}
+	
+	resetClipping()
+	{
+		this.clippingEnabled = false;
+		this.renderer.clippingPlanes = this.clippingEmpty;
 	}
 	
 	switchOrthographicMode(flag)

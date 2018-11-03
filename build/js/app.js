@@ -2,12 +2,13 @@ var aGlobal = null;
 var anItem = null;
 var aWall = null;
 var aFloor = null;
+var aCameraRange = null;
 var gui = null;
 var globalPropFolder = null;
 var itemPropFolder = null;
 var wallPropFolder = null;
 var floorPropFolder = null;
-
+var cameraPropFolder = null;
 /*
  * Floorplanner controls
  */
@@ -167,6 +168,28 @@ var GlobalProperties = function()
 	this.setGUIControllers = function(guiControls)
 	{
 		this.guiControllers = guiControls;
+	}
+}
+
+var CameraProperties = function()
+{
+	this.ratio = 1;
+	this.three = null;
+	
+	this.change = function()
+	{
+		if(this.three)
+		{
+			this.three.changeClippingPlanes(this.ratio);
+		}
+	}
+	
+	this.reset = function()
+	{
+		if(this.three)
+		{
+			this.three.resetClipping();
+		}
 	}
 }
 
@@ -331,6 +354,15 @@ function addBlueprintListeners(blueprint3d)
 }
 
 
+function getCameraRangePropertiesFolder(gui, camerarange)
+{
+	var f = gui.addFolder('Camera Limits');
+	var ficontrol = f.add(camerarange, 'ratio', -1, 1).name("Range").step(0.01).onChange(function(){camerarange.change()});
+	var resetControl = f.add(camerarange, 'reset').name('Reset');	
+	return f;
+	
+}
+
 function getGlobalPropertiesFolder(gui, global)
 {
 	var f = gui.addFolder('Global');
@@ -392,14 +424,18 @@ function getWallAndFloorPropertiesFolder(gui, aWall)
 	return f;
 }
 
-function datGUI()
+function datGUI(three)
 {
 	aGlobal = new GlobalProperties();
+	aCameraRange = new CameraProperties();
 	anItem = new ItemProperties();
 	aWall = new WallProperties();
 	gui = new dat.GUI();
 	
+	aCameraRange.three = three;
+	
 	globalPropFolder = getGlobalPropertiesFolder(gui, aGlobal);
+	cameraPropFolder = getCameraRangePropertiesFolder(gui, aCameraRange);
 	itemPropFolder = getItemPropertiesFolder(gui, anItem);	
 	wallPropFolder = getWallAndFloorPropertiesFolder(gui, aWall);
 }
@@ -425,7 +461,7 @@ $(document).ready(function()
 	
 	
 	addBlueprintListeners(blueprint3d);
-	datGUI();
+	datGUI(blueprint3d.three);
 	blueprint3d.three.stopSpin();
 	gui.closed = true;
 	

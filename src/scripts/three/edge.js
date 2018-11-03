@@ -94,6 +94,7 @@ export class Edge extends EventDispatcher
 		scope.visible = true;
 		scope.planes.forEach((plane) => 
 		{
+			plane.material.transparent = !scope.visible;
 			plane.material.opacity = 1.0;
 			plane.visible = scope.visible;
 		});		
@@ -184,6 +185,7 @@ export class Edge extends EventDispatcher
 		var fillerMaterial = new MeshBasicMaterial({
 			color: this.fillerColor,
 			side: DoubleSide,
+			map: this.texture,
 			transparent: true,
 			opacity: 1.0,
 		});
