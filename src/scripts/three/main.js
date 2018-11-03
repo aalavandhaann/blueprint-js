@@ -3,7 +3,7 @@ import {EventDispatcher, Vector2, Vector3, WebGLRenderer,ImageUtils, Perspective
 import {Plane} from 'three';
 import {PCFSoftShadowMap} from 'three';
 import {Clock} from 'three';
-//import {FirstPersonControls} from './first-person-controls.js';
+// import {FirstPersonControls} from './first-person-controls.js';
 import {PointerLockControls} from './pointerlockcontrols.js';
 
 import {EVENT_UPDATED, EVENT_WALL_CLICKED, EVENT_NOTHING_CLICKED, EVENT_FLOOR_CLICKED, EVENT_ITEM_SELECTED, EVENT_ITEM_UNSELECTED} from '../core/events.js';
@@ -107,7 +107,7 @@ export class Main extends EventDispatcher
 		renderer.setClearColor( 0xFFFFFF, 1 );
 		renderer.clippingPlanes = this.clippingEmpty;
 		renderer.localClippingEnabled = false;
-//		renderer.sortObjects = false;
+// renderer.sortObjects = false;
 		
 		return renderer;
 	}
@@ -128,7 +128,7 @@ export class Main extends EventDispatcher
 		scope.orthocamera = new OrthographicCamera(orthoWidth / -orthoScale, orthoWidth /orthoScale, orthoHeight /orthoScale, orthoHeight / -orthoScale, scope.cameraNear, scope.cameraFar);
 		
 		scope.camera = scope.perspectivecamera;
-//		scope.camera = scope.orthocamera;
+// scope.camera = scope.orthocamera;
 
 		scope.renderer = scope.getARenderer(); 		
 		scope.domElement.appendChild(scope.renderer.domElement);
@@ -143,12 +143,12 @@ export class Main extends EventDispatcher
 		scope.controls.maxDistance = 3500;
 		scope.controls.minZoom = 0.9;
 		scope.controls.screenSpacePanning = true;
-//		scope.controls.maxZoom = 3500/ orthoWidth;
+// scope.controls.maxZoom = 3500/ orthoWidth;
 		
 		scope.fpscontrols = new PointerLockControls(scope.fpscamera);
 		
 		this.scene.add(scope.fpscontrols.getObject());
-//		this.fpscamera.position.set(0, 125, 0);
+// this.fpscamera.position.set(0, 125, 0);
 		this.fpscontrols.getObject().position.set(0, 200, 0);
 		
 		this.fpscontrols.addEventListener('unlock', function(){
@@ -177,10 +177,10 @@ export class Main extends EventDispatcher
 		scope.lights = new Lights(scope.scene, scope.model.floorplan);
 		scope.floorplan = new Floorplan(scope.scene, scope.model.floorplan, scope.controls);
 		
-//		var delay = 50;
+// var delay = 50;
 		function animate() 
 		{			
-//			setTimeout(function () {requestAnimationFrame(animate);}, delay);
+// setTimeout(function () {requestAnimationFrame(animate);}, delay);
 			requestAnimationFrame(animate);
 			scope.render();
 		}
@@ -353,24 +353,6 @@ export class Main extends EventDispatcher
 		return vec2;
 	}
 
-	shouldRender() 
-	{
-		var scope = this;
-		// Do we need to draw a new frame
-		if (scope.controls.needsUpdate || scope.controller.needsUpdate || scope.needsUpdate || scope.model.scene.needsUpdate) 
-		{
-			scope.controls.needsUpdate = false;
-			scope.controller.needsUpdate = false;
-			scope.needsUpdate = false;
-			scope.model.scene.needsUpdate = false;
-			return true;
-		} 
-		else 
-		{
-			return false;
-		}
-	}
-	
 	sceneGraph(obj)
 	{
 		console.group( ' <%o> ' + obj.name, obj );
@@ -417,6 +399,8 @@ export class Main extends EventDispatcher
 		}
 		this.camera.position.copy(center);
 		this.controls.dispatchEvent({type:EVENT_CAMERA_ACTIVE_STATUS});
+		this.controls.needsUpdate = true;
+		this.controls.update();
 	}
 	
 	getRoomSize()
@@ -424,7 +408,7 @@ export class Main extends EventDispatcher
 		return this.model.floorplan.getSize();
 	}
 	
-	//Send in a value between -1 to 1
+	// Send in a value between -1 to 1
 	changeClippingPlanes(clipRatio)
 	{
 		var size = this.model.floorplan.getSize();
@@ -438,12 +422,16 @@ export class Main extends EventDispatcher
 			this.renderer.clippingPlanes = this.globalClippingPlane;
 		}
 		this.controls.dispatchEvent({type:EVENT_CAMERA_ACTIVE_STATUS});
+		this.controls.needsUpdate = true;
+		this.controls.update();
 	}
 	
 	resetClipping()
 	{
 		this.clippingEnabled = false;
 		this.renderer.clippingPlanes = this.clippingEmpty;
+		this.controls.needsUpdate = true;
+		this.controls.update();
 	}
 	
 	switchOrthographicMode(flag)
@@ -454,14 +442,17 @@ export class Main extends EventDispatcher
 			this.camera.position.copy(this.perspectivecamera.position.clone());
 			this.controls.object = this.camera;
 			this.controller.changeCamera(this.camera);
+			this.controls.needsUpdate = true;
+			this.controls.update();
 			return;
 		}
 		
 		this.camera = this.perspectivecamera;
 		this.camera.position.copy(this.orthocamera.position.clone());
-		this.controls.object = this.camera;
-		
+		this.controls.object = this.camera;		
 		this.controller.changeCamera(this.camera);
+		this.controls.needsUpdate = true;
+		this.controls.update();
 	}
 	
 	switchFPSMode(flag)
@@ -482,6 +473,24 @@ export class Main extends EventDispatcher
 			this.fpscontrols.unlock();
 		}
 	}
+	
+	shouldRender() 
+	{
+		var scope = this;
+		// Do we need to draw a new frame
+		if (scope.controls.needsUpdate || scope.controller.needsUpdate || scope.needsUpdate || scope.model.scene.needsUpdate) 
+		{
+			scope.controls.needsUpdate = false;
+			scope.controller.needsUpdate = false;
+			scope.needsUpdate = false;
+			scope.model.scene.needsUpdate = false;
+			return true;
+		} 
+		else 
+		{
+			return false;
+		}
+	}
 
 	render() 
 	{
@@ -499,8 +508,11 @@ export class Main extends EventDispatcher
 		}
 		else
 		{
-			scope.controls.update();
-			scope.renderer.render(scope.scene.getScene(), scope.camera);
+			if(this.shouldRender())
+			{
+// scope.controls.update();
+				scope.renderer.render(scope.scene.getScene(), scope.camera);
+			}			
 		}
 		scope.lastRender = Date.now();
 	}
