@@ -405,7 +405,7 @@ export class Main extends EventDispatcher
 	
 	lockView(locked)
 	{
-		this.controls.enabled = locked;
+		this.controls.enableRotate = locked;
 	}
 	
 	// Send in a value between -1 to 1
