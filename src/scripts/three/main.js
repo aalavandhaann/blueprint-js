@@ -6,7 +6,8 @@ import {Clock} from 'three';
 import {PointerLockControls} from './pointerlockcontrols.js';
 
 import {EVENT_UPDATED, EVENT_WALL_CLICKED, EVENT_NOTHING_CLICKED, EVENT_FLOOR_CLICKED, EVENT_ITEM_SELECTED, EVENT_ITEM_UNSELECTED} from '../core/events.js';
-import {EVENT_CAMERA_ACTIVE_STATUS} from '../core/events.js';
+import {EVENT_CAMERA_ACTIVE_STATUS, EVENT_FPS_EXIT} from '../core/events.js';
+import {VIEW_TOP, VIEW_FRONT, VIEW_RIGHT, VIEW_LEFT, VIEW_ISOMETRY} from '../core/constants.js';
 
 import {OrbitControls} from './orbitcontrols.js';
 
@@ -43,6 +44,7 @@ export class Main extends EventDispatcher
 		this.orthocamera = null;
 		this.perspectivecamera = null;
 		this.camera = null;
+		this.savedcameraposition = null;
 		this.fpscamera = null;
 		
 		this.controls = null;		
@@ -112,8 +114,8 @@ export class Main extends EventDispatcher
 		scope.domElement = scope.element.get(0);
 		
 		scope.fpscamera = new PerspectiveCamera(75, 1, 1, 10000 );
-		scope.perspectivecamera = new PerspectiveCamera(45, 1, 100, 10000);
-		scope.orthocamera = new OrthographicCamera(orthoWidth / -orthoScale, orthoWidth /orthoScale, orthoHeight /orthoScale, orthoHeight / -orthoScale, 1, 10000);
+		scope.perspectivecamera = new PerspectiveCamera(45, 10, 10, 10000);
+		scope.orthocamera = new OrthographicCamera(orthoWidth / -orthoScale, orthoWidth /orthoScale, orthoHeight /orthoScale, orthoHeight / -orthoScale, 10, 10000);
 		
 		scope.camera = scope.perspectivecamera;
 //		scope.camera = scope.orthocamera;
@@ -126,15 +128,23 @@ export class Main extends EventDispatcher
 		scope.controls = new OrbitControls(scope.camera, scope.domElement);
 		scope.controls.autoRotate = this.options['spin'];
 		scope.controls.enableDamping = true;
-		scope.controls.dampingFactor = 0.1;
+		scope.controls.dampingFactor = 0.5;
 		scope.controls.maxPolarAngle = Math.PI * 0.5;
 		scope.controls.maxDistance = 3500;
+		scope.controls.minZoom = 0.9;
+		scope.controls.screenSpacePanning = true;
+//		scope.controls.maxZoom = 3500/ orthoWidth;
 		
 		scope.fpscontrols = new PointerLockControls(scope.fpscamera);
 		
 		this.scene.add(scope.fpscontrols.getObject());
 //		this.fpscamera.position.set(0, 125, 0);
 		this.fpscontrols.getObject().position.set(0, 200, 0);
+		
+		this.fpscontrols.addEventListener('unlock', function(){
+			scope.switchFPSMode(false);
+			scope.dispatchEvent({type:EVENT_FPS_EXIT});
+		});
 				
 // scope.controls2 = new Controls(scope.camera, scope.domElement);
 		
@@ -280,10 +290,10 @@ export class Main extends EventDispatcher
 			scope.elementHeight = scope.element.innerHeight();
 		}		
 		
-		scope.orthocamera.left = -window.innerWidth / 2.0;
-		scope.orthocamera.right = window.innerWidth / 2.0;
-		scope.orthocamera.top = window.innerHeight / 2.0;
-		scope.orthocamera.bottom = -window.innerHeight / 2.0;
+		scope.orthocamera.left = -window.innerWidth / 1.0;
+		scope.orthocamera.right = window.innerWidth / 1.0;
+		scope.orthocamera.top = window.innerHeight / 1.0;
+		scope.orthocamera.bottom = -window.innerHeight / 1.0;
 		scope.orthocamera.updateProjectionMatrix();
 		
 		scope.perspectivecamera.aspect = scope.elementWidth / scope.elementHeight;
@@ -361,6 +371,54 @@ export class Main extends EventDispatcher
 	pauseTheRendering(flag)
 	{
 		this.pauseRender = flag;
+	}
+	
+	switchView(viewpoint)
+	{
+		var center = this.model.floorplan.getCenter();
+		var size = this.model.floorplan.getSize();
+		var distance = this.controls.object.position.distanceTo(this.controls.target);
+		this.controls.target.copy(center);
+		
+		switch(viewpoint)
+		{
+		case VIEW_TOP:
+			center.y = 1000;
+			break;
+		case VIEW_FRONT:
+			center.z = center.z - (size.z*0.5) - distance;
+			break;
+		case VIEW_RIGHT:
+			center.x = center.x + (size.x*0.5) + distance;
+			break;
+		case VIEW_LEFT:
+			center.x = center.x - (size.x*0.5) - distance;
+			break;
+		case VIEW_ISOMETRY:
+		default:
+			center.x += distance;
+			center.y += distance;
+			center.z += distance;
+		}
+		this.camera.position.copy(center);
+	}
+	
+	switchOrthographicMode(flag)
+	{
+		if(flag)
+		{
+			this.camera = this.orthocamera;
+			this.camera.position.copy(this.perspectivecamera.position.clone());
+			this.controls.object = this.camera;
+			this.controller.changeCamera(this.camera);
+			return;
+		}
+		
+		this.camera = this.perspectivecamera;
+		this.camera.position.copy(this.orthocamera.position.clone());
+		this.controls.object = this.camera;
+		
+		this.controller.changeCamera(this.camera);
 	}
 	
 	switchFPSMode(flag)

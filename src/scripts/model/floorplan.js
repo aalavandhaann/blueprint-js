@@ -370,7 +370,7 @@ export class Floorplans extends EventDispatcher
 		var scope = this;
 		
 		this.corners.forEach((corner)=>{
-			corner.clearAttachedRooms();
+			corner.clearAttachedRooms();		
 		});
 		
 		roomCorners.forEach((corners) => {

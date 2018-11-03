@@ -1,5 +1,5 @@
 import {EventDispatcher, JSONLoader, Color} from 'three';
-import {GLTFLoader} from 'three-gltf-loader';
+//import {GLTFLoader} from 'three-gltf-loader';
 import {Scene as ThreeScene} from 'three';
 import {Utils} from '../core/utils.js';
 import {Factory} from '../items/factory.js';
@@ -32,7 +32,8 @@ export class Scene extends EventDispatcher
 		this.loader = new JSONLoader();
 		this.loader.setCrossOrigin('');
 		
-		this.gltfloader = new GLTFLoader();
+//		this.gltfloader = new GLTFLoader();
+		this.gltfloader = new JSONLoader();
 		this.gltfloader.setCrossOrigin('');
 
 		this.itemLoadingCallbacks = null;

@@ -318,10 +318,12 @@ function addBlueprintListeners(blueprint3d)
 		anItem.setItem(undefined);
 		itemPropFolder.close();
 	}
+	
 	three.addEventListener(BP3DJS.EVENT_ITEM_SELECTED, function(o){itemSelected(o.item);});
 	three.addEventListener(BP3DJS.EVENT_ITEM_UNSELECTED, function(o){itemUnselected();});	
 	three.addEventListener(BP3DJS.EVENT_WALL_CLICKED, (o)=>{wallClicked(o.item);});
     three.addEventListener(BP3DJS.EVENT_FLOOR_CLICKED, (o)=>{floorClicked(o.item);});
+    three.addEventListener(BP3DJS.EVENT_FPS_EXIT, ()=>{$('#showDesign').trigger('click')});
     
 // three.skybox.toggleEnvironment(this.checked);
 // currentTarget.setTexture(textureUrl, textureStretch, textureScale);
@@ -440,7 +442,10 @@ $(document).ready(function()
 	   });
 	}).resize();
 	
+	
 	$('#showAddItems').hide();
+	$('#viewcontrols').hide();
+	
 	$('.card').flip({trigger:'manual', axis:'x'});  
 	$('#showFloorPlan').click(function()
 	{
@@ -449,6 +454,7 @@ $(document).ready(function()
 		$('#showDesign').removeClass('active');
 		$('#showFirstPerson').removeClass('active');
 		$('#showAddItems').hide();
+		$('#viewcontrols').hide();
 		gui.closed = true;
 		blueprint3d.three.pauseTheRendering(true);
 		blueprint3d.three.getController().setSelectedObject(null);
@@ -461,8 +467,10 @@ $(document).ready(function()
 		gui.closed = false;
 		$(this).addClass('active');
 		$('#showFloorPlan').removeClass('active');
-		$('#showFirstPerson').removeClass('active');		
+		$('#showFirstPerson').removeClass('active');	
+		
 		$('#showAddItems').show();
+		$('#viewcontrols').show();
 		
 		blueprint3d.three.pauseTheRendering(false);
 		blueprint3d.three.switchFPSMode(false);
@@ -475,7 +483,9 @@ $(document).ready(function()
 		$(this).addClass('active');
 		$('#showFloorPlan').removeClass('active');
 		$('#showDesign').removeClass('active');
+		
 		$('#showAddItems').hide();
+		$('#viewcontrols').hide();
 		
 		blueprint3d.three.pauseTheRendering(false);
 		blueprint3d.three.switchFPSMode(true);
@@ -484,8 +494,18 @@ $(document).ready(function()
 	$('#showAddItems').click(function()
 	{
 		$('#add-items').dialog('open');
-// $('#add-items').show();
 	});
+	
+	$('#showSwitchCameraMode').click(function()
+	{
+		$(this).toggleClass('active');
+		blueprint3d.three.switchOrthographicMode($(this).hasClass('active'));		
+	});
+	
+	$('#topview, #isometryview, #frontview, #leftview, #rightview').click(function(){
+		blueprint3d.three.switchView($(this).attr('id'));
+	});
+	
 	
 	$("#add-items").find(".add-item").mousedown(function(e) {
 	      var modelUrl = $(this).attr("model-url");

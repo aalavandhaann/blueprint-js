@@ -33,6 +33,12 @@ div {
 	text-align: center;
 	bottom: 10px;
 }
+#camera-controls
+{
+	float: left;
+/* 	right: 50%; */
+/* 	bottom: 50px; */
+}
 
 #floorplanner, #viewer
 {  

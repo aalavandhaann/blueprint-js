@@ -24,6 +24,8 @@ export class Controller extends EventDispatcher
 
 		this.plane = null;
 		this.mouse = new Vector2(0, 0);
+		this.alternateMouse = new Vector2(0, 0);
+		
 		this.intersectedObject = null;
 		this.mouseoverObject = null;
 		this.selectedObject = null;
@@ -51,15 +53,15 @@ export class Controller extends EventDispatcher
 	{
 		this.element.mousedown(this.mousedownevent);
 // this.element.get(0).addEventListener('touchstart', this.mousedownevent);
-//		this.element.on('touchstart', this.mousedownevent);
+// this.element.on('touchstart', this.mousedownevent);
 		
 		this.element.mouseup(this.mouseupevent);
 // this.element.get(0).addEventListener('touchend', this.mouseupevent);
-//		this.element.on('touchend', this.mouseupevent);
+// this.element.on('touchend', this.mouseupevent);
 		
 		this.element.mousemove(this.mousemoveevent);
 // this.element.get(0).addEventListener('touchmove', this.mousemoveevent);
-//		this.element.on('touchmove', this.mousemoveevent);
+// this.element.on('touchmove', this.mousemoveevent);
 		
 
 		// scene.itemRemovedCallbacks.add(itemRemoved);
@@ -183,7 +185,11 @@ export class Controller extends EventDispatcher
 			
 			this.mouse.x = event.clientX;
 			this.mouse.y = event.clientY;
-
+			
+			this.alternateMouse.x = event.clientX;
+			this.alternateMouse.y = event.clientY;
+			
+				
 			if (!this.mouseDown) 
 			{
 				this.updateIntersections();
@@ -438,8 +444,11 @@ export class Controller extends EventDispatcher
 		
 		var direction = vector.sub(this.camera.position).normalize();
 		var raycaster = new Raycaster(this.camera.position, direction);
-		
 		raycaster.linePrecision = linePrecision;
+		
+		raycaster = new Raycaster();
+		raycaster.setFromCamera( this.normalizeVector2(this.alternateMouse), this.camera );	
+		
 		var intersections;
 		
 		if (objects instanceof Array) 
@@ -525,5 +534,10 @@ export class Controller extends EventDispatcher
 			this.mouseoverObject = null;
 			this.needsUpdate = true;
 		}
+	}
+	
+	changeCamera(newCamera)
+	{
+		this.camera = newCamera;
 	}
 }

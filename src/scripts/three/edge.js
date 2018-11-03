@@ -129,7 +129,8 @@ export class Edge extends EventDispatcher
 		scope.visible = (dot >= 0);
 		// show or hide planes
 		scope.planes.forEach((plane) => {
-			plane.material.opacity = (scope.visible)? 1.0 : 0.7;
+			plane.material.transparent = !scope.visible;
+			plane.material.opacity = (scope.visible)? 1.0 : 0.3;
 //			plane.visible = scope.visible;
 		});		
 		scope.updateObjectVisibility();
@@ -137,13 +138,13 @@ export class Edge extends EventDispatcher
 
 	updateObjectVisibility() 
 	{
-		var scope = this;
-		this.wall.items.forEach((item) => {
-			item.updateEdgeVisibility(scope.visible, scope.front);
-		});
-		this.wall.onItems.forEach((item) => {
-			item.updateEdgeVisibility(scope.visible, scope.front);
-		});
+//		var scope = this;
+//		this.wall.items.forEach((item) => {
+//			item.updateEdgeVisibility(scope.visible, scope.front);
+//		});
+//		this.wall.onItems.forEach((item) => {
+//			item.updateEdgeVisibility(scope.visible, scope.front);
+//		});
 	}
 
 	updateTexture(callback)
