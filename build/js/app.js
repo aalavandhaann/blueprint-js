@@ -497,7 +497,16 @@ $(document).ready(function()
 	        itemType: itemType
 	      }
 	      console.log(itemType, modelUrl, metadata);
-	      blueprint3d.model.scene.addItem(itemType, modelUrl, metadata);
+	      if(aWall.currentFloor)
+    	  {
+	    	  var placeAt = aWall.currentFloor.center.clone();
+	    	  blueprint3d.model.scene.addItem(itemType, modelUrl, metadata, null, null, null, false, placeAt);
+    	  }
+	      else
+    	  {
+	    	  blueprint3d.model.scene.addItem(itemType, modelUrl, metadata);
+    	  }
+	      
 	      $('#add-items').dialog('close');
 	    });
 	

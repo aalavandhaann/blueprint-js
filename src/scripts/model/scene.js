@@ -1,4 +1,5 @@
 import {EventDispatcher, JSONLoader, Color} from 'three';
+//import {GLTFLoader} from 'three-gltf-loader';
 import {Scene as ThreeScene} from 'three';
 import {Utils} from '../core/utils.js';
 import {Factory} from '../items/factory.js';
@@ -29,7 +30,10 @@ export class Scene extends EventDispatcher
 		this.needsUpdate = false;
 		// init item loader
 		this.loader = new JSONLoader();
-		this.loader.crossOrigin = '';
+		this.loader.setCrossOrigin('');
+		
+		this.gltfloader = new JSONLoader();
+		this.gltfloader.setCrossOrigin('');
 
 		this.itemLoadingCallbacks = null;
 		this.itemLoadedCallbacks = null;
@@ -119,10 +123,11 @@ export class Scene extends EventDispatcher
 	 * @param scale The initial scaling.
 	 * @param fixed True if fixed.
 	 */
-	addItem(itemType, fileName, metadata, position, rotation, scale, fixed) 
+	addItem(itemType, fileName, metadata, position, rotation, scale, fixed, newItem) 
 	{
 		itemType = itemType || 1;
-		var scope = this;
+		var scope = this;		
+		
 		var loaderCallback = function (geometry, materials) 
 		{
 //			var item = new (Factory.getClass(itemType))(scope.model, metadata, geometry, new MeshFaceMaterial(materials), position, rotation, scale);
@@ -132,11 +137,28 @@ export class Scene extends EventDispatcher
 			scope.add(item);
 			item.initObject();
 			scope.dispatchEvent({type:EVENT_ITEM_LOADED, item: item});
-			// scope.itemLoadedCallbacks.fire(item);
+			if(newItem)
+			{
+				item.moveToPosition(newItem);
+			}
+		};
+		var gltfCallback = function(gltfModel)
+		{
+			gltfModel.scene.traverse(function (child) {
+				if(child.type == 'Mesh'){
+					loaderCallback(child.geometry, child.materials);
+				}
+			});
 		};
 
 		this.dispatchEvent({type:EVENT_ITEM_LOADING});
-		// this.itemLoadingCallbacks.fire();
-		this.loader.load(fileName, loaderCallback, undefined); // third parameter is undefined - TODO_Ekki 
+		if(!metadata.format)
+		{
+			this.loader.load(fileName, loaderCallback, undefined); // third parameter is undefined - TODO_Ekki 
+		}
+		else
+		{
+			this.gltfloader.load(fileName, gltfCallback, null, null);
+		}		
 	}
 }

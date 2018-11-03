@@ -1,5 +1,5 @@
 import {EVENT_CHANGED} from '../core/events.js';
-import {EventDispatcher, Vector2, Shape, ShapeGeometry, Mesh, MeshBasicMaterial, DoubleSide} from 'three';
+import {EventDispatcher, Vector2, Shape, ShapeGeometry, Mesh, MeshBasicMaterial, DoubleSide, Box3} from 'three';
 import {Utils} from '../core/utils.js';
 import {HalfEdge} from './half_edge.js';
 
@@ -17,6 +17,10 @@ export class Room extends EventDispatcher
 	constructor(floorplan, corners) 
 	{
 		super();
+		this.min = null;
+		this.max = null;
+		this.center = null;
+		
 		this.floorplan = floorplan;
 		this.corners = corners;
 		this.interiorCorners = [];
@@ -98,6 +102,12 @@ export class Room extends EventDispatcher
 		this.floorPlane.visible = true;
 		this.floorPlane.rotation.set(Math.PI / 2, 0, 0);
 		this.floorPlane.room = this; // js monkey patch
+		
+		var b3 = new Box3();
+		b3.setFromObject(this.floorPlane);
+		this.min = b3.min.clone();
+		this.max = b3.max.clone();
+		this.center = this.max.clone().sub(this.min).multiplyScalar(0.5).add(this.min);
 	}
 
 	cycleIndex(index) 

@@ -63,16 +63,12 @@ export class Item extends Mesh
 
 		this.geometry = geometry;
 		this.material = material;
-
+		this.position_set = false;
 		if (position) 
 		{
 			this.position.copy(position);
 			this.position_set = true;
 		} 
-		else 
-		{
-			this.position_set = false;
-		}
 
 		// center in its boundingbox
 		this.geometry.computeBoundingBox();
