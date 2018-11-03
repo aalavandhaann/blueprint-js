@@ -401,11 +401,13 @@ export class Main extends EventDispatcher
 		this.controls.dispatchEvent({type:EVENT_CAMERA_ACTIVE_STATUS});
 		this.controls.needsUpdate = true;
 		this.controls.update();
+		this.render(true);
 	}
 	
 	lockView(locked)
 	{
 		this.controls.enableRotate = locked;
+		this.render(true);
 	}
 	
 	// Send in a value between -1 to 1
@@ -424,6 +426,7 @@ export class Main extends EventDispatcher
 		this.controls.dispatchEvent({type:EVENT_CAMERA_ACTIVE_STATUS});
 		this.controls.needsUpdate = true;
 		this.controls.update();
+		this.render(true);
 	}
 	
 	resetClipping()
@@ -432,6 +435,7 @@ export class Main extends EventDispatcher
 		this.renderer.clippingPlanes = this.clippingEmpty;
 		this.controls.needsUpdate = true;
 		this.controls.update();
+		this.render(true);
 	}
 	
 	switchOrthographicMode(flag)
@@ -444,6 +448,7 @@ export class Main extends EventDispatcher
 			this.controller.changeCamera(this.camera);
 			this.controls.needsUpdate = true;
 			this.controls.update();
+			this.render();
 			return;
 		}
 		
@@ -453,6 +458,7 @@ export class Main extends EventDispatcher
 		this.controller.changeCamera(this.camera);
 		this.controls.needsUpdate = true;
 		this.controls.update();
+		this.render(true);
 	}
 	
 	switchFPSMode(flag)
@@ -492,10 +498,11 @@ export class Main extends EventDispatcher
 		}
 	}
 
-	render() 
+	render(forced) 
 	{
 		var scope = this;
-		if(this.pauseRender)
+		forced = (forced)? forced : false;
+		if(this.pauseRender && !forced)
 		{
 			return;
 		}
@@ -508,7 +515,7 @@ export class Main extends EventDispatcher
 		}
 		else
 		{
-			if(this.shouldRender())
+			if(this.shouldRender() || forced)
 			{
 // scope.controls.update();
 				scope.renderer.render(scope.scene.getScene(), scope.camera);
