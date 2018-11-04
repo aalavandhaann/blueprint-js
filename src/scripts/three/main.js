@@ -365,6 +365,7 @@ export class Main extends EventDispatcher
 	{
 		this.model.switchWireframe(flag);
 		this.floorplan.switchWireframe(flag);
+		this.render(true);
 	}
 	
 	pauseTheRendering(flag)
