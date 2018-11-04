@@ -135,7 +135,12 @@ export class Item extends Mesh
 		scaleVec.multiply(this.scale);
 		this.scale.set(scaleVec.x, scaleVec.y, scaleVec.z);
 		this.resized();
+		if(this.bhelper)
+		{
+			this.bhelper.update();
+		}
 		this.scene.needsUpdate = true;
+		
 	}
 
 	/** */
