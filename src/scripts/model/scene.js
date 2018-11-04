@@ -113,6 +113,13 @@ export class Scene extends EventDispatcher
 			Utils.removeValue(this.items, item);
 		}
 	}
+	
+	switchWireframe(flag)
+	{
+		this.items.forEach((item)=>{
+			item.switchWireframe(flag);
+		});
+	}
 
 	/**
 	 * Creates an item and adds it to the scene.

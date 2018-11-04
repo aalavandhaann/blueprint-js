@@ -106,6 +106,16 @@ export class Edge extends EventDispatcher
 			item.updateEdgeVisibility(scope.visible, scope.front);
 		});
 	}
+	
+	switchWireframe(flag)
+	{
+		var scope = this;
+		scope.visible = true;
+		scope.planes.forEach((plane) => 
+		{
+			plane.material.wireframe = flag;
+		});	
+	}
 
 	updateVisibility() 
 	{
@@ -180,6 +190,7 @@ export class Edge extends EventDispatcher
 			transparent: true,
 			lightMap: this.lightMap,
 			opacity: 1.0,
+			wireframe: false,
 		});
 
 		var fillerMaterial = new MeshBasicMaterial({
@@ -188,6 +199,7 @@ export class Edge extends EventDispatcher
 			map: this.texture,
 			transparent: true,
 			opacity: 1.0,
+			wireframe: false,
 		});
 		
 		// exterior plane for real exterior walls

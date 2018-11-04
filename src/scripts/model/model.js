@@ -24,6 +24,11 @@ export class Model extends EventDispatcher
 		this.roomDeletedCallbacks = null;
 
 	}
+	
+	switchWireframe(flag)
+	{
+		this.scene.switchWireframe(flag);
+	}
 
 	loadSerialized(json) 
 	{

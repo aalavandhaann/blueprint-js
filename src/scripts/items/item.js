@@ -1,4 +1,6 @@
 import {Mesh, Matrix4, Vector2, Vector3, BoxHelper, Box3, MeshBasicMaterial, AdditiveBlending} from 'three';
+import {LineSegments, EdgesGeometry, LineBasicMaterial} from 'three';
+
 import {Utils} from '../core/utils.js';
 
 /**
@@ -62,19 +64,36 @@ export class Item extends Mesh
 		this.receiveShadow = false;
 
 		this.geometry = geometry;
-		this.material = material;
+//		this.material = material;
+		this.material = new MeshBasicMaterial({color:0xFFFFFF, visible:false});
+		
 		this.position_set = false;
 		if (position) 
 		{
 			this.position.copy(position);
 			this.position_set = true;
 		} 
-
+		
 		// center in its boundingbox
 		this.geometry.computeBoundingBox();
 		this.geometry.applyMatrix(new Matrix4().makeTranslation(- 0.5 * (this.geometry.boundingBox.max.x + this.geometry.boundingBox.min.x),- 0.5 * (this.geometry.boundingBox.max.y + this.geometry.boundingBox.min.y),- 0.5 * (this.geometry.boundingBox.max.z + this.geometry.boundingBox.min.z)));
 		this.geometry.computeBoundingBox();
 		this.halfSize = this.objectHalfSize();
+		
+		this.colorgeometry = geometry;
+		this.colormaterial = material;		
+		this.wiregeometry = new EdgesGeometry(geometry);
+		this.wirematerial = new LineBasicMaterial( { color: 0x999999, linewidth: 2 } );
+		this.wiremesh = new LineSegments(this.wiregeometry, this.wirematerial);		
+		this.colormesh = new Mesh(this.colorgeometry, this.colormaterial);
+		
+		this.wiregeometry.applyMatrix(new Matrix4().makeTranslation(- 0.5 * (this.geometry.boundingBox.max.x + this.geometry.boundingBox.min.x),- 0.5 * (this.geometry.boundingBox.max.y + this.geometry.boundingBox.min.y),- 0.5 * (this.geometry.boundingBox.max.z + this.geometry.boundingBox.min.z)));
+		this.colorgeometry.applyMatrix(new Matrix4().makeTranslation(- 0.5 * (this.geometry.boundingBox.max.x + this.geometry.boundingBox.min.x),- 0.5 * (this.geometry.boundingBox.max.y + this.geometry.boundingBox.min.y),- 0.5 * (this.geometry.boundingBox.max.z + this.geometry.boundingBox.min.z)));
+		
+		this.add(this.wiremesh);
+		this.add(this.colormesh);
+		
+		this.wiremesh.visible = false;		
 
 		if (rotation) 
 		{
@@ -85,6 +104,12 @@ export class Item extends Mesh
 		{
 			this.setScale(scale.x, scale.y, scale.z);
 		}
+	}
+	
+	switchWireframe(flag)
+	{
+		this.wiremesh.visible = flag;
+		this.colormesh.visible = !flag;
 	}
 
 	/** */
@@ -173,16 +198,28 @@ export class Item extends Mesh
 		var hex = on ? this.emissiveColor : 0x000000;
 		if(this.material)
 		{
-			if(this.material.length)
+//			if(this.material.length)
+//			{
+//				this.material.forEach((material) => {
+//					// TODO_Ekki emissive doesn't exist anymore?
+//					material.emissive.setHex(hex);
+//				});
+//			}
+//			else
+//			{
+//				this.material.emissive.setHex(hex);
+//			}
+			
+			if(this.colormaterial.length)
 			{
-				this.material.forEach((material) => {
+				this.colormaterial.forEach((material) => {
 					// TODO_Ekki emissive doesn't exist anymore?
 					material.emissive.setHex(hex);
 				});
 			}
 			else
 			{
-				this.material.emissive.setHex(hex);
+				this.colormaterial.emissive.setHex(hex);
 			}
 			
 		}
@@ -269,7 +306,6 @@ export class Item extends Mesh
 	{
 		if (this.error) 
 		{
-			console.log('THERE WAS AN ERROR DRAGGING AND PLACING THIS ITEM ', this.error);
 			this.hideError();
 		}
 	}

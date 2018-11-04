@@ -20,6 +20,16 @@ export class Floorplan extends EventDispatcher
 		this.floorplan.addEventListener(EVENT_UPDATED, this.updatedroomsevent);
 	}
 	
+	switchWireframe(flag)
+	{
+		this.floors.forEach((floor)=>{
+			floor.switchWireframe(flag);
+		});
+		this.edges.forEach((edge)=>{
+			edge.switchWireframe(flag);
+		});
+	}
+	
 	redraw()
 	{
 		var scope = this;

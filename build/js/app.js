@@ -247,9 +247,9 @@ var ItemProperties = function()
 	{
 		if(this.currentItem)
 		{
-			var h = BP3DJS.Dimensioning.cmFromMeasure(this.height);
-			var w = BP3DJS.Dimensioning.cmFromMeasure(this.width);
-			var d = BP3DJS.Dimensioning.cmFromMeasure(this.depth);
+			var h = BP3DJS.Dimensioning.cmFromMeasureRaw(this.height);
+			var w = BP3DJS.Dimensioning.cmFromMeasureRaw(this.width);
+			var d = BP3DJS.Dimensioning.cmFromMeasureRaw(this.depth);
 			this.currentItem.resize(h,w,d);
 		}
 	}
@@ -550,9 +550,16 @@ $(document).ready(function()
 		blueprint3d.three.switchOrthographicMode($(this).hasClass('active'));		
 	});
 	
+	$('#showSwitchWireframeMode').click(function()
+	{
+		$(this).toggleClass('wireframe-active');
+		blueprint3d.three.switchWireframe($(this).hasClass('wireframe-active'));		
+	});
+	
 	$('#topview, #isometryview, #frontview, #leftview, #rightview').click(function(){
 		blueprint3d.three.switchView($(this).attr('id'));
 	});
+	
 	
 	
 	$("#add-items").find(".add-item").mousedown(function(e) {

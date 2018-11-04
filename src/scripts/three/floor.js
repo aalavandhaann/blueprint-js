@@ -14,6 +14,12 @@ export class Floor extends EventDispatcher
 		this.changedevent = () => {this.redraw();};
 		this.init();
 	}
+	
+	switchWireframe(flag)
+	{
+		this.floorPlane.visible = !flag;
+		this.roofPlane.visible = !flag;
+	}
 
 	init() 
 	{
