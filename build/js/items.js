@@ -157,7 +157,14 @@ $(document).ready(function() {
       "image" : "models/thumbnails/thumbnail_cabinet.png",
       "model" : "models/js/cabinet.json",
       "type" : "1"
-    }
+    },
+    {
+        "name" : "Duck",
+        "image" : "models/thumbnails/thumbnail_duck.png",
+        "model" : "models/js/Duck.gltf",
+        "type" : "1",
+        "format": "gltf",
+      }
    /*     
    {
       "name" : "",
@@ -174,18 +181,8 @@ $(document).ready(function() {
   for (var i = 0; i < items.length; i++) 
   {
     var item = items[i];
-    var html = '<div class="col-sm-4">' +
-                '<a class="thumbnail add-item" model-name="' + 
-                item.name + 
-                '" model-url="' +
-                item.model +
-                '" model-type="' +
-                item.type + 
-                '"><img src="' +
-                item.image + 
-                '" alt="Add Item"> '+
-                item.name +
-                '</a></div>';
+    var modelformat = (item.format) ?' model-format="'+item.format+'"' : "";    
+    var html = '<div class="col-sm-4">' + '<a class="thumbnail add-item"' +' model-name="'+ item.name +'"' +' model-url="' +item.model+'"' +' model-type="' +item.type+'"' + modelformat+'>'+'<img src="'+item.image +'" alt="Add Item"> '+item.name +'</a></div>';
     itemsDiv.append(html);
   }
 });

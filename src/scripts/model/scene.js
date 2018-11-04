@@ -1,5 +1,5 @@
 import {EventDispatcher, JSONLoader, Color} from 'three';
-//import {GLTFLoader} from 'three-gltf-loader';
+import GLTFLoader from 'three-gltf-loader';
 import {Scene as ThreeScene} from 'three';
 import {Utils} from '../core/utils.js';
 import {Factory} from '../items/factory.js';
@@ -32,8 +32,8 @@ export class Scene extends EventDispatcher
 		this.loader = new JSONLoader();
 		this.loader.setCrossOrigin('');
 		
-//		this.gltfloader = new GLTFLoader();
-		this.gltfloader = new JSONLoader();
+		this.gltfloader = new GLTFLoader();
+//		this.gltfloader = new JSONLoader();
 		this.gltfloader.setCrossOrigin('');
 
 		this.itemLoadingCallbacks = null;
@@ -153,8 +153,16 @@ export class Scene extends EventDispatcher
 		var gltfCallback = function(gltfModel)
 		{
 			gltfModel.scene.traverse(function (child) {
-				if(child.type == 'Mesh'){
-					loaderCallback(child.geometry, child.materials);
+				if(child.type == 'Mesh')
+				{
+					if(child.material.length)
+					{
+						loaderCallback(child.geometry, child.material[0]);
+					}					
+					else
+					{
+						loaderCallback(child.geometry, child.material);
+					}
 				}
 			});
 		};
@@ -166,6 +174,7 @@ export class Scene extends EventDispatcher
 		}
 		else
 		{
+			console.log('HEY LOADING A NEW FORMAT CALLED GLTF0');
 			this.gltfloader.load(fileName, gltfCallback, null, null);
 		}		
 	}

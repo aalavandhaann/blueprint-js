@@ -565,11 +565,14 @@ $(document).ready(function()
 	$("#add-items").find(".add-item").mousedown(function(e) {
 	      var modelUrl = $(this).attr("model-url");
 	      var itemType = parseInt($(this).attr("model-type"));
+	      var itemFormat = $(this).attr('model-format');
 	      var metadata = {
 	        itemName: $(this).attr("model-name"),
 	        resizable: true,
 	        modelUrl: modelUrl,
-	        itemType: itemType
+	        itemType: itemType,
+	        format: itemFormat,
+	        
 	      }
 	      console.log(itemType, modelUrl, metadata);
 	      if(aWall.currentFloor)
