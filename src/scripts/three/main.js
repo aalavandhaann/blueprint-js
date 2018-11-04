@@ -86,7 +86,8 @@ export class Main extends EventDispatcher
 		this.updatedevent = ()=>{scope.centerCamera();};
 		
 		this.clippingPlaneActive = new Plane(new Vector3(0, 0, 1), 0.0);
-		this.globalClippingPlane = [this.clippingPlaneActive];
+		this.clippingPlaneActive2 = new Plane(new Vector3(0, 0, -1), 0.0);
+		this.globalClippingPlane = [this.clippingPlaneActive, this.clippingPlaneActive2];
 		this.clippingEmpty = Object.freeze([]);
 		this.clippingEnabled = false;
 		
@@ -411,12 +412,13 @@ export class Main extends EventDispatcher
 	}
 	
 	// Send in a value between -1 to 1
-	changeClippingPlanes(clipRatio)
+	changeClippingPlanes(clipRatio, clipRatio2)
 	{
 		var size = this.model.floorplan.getSize();
 		size.z = size.z + (size.z * 0.25);
 		size.z = size.z * 0.5;
 		this.clippingPlaneActive.constant = (this.model.floorplan.getSize().z * clipRatio);
+		this.clippingPlaneActive2.constant = (this.model.floorplan.getSize().z * clipRatio2);
 		
 		if(!this.clippingEnabled)
 		{
