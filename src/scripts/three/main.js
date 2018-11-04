@@ -457,7 +457,7 @@ export class Main extends EventDispatcher
 			this.controller.changeCamera(this.camera);
 			this.controls.needsUpdate = true;
 			this.controls.update();
-			this.render();
+			this.render(true);
 			return;
 		}
 		
