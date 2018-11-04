@@ -137,7 +137,7 @@ export class Item extends Mesh
 		this.resized();
 		if(this.bhelper)
 		{
-			this.bhelper.update();
+			this.bhelper.update(this);
 		}
 		this.scene.needsUpdate = true;
 		
