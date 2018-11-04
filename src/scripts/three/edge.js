@@ -205,7 +205,7 @@ export class Edge extends EventDispatcher
 		// exterior plane for real exterior walls
 		//If the walls have corners that have more than one room attached
 		//Then there is no need to construct an exterior wall
-		if(this.edge.wall.start.getAttachedRooms().length ==1 || this.edge.wall.end.getAttachedRooms().length == 1)
+		if(this.edge.wall.start.getAttachedRooms().length < 2 || this.edge.wall.end.getAttachedRooms().length < 2)
 		{
 			this.planes.push(this.makeWall(this.edge.exteriorStart(), this.edge.exteriorEnd(), this.edge.exteriorTransform, this.edge.invExteriorTransform, fillerMaterial));
 		}
@@ -215,7 +215,7 @@ export class Edge extends EventDispatcher
 		// put into basePlanes since this is always visible
 		this.basePlanes.push(this.buildFiller(this.edge, 0, BackSide, this.baseColor));
 		
-		if(this.edge.wall.start.getAttachedRooms().length ==1 || this.edge.wall.end.getAttachedRooms().length == 1)
+		if(this.edge.wall.start.getAttachedRooms().length < 2 || this.edge.wall.end.getAttachedRooms().length < 2)
 		{
 			// top
 			this.planes.push(this.buildFiller(this.edge, this.wall.height, DoubleSide, this.fillerColor));

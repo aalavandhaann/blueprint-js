@@ -124,7 +124,7 @@ export class Main extends EventDispatcher
 
 		scope.domElement = scope.element.get(0);
 		
-		scope.fpscamera = new PerspectiveCamera(75, 1, 1, 10000 );
+		scope.fpscamera = new PerspectiveCamera(60, 1, 1, 10000 );
 		scope.perspectivecamera = new PerspectiveCamera(45, 10, scope.cameraNear, scope.cameraFar);
 		scope.orthocamera = new OrthographicCamera(orthoWidth / -orthoScale, orthoWidth /orthoScale, orthoHeight /orthoScale, orthoHeight / -orthoScale, scope.cameraNear, scope.cameraFar);
 		
@@ -147,6 +147,7 @@ export class Main extends EventDispatcher
 // scope.controls.maxZoom = 3500/ orthoWidth;
 		
 		scope.fpscontrols = new PointerLockControls(scope.fpscamera);
+		scope.fpscontrols.characterHeight = 160;
 		
 		this.scene.add(scope.fpscontrols.getObject());
 // this.fpscamera.position.set(0, 125, 0);
@@ -487,6 +488,10 @@ export class Main extends EventDispatcher
 			this.skybox.toggleEnvironment(false);
 			this.fpscontrols.unlock();
 		}
+		
+		this.model.switchWireframe(false);
+		this.floorplan.switchWireframe(false);
+		this.render(true);
 	}
 	
 	shouldRender() 
