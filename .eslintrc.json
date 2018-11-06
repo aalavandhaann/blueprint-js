@@ -10,8 +10,13 @@
     "rules": {
     	"no-console": "off",
         "indent": [
-            "error",
+            "off",
             "tab"
+        ],
+        "no-mixed-spaces-and-tabs": 
+        [
+            0, 
+            "smart-tabs"
         ],
         "linebreak-style": [
             "error",
@@ -24,6 +29,6 @@
         "semi": [
             "error",
             "always"
-        ]
+        ]       
     }
 }

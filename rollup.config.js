@@ -1,60 +1,42 @@
-// Rollup plugins
 import babel from 'rollup-plugin-babel';
-import eslint from 'rollup-plugin-eslint';
 import resolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
-import replace from 'rollup-plugin-replace';
+import eslint from 'rollup-plugin-eslint';
 import uglify from 'rollup-plugin-uglify';
+import replace from 'rollup-plugin-replace';
 import postcss from 'rollup-plugin-postcss';
-
-// PostCSS plugins
-import simplevars from 'postcss-simple-vars';
-import nested from 'postcss-nested';
-import cssnext from 'postcss-cssnext';
+import serve from 'rollup-plugin-serve'
 import cssnano from 'cssnano';
+import commonjs from 'rollup-plugin-commonjs'
 
-import serve from 'rollup-plugin-serve';
-//The tutorial has some attributes for below export default in depreciation. Use the output attribute for file out and sourceMap
+var isProduction = process.env.NODE_ENV === 'production';
+var cache;
+
 export default {
-  input: 'src/scripts/blueprint.js',
+  input: 'src/scripts/blueprint.js',  
+  output:{name: 'BP3DJS',file: 'build/js/bp3djs.min.js',format: 'iife',sourceMap: true,},
+  cache: cache,
+  treeshake: true,
   plugins: [
-    postcss({
-      plugins: [
-        simplevars(),
-        nested(),
-        cssnext({ warnForDuplicates: false, }),
-        cssnano()        
-      ],
-      extensions: [ '.css' ],
-    }),
-    resolve({
-      jsnext: true,
-      main: true,
-      browser: true,
-    }),
-    commonjs(),
-    eslint({
-      exclude: [
-        'src/styles/**',
+      (!isProduction && serve('build')),
+      resolve({jsnext: true,main: true,browser: true,}),
+      babel({exclude: ['node_modules/**', 'src/styles/**']}),
+      eslint({exclude: ['src/styles/**',]}),
+      commonjs({
+      include: [
+        'node_modules/jquery/**',
+        'node_modules/es6-enum/**', 
+        'node_modules/three/**',
+        'node_modules/three-gltf-loader/**',
       ]
     }),
-    babel({
-      exclude: 'node_modules/**',
-    }),
-    replace({
-      exclude: 'node_modules/**',
-      ENV: JSON.stringify(process.env.NODE_ENV || 'development'),
-    }),
-    (process.env.NODE_ENV === 'production' && uglify()),
-  ],
-  output:
-	  {
-		  name: 'BP3DJS',
-		  file: 'build/js/bp3djs.min.js',
-		  format: 'iife',
-//		  sourceMap: 'inline',
-	  }
+      postcss({extensions: [ '.css' ],plugins: [cssnano()]}),
+      replace({exclude: 'node_modules/**',  ENV: JSON.stringify(process.env.NODE_ENV || 'development')}), (isProduction && uglify()),
+  ]
 };
 
-//Use command "NODE_ENV=production rollup -c" to produce the minified and uglified version of the code
-//Otherwise just use "rollup -c" to produce the library for development environment
+//~ include: [
+        //~ 'node_modules/jquery/**',
+        //~ 'node_modules/es6-enum/**', 
+        //~ 'node_modules/three/**',
+        //~ 'node_modules/three-gltf-loader/**',        
+      //~ ],

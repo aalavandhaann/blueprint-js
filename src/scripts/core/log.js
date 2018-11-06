@@ -27,7 +27,6 @@ export function log(context, level, message)
 	{
 		return;
 	}
-
 	var tPrefix = '';
 	switch (level) 
 	{

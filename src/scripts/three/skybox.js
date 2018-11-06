@@ -1,4 +1,5 @@
-import {EventDispatcher, PlaneGeometry, SphereGeometry, MeshBasicMaterial, ShaderMaterial, Mesh, TextureLoader, Color, DoubleSide, AxesHelper} from 'three';
+import {EventDispatcher, PlaneGeometry, SphereGeometry, MeshBasicMaterial, ShaderMaterial, Mesh, TextureLoader, Color, DoubleSide} from 'three';
+//import {AxesHelper} from 'three';
 
 export class Skybox extends EventDispatcher
 {
@@ -46,8 +47,8 @@ export class Skybox extends EventDispatcher
 		this.ground.position.y = -1;
 		this.scene.add(this.ground);
 		
-		var axesHelper = new AxesHelper( 100 );
-		this.scene.add( axesHelper );
+//		var axesHelper = new AxesHelper( 100 );
+//		this.scene.add( axesHelper );
 		
 		this.init();
 	}

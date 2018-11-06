@@ -154,7 +154,6 @@ export class Utils
 			{
 				tSecondCorner = firstCorners[tI + 1];
 			}
-
 			if (Utils.linePolygonIntersect(tFirstCorner.x, tFirstCorner.y,tSecondCorner.x, tSecondCorner.y, secondCorners)) 
 			{
 				return true;
