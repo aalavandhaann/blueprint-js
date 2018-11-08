@@ -27,6 +27,7 @@ export default {
         'node_modules/es6-enum/**', 
         'node_modules/three/**',
         'node_modules/three-gltf-loader/**',
+        'node_modules/three-obj-loader/**',
       ]
     }),
       postcss({extensions: [ '.css' ],plugins: [cssnano()]}),

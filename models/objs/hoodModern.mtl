@@ -1,0 +1,12 @@
+# Created by Kenney (www.kenney.nl) 
+
+newmtl metalMedium
+Ka 0.000000 0.000000 0.000000 
+Kd 0.3686275 0.4666667 0.4666667 
+Ks 0.330000 0.330000 0.330000 
+
+newmtl _defaultMat
+Ka 0.000000 0.000000 0.000000 
+Kd 1 1 1 
+Ks 0.330000 0.330000 0.330000 
+

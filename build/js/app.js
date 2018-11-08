@@ -209,6 +209,7 @@ var ItemProperties = function()
 	this.width = 10;
 	this.height = 10;
 	this.depth = 10;
+	this.color = '#00FF00';
 	this.fixed = false;
 	this.currentItem = null;
 	this.guiControllers = null;
@@ -229,9 +230,9 @@ var ItemProperties = function()
 			this.width = BP3DJS.Dimensioning.cmToMeasureRaw(item.getWidth());
 			this.height = BP3DJS.Dimensioning.cmToMeasureRaw(item.getHeight());
 			this.depth = BP3DJS.Dimensioning.cmToMeasureRaw(item.getDepth());
-			
+			this.color = item.getMaterialColor();
 			this.fixed = item.fixed;
-			console.log('UPDATE GUI CONTROLLERS ', this.guiControllers.length);
+			console.log('UPDATE GUI CONTROLLERS ', this.guiControllers.length, this.color);
 			for (var i in this.guiControllers) // Iterate over gui controllers to update the values
 			{
 				this.guiControllers[i].updateDisplay();
@@ -249,8 +250,9 @@ var ItemProperties = function()
 		{
 			var h = BP3DJS.Dimensioning.cmFromMeasureRaw(this.height);
 			var w = BP3DJS.Dimensioning.cmFromMeasureRaw(this.width);
-			var d = BP3DJS.Dimensioning.cmFromMeasureRaw(this.depth);
+			var d = BP3DJS.Dimensioning.cmFromMeasureRaw(this.depth);			
 			this.currentItem.resize(h,w,d);
+			this.currentItem.setMaterialColor(this.color);
 		}
 	}
 	
@@ -394,6 +396,7 @@ function getItemPropertiesFolder(gui, anItem)
 	var wcontrol = f.add(anItem, 'width', 0.1, 1000.1);
 	var hcontrol = f.add(anItem, 'height', 0.1, 1000.1);
 	var dcontrol = f.add(anItem, 'depth', 0.1, 1000.1);
+	var ccontrol = f.addColor(anItem, 'color');
 	var lockcontrol = f.add(anItem, 'fixed').name('Locked in place');
 	var deleteItemControl = f.add(anItem, 'deleteItem').name('Delete Item');
 	
@@ -408,9 +411,10 @@ function getItemPropertiesFolder(gui, anItem)
 	wcontrol.onChange(changed);
 	hcontrol.onChange(changed);
 	dcontrol.onChange(changed);
+	ccontrol.onChange(changed);
 	lockcontrol.onChange(lockChanged);	
 	
-	anItem.setGUIControllers([inamecontrol, wcontrol, hcontrol, dcontrol, lockcontrol, deleteItemControl]);
+	anItem.setGUIControllers([inamecontrol, wcontrol, hcontrol, dcontrol, ccontrol, lockcontrol, deleteItemControl]);
 	
 	return f;
 }

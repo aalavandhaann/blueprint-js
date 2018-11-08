@@ -1,20 +1,30 @@
 import {Mesh, Matrix4, Vector2, Vector3, BoxHelper, Box3, MeshBasicMaterial, AdditiveBlending} from 'three';
+import {Color} from 'three';
 import {Utils} from '../core/utils.js';
 
 /**
- * An Item is an abstract entity for all things placed in the scene,
- * e.g. at walls or on the floor.
+ * An Item is an abstract entity for all things placed in the scene, e.g. at
+ * walls or on the floor.
  */
 export class Item extends Mesh
 {
-	/** Constructs an item. 
-	 * @param model TODO
-	 * @param metadata TODO
-	 * @param geometry TODO
-	 * @param material TODO
-	 * @param position TODO
-	 * @param rotation TODO
-	 * @param scale TODO 
+	/**
+	 * Constructs an item.
+	 * 
+	 * @param model
+	 *            TODO
+	 * @param metadata
+	 *            TODO
+	 * @param geometry
+	 *            TODO
+	 * @param material
+	 *            TODO
+	 * @param position
+	 *            TODO
+	 * @param rotation
+	 *            TODO
+	 * @param scale
+	 *            TODO
 	 */
 	constructor(model, metadata, geometry, material, position, rotation, scale) 
 	{
@@ -53,6 +63,10 @@ export class Item extends Mesh
 		this.scene = this.model.scene;
 		this.geometry = geometry;
 		this.material = material;
+		if(!this.material.color)
+		{
+			this.material.color = new Color('#FFFFFF');
+		}			
 		this.wirematerial = new MeshBasicMaterial({color: 0x000000, wireframe: true});
 
 		this.errorColor = 0xff0000;
@@ -78,8 +92,8 @@ export class Item extends Mesh
 		this.geometry.computeBoundingBox();
 		this.geometry.applyMatrix(new Matrix4().makeTranslation(- 0.5 * (this.geometry.boundingBox.max.x + this.geometry.boundingBox.min.x),- 0.5 * (this.geometry.boundingBox.max.y + this.geometry.boundingBox.min.y),- 0.5 * (this.geometry.boundingBox.max.z + this.geometry.boundingBox.min.z)));
 		this.geometry.computeBoundingBox();
-		this.halfSize = this.objectHalfSize();	
-
+		this.halfSize = this.objectHalfSize();
+		
 		if (rotation) 
 		{
 			this.rotation.y = rotation;
@@ -88,6 +102,13 @@ export class Item extends Mesh
 		if (scale != null) 
 		{
 			this.setScale(scale.x, scale.y, scale.z);
+		}
+		
+		//An ugly hack to increase the size of gltf models
+		if(this.halfSize.x < 1.0)
+		{
+			this.resize(this.getHeight()*100, this.getWidth()*100, this.getDepth()*100);
+			
 		}
 	}
 	
@@ -110,6 +131,17 @@ export class Item extends Mesh
 		var z = depth / this.getDepth();
 		this.setScale(x, y, z);
 	}
+	
+	getMaterialColor()
+	{
+		return '#'+this.material.color.getHexString();
+	}
+	
+	setMaterialColor(color)
+	{
+		this.material.color = new Color(color);
+		this.material.needsUpdate = true;
+	}
 
 	/** */
 	setScale(x, y, z) 
@@ -121,7 +153,7 @@ export class Item extends Mesh
 		this.resized();
 		if(this.bhelper)
 		{
-			this.bhelper.update(this);
+			this.bhelper.update();
 		}
 		this.scene.needsUpdate = true;
 		
@@ -287,15 +319,15 @@ export class Item extends Mesh
 	}
 
 	/**
-	 * Returns an array of planes to use other than the ground plane
-	 * for passing intersection to clickPressed and clickDragged
+	 * Returns an array of planes to use other than the ground plane for passing
+	 * intersection to clickPressed and clickDragged
 	 */
 	customIntersectionPlanes() 
 	{
 		return [];
 	}
 
-	/** 
+	/**
 	 * returns the 2d corners of the bounding polygon
 	 * 
 	 * offset is Vector3 (used for getting corners of object at a new position)
@@ -312,8 +344,8 @@ export class Item extends Mesh
 		var c4 = new Vector3(-halfSize.x, 0, halfSize.z);
 
 		var transform = new Matrix4();
-		//console.log(this.rotation.y);
-		transform.makeRotationY(this.rotation.y); //  + Math.PI/2)
+		// console.log(this.rotation.y);
+		transform.makeRotationY(this.rotation.y); // + Math.PI/2)
 
 		c1.applyMatrix4(transform);
 		c2.applyMatrix4(transform);
@@ -325,10 +357,10 @@ export class Item extends Mesh
 		c3.add(position);
 		c4.add(position);
 
-		//halfSize.applyMatrix4(transform);
+		// halfSize.applyMatrix4(transform);
 
-		//var min = position.clone().sub(halfSize);
-		//var max = position.clone().add(halfSize);
+		// var min = position.clone().sub(halfSize);
+		// var max = position.clone().add(halfSize);
 
 		var corners = [{ x: c1.x, y: c1.z },{ x: c2.x, y: c2.z },{ x: c3.x, y: c3.z },{ x: c4.x, y: c4.z }];
 		return corners;
