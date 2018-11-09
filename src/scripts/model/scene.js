@@ -132,12 +132,12 @@ export class Scene extends EventDispatcher
 	 * @param rotation The initial rotation around the y axis.
 	 * @param scale The initial scaling.
 	 * @param fixed True if fixed.
+	 * @param newItemDefinitions - Object with position and 'edge' attribute if it is a wall item
 	 */
-	addItem(itemType, fileName, metadata, position, rotation, scale, fixed, newItem) 
+	addItem(itemType, fileName, metadata, position, rotation, scale, fixed, newItemDefinitions) 
 	{
 		itemType = itemType || 1;
-		var scope = this;		
-		
+		var scope = this;
 		var loaderCallback = function (geometry, materials) 
 		{
 //			var item = new (Factory.getClass(itemType))(scope.model, metadata, geometry, new MeshFaceMaterial(materials), position, rotation, scale);
@@ -147,9 +147,10 @@ export class Scene extends EventDispatcher
 			scope.add(item);
 			item.initObject();
 			scope.dispatchEvent({type:EVENT_ITEM_LOADED, item: item});
-			if(newItem)
+			if(newItemDefinitions)
 			{
-				item.moveToPosition(newItem);
+				item.moveToPosition(newItemDefinitions.position, newItemDefinitions.edge);
+				item.placeInRoom();
 			}
 		};
 		var gltfCallback = function(gltfModel)
@@ -159,6 +160,24 @@ export class Scene extends EventDispatcher
 			gltfModel.scene.traverse(function (child) {
 				if(child.type == 'Mesh')
 				{
+					if(child.geometry.isBufferGeometry)
+					{
+						var tGeometry = new Geometry().fromBufferGeometry(child.geometry);
+						tGeometry.faces.forEach((face)=>{
+							face.materialIndex = face.materialIndex + materials.length;
+						});
+						child.updateMatrix();						
+						newGeometry.merge(tGeometry, child.matrix);
+					}
+					else
+					{
+						child.geometry.faces.forEach((face)=>{
+							face.materialIndex = face.materialIndex + materials.length;
+						});
+						child.updateMatrix();
+						newGeometry.mergeMesh(child);
+					}
+					
 					if(child.material.length)
 					{
 						materials = materials.concat(child.material);
@@ -166,17 +185,6 @@ export class Scene extends EventDispatcher
 					else
 					{
 						materials.push(child.material);
-					}
-					if(child.geometry.isBufferGeometry)
-					{
-						var tGeometry = new Geometry().fromBufferGeometry(child.geometry);
-						child.updateMatrix();
-						newGeometry.merge(tGeometry, child.matrix);
-					}
-					else
-					{
-						child.updateMatrix();
-						newGeometry.mergeMesh(child);
 					}
 					
 				}

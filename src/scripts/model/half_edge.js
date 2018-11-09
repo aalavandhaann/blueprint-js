@@ -1,4 +1,4 @@
-import {EventDispatcher, Vector2, Vector3, Matrix4, Face3, Mesh, Geometry, MeshBasicMaterial} from 'three';
+import {EventDispatcher, Vector2, Vector3, Matrix4, Face3, Mesh, Geometry, MeshBasicMaterial, Box3} from 'three';
 import {EVENT_REDRAW} from '../core/events.js';
 import {Utils} from '../core/utils.js';
 
@@ -21,6 +21,10 @@ export class HalfEdge extends EventDispatcher
 	constructor(room, wall, front)
 	{
 		super();
+		
+		this.min = null;
+		this.max = null;
+		this.center = null;
 		
 		this.room = room;
 		this.wall = wall;
@@ -125,6 +129,12 @@ export class HalfEdge extends EventDispatcher
 
 		this.computeTransforms(this.interiorTransform, this.invInteriorTransform, this.interiorStart(), this.interiorEnd());
 		this.computeTransforms(this.exteriorTransform, this.invExteriorTransform, this.exteriorStart(), this.exteriorEnd());
+		
+		var b3 = new Box3();
+		b3.setFromObject(this.plane);
+		this.min = b3.min.clone();
+		this.max = b3.max.clone();
+		this.center = this.max.clone().sub(this.min).multiplyScalar(0.5).add(this.min);
 	}
 
 	interiorDistance() 

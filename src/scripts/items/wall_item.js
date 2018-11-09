@@ -133,7 +133,8 @@ export class WallItem extends Item
 	/** */
 	moveToPosition(vec3, intersection) 
 	{
-		this.changeWallEdge(intersection.object.edge);
+		var intersectionEdge = (intersection) ? (intersection.object) ? intersection.object.edge: intersection : this.closestWallEdge(); 
+		this.changeWallEdge(intersectionEdge);
 		this.boundMove(vec3);
 //		this.position.copy(vec3);
 		super.moveToPosition(vec3);

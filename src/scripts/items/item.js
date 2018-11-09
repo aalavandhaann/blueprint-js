@@ -102,6 +102,8 @@ export class Item extends Mesh
 		{
 			this.setScale(scale.x, scale.y, scale.z);
 		}
+		
+		
 	}
 	
 	switchWireframe(flag)
@@ -124,23 +126,29 @@ export class Item extends Mesh
 		this.setScale(x, y, z);
 	}
 	
-	getMaterialColor()
+	getMaterial()
 	{
+		return this.material;
+	}
+	
+	getMaterialColor(index)
+	{
+		index = (index)? index : 0;
 		if(this.material.length)
 		{			
-			return '#'+this.material[0].color.getHexString();
+			return '#'+this.material[index].color.getHexString();
 		}	
 		return '#'+this.material.color.getHexString();
 	}
 	
-	setMaterialColor(color)
+	//Always send an hexadecimal string value for color - ex. '#FFFFFF'
+	setMaterialColor(color, index)
 	{
 		var c = new Color(color);
 		if(this.material.length)
 		{
-			this.material.forEach((material) => {
-				material.color = c;
-			});
+			index = (index) ? index : 0;
+			this.material[index].color = c;
 			return;
 		}		
 		this.material.color = c;
@@ -287,7 +295,7 @@ export class Item extends Mesh
 	{
 		if (intersection) 
 		{
-			this.moveToPosition(intersection.point.sub(this.dragOffset),intersection);
+			this.moveToPosition(intersection.point.sub(this.dragOffset), intersection);
 		}
 	}
 

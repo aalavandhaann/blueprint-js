@@ -203,17 +203,19 @@ var CameraProperties = function()
 	}
 }
 
-var ItemProperties = function()
+var ItemProperties = function(gui)
 {
 	this.name = 'an item';
 	this.width = 10;
 	this.height = 10;
 	this.depth = 10;
-	this.color = '#00FF00';
 	this.fixed = false;
 	this.currentItem = null;
 	this.guiControllers = null;
-	this.gui = null;
+	this.gui = gui;
+	this.materialsfolder = null;
+	this.materials = {};
+	this.totalmaterials = -1;
 	
 	this.setGUIControllers = function(guiControls)
 	{
@@ -223,28 +225,47 @@ var ItemProperties = function()
 	this.setItem = function(item)
 	{
 		this.currentItem = item;
+		if(this.materialsfolder)
+		{
+			this.gui.removeFolder(this.materialsfolder.name);
+		}
 		if(item)
 		{
-			this.name = item.metadata.itemName;
-			
+			var scope = this;
+			var material = item.material;
+			this.name = item.metadata.itemName;			
 			this.width = BP3DJS.Dimensioning.cmToMeasureRaw(item.getWidth());
 			this.height = BP3DJS.Dimensioning.cmToMeasureRaw(item.getHeight());
-			this.depth = BP3DJS.Dimensioning.cmToMeasureRaw(item.getDepth());
-			this.color = item.getMaterialColor();
+			this.depth = BP3DJS.Dimensioning.cmToMeasureRaw(item.getDepth());			
 			this.fixed = item.fixed;
-			console.log('UPDATE GUI CONTROLLERS ', this.guiControllers.length, this.color);
+			
 			for (var i in this.guiControllers) // Iterate over gui controllers to update the values
 			{
 				this.guiControllers[i].updateDisplay();
 		    }
 			
+			this.materialsfolder =  this.gui.addFolder('Materials');
+			this.materials = {};
+			if(material.length)
+			{
+				this.totalmaterials = material.length;
+				for (var i=0;i<material.length;i++)
+				{
+					this.materials['mat_'+i] = '#'+material[i].color.getHexString();
+					var ccontrol = this.materialsfolder.addColor(this.materials, 'mat_'+i).onChange(()=>{scope.dimensionsChanged()});
+				}
+				return;
+			}
+			this.totalmaterials = 1;
+			this.materials['mat_0'] = '#'+material.color.getHexString();
+			var ccontrol = this.materialsfolder.addColor(this.materials, 'mat_0').onChange(()=>{scope.dimensionsChanged()});
 			return;
 		}
 		this.name = 'None';
 		return;
 	}
 	
-	this.dimensionsChanged = function()
+	this.dimensionsChanged = function(matindex, matcolor)
 	{
 		if(this.currentItem)
 		{
@@ -252,7 +273,11 @@ var ItemProperties = function()
 			var w = BP3DJS.Dimensioning.cmFromMeasureRaw(this.width);
 			var d = BP3DJS.Dimensioning.cmFromMeasureRaw(this.depth);			
 			this.currentItem.resize(h,w,d);
-			this.currentItem.setMaterialColor(this.color);
+			
+			for (var i=0;i<this.totalmaterials;i++)
+			{
+				this.currentItem.setMaterialColor(this.materials['mat_'+i], i);
+			}
 		}
 	}
 	
@@ -372,7 +397,7 @@ function getCameraRangePropertiesFolder(gui, camerarange)
 	var ficontrol = f.add(camerarange, 'ratio', -1, 1).name("Range").step(0.01).onChange(function(){camerarange.change()});
 	var ficontrol2 = f.add(camerarange, 'ratio2', -1, 1).name("Range 2").step(0.01).onChange(function(){camerarange.change()});
 	var flockcontrol = f.add(camerarange, 'locked').name("Lock View").onChange(function(){camerarange.changeLock()});
-	var resetControl = f.add(camerarange, 'reset').name('Reset');	
+	var resetControl = f.add(camerarange, 'reset').name('Reset');
 	return f;
 	
 }
@@ -396,7 +421,6 @@ function getItemPropertiesFolder(gui, anItem)
 	var wcontrol = f.add(anItem, 'width', 0.1, 1000.1);
 	var hcontrol = f.add(anItem, 'height', 0.1, 1000.1);
 	var dcontrol = f.add(anItem, 'depth', 0.1, 1000.1);
-	var ccontrol = f.addColor(anItem, 'color');
 	var lockcontrol = f.add(anItem, 'fixed').name('Locked in place');
 	var deleteItemControl = f.add(anItem, 'deleteItem').name('Delete Item');
 	
@@ -411,10 +435,9 @@ function getItemPropertiesFolder(gui, anItem)
 	wcontrol.onChange(changed);
 	hcontrol.onChange(changed);
 	dcontrol.onChange(changed);
-	ccontrol.onChange(changed);
 	lockcontrol.onChange(lockChanged);	
 	
-	anItem.setGUIControllers([inamecontrol, wcontrol, hcontrol, dcontrol, ccontrol, lockcontrol, deleteItemControl]);
+	anItem.setGUIControllers([inamecontrol, wcontrol, hcontrol, dcontrol, lockcontrol, deleteItemControl]);
 	
 	return f;
 }
@@ -442,11 +465,11 @@ function getWallAndFloorPropertiesFolder(gui, aWall)
 
 function datGUI(three)
 {
+	gui = new dat.GUI();
 	aGlobal = new GlobalProperties();
 	aCameraRange = new CameraProperties();
-	anItem = new ItemProperties();
+	anItem = new ItemProperties(gui);
 	aWall = new WallProperties();
-	gui = new dat.GUI();
 	
 	aCameraRange.three = three;
 	
@@ -459,6 +482,17 @@ function datGUI(three)
 
 $(document).ready(function() 
 {
+	dat.GUI.prototype.removeFolder = function(name) 
+	{
+		  var folder = this.__folders[name];
+		  if (!folder) {
+		    return;
+		  }
+		  folder.close();
+		  this.__ul.removeChild(folder.domElement.parentNode);
+		  delete this.__folders[name];
+		  this.onResize();
+	}
 	// main setup
 	var opts = 
 	{
@@ -579,10 +613,17 @@ $(document).ready(function()
 	        
 	      }
 	      console.log(itemType, modelUrl, metadata);
-	      if(aWall.currentFloor)
+//	      console.log('WALL PROPERTIES ::: ', aWall.currentWall, aWall.currentWall.center);
+	      
+	      if([2,3,7,9].indexOf(metadata.itemType) != -1 && aWall.currentWall)
+    	  {
+	    	  var placeAt = aWall.currentWall.center.clone();
+	    	  blueprint3d.model.scene.addItem(itemType, modelUrl, metadata, null, null, null, false, {position: placeAt, edge: aWall.currentWall});
+    	  }
+	      else if(aWall.currentFloor)
     	  {
 	    	  var placeAt = aWall.currentFloor.center.clone();
-	    	  blueprint3d.model.scene.addItem(itemType, modelUrl, metadata, null, null, null, false, placeAt);
+	    	  blueprint3d.model.scene.addItem(itemType, modelUrl, metadata, null, null, null, false, {position: placeAt});
     	  }
 	      else
     	  {
