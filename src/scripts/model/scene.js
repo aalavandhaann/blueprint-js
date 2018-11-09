@@ -1,6 +1,7 @@
 import {EventDispatcher, JSONLoader, Color} from 'three';
+import {Geometry} from 'three';
 import GLTFLoader from 'three-gltf-loader';
-//import OBJLoader from 'three-obj-loader';
+import OBJLoader from '@calvinscofield/three-objloader';
 import {Scene as ThreeScene} from 'three';
 import {Utils} from '../core/utils.js';
 import {Factory} from '../items/factory.js';
@@ -34,7 +35,7 @@ export class Scene extends EventDispatcher
 		this.loader.setCrossOrigin('');
 		
 		this.gltfloader = new GLTFLoader();
-//		this.objloader = new OBJLoader();
+		this.objloader = new OBJLoader();
 		this.gltfloader.setCrossOrigin('');
 
 		this.itemLoadingCallbacks = null;
@@ -153,39 +154,68 @@ export class Scene extends EventDispatcher
 		};
 		var gltfCallback = function(gltfModel)
 		{
+			var materials = [];
+			var newGeometry = new Geometry();
 			gltfModel.scene.traverse(function (child) {
 				if(child.type == 'Mesh')
 				{
 					if(child.material.length)
 					{
-						loaderCallback(child.geometry, child.material[0]);
+						materials = materials.concat(child.material);
 					}					
 					else
 					{
-						loaderCallback(child.geometry, child.material);
+						materials.push(child.material);
 					}
+					if(child.geometry.isBufferGeometry)
+					{
+						var tGeometry = new Geometry().fromBufferGeometry(child.geometry);
+						child.updateMatrix();
+						newGeometry.merge(tGeometry, child.matrix);
+					}
+					else
+					{
+						child.updateMatrix();
+						newGeometry.mergeMesh(child);
+					}
+					
 				}
 			});
+			loaderCallback(newGeometry, materials);
 		};
 		
 		
-//		var objCallback = function(object)
-//		{
-//			object.traverse(function (child) 
-//			{
-//				if(child.type == 'Mesh')
-//				{
-//					if(child.material.length)
-//					{
-//						loaderCallback(child.geometry, child.material[0]);
-//					}					
-//					else
-//					{
-//						loaderCallback(child.geometry, child.material);
-//					}
-//				}
-//			});
-//		};
+		var objCallback = function(object)
+		{
+			var materials = [];
+			var newGeometry = new Geometry();
+			object.traverse(function (child) 
+			{
+				if(child.type == 'Mesh')
+				{
+					if(child.material.length)
+					{
+						materials = materials.concat(child.material);
+					}					
+					else
+					{
+						materials.push(child.material);
+					}
+					if(child.geometry.isBufferGeometry)
+					{
+						var tGeometry = new Geometry().fromBufferGeometry(child.geometry);
+						child.updateMatrix();
+						newGeometry.merge(tGeometry, child.matrix);
+					}
+					else
+					{
+						child.updateMatrix();
+						newGeometry.mergeMesh(child);
+					}
+				}
+			});
+			loaderCallback(newGeometry, materials);
+		};
 
 		this.dispatchEvent({type:EVENT_ITEM_LOADING});
 		if(!metadata.format)
@@ -196,9 +226,9 @@ export class Scene extends EventDispatcher
 		{
 			this.gltfloader.load(fileName, gltfCallback, null, null);
 		}	
-//		else if(metadata.format == 'obj')
-//		{
-//			this.objloader.load(fileName, objCallback, null, null);
-//		}
+		else if(metadata.format == 'obj')
+		{
+			this.objloader.load(fileName, objCallback, null, null);
+		}
 	}
 }

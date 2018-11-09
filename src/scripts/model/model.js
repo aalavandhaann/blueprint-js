@@ -57,7 +57,8 @@ export class Model extends EventDispatcher
 		for (var i = 0; i < objects.length; i++) 
 		{
 			var obj = objects[i];
-			items_arr[i] = {item_name: obj.metadata.itemName,item_type: obj.metadata.itemType,model_url: obj.metadata.modelUrl,xpos: obj.position.x,ypos: obj.position.y,zpos: obj.position.z,rotation: obj.rotation.y,scale_x: obj.scale.x,scale_y: obj.scale.y,scale_z: obj.scale.z,fixed: obj.fixed};
+//			items_arr[i] = {item_name: obj.metadata.itemName,item_type: obj.metadata.itemType,model_url: obj.metadata.modelUrl,xpos: obj.position.x,ypos: obj.position.y,zpos: obj.position.z,rotation: obj.rotation.y,scale_x: obj.scale.x,scale_y: obj.scale.y,scale_z: obj.scale.z,fixed: obj.fixed};
+			items_arr[i] = obj.getMetaData();
 		}
 
 		var room = {floorplan: (this.floorplan.saveFloorplan()),items: items_arr};

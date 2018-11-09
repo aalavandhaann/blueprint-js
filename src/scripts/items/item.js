@@ -33,7 +33,6 @@ export class Item extends Mesh
 		this.model = model;
 		this.metadata = metadata;
 		
-		
 		/** */
 		this.errorGlow = new Mesh();
 		/** */
@@ -103,13 +102,6 @@ export class Item extends Mesh
 		{
 			this.setScale(scale.x, scale.y, scale.z);
 		}
-		
-		//An ugly hack to increase the size of gltf models
-		if(this.halfSize.x < 1.0)
-		{
-			this.resize(this.getHeight()*100, this.getWidth()*100, this.getDepth()*100);
-			
-		}
 	}
 	
 	switchWireframe(flag)
@@ -134,13 +126,24 @@ export class Item extends Mesh
 	
 	getMaterialColor()
 	{
+		if(this.material.length)
+		{			
+			return '#'+this.material[0].color.getHexString();
+		}	
 		return '#'+this.material.color.getHexString();
 	}
 	
 	setMaterialColor(color)
 	{
-		this.material.color = new Color(color);
-		this.material.needsUpdate = true;
+		var c = new Color(color);
+		if(this.material.length)
+		{
+			this.material.forEach((material) => {
+				material.color = c;
+			});
+			return;
+		}		
+		this.material.color = c;
 	}
 
 	/** */
@@ -199,11 +202,18 @@ export class Item extends Mesh
 	initObject() 
 	{
 		this.placeInRoom();
+		// An ugly hack to increase the size of gltf models
+		if(this.halfSize.x < 1.0)
+		{
+			this.resize(this.getHeight()*300, this.getWidth()*300, this.getDepth()*300);
+			
+		}
 		this.bhelper = new BoxHelper(this);
 		this.scene.add(this.bhelper);
 		this.bhelper.visible = false;
 		// select and stuff
 		this.scene.needsUpdate = true;
+		
 	}
 
 	/** */
@@ -224,11 +234,13 @@ export class Item extends Mesh
 				this.material.forEach((material) => {
 					// TODO_Ekki emissive doesn't exist anymore?
 					material.emissive.setHex(hex);
+					this.material.emissive = new Color(hex);
 				});
 			}
 			else
 			{
 				this.material.emissive.setHex(hex);
+				this.material.emissive = new Color(hex);
 			}			
 		}
 		
@@ -414,5 +426,11 @@ export class Item extends Mesh
 		glow.rotation.copy(this.rotation);
 		glow.scale.copy(this.scale);
 		return glow;
+	}
+	
+	
+	getMetaData()
+	{
+		return {item_name: this.metadata.itemName, item_type: this.metadata.itemType, model_url: this.metadata.modelUrl, xpos: this.position.x,ypos: this.position.y,zpos: this.position.z,rotation: this.rotation.y,scale_x: this.scale.x,scale_y: this.scale.y,scale_z: this.scale.z,fixed: this.fixed}
 	}
 }

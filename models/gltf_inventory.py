@@ -7,6 +7,8 @@ import matplotlib.cm as cm;
 from matplotlib.cm import get_cmap;
 import matplotlib.colors as clrs;
 
+from PIL import Image, ImageOps;
+
 def getFilesFromDirectory(directorypath, extension='.obj', *, exclusions=[], recursive=False):
     found_files = [];
     for root, directories, files in os.walk(os.path.abspath(directorypath)):
@@ -97,12 +99,45 @@ def createItemsJSON(gltf_files, thumbnails, objfiles=None):
     createJSONJS(json_gltf_items, export_path_gltf_json);
     createJSONJS(json_obj_items, export_path_obj_json, mformat='obj');
 
+
+def resizeImages(imagefilesmap):
+    thumbnails_resized = createDir(os.path.abspath('./thumbnails_resized/'));
+    
+    ow, oh = 300, 225;
+    cx, cy = int(ow*0.5), int(oh*0.5);
+    white = (255, 255, 255);
+    need_size = (ow, oh);
+    
+    for im_map in imagefilesmap:
+        im_path = im_map['filepath'];
+        im_purename = im_map['purename'];        
+        in_img = Image.open(im_path);
+        w, h = in_img.size;
+        rw, rh = w, h;
+        wbyhratio = float(w) / float(h);
+        if(w > h):
+            rw, rh = ow, ow / wbyhratio;
+        if(h > w):
+            rw, rh = oh * wbyhratio, oh;
+        in_img = in_img.resize((int(rw), int(rh)), Image.ANTIALIAS);
+        
+        w, h = in_img.size;
+        out_img = Image.new("RGBA", (ow, oh), white);
+        out_path = os.path.join(thumbnails_resized, '%s.png'%(im_purename));
+        l, t = int(cx - (w*0.5)), int(cy - (h * 0.5));
+        out_img.paste(in_img, (l, t));
+        out_img.save(out_path);
+    
+    input_thumbnails = os.path.abspath('./thumbnails');
+    thumbail_resized_files =  getFilesFromDirectory(thumbnails_resized, extension='.png');
+    return thumbail_resized_files;
+    
 in_format = 'gltf';
 in_format_extension = 'glb';
 
 input_gltf_meshes = os.path.abspath('./%s'%(in_format));
 input_obj_meshes = os.path.abspath('./%s'%('objs'));
-input_thumbnails = os.path.abspath('./thumbnails');
+input_original_thumbnails = os.path.abspath('./thumbnails');
 
 export_path_root = os.path.abspath('../build/');
 
@@ -115,7 +150,14 @@ export_dir_thumbnails = createDir(os.path.abspath('../build/models/thumbnails_ne
 export_dir_obj = createDir(os.path.abspath('../build/models/%s/'%('obj')));
 
 gltf_mesh_files = getFilesFromDirectory(input_gltf_meshes, extension='.%s'%(in_format_extension), recursive=True);
+gltf_mesh_files = sorted(gltf_mesh_files, key=lambda k: k['purename']);
+
 obj_mesh_files = getFilesFromDirectory(input_obj_meshes, extension='.obj', recursive=True);
+
+input_thumbnails = os.path.abspath('./thumbnails_resized');
 thumbail_files =  getFilesFromDirectory(input_thumbnails, extension='.png');
 
-createItemsJSON(gltf_mesh_files, thumbail_files, obj_mesh_files);
+if __name__ == "__main__":
+    resizeImages(getFilesFromDirectory(input_original_thumbnails, extension='.png'));
+    createItemsJSON(gltf_mesh_files, thumbail_files, obj_mesh_files);
+    
