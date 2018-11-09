@@ -93,6 +93,8 @@ export class Item extends Mesh
 		this.geometry.computeBoundingBox();
 		this.halfSize = this.objectHalfSize();
 		
+		this.resizeProportionally = true;
+		
 		if (rotation) 
 		{
 			this.rotation.y = rotation;
@@ -103,7 +105,23 @@ export class Item extends Mesh
 			this.setScale(scale.x, scale.y, scale.z);
 		}
 		
-		
+		if(this.metadata.materialColors)
+		{
+			if(this.metadata.materialColors.length)
+			{
+				if(this.material.length)
+				{
+					for (var i=0;i<this.metadata.materialColors.length;i++)
+					{
+						this.material[i].color = new Color(this.metadata.materialColors[i]);
+					}
+				}
+				else
+				{
+					this.material.color = new Color(this.metadata.materialColors[0]);
+				}
+			}
+		}
 	}
 	
 	switchWireframe(flag)
@@ -123,6 +141,23 @@ export class Item extends Mesh
 		var x = width / this.getWidth();
 		var y = height / this.getHeight();
 		var z = depth / this.getDepth();
+		
+		if(this.resizeProportionally)
+		{			
+			if(Math.abs(width - this.getWidth()) > 0.1)
+			{
+				this.setScale(x, x, x);
+			}
+			else if(Math.abs(height - this.getHeight()) > 0.1)
+			{
+				this.setScale(y, y, y);
+			}
+			else
+			{
+				this.setScale(z, z, z);
+			}
+			return;
+		}
 		this.setScale(x, y, z);
 	}
 	
@@ -141,7 +176,7 @@ export class Item extends Mesh
 		return '#'+this.material.color.getHexString();
 	}
 	
-	//Always send an hexadecimal string value for color - ex. '#FFFFFF'
+	// Always send an hexadecimal string value for color - ex. '#FFFFFF'
 	setMaterialColor(color, index)
 	{
 		var c = new Color(color);
@@ -168,6 +203,16 @@ export class Item extends Mesh
 		}
 		this.scene.needsUpdate = true;
 		
+	}
+	
+	getProportionalResize()
+	{
+		return this.resizeProportionally;
+	}
+	
+	setProportionalResize(flag)
+	{
+		this.resizeProportionally = flag;
 	}
 
 	/** */
@@ -439,6 +484,23 @@ export class Item extends Mesh
 	
 	getMetaData()
 	{
-		return {item_name: this.metadata.itemName, item_type: this.metadata.itemType, model_url: this.metadata.modelUrl, xpos: this.position.x,ypos: this.position.y,zpos: this.position.z,rotation: this.rotation.y,scale_x: this.scale.x,scale_y: this.scale.y,scale_z: this.scale.z,fixed: this.fixed}
+		var matattribs = [];
+		if(this.material.length)
+		{
+			this.material.forEach((mat)=>{
+				matattribs.push('#'+mat.color.getHexString());
+			});
+			
+		}
+		else
+		{
+			matattribs.push('#'+this.material.color.getHexString());
+		}
+		return {item_name: this.metadata.itemName, 
+			item_type: this.metadata.itemType, model_url: this.metadata.modelUrl, 
+			xpos: this.position.x, ypos: this.position.y, zpos: this.position.z,
+			rotation: this.rotation.y, 
+			scale_x: this.scale.x, scale_y: this.scale.y,scale_z: this.scale.z,fixed: this.fixed, 
+			material_colors: matattribs};
 	}
 }

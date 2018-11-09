@@ -216,6 +216,8 @@ var ItemProperties = function(gui)
 	this.materialsfolder = null;
 	this.materials = {};
 	this.totalmaterials = -1;
+	this.proportionalsize = false;
+	this.changingdimension = 'w';
 	
 	this.setGUIControllers = function(guiControls)
 	{
@@ -238,6 +240,7 @@ var ItemProperties = function(gui)
 			this.height = BP3DJS.Dimensioning.cmToMeasureRaw(item.getHeight());
 			this.depth = BP3DJS.Dimensioning.cmToMeasureRaw(item.getDepth());			
 			this.fixed = item.fixed;
+			this.proportionalsize = item.getProportionalResize();
 			
 			for (var i in this.guiControllers) // Iterate over gui controllers to update the values
 			{
@@ -252,33 +255,69 @@ var ItemProperties = function(gui)
 				for (var i=0;i<material.length;i++)
 				{
 					this.materials['mat_'+i] = '#'+material[i].color.getHexString();
-					var ccontrol = this.materialsfolder.addColor(this.materials, 'mat_'+i).onChange(()=>{scope.dimensionsChanged()});
+					var matname = (material[i].name) ? material[i].name : 'Material '+(i+1);
+					var ccontrol = this.materialsfolder.addColor(this.materials, 'mat_'+i).name(matname).onChange(()=>{scope.dimensionsChanged()});
 				}
 				return;
 			}
 			this.totalmaterials = 1;
+			var matname = (material.name) ? material.name : 'Material 1';
 			this.materials['mat_0'] = '#'+material.color.getHexString();
-			var ccontrol = this.materialsfolder.addColor(this.materials, 'mat_0').onChange(()=>{scope.dimensionsChanged()});
+			var ccontrol = this.materialsfolder.addColor(this.materials, 'mat_0').name(matname).onChange(()=>{scope.dimensionsChanged()});
 			return;
 		}
 		this.name = 'None';
 		return;
 	}
 	
-	this.dimensionsChanged = function(matindex, matcolor)
+	this.dimensionsChanged = function()
 	{
 		if(this.currentItem)
 		{
+			var item = this.currentItem;
+			
+			var ow = BP3DJS.Dimensioning.cmToMeasureRaw(item.getWidth());
+			var oh = BP3DJS.Dimensioning.cmToMeasureRaw(item.getHeight());
+			var od = BP3DJS.Dimensioning.cmToMeasureRaw(item.getDepth());
+			
 			var h = BP3DJS.Dimensioning.cmFromMeasureRaw(this.height);
 			var w = BP3DJS.Dimensioning.cmFromMeasureRaw(this.width);
-			var d = BP3DJS.Dimensioning.cmFromMeasureRaw(this.depth);			
+			var d = BP3DJS.Dimensioning.cmFromMeasureRaw(this.depth);		
+			
 			this.currentItem.resize(h,w,d);
 			
+			if( w != ow)
+			{
+				this.height = BP3DJS.Dimensioning.cmToMeasureRaw(item.getHeight());
+				this.depth = BP3DJS.Dimensioning.cmToMeasureRaw(item.getDepth());
+			}
+			
+			if( h != oh)
+			{
+				this.width = BP3DJS.Dimensioning.cmToMeasureRaw(item.getWidth());
+				this.depth = BP3DJS.Dimensioning.cmToMeasureRaw(item.getDepth());
+			}
+			
+			if( d != od)
+			{
+				this.width = BP3DJS.Dimensioning.cmToMeasureRaw(item.getWidth());
+				this.height = BP3DJS.Dimensioning.cmToMeasureRaw(item.getHeight());
+			}		
 			for (var i=0;i<this.totalmaterials;i++)
 			{
 				this.currentItem.setMaterialColor(this.materials['mat_'+i], i);
 			}
+			
+			this.guiControllers.forEach((control)=>{control.updateDisplay()}); // Iterate over gui controllers to update the values
 		}
+	}
+	
+	this.proportionFlagChange = function()
+	{
+		if(this.currentItem)
+		{
+			this.currentItem.setProportionalResize(this.proportionalsize);
+		}	
 	}
 	
 	this.lockFlagChanged = function()
@@ -421,6 +460,7 @@ function getItemPropertiesFolder(gui, anItem)
 	var wcontrol = f.add(anItem, 'width', 0.1, 1000.1);
 	var hcontrol = f.add(anItem, 'height', 0.1, 1000.1);
 	var dcontrol = f.add(anItem, 'depth', 0.1, 1000.1);
+	var pcontrol = f.add(anItem, 'proportionalsize').name('Maintain Size Ratio');
 	var lockcontrol = f.add(anItem, 'fixed').name('Locked in place');
 	var deleteItemControl = f.add(anItem, 'deleteItem').name('Delete Item');
 	
@@ -428,16 +468,25 @@ function getItemPropertiesFolder(gui, anItem)
 	{
 		anItem.dimensionsChanged();
 	}	
+	
 	function lockChanged()
 	{
 		anItem.lockFlagChanged();
 	}	
+	
+	function proportionFlagChanged()
+	{
+		anItem.proportionFlagChange();
+	}
+	
 	wcontrol.onChange(changed);
 	hcontrol.onChange(changed);
 	dcontrol.onChange(changed);
-	lockcontrol.onChange(lockChanged);	
+	pcontrol.onChange(proportionFlagChanged);
+	lockcontrol.onChange(lockChanged);
 	
-	anItem.setGUIControllers([inamecontrol, wcontrol, hcontrol, dcontrol, lockcontrol, deleteItemControl]);
+	
+	anItem.setGUIControllers([inamecontrol, wcontrol, hcontrol, dcontrol, pcontrol, lockcontrol, deleteItemControl]);
 	
 	return f;
 }

@@ -157,6 +157,7 @@ export class Scene extends EventDispatcher
 		{
 			var materials = [];
 			var newGeometry = new Geometry();
+			
 			gltfModel.scene.traverse(function (child) {
 				if(child.type == 'Mesh')
 				{
