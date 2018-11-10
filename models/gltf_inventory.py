@@ -9,13 +9,14 @@ import matplotlib.colors as clrs;
 
 from PIL import Image, ImageOps;
 
-def getFilesFromDirectory(directorypath, extension='.obj', *, exclusions=[], recursive=False):
+def getFilesFromDirectory(directorypath, extension=['.obj'], *, exclusions=[], recursive=False):
     found_files = [];
     for root, directories, files in os.walk(os.path.abspath(directorypath)):
         for f in files:
-            if(f.endswith(extension)):
+            if(f.endswith(tuple(extension))):
+                real_ext = [ext for ext in extension if f.endswith(ext)][0];
 #                 Purename is the name without the file extension
-                purename = f[:f.index(extension)];
+                purename = f[:f.index(real_ext)];
                 if(not (f in exclusions or purename in exclusions)):
                     found_files.append({'filename':f, 'purename':purename, 'filepath':os.path.join(root, f)});
         if(not recursive):
@@ -65,7 +66,6 @@ def createJSONJS(jsonitems, export_to_file, mformat='gltf'):
 
 def createItemsJSON(gltf_files, thumbnails, objfiles=None):    
     json_gltf_items = [];
-    json_obj_items = [];
     
     for gltf_map in gltf_files:
         
@@ -87,17 +87,8 @@ def createItemsJSON(gltf_files, thumbnails, objfiles=None):
         
         json_gltf_items.append((gltf_name, gltf_type, export_gltf_r_path, export_thumb_r_path));
         
-        if(objfiles):
-            obj_map = findEquivalent(gltf_name, objfiles);
-            obj_path = obj_map['filepath'];
-            export_obj_path = os.path.join(export_dir_obj, obj_map['filename']);
-            export_obj_r_path = os.path.relpath(export_obj_path, start=export_path_root);
-            
-            copyfile(obj_path, export_obj_path);            
-            json_obj_items.append((gltf_name, gltf_type, export_obj_r_path, export_thumb_r_path));
     
     createJSONJS(json_gltf_items, export_path_gltf_json);
-    createJSONJS(json_obj_items, export_path_obj_json, mformat='obj');
 
 
 def resizeImages(imagefilesmap):
@@ -136,28 +127,20 @@ in_format = 'gltf';
 in_format_extension = 'glb';
 
 input_gltf_meshes = os.path.abspath('./%s'%(in_format));
-input_obj_meshes = os.path.abspath('./%s'%('objs'));
 input_original_thumbnails = os.path.abspath('./thumbnails');
+input_thumbnails = os.path.abspath('./thumbnails_resized');
 
 export_path_root = os.path.abspath('../build/');
-
 export_path_gltf_json = os.path.abspath('../build/js/items_%s.js'%(in_format));
-export_path_obj_json = os.path.abspath('../build/js/items_%s.js'%('obj'));
 
 export_dir_gltf = createDir(os.path.abspath('../build/models/%s/'%(in_format)));
 export_dir_thumbnails = createDir(os.path.abspath('../build/models/thumbnails_new/'));
 
-export_dir_obj = createDir(os.path.abspath('../build/models/%s/'%('obj')));
-
-gltf_mesh_files = getFilesFromDirectory(input_gltf_meshes, extension='.%s'%(in_format_extension), recursive=True);
+gltf_mesh_files = getFilesFromDirectory(input_gltf_meshes, extension=['.%s'%(in_format_extension), '.gltf'], recursive=True);
+thumbail_files =  getFilesFromDirectory(input_thumbnails, extension=['.png']);
 gltf_mesh_files = sorted(gltf_mesh_files, key=lambda k: k['purename']);
-
-obj_mesh_files = getFilesFromDirectory(input_obj_meshes, extension='.obj', recursive=True);
-
-input_thumbnails = os.path.abspath('./thumbnails_resized');
-thumbail_files =  getFilesFromDirectory(input_thumbnails, extension='.png');
 
 if __name__ == "__main__":
     resizeImages(getFilesFromDirectory(input_original_thumbnails, extension='.png'));
-    createItemsJSON(gltf_mesh_files, thumbail_files, obj_mesh_files);
+    createItemsJSON(gltf_mesh_files, thumbail_files);
     
