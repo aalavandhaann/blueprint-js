@@ -1,4 +1,5 @@
 import {EventDispatcher, PlaneGeometry, SphereGeometry, MeshBasicMaterial, ShaderMaterial, Mesh, TextureLoader, Color, DoubleSide} from 'three';
+import {RepeatWrapping} from 'three';
 //import {AxesHelper} from 'three';
 
 export class Skybox extends EventDispatcher
@@ -38,14 +39,19 @@ export class Skybox extends EventDispatcher
 //		this.sky.position.x += this.sphereRadius*0.5;
 		this.scene.add(this.sky);
 		
+		var groundT = new TextureLoader().load('rooms/textures/Ground_4K.jpg', function(){});		
+		groundT.wrapS = groundT.wrapT = RepeatWrapping;
+		groundT.repeat.set(10,10);
 		
 //		var uniforms2 = {topColor: {type: 'c',value: new Color(0xFFFFFF)},bottomColor: {type: 'c',value: new Color(0x999999)},offset: {type: 'f',value: this.verticalOffset}, exponent: {type:'f', value: this.exponent}};
 		this.groundGeo = new PlaneGeometry(10000, 10000, 10);
-		this.groundMat = new MeshBasicMaterial({color: 0xEAEAEA, side: DoubleSide});
+		this.groundMat = new MeshBasicMaterial({color: 0xEAEAEA, side: DoubleSide, map:groundT });
 		this.ground = new Mesh(this.groundGeo, this.groundMat);
 		this.ground.rotateX(-Math.PI * 0.5);
 		this.ground.position.y = -1;
 		this.scene.add(this.ground);
+		
+		
 		
 //		var axesHelper = new AxesHelper( 100 );
 //		this.scene.add( axesHelper );
