@@ -134,7 +134,7 @@ export class Main extends EventDispatcher
 		scope.renderer = scope.getARenderer(); 		
 		scope.domElement.appendChild(scope.renderer.domElement);
 		
-		scope.skybox = new Skybox(scope.scene);
+		scope.skybox = new Skybox(scope.scene, scope.renderer);
 		
 		scope.controls = new OrbitControls(scope.camera, scope.domElement);
 		scope.controls.autoRotate = this.options['spin'];

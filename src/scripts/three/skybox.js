@@ -1,10 +1,12 @@
 import {EventDispatcher, PlaneGeometry, SphereGeometry, MeshBasicMaterial, ShaderMaterial, Mesh, TextureLoader, Color, DoubleSide} from 'three';
 import {RepeatWrapping} from 'three';
+import {GroundSceneReflector} from 'three-reflector2';
+
 //import {AxesHelper} from 'three';
 
 export class Skybox extends EventDispatcher
 {
-	constructor(scene)
+	constructor(scene, renderer)
 	{
 		super();
 		
@@ -18,6 +20,7 @@ export class Skybox extends EventDispatcher
 		var uniforms = {topColor: {type: 'c',value: new Color(this.topColor)},bottomColor: {type: 'c',value: new Color(this.bottomColor)},offset: {type: 'f',value: this.verticalOffset}, exponent: {type:'f', value: this.exponent}};
 		
 		this.scene = scene;
+		this.renderer = renderer;
 		
 		this.sphereRadius = 4000;
 		this.widthSegments = 32;
@@ -49,7 +52,10 @@ export class Skybox extends EventDispatcher
 		this.ground = new Mesh(this.groundGeo, this.groundMat);
 		this.ground.rotateX(-Math.PI * 0.5);
 		this.ground.position.y = -1;
+		
+		this.groundSceneReflector = new GroundSceneReflector(this.ground, this.renderer, this.scene,{textureOne:'rooms/textures/Ground_4K.jpg', wrapOne:{x:10, y:10}});
 		this.scene.add(this.ground);
+		
 		
 		
 		

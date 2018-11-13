@@ -44,6 +44,7 @@
     "jquery": "^3.3.1",
     "line-intersect": "^2.1.1",
     "three": "^0.98.0",
-    "three-gltf-loader": "^1.98.0"
+    "three-gltf-loader": "^1.98.0",
+    "three-reflector2": "file:../three_reflector/three-reflector2-0.0.2.tgz"
   }
 }
