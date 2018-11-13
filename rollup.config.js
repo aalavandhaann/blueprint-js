@@ -1,7 +1,8 @@
 import babel from 'rollup-plugin-babel';
 import resolve from 'rollup-plugin-node-resolve';
 import eslint from 'rollup-plugin-eslint';
-import uglify from 'rollup-plugin-uglify';
+//import uglify from 'rollup-plugin-uglify';
+import uglify from 'rollup-plugin-uglify-es';
 import replace from 'rollup-plugin-replace';
 import postcss from 'rollup-plugin-postcss';
 import serve from 'rollup-plugin-serve'
@@ -28,6 +29,7 @@ export default {
         'node_modules/three/**',
         'node_modules/three-gltf-loader/**',
         'node_modules/@calvinscofield/three-objloader/**',
+        'node_modules/@calvinscofield/three-reflector2/**',
       ]
     }),
       postcss({extensions: [ '.css' ],plugins: [cssnano()]}),

@@ -141,7 +141,7 @@ export class Main extends EventDispatcher
 		scope.controls.enableDamping = true;
 		scope.controls.dampingFactor = 0.5;
 		scope.controls.maxPolarAngle = Math.PI * 0.5;
-		scope.controls.maxDistance = 3500;
+		scope.controls.maxDistance = 3000;
 		scope.controls.minZoom = 0.9;
 		scope.controls.screenSpacePanning = true;
 // scope.controls.maxZoom = 3500/ orthoWidth;
