@@ -138,6 +138,22 @@ export class Scene extends EventDispatcher
 	{
 		itemType = itemType || 1;
 		var scope = this;
+		
+		function addToMaterials(materials, materialnames, newmaterial)
+		{
+			for(var i=0;i<materials.length;i++)
+			{
+				var mat = materials[i];
+				if(mat.name == newmaterial.name)
+				{
+					return [materials, materialnames];
+				}
+			}
+			materials.push(newmaterial);
+			materialnames.push(newmaterial.name);
+			return [materials, materialnames];
+		}
+		
 		var loaderCallback = function (geometry, materials) 
 		{
 //			var item = new (Factory.getClass(itemType))(scope.model, metadata, geometry, new MeshFaceMaterial(materials), position, rotation, scale);
@@ -155,17 +171,38 @@ export class Scene extends EventDispatcher
 		};
 		var gltfCallback = function(gltfModel)
 		{
-			var materials = [];
+			var newmaterials = [];
+			var newmaterialnames = [];
 			var newGeometry = new Geometry();
 			
 			gltfModel.scene.traverse(function (child) {
 				if(child.type == 'Mesh')
 				{
+					var materialindices = [];
+					if(child.material.length)
+					{
+						for (var k=0;k<child.material.length;k++)
+						{
+							var newItems = addToMaterials(newmaterials, newmaterialnames, child.material[k]);
+							newmaterials = newItems[0];
+							newmaterialnames = newItems[1];
+							materialindices.push(newmaterialnames.indexOf(child.material[k].name));
+						}
+					}					
+					else
+					{
+						newItems = addToMaterials(newmaterials, newmaterialnames, child.material);//materials.push(child.material);
+						newmaterials = newItems[0];
+						newmaterialnames = newItems[1];
+						materialindices.push(newmaterialnames.indexOf(child.material.name));
+					}
+					
 					if(child.geometry.isBufferGeometry)
 					{
 						var tGeometry = new Geometry().fromBufferGeometry(child.geometry);
 						tGeometry.faces.forEach((face)=>{
-							face.materialIndex = face.materialIndex + materials.length;
+//							face.materialIndex = face.materialIndex + newmaterials.length;
+							face.materialIndex = materialindices[face.materialIndex];
 						});
 						child.updateMatrix();						
 						newGeometry.merge(tGeometry, child.matrix);
@@ -173,24 +210,16 @@ export class Scene extends EventDispatcher
 					else
 					{
 						child.geometry.faces.forEach((face)=>{
-							face.materialIndex = face.materialIndex + materials.length;
+//							face.materialIndex = face.materialIndex + newmaterials.length;
+							face.materialIndex = materialindices[face.materialIndex];
 						});
 						child.updateMatrix();
 						newGeometry.mergeMesh(child);
 					}
 					
-					if(child.material.length)
-					{
-						materials = materials.concat(child.material);
-					}					
-					else
-					{
-						materials.push(child.material);
-					}
-					
 				}
 			});
-			loaderCallback(newGeometry, materials);
+			loaderCallback(newGeometry, newmaterials);
 		};
 		
 		
