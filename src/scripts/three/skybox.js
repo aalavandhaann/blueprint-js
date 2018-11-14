@@ -53,11 +53,8 @@ export class Skybox extends EventDispatcher
 		this.ground.rotateX(-Math.PI * 0.5);
 		this.ground.position.y = -1;
 		
-		this.groundSceneReflector = new GroundSceneReflector(this.ground, this.renderer, this.scene,{textureOne:'rooms/textures/Ground_4K.jpg', wrapOne:{x:10, y:10}, textureWidth: 512, textureHeight: 512, intensity: 0.15});
+		this.groundSceneReflector = new GroundSceneReflector(this.ground, this.renderer, this.scene,{textureOne:'rooms/textures/Ground_4K.jpg', textureTwo:'rooms/textures/GroundRough.jpg', wrapOne:{x:40, y:40}, wrapTwo:{x:50, y:50}, textureWidth: 512, textureHeight: 512, intensity: 0.1, blendIntensity: 0.05});
 		this.scene.add(this.ground);
-		
-		
-		
 		
 //		var axesHelper = new AxesHelper( 100 );
 //		this.scene.add( axesHelper );
