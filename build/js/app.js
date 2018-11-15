@@ -517,15 +517,15 @@ function datGUI(three)
 	gui = new dat.GUI();
 	aGlobal = new GlobalProperties();
 	aCameraRange = new CameraProperties();
-	anItem = new ItemProperties(gui);
 	aWall = new WallProperties();
+	anItem = new ItemProperties(gui);
 	
 	aCameraRange.three = three;
 	
 	globalPropFolder = getGlobalPropertiesFolder(gui, aGlobal);
 	cameraPropFolder = getCameraRangePropertiesFolder(gui, aCameraRange);
-	itemPropFolder = getItemPropertiesFolder(gui, anItem);	
 	wallPropFolder = getWallAndFloorPropertiesFolder(gui, aWall);
+	itemPropFolder = getItemPropertiesFolder(gui, anItem);
 }
 
 
@@ -563,19 +563,6 @@ $(document).ready(function()
 	datGUI(blueprint3d.three);
 	blueprint3d.three.stopSpin();
 	gui.closed = true;
-	
-	$('#add-items').dialog({autoOpen:false, modal:true, resizable:false, title: 'Shop'});
-	
-	$(window).resize(function()
-	{
-		console.log('WINDOW RESIZE INVOKE');
-		$('.ui-dialog, .ui-dialog-content, .ui-widget-content').css({
-	        'width': $(window).width() * 0.5,
-	        'height': $(window).height() * 0.5,
-	        'left': '0px',
-	        'top':'0px'
-	   });
-	}).resize();
 	
 	
 	$('#showAddItems').hide();
@@ -626,11 +613,6 @@ $(document).ready(function()
 		blueprint3d.three.switchFPSMode(true);
 	});
 	
-	$('#showAddItems').click(function()
-	{
-		$('#add-items').dialog('open');
-	});
-	
 	$('#showSwitchCameraMode').click(function()
 	{
 		$(this).toggleClass('active');
@@ -661,8 +643,6 @@ $(document).ready(function()
 	        format: itemFormat,
 	        
 	      }
-	      console.log(itemType, modelUrl, metadata);
-//	      console.log('WALL PROPERTIES ::: ', aWall.currentWall, aWall.currentWall.center);
 	      
 	      if([2,3,7,9].indexOf(metadata.itemType) != -1 && aWall.currentWall)
     	  {
@@ -678,9 +658,5 @@ $(document).ready(function()
     	  {
 	    	  blueprint3d.model.scene.addItem(itemType, modelUrl, metadata);
     	  }
-	      
-	      $('#add-items').dialog('close');
-	    });
-	
-	
+	    });	
 });

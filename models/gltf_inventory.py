@@ -47,22 +47,28 @@ def createJSONJS(jsonitems, export_to_file, mformat='gltf'):
         json_item = {'name':mname.capitalize(), 'image': tpath, 'model': mpath, 'type':mtype, 'format':mformat};
         json_items.append(json_item);
             
+    js_snippet_f = open(os.path.abspath("./js_snippet_inventory.js"), "r");
+    js_lines = js_snippet_f.readlines();
+    js_snippet_f.close();
     f = open(os.path.abspath(export_to_file), 'w');
+    
     line1 = '$(document).ready(function() {';
     line2 = '\tvar items = ' + json.dumps(json_items);
-    line3 = '\tvar itemsDiv = $("#items-wrapper");'
-    line4 = '\tfor (var i = 0; i < items.length; i++) {';
-    line5 = '\t\tvar item = items[i];';
-    line6 = '\t\tvar modelformat = (item.format) ? \'model-format="\'+item.format+\'"\' : "";';
-    line7 = '\t\tvar html = \'<div class="col-sm-4">\';';
-    line8 = '\t\tvar atag = \'<a class="thumbnail add-item"\' +\' model-name="\'+ item.name +\'"\' +\' model-url="\' +item.model+\'"\' +\' model-type="\' +item.type+\'"\' + modelformat+\'>\'+\'<img src="\'+item.image +\'" alt="Add Item"> \'+item.name +\'</a></div>\';';
-    line9 = '\t\thtml = html + atag;';
-    line10 = '\t\titemsDiv.append(html);';
-    line11 = '\t};';
+    
+#     line3 = '\tvar itemsDiv = $("#items-wrapper");'
+#     line4 = '\tfor (var i = 0; i < items.length; i++) {';
+#     line5 = '\t\tvar item = items[i];';
+#     line6 = '\t\tvar modelformat = (item.format) ? \'model-format="\'+item.format+\'"\' : "";';
+#     line7 = '\t\tvar html = \'<div class="col-sm-4">\';';
+#     line8 = '\t\tvar atag = \'<a class="thumbnail add-item"\' +\' model-name="\'+ item.name +\'"\' +\' model-url="\' +item.model+\'"\' +\' model-type="\' +item.type+\'"\' + modelformat+\'>\'+\'<img src="\'+item.image +\'" alt="Add Item"> \'+item.name +\'</a></div>\';';
+#     line9 = '\t\thtml = html + atag;';
+#     line10 = '\t\titemsDiv.append(html);';
+#     line11 = '\t};';
     line12 = '});';
-    f.writelines('\n'.join([line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, line11, line12]));
+    f.writelines('\n'.join([line1, line2]+js_lines+[line12]));
+#     f.writelines('\n'.join([line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, line11, line12]));
     f.close();
-
+    
 
 def createItemsJSON(gltf_files, thumbnails, objfiles=None):    
     json_gltf_items = [];
