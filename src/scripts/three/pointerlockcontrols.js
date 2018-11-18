@@ -239,10 +239,14 @@ function PointerLockControls( camera, domElement ) {
 	};
 
 	this.unlock = function () {
-
-		document.exitPointerLock();
+		if(document.exitPointerLock)
+		{
+			document.exitPointerLock();
+		}
+		
 
 	};
+	
 	this.connect();
 
 }

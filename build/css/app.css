@@ -26,12 +26,18 @@ div {
 	position: absolute; 
 }
 
+#interfaces
+{
+	z-index: 0;
+}
+
 #interface-controls
 {
 	margin: 0 auto;
 	width: 100%;
 	text-align: center;
 	bottom: 10px;
+	z-index: 100;
 }
 #camera-controls
 {
