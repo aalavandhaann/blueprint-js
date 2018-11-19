@@ -9,14 +9,14 @@ import {EVENT_CAMERA_MOVED} from '../core/events.js';
  * @author erich666 / http://erichaines.com
  */
 
-//This set of controls performs orbiting, dollying (zooming), and panning.
-//Unlike TrackballControls, it maintains the "up" direction object.up (+Y by
-//default).
+// This set of controls performs orbiting, dollying (zooming), and panning.
+// Unlike TrackballControls, it maintains the "up" direction object.up (+Y by
+// default).
 
-//Orbit - left mouse / touch: one-finger move
-//Zoom - middle mouse, or mousewheel / touch: two-finger spread or squish
-//Pan - right mouse, or left mouse + ctrl/metaKey, or arrow keys / touch:
-//two-finger move
+// Orbit - left mouse / touch: one-finger move
+// Zoom - middle mouse, or mousewheel / touch: two-finger spread or squish
+// Pan - right mouse, or left mouse + ctrl/metaKey, or arrow keys / touch:
+// two-finger move
 
 function OrbitControls( object, domElement ) 
 {
@@ -687,7 +687,6 @@ function OrbitControls( object, domElement )
 	//
 
 	function onMouseDown( event ) {
-
 		if ( scope.enabled === false ) return;
 
 		event.preventDefault();
@@ -739,7 +738,6 @@ function OrbitControls( object, domElement )
 		}
 
 		if ( state !== STATE.NONE ) {
-
 			document.addEventListener( 'mousemove', onMouseMove, false );
 			document.addEventListener( 'mouseup', onMouseUp, false );
 
@@ -750,9 +748,8 @@ function OrbitControls( object, domElement )
 	}
 
 	function onMouseMove( event ) {
-
 		if ( scope.enabled === false ) return;
-
+		
 		event.preventDefault();
 
 		switch ( state ) {

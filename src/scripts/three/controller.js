@@ -43,29 +43,22 @@ export class Controller extends EventDispatcher
 		
 		this.mousedownevent = (event)=> {scope.mouseDownEvent(event);};
 		this.mouseupevent = (event)=> {scope.mouseUpEvent(event);};
-		this.mousemoveevent = (event)=> {scope.mouseMoveEvent(event);};
-		
+		this.mousemoveevent = (event)=> {scope.mouseMoveEvent(event);};		
 		this.init();		
 	}
 
 
 	init() 
 	{
-		this.element.mousedown(this.mousedownevent);
-// this.element.get(0).addEventListener('touchstart', this.mousedownevent);
-// this.element.on('touchstart', this.mousedownevent);
 		
-		this.element.mouseup(this.mouseupevent);
-// this.element.get(0).addEventListener('touchend', this.mouseupevent);
-// this.element.on('touchend', this.mouseupevent);
+//		this.element.mousedown(this.mousedownevent);		
+//		this.element.mouseup(this.mouseupevent);		
+//		this.element.mousemove(this.mousemoveevent);
 		
-		this.element.mousemove(this.mousemoveevent);
-// this.element.get(0).addEventListener('touchmove', this.mousemoveevent);
-// this.element.on('touchmove', this.mousemoveevent);
+		this.element.bind('touchstart mousedown', this.mousedownevent);
+		this.element.bind('touchmove mousemove', this.mousemoveevent);
+		this.element.bind('touchend mouseup', this.mouseupevent);
 		
-
-		// scene.itemRemovedCallbacks.add(itemRemoved);
-		// scene.itemLoadedCallbacks.add(itemLoaded);
 		this.scene.addEventListener(EVENT_ITEM_REMOVED, this.itemremovedevent);
 		this.scene.addEventListener(EVENT_ITEM_LOADED, this.itemloadedevent);
 		this.setGroundPlane();
@@ -176,53 +169,26 @@ export class Controller extends EventDispatcher
 		return (this.state == states.ROTATING || this.state == states.ROTATING_FREE);
 	}
 	
-	mouseMoveEvent(event) 
-	{
-		if (this.enabled) 
-		{
-			event.preventDefault();
-			this.mouseMoved = true;
-			
-			this.mouse.x = event.clientX;
-			this.mouse.y = event.clientY;
-			
-			this.alternateMouse.x = event.clientX;
-			this.alternateMouse.y = event.clientY;
-			
-				
-			if (!this.mouseDown) 
-			{
-				this.updateIntersections();
-			}
-
-			switch (this.state) 
-			{
-			case states.UNSELECTED:
-				this.updateMouseover();
-				break;
-			case states.SELECTED:
-				this.updateMouseover();
-				break;
-			case states.DRAGGING:
-			case states.ROTATING:
-			case states.ROTATING_FREE:
-				this.clickDragged();
-				this.hud.update();
-				this.needsUpdate = true;
-				break;
-			}
-		}
-	}
-
+	
 	mouseDownEvent(event) 
 	{
 		if (this.enabled) 
 		{
-			event.preventDefault();
-
+			event.preventDefault();			
 			this.mouseMoved = false;
 			this.mouseDown = true;
-
+			
+			if(event.touches)
+			{
+				//In case if this is a touch device do the necessary to click and drag items
+				this.mouse.x = event.touches[0].clientX;
+				this.mouse.y = event.touches[0].clientY;
+				this.alternateMouse.x = event.touches[0].clientX;
+				this.alternateMouse.y = event.touches[0].clientY;
+				this.updateIntersections();
+				this.checkWallsAndFloors();
+			}
+			
 			switch (this.state) 
 			{
 			case states.SELECTED:
@@ -254,6 +220,50 @@ export class Controller extends EventDispatcher
 				break;
 			case states.ROTATING_FREE:
 				this.switchState(states.SELECTED);
+				break;
+			}
+		}
+	}
+	
+	mouseMoveEvent(event) 
+	{
+		if (this.enabled) 
+		{
+			event.preventDefault();
+			this.mouseMoved = true;
+			
+			this.mouse.x = event.clientX;
+			this.mouse.y = event.clientY;
+			this.alternateMouse.x = event.clientX;
+			this.alternateMouse.y = event.clientY;
+			
+			if(event.touches)
+			{
+				this.mouse.x = event.touches[0].clientX;
+				this.mouse.y = event.touches[0].clientY;
+				this.alternateMouse.x = event.touches[0].clientX;
+				this.alternateMouse.y = event.touches[0].clientY;
+			}
+							
+			if (!this.mouseDown) 
+			{
+				this.updateIntersections();
+			}
+
+			switch (this.state) 
+			{
+			case states.UNSELECTED:
+				this.updateMouseover();
+				break;
+			case states.SELECTED:
+				this.updateMouseover();
+				break;
+			case states.DRAGGING:
+			case states.ROTATING:
+			case states.ROTATING_FREE:
+				this.clickDragged();
+				this.hud.update();
+				this.needsUpdate = true;
 				break;
 			}
 		}

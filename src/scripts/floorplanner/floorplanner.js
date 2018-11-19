@@ -75,6 +75,22 @@ export class Floorplanner extends EventDispatcher
 		this.canvasElement.mousemove((event) => {scope.mousemove(event);});
 		this.canvasElement.mouseup((event) => {scope.mouseup(event);});
 		this.canvasElement.mouseleave((event) => {scope.mouseleave(event);});
+		this.canvasElement[0].addEventListener('touchstart', function (e) {
+			var touch = e.touches[0];
+			var mouseEvent = new MouseEvent('mousedown', {clientX: touch.clientX,clientY: touch.clientY});
+			scope.canvasElement[0].dispatchEvent(mouseEvent);
+		}, false);
+		this.canvasElement[0].addEventListener('touchend', function () {
+			var mouseEvent = new MouseEvent('mouseup', {});
+			scope.canvasElement[0].dispatchEvent(mouseEvent);
+		}, false);
+		this.canvasElement[0].addEventListener('touchmove', function (e) {
+			var touch = e.touches[0];
+			var mouseEvent = new MouseEvent('mousemove', {clientX: touch.clientX,clientY: touch.clientY});
+			scope.canvasElement[0].dispatchEvent(mouseEvent);
+		}, false);
+		
+		
 		$(document).keyup((e) => {
 			if (e.keyCode == 27) 
 			{
@@ -153,7 +169,8 @@ export class Floorplanner extends EventDispatcher
 			} 
 			else 
 			{
-				this.setMode(floorplannerModes.MOVE);
+				//Continue the mode of deleting walls, this is necessary for deleting multiple walls
+//				this.setMode(floorplannerModes.MOVE);
 			}
 		}
 	}
@@ -163,12 +180,18 @@ export class Floorplanner extends EventDispatcher
 	{
 		this.mouseMoved = true;
 
+		if(event.touches)
+		{
+			event = event.touches[0];
+		}
+		
 		// update mouse
 		this.rawMouseX = event.clientX;
 		this.rawMouseY = event.clientY;
 		
 		this.mouseX = (event.clientX - this.canvasElement.offset().left)  * this.cmPerPixel + this.originX * this.cmPerPixel;
 		this.mouseY = (event.clientY - this.canvasElement.offset().top) * this.cmPerPixel + this.originY * this.cmPerPixel;
+		
 		
 		// update target (snapped position of actual mouse)
 		if (this.mode == floorplannerModes.DRAW || (this.mode == floorplannerModes.MOVE && this.mouseDown)) 
