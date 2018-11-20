@@ -71,24 +71,30 @@ export class Floorplanner extends EventDispatcher
 
 		var scope = this;
 		
-		this.canvasElement.mousedown((event) => {scope.mousedown(event);});
-		this.canvasElement.mousemove((event) => {scope.mousemove(event);});
-		this.canvasElement.mouseup((event) => {scope.mouseup(event);});
-		this.canvasElement.mouseleave((event) => {scope.mouseleave(event);});
-		this.canvasElement[0].addEventListener('touchstart', function (e) {
-			var touch = e.touches[0];
-			var mouseEvent = new MouseEvent('mousedown', {clientX: touch.clientX,clientY: touch.clientY});
-			scope.canvasElement[0].dispatchEvent(mouseEvent);
-		}, false);
-		this.canvasElement[0].addEventListener('touchend', function () {
-			var mouseEvent = new MouseEvent('mouseup', {});
-			scope.canvasElement[0].dispatchEvent(mouseEvent);
-		}, false);
-		this.canvasElement[0].addEventListener('touchmove', function (e) {
-			var touch = e.touches[0];
-			var mouseEvent = new MouseEvent('mousemove', {clientX: touch.clientX,clientY: touch.clientY});
-			scope.canvasElement[0].dispatchEvent(mouseEvent);
-		}, false);
+//		this.canvasElement.mousedown((event) => {scope.mousedown(event);});
+//		this.canvasElement.mousemove((event) => {scope.mousemove(event);});
+//		this.canvasElement.mouseup((event) => {scope.mouseup(event);});
+//		this.canvasElement.mouseleave((event) => {scope.mouseleave(event);});
+		
+		this.canvasElement.bind('touchstart mousedown', (event) => {scope.mousedown(event);});
+		this.canvasElement.bind('touchmove mousemove', (event) => {scope.mousemove(event);});
+		this.canvasElement.bind('touchend mouseup', (event) => {scope.mouseup(event);});
+		this.canvasElement.bind('mouseleave', (event) => {scope.mouseleave(event);});
+		
+//		this.canvasElement[0].addEventListener('touchstart', function (e) {
+//			var touch = e.touches[0];
+//			var mouseEvent = new MouseEvent('mousedown', {clientX: touch.clientX,clientY: touch.clientY});
+//			scope.canvasElement[0].dispatchEvent(mouseEvent);
+//		}, false);
+//		this.canvasElement[0].addEventListener('touchend', function () {
+//			var mouseEvent = new MouseEvent('mouseup', {});
+//			scope.canvasElement[0].dispatchEvent(mouseEvent);
+//		}, false);
+//		this.canvasElement[0].addEventListener('touchmove', function (e) {
+//			var touch = e.touches[0];
+//			var mouseEvent = new MouseEvent('mousemove', {clientX: touch.clientX,clientY: touch.clientY});
+//			scope.canvasElement[0].dispatchEvent(mouseEvent);
+//		}, false);
 		
 		
 		$(document).keyup((e) => {
@@ -153,6 +159,12 @@ export class Floorplanner extends EventDispatcher
 	{
 		this.mouseDown = true;
 		this.mouseMoved = false;
+		if(event.touches)
+		{
+			this.rawMouseX = event.touches[0].clientX;
+			this.rawMouseY = event.touches[0].clientY;
+		}
+		
 		this.lastX = this.rawMouseX;
 		this.lastY = this.rawMouseY;
 

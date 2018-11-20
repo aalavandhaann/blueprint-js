@@ -174,7 +174,8 @@ export class Controller extends EventDispatcher
 	{
 		if (this.enabled) 
 		{
-			event.preventDefault();			
+			event.preventDefault();				
+			
 			this.mouseMoved = false;
 			this.mouseDown = true;
 			

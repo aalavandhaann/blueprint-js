@@ -1,6 +1,8 @@
 import {Mesh, Matrix4, Vector2, Vector3, BoxHelper, Box3, MeshBasicMaterial, AdditiveBlending} from 'three';
+import {CanvasTexture, PlaneGeometry, DoubleSide} from 'three';
 import {Color} from 'three';
 import {Utils} from '../core/utils.js';
+import {Dimensioning} from '../core/dimensioning.js';
 
 /**
  * An Item is an abstract entity for all things placed in the scene, e.g. at
@@ -93,6 +95,35 @@ export class Item extends Mesh
 		this.geometry.computeBoundingBox();
 		this.halfSize = this.objectHalfSize();
 		
+		
+		this.canvasWH = document.createElement('canvas');
+		this.canvasWH.width = this.getWidth()+1.0;
+		this.canvasWH.height = this.getHeight()+1.0;
+		this.canvasWH.style.letterSpacing = -7.0;
+		this.canvascontextWH = this.canvasWH.getContext('2d');
+		this.canvasTextureWH = new CanvasTexture(this.canvasWH);
+		this.canvasMaterialWH = new MeshBasicMaterial({map:this.canvasTextureWH, side: DoubleSide, transparent:true});
+		this.canvasPlaneWH = new Mesh(new PlaneGeometry(this.getWidth(), this.getHeight(), 1, 1), this.canvasMaterialWH);
+		this.canvasPlaneWH.scale.set(1, 1, 1);
+		this.canvasPlaneWH.position.set(0, 0, this.getDepth()*0.5 + 0.3);
+		this.add(this.canvasPlaneWH);
+		
+		this.canvasWD = document.createElement('canvas');
+		this.canvasWD.width = this.getWidth()+1.0;
+		this.canvasWD.height = this.getDepth()+1.0;
+		this.canvasWD.style.letterSpacing = -7.0;
+		
+		this.canvascontextWD = this.canvasWD.getContext('2d');
+		this.canvasTextureWD = new CanvasTexture(this.canvasWD);
+		this.canvasMaterialWD = new MeshBasicMaterial({map:this.canvasTextureWD, side: DoubleSide, transparent:true});
+		this.canvasPlaneWD = new Mesh(new PlaneGeometry(this.getWidth(), this.getDepth(), 1, 1), this.canvasMaterialWD);
+		this.canvasPlaneWD.rotateX(-Math.PI * 0.5);
+		this.canvasPlaneWD.scale.set(1, 1, 1);
+		this.canvasPlaneWD.position.set(0, this.getHeight()*0.5 + 0.3, 0);
+		this.add(this.canvasPlaneWD);
+		
+		this.canvasPlaneWH.visible = this.canvasPlaneWD.visible = false;
+		
 		this.resizeProportionally = true;
 		
 		if (rotation) 
@@ -121,7 +152,59 @@ export class Item extends Mesh
 					this.material.color = new Color(this.metadata.materialColors[0]);
 				}
 			}
+		}		
+	}
+	
+	
+	
+	updateCanvasTexture(canvas, context, material, w, h)
+	{
+		if(w < 1 || h < 1)
+		{
+			return;
 		}
+		
+		w *= 3;
+		h *= 3;
+		
+		canvas.width = w;
+		canvas.height = h;
+		
+		context.font = 'bold 45pt Courier';
+		context.fillStyle = '#DADADA33';
+		context.fillRect(0, 0, canvas.width, canvas.height);		
+		context.textAlign = 'center';
+		context.textBaseline = 'middle';
+		
+		context.lineWidth = 3;
+		context.setLineDash([1, 2]);
+		context.strokeStyle = '#000000';
+		context.beginPath();
+		context.moveTo(0,h*0.5);
+		context.lineTo(w,h*0.5);
+		context.closePath();
+		context.stroke();		
+		
+		context.beginPath();
+		context.moveTo(canvas.width - context.measureText(Dimensioning.cmToMeasure(h)).width, 0);
+		context.lineTo(canvas.width - context.measureText(Dimensioning.cmToMeasure(h)).width, h);
+		context.closePath();
+		context.stroke();
+		
+		context.lineWidth = 1;
+		context.setLineDash([0]);
+		context.strokeStyle = '#0000FF';
+		context.strokeText(Dimensioning.cmToMeasure(w), canvas.width / 2, h*0.5);		
+		
+		context.fillStyle = '#FF0000';
+		context.fillText(Dimensioning.cmToMeasure(w), canvas.width / 2, h*0.5);
+		
+		context.strokeStyle = '#0000FF';
+		context.strokeText(Dimensioning.cmToMeasure(h), canvas.width - context.measureText(Dimensioning.cmToMeasure(h)).width, h*0.25);
+		
+		context.fillStyle = '#FF0000';
+		context.fillText(Dimensioning.cmToMeasure(h), canvas.width - context.measureText(Dimensioning.cmToMeasure(h)).width, h*0.25);
+		material.map.needsUpdate = true;		
 	}
 	
 	switchWireframe(flag)
@@ -201,6 +284,11 @@ export class Item extends Mesh
 		{
 			this.bhelper.update();
 		}
+		
+//		this.updateCanvasTexture(canvas, context, material, w, h);
+		this.updateCanvasTexture(this.canvasWH, this.canvascontextWH, this.canvasMaterialWH, this.getWidth(), this.getHeight());
+		this.updateCanvasTexture(this.canvasWD, this.canvascontextWD, this.canvasMaterialWD, this.getWidth(), this.getDepth());
+		
 		this.scene.needsUpdate = true;
 		
 	}
@@ -316,8 +404,10 @@ export class Item extends Mesh
 	/** */
 	setSelected() 
 	{
+		this.setScale(1, 1, 1);
 		this.selected = true;
 		this.bhelper.visible = true;
+		this.canvasPlaneWH.visible = this.canvasPlaneWD.visible = true;
 		this.updateHighlight();
 	}
 
@@ -326,6 +416,7 @@ export class Item extends Mesh
 	{
 		this.selected = false;
 		this.bhelper.visible = false;
+		this.canvasPlaneWH.visible = this.canvasPlaneWD.visible = false;
 		this.updateHighlight();
 	}
 
