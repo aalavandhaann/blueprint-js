@@ -130,6 +130,8 @@ export class Main extends EventDispatcher
 		scope.domElement = scope.element.get(0);
 		
 		scope.fpscamera = new PerspectiveCamera(60, 1, 1, 10000 );
+		scope.fpsvrcamera = new PerspectiveCamera(60, 1, 1, 10000 );
+		
 		scope.perspectivecamera = new PerspectiveCamera(45, 10, scope.cameraNear, scope.cameraFar);
 		scope.orthocamera = new OrthographicCamera(orthoWidth / -orthoScale, orthoWidth /orthoScale, orthoHeight /orthoScale, orthoHeight / -orthoScale, scope.cameraNear, scope.cameraFar);
 		
@@ -162,7 +164,7 @@ export class Main extends EventDispatcher
 		});
 		
 		
-		scope.fpsvrcontrols = new FirstPersonVRControls(scope.camera, scope.scene.getScene());
+		scope.fpsvrcontrols = new FirstPersonVRControls(scope.fpsvrcamera, scope.scene.getScene());
 		scope.fpsvrcontrols.verticalMovement = false;
 		scope.fpsvrcontrols.strafing = true;
 		
@@ -543,12 +545,14 @@ export class Main extends EventDispatcher
 			if(scope.isMobile == null)
 			{
 				scope.fpscontrols.update(scope.fpsclock.getDelta());
+				scope.renderer.render(scope.scene.getScene(), scope.fpscamera);
 			}
 			else
 			{
 				scope.fpsvrcontrols.update(scope.fpsclock.getDelta());
+				scope.renderer.render(scope.scene.getScene(), scope.fpsvrcamera);				
 			}			
-			scope.renderer.render(scope.scene.getScene(), scope.fpscamera);
+			
 		}
 		else
 		{
