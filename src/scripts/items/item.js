@@ -98,8 +98,8 @@ export class Item extends Mesh
 		
 		this.canvasWH = document.createElement('canvas');
 		this.canvasWH.width = this.getWidth()+1.0;
-		this.canvasWH.height = this.getHeight()+1.0;
-		this.canvasWH.style.letterSpacing = -7.0;
+		this.canvasWH.height = this.getHeight()+1.0;		
+		
 		this.canvascontextWH = this.canvasWH.getContext('2d');
 		this.canvasTextureWH = new CanvasTexture(this.canvasWH);
 		this.canvasMaterialWH = new MeshBasicMaterial({map:this.canvasTextureWH, side: DoubleSide, transparent:true});
@@ -111,7 +111,6 @@ export class Item extends Mesh
 		this.canvasWD = document.createElement('canvas');
 		this.canvasWD.width = this.getWidth()+1.0;
 		this.canvasWD.height = this.getDepth()+1.0;
-		this.canvasWD.style.letterSpacing = -7.0;
 		
 		this.canvascontextWD = this.canvasWD.getContext('2d');
 		this.canvasTextureWD = new CanvasTexture(this.canvasWD);
@@ -172,16 +171,18 @@ export class Item extends Mesh
 		
 		canvas.width = w;
 		canvas.height = h;
+		canvas.style.letterSpacing = '-22.5px';
 		
 		context.font = 'bold 45pt Courier';
 		context.fillStyle = '#DADADA33';
-		context.fillRect(0, 0, canvas.width, canvas.height);		
+		context.fillRect(0, 0, w, h);		
 		context.textAlign = 'center';
 		context.textBaseline = 'middle';
 		
 		context.lineWidth = 3;
 		context.setLineDash([1, 2]);
 		context.strokeStyle = '#000000';
+		
 		context.beginPath();
 		context.moveTo(0,h*0.5);
 		context.lineTo(w,h*0.5);
@@ -189,24 +190,27 @@ export class Item extends Mesh
 		context.stroke();		
 		
 		context.beginPath();
-		context.moveTo(canvas.width - context.measureText(Dimensioning.cmToMeasure(h)).width, 0);
-		context.lineTo(canvas.width - context.measureText(Dimensioning.cmToMeasure(h)).width, h);
+		context.moveTo(w * 0.125, 0);
+		context.lineTo(w * 0.125, h);
 		context.closePath();
 		context.stroke();
 		
 		context.lineWidth = 1;
 		context.setLineDash([0]);
 		context.strokeStyle = '#0000FF';
-		context.strokeText(wPrefix+Dimensioning.cmToMeasure(w), canvas.width / 2, h*0.5);		
+		context.strokeText(wPrefix+Dimensioning.cmToMeasure(w), w*0.5, h*0.5);		
 		
 		context.fillStyle = '#FF0000';
-		context.fillText(wPrefix+Dimensioning.cmToMeasure(w), canvas.width / 2, h*0.5);
+		context.fillText(wPrefix+Dimensioning.cmToMeasure(w), w*0.5, h*0.5);
 		
+		context.translate(w*0.125, 0);
+		context.rotate(Math.PI * 0.5);
 		context.strokeStyle = '#0000FF';
-		context.strokeText(hPrefix+Dimensioning.cmToMeasure(h), canvas.width - context.measureText(Dimensioning.cmToMeasure(h)).width, h*0.25);
+		context.strokeText(hPrefix+Dimensioning.cmToMeasure(h), h*0.5, 0);
 		
 		context.fillStyle = '#FF0000';
-		context.fillText(hPrefix+Dimensioning.cmToMeasure(h), canvas.width - context.measureText(Dimensioning.cmToMeasure(h)).width, h*0.25);
+		context.fillText(hPrefix+Dimensioning.cmToMeasure(h), h*0.5, 0);
+		context.restore();
 		material.map.needsUpdate = true;		
 	}
 	
