@@ -204,6 +204,7 @@ export class Main extends EventDispatcher
 		if(scope.isMobile != null)
 		{
 			console.log('ENABLE THE VR MODE');
+			window.renderer = scope.renderer;
 			scope.renderer.vr.enabled = true;
 		}
 	}
