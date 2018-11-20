@@ -155,7 +155,7 @@ export class Floorplanner extends EventDispatcher
 	}
 
 	/** */
-	mousedown() 
+	mousedown(event) 
 	{
 		this.mouseDown = true;
 		this.mouseMoved = false;
