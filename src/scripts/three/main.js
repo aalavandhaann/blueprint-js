@@ -164,6 +164,7 @@ export class Main extends EventDispatcher
 		});
 		
 		
+		scope.fpsvrcamera.position.set(0, 100, 0);
 		scope.fpsvrcontrols = new FirstPersonVRControls(scope.fpsvrcamera, scope.scene.getScene());
 		scope.fpsvrcontrols.verticalMovement = false;
 		scope.fpsvrcontrols.strafing = true;
