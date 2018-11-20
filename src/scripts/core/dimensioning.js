@@ -108,13 +108,13 @@ export class Dimensioning
 			return inches + '\'';
 		case dimMilliMeter:
 			var mm = Math.round(decimals * (10 * cm)) / decimals;
-			return '' + mm + ' mm';
+			return '' + mm + 'mm';
 		case dimCentiMeter:
-			return '' + Math.round(decimals * cm) / decimals + ' cm';
+			return '' + Math.round(decimals * cm) / decimals + 'cm';
 		case dimMeter:
 		default:
 			var m = Math.round(decimals * (cm  * 0.01)) / decimals;
-			return '' + m + ' m';
+			return '' + m + 'm';
 		}
 	}
 }
