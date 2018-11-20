@@ -102,7 +102,7 @@ export class Dimensioning
 			var floorFeet = Math.floor(allInFeet);
 			var remainingFeet = allInFeet - floorFeet;
 			var remainingInches = Math.round(remainingFeet * 12);
-			return floorFeet + '" ' + remainingInches + '`';
+			return floorFeet + '"' + remainingInches + '\'';
 		case dimInch:
 			var inches = Math.round(decimals * (cm * 0.393700)) / decimals;
 			return inches + '\'';
