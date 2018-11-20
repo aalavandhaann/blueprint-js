@@ -157,12 +157,15 @@ export class Item extends Mesh
 	
 	
 	
-	updateCanvasTexture(canvas, context, material, w, h)
+	updateCanvasTexture(canvas, context, material, w, h, wPrefix, hPrefix)
 	{
 		if(w < 1 || h < 1)
 		{
 			return;
 		}
+		
+		wPrefix = (wPrefix) ? wPrefix: 'w:';
+		hPrefix = (hPrefix) ? hPrefix: 'h:';
 		
 		w *= 3;
 		h *= 3;
@@ -194,16 +197,16 @@ export class Item extends Mesh
 		context.lineWidth = 1;
 		context.setLineDash([0]);
 		context.strokeStyle = '#0000FF';
-		context.strokeText(Dimensioning.cmToMeasure(w), canvas.width / 2, h*0.5);		
+		context.strokeText(wPrefix+Dimensioning.cmToMeasure(w), canvas.width / 2, h*0.5);		
 		
 		context.fillStyle = '#FF0000';
-		context.fillText(Dimensioning.cmToMeasure(w), canvas.width / 2, h*0.5);
+		context.fillText(wPrefix+Dimensioning.cmToMeasure(w), canvas.width / 2, h*0.5);
 		
 		context.strokeStyle = '#0000FF';
-		context.strokeText(Dimensioning.cmToMeasure(h), canvas.width - context.measureText(Dimensioning.cmToMeasure(h)).width, h*0.25);
+		context.strokeText(hPrefix+Dimensioning.cmToMeasure(h), canvas.width - context.measureText(Dimensioning.cmToMeasure(h)).width, h*0.25);
 		
 		context.fillStyle = '#FF0000';
-		context.fillText(Dimensioning.cmToMeasure(h), canvas.width - context.measureText(Dimensioning.cmToMeasure(h)).width, h*0.25);
+		context.fillText(hPrefix+Dimensioning.cmToMeasure(h), canvas.width - context.measureText(Dimensioning.cmToMeasure(h)).width, h*0.25);
 		material.map.needsUpdate = true;		
 	}
 	
@@ -286,8 +289,8 @@ export class Item extends Mesh
 		}
 		
 //		this.updateCanvasTexture(canvas, context, material, w, h);
-		this.updateCanvasTexture(this.canvasWH, this.canvascontextWH, this.canvasMaterialWH, this.getWidth(), this.getHeight());
-		this.updateCanvasTexture(this.canvasWD, this.canvascontextWD, this.canvasMaterialWD, this.getWidth(), this.getDepth());
+		this.updateCanvasTexture(this.canvasWH, this.canvascontextWH, this.canvasMaterialWH, this.getWidth(), this.getHeight(), 'w:', 'h:');
+		this.updateCanvasTexture(this.canvasWD, this.canvascontextWD, this.canvasMaterialWD, this.getWidth(), this.getDepth(), 'w:', 'd:');
 		
 		this.scene.needsUpdate = true;
 		
