@@ -1,10 +1,16 @@
 # README #
+This is a javascript floorplanner tool based on the existing typescript based project [blueprint3d](https://github.com/furnishup/blueprint3d)
 
 ## DEMO ##
 
 [Cick for example](https://aalavandhaann.github.io/blueprint-js/build)
 
-This is a javascript floorplanner tool based on the existing typescript based project [blueprint3d](https://github.com/furnishup/blueprint3d)
+## DEMO VR ##
+The ability to export the floorplan as GLTF gives the scope of having easy VR with A-Frame. Export the layout to use it directly with A-Frame or process it further using Blender and then use it with A-Frame. 
+
+[Cick for example of VR](https://aalavandhaann.github.io/blueprint-js/build/vrtest)
+
+You will notice a lot of flickering in the VR mode. This is because of the overlapping materials in the floorplan.
 
 ## What is this?
 
