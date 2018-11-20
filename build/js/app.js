@@ -117,6 +117,23 @@ var mainControls = function(blueprint3d)
 	    document.body.removeChild(a)
 	  }
 	  
+	  function saveGLTF()
+	  {
+		  blueprint3d.three.exportForBlender();
+	  }
+	  
+	  function saveGLTFCallback(o)
+	  {
+		var data = o.gltf;
+		var a = window.document.createElement('a');
+		var blob = new Blob([data], {type : 'text'});
+		a.href = window.URL.createObjectURL(blob);
+		a.download = 'design.gltf';
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+	  }
+	  
 	  function saveMesh() {
 		    var data = blueprint3d.model.exportMeshAsObj();
 		    var a = window.document.createElement('a');
@@ -134,6 +151,8 @@ var mainControls = function(blueprint3d)
 	    $("#loadFile").change(loadDesign);
 	    $("#saveFile").click(saveDesign);
 	    $("#saveMesh").click(saveMesh);
+	    $("#saveGLTF").click(saveGLTF);
+	    blueprint3d.three.addEventListener(BP3DJS.EVENT_GLTF_READY, saveGLTFCallback);
 	  }
 
 	  init();
@@ -422,8 +441,7 @@ function addBlueprintListeners(blueprint3d)
 	three.addEventListener(BP3DJS.EVENT_ITEM_UNSELECTED, function(o){itemUnselected();});	
 	three.addEventListener(BP3DJS.EVENT_WALL_CLICKED, (o)=>{wallClicked(o.item);});
     three.addEventListener(BP3DJS.EVENT_FLOOR_CLICKED, (o)=>{floorClicked(o.item);});
-    three.addEventListener(BP3DJS.EVENT_FPS_EXIT, ()=>{$('#showDesign').trigger('click')});
-    
+    three.addEventListener(BP3DJS.EVENT_FPS_EXIT, ()=>{$('#showDesign').trigger('click')});    
 // three.skybox.toggleEnvironment(this.checked);
 // currentTarget.setTexture(textureUrl, textureStretch, textureScale);
 // three.skybox.setEnvironmentMap(textureUrl);

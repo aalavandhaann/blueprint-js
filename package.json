@@ -44,11 +44,9 @@
     "es6-enum": "^1.1.0",
     "jquery": "^3.3.1",
     "line-intersect": "^2.1.1",
-    "mobile-detect": "^1.4.3",
     "three": "^0.98.0",
-    "three-firstperson-vr-controls": "^0.2.0",
+    "three-gltf-exporter": "0.0.1",
     "three-gltf-loader": "^1.98.0",
-    "three-reflector2": "0.0.5",
-    "webvr-ui": "^0.10.0"
+    "three-reflector2": "0.0.5"
   }
 }

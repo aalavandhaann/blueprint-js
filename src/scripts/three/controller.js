@@ -118,6 +118,11 @@ export class Controller extends EventDispatcher
 			}
 		}
 	}	
+	
+	showGroundPlane(flag)
+	{
+		this.plane.visible = flag;
+	}
 
 	setGroundPlane() 
 	{

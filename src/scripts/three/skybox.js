@@ -40,7 +40,7 @@ export class Skybox extends EventDispatcher
 		this.skyGeo = new SphereGeometry(this.sphereRadius, this.widthSegments, this.heightSegments);
 		this.sky = new Mesh(this.skyGeo, this.skyMat);
 //		this.sky.position.x += this.sphereRadius*0.5;
-		this.scene.add(this.sky);
+		
 		
 		var groundT = new TextureLoader().load('rooms/textures/Ground_4K.jpg', function(){});		
 		groundT.wrapS = groundT.wrapT = RepeatWrapping;
@@ -54,12 +54,29 @@ export class Skybox extends EventDispatcher
 		this.ground.position.y = -1;
 		
 		this.groundSceneReflector = new GroundSceneReflector(this.ground, this.renderer, this.scene,{textureOne:'rooms/textures/Ground_4K.jpg', textureTwo:'rooms/textures/GroundRough.jpg', wrapOne:{x:40, y:40}, wrapTwo:{x:50, y:50}, textureWidth: 512, textureHeight: 512, intensity: 0.1, blendIntensity: 0.05});
+		
+		this.scene.add(this.sky);
 		this.scene.add(this.ground);
 		
 //		var axesHelper = new AxesHelper( 100 );
 //		this.scene.add( axesHelper );
 		
 		this.init();
+	}
+	
+	setEnabled(flag)
+	{
+		if(!flag)
+		{
+			this.scene.remove(this.sky);
+			this.scene.remove(this.ground);
+		}
+		else
+		{
+			this.scene.add(this.sky);
+			this.scene.add(this.ground);
+		}
+//		this.sky.visible = this.ground.visible = flag;
 	}
 	
 	toggleEnvironment(flag)

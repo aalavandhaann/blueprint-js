@@ -28,8 +28,9 @@ export default {
         'node_modules/es6-enum/**', 
         'node_modules/three/**',
         'node_modules/three-gltf-loader/**',
-        'node_modules/@calvinscofield/three-objloader/**',
-        'node_modules/@calvinscofield/three-reflector2/**',
+        'node_modules/three-gltf-exporter/**',
+        'node_modules/three-reflector2/**',
+        'node_modules/@calvinscofield/three-objloader/**',        
       ]
     }),
       postcss({extensions: [ '.css' ],plugins: [cssnano()]}),

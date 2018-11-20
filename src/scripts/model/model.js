@@ -1,9 +1,11 @@
-import {EVENT_LOADED, EVENT_LOADING} from '../core/events.js';
-import {EventDispatcher, Vector3} from 'three';
+import {EVENT_LOADED, EVENT_LOADING, EVENT_GLTF_READY} from '../core/events.js';
+import {EventDispatcher, Vector3, Mesh} from 'three';
 import {Floorplans} from './floorplan.js';
 import {Scene} from './scene.js';
 
 import {OBJExporter} from '../exporters/OBJExporter.js';
+
+import GLTFExporter from 'three-gltf-exporter';
 
 /** 
  * A Model connects a Floorplan and a Scene. 
@@ -48,6 +50,37 @@ export class Model extends EventDispatcher
 	{
 		var exporter = new OBJExporter();
 		return exporter.parse(this.scene.getScene()); 
+	}
+	
+	exportForBlender()
+	{
+		var scope = this;
+		var gltfexporter = new GLTFExporter();
+		var meshes = [];
+		this.scene.getScene().traverse( function(child) 
+		{
+			if (child instanceof Mesh) 
+			{
+				if(child.material)
+				{
+					if(child.material.length || child.material.visible)
+					{
+						var op = (child.material.transparent)? child.material.opacity: undefined;
+						meshes.push(child);
+						if(op)
+						{
+							child.material.opacity = op;
+						}
+					}
+				}
+			}
+		  });		
+		
+		gltfexporter.parse(meshes, function(result)
+		{
+			var output = JSON.stringify( result, null, 2 );
+			scope.dispatchEvent({type:EVENT_GLTF_READY, item: this, gltf: output});
+		});
 	}
 
 	exportSerialized() 

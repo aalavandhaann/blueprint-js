@@ -6,7 +6,7 @@ import {Clock} from 'three';
 // import {FirstPersonControls} from './first-person-controls.js';
 import {PointerLockControls} from './pointerlockcontrols.js';
 
-import {EVENT_UPDATED, EVENT_WALL_CLICKED, EVENT_NOTHING_CLICKED, EVENT_FLOOR_CLICKED, EVENT_ITEM_SELECTED, EVENT_ITEM_UNSELECTED} from '../core/events.js';
+import {EVENT_UPDATED, EVENT_WALL_CLICKED, EVENT_NOTHING_CLICKED, EVENT_FLOOR_CLICKED, EVENT_ITEM_SELECTED, EVENT_ITEM_UNSELECTED, EVENT_GLTF_READY} from '../core/events.js';
 import {EVENT_CAMERA_ACTIVE_STATUS, EVENT_FPS_EXIT, EVENT_CAMERA_VIEW_CHANGE} from '../core/events.js';
 import {VIEW_TOP, VIEW_FRONT, VIEW_RIGHT, VIEW_LEFT, VIEW_ISOMETRY} from '../core/constants.js';
 
@@ -83,6 +83,7 @@ export class Main extends EventDispatcher
 		
 		var scope = this;
 		this.updatedevent = ()=>{scope.centerCamera();};
+		this.gltfreadyevent = (o)=>{scope.gltfReady(o);};
 		
 		this.clippingPlaneActive = new Plane(new Vector3(0, 0, 1), 0.0);
 		this.clippingPlaneActive2 = new Plane(new Vector3(0, 0, -1), 0.0);
@@ -173,11 +174,10 @@ export class Main extends EventDispatcher
 		scope.centerCamera();
 
 		scope.model.floorplan.addEventListener(EVENT_UPDATED, this.updatedevent);
+		scope.model.addEventListener(EVENT_GLTF_READY, this.gltfreadyevent);
 		
 		scope.lights = new Lights(scope.scene, scope.model.floorplan);
 		scope.floorplan = new Floorplan(scope.scene, scope.model.floorplan, scope.controls);
-		
-		
 		
 		function animate() 
 		{			
@@ -189,6 +189,19 @@ export class Main extends EventDispatcher
 		animate();
 		
 		scope.element.mouseenter(function () {scope.mouseOver = true;}).mouseleave(function () {scope.mouseOver = false;}).click(function () {scope.hasClicked = true;});
+	}
+	exportForBlender()
+	{
+		this.skybox.setEnabled(false);
+		this.controller.showGroundPlane(false);
+		this.model.exportForBlender();
+	}
+	
+	gltfReady(o)
+	{
+		this.dispatchEvent({type:EVENT_GLTF_READY, item: this, gltf: o.gltf});
+		this.skybox.setEnabled(true);
+		this.controller.showGroundPlane(true);
 	}
 	
 	itemIsSelected(item)
