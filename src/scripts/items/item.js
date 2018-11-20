@@ -198,18 +198,18 @@ export class Item extends Mesh
 		context.lineWidth = 1;
 		context.setLineDash([0]);
 		context.strokeStyle = '#0000FF';
-		context.strokeText(wPrefix+Dimensioning.cmToMeasure(w), w*0.5, h*0.5);		
+		context.strokeText(wPrefix+Dimensioning.cmToMeasure(w/3), w*0.5, h*0.5);		
 		
 		context.fillStyle = '#FF0000';
-		context.fillText(wPrefix+Dimensioning.cmToMeasure(w), w*0.5, h*0.5);
+		context.fillText(wPrefix+Dimensioning.cmToMeasure(w/3), w*0.5, h*0.5);
 		
 		context.translate(w*0.125, 0);
 		context.rotate(Math.PI * 0.5);
 		context.strokeStyle = '#0000FF';
-		context.strokeText(hPrefix+Dimensioning.cmToMeasure(h), h*0.5, 0);
+		context.strokeText(hPrefix+Dimensioning.cmToMeasure(h/3), h*0.5, 0);
 		
 		context.fillStyle = '#FF0000';
-		context.fillText(hPrefix+Dimensioning.cmToMeasure(h), h*0.5, 0);
+		context.fillText(hPrefix+Dimensioning.cmToMeasure(h/3), h*0.5, 0);
 		context.restore();
 		material.map.needsUpdate = true;		
 	}
