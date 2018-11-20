@@ -456,10 +456,10 @@ function getGlobalPropertiesFolder(gui, global)
 function getItemPropertiesFolder(gui, anItem)
 {
 	var f = gui.addFolder('Current Item');
-	var inamecontrol = f.add(anItem, 'name', 0.1, 1000.1);
-	var wcontrol = f.add(anItem, 'width', 0.1, 1000.1);
-	var hcontrol = f.add(anItem, 'height', 0.1, 1000.1);
-	var dcontrol = f.add(anItem, 'depth', 0.1, 1000.1);
+	var inamecontrol = f.add(anItem, 'name');
+	var wcontrol = f.add(anItem, 'width', 0.1, 1000.1).step(0.1);
+	var hcontrol = f.add(anItem, 'height', 0.1, 1000.1).step(0.1);
+	var dcontrol = f.add(anItem, 'depth', 0.1, 1000.1).step(0.1);
 	var pcontrol = f.add(anItem, 'proportionalsize').name('Maintain Size Ratio');
 	var lockcontrol = f.add(anItem, 'fixed').name('Locked in place');
 	var deleteItemControl = f.add(anItem, 'deleteItem').name('Delete Item');

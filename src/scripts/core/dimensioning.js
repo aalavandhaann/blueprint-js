@@ -84,7 +84,7 @@ export class Dimensioning
 			return Math.round(decimals * cm) / decimals;
 		case dimMeter:
 		default:
-			var m = Math.round(decimals * (cm)) / decimals;
+			var m = Math.round(decimals * (0.01 * cm)) / decimals;
 			return m;
 		}
 	}
