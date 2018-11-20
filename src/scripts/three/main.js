@@ -5,8 +5,6 @@ import {PCFSoftShadowMap} from 'three';
 import {Clock} from 'three';
 // import {FirstPersonControls} from './first-person-controls.js';
 import {PointerLockControls} from './pointerlockcontrols.js';
-import FirstPersonVRControls from 'three-firstperson-vr-controls';
-
 
 import {EVENT_UPDATED, EVENT_WALL_CLICKED, EVENT_NOTHING_CLICKED, EVENT_FLOOR_CLICKED, EVENT_ITEM_SELECTED, EVENT_ITEM_UNSELECTED} from '../core/events.js';
 import {EVENT_CAMERA_ACTIVE_STATUS, EVENT_FPS_EXIT, EVENT_CAMERA_VIEW_CHANGE} from '../core/events.js';
@@ -20,8 +18,6 @@ import {HUD} from './hud.js';
 import {Floorplan} from './floorPlan.js';
 import {Lights} from './lights.js';
 import {Skybox} from './skybox.js';
-
-import MobileDetect from 'mobile-detect';
 
 export class Main extends EventDispatcher
 {
@@ -113,6 +109,7 @@ export class Main extends EventDispatcher
 		renderer.setClearColor( 0xFFFFFF, 1 );
 		renderer.clippingPlanes = this.clippingEmpty;
 		renderer.localClippingEnabled = false;
+//		renderer.setPixelRatio(window.devicePixelRatio);
 // renderer.sortObjects = false;
 		
 		return renderer;
@@ -129,9 +126,7 @@ export class Main extends EventDispatcher
 
 		scope.domElement = scope.element.get(0);
 		
-		scope.fpscamera = new PerspectiveCamera(60, 1, 1, 10000 );
-		scope.fpsvrcamera = new PerspectiveCamera(60, 1, 1, 10000 );
-		
+		scope.fpscamera = new PerspectiveCamera(60, 1, 1, 10000 );		
 		scope.perspectivecamera = new PerspectiveCamera(45, 10, scope.cameraNear, scope.cameraFar);
 		scope.orthocamera = new OrthographicCamera(orthoWidth / -orthoScale, orthoWidth /orthoScale, orthoHeight /orthoScale, orthoHeight / -orthoScale, scope.cameraNear, scope.cameraFar);
 		
@@ -164,11 +159,6 @@ export class Main extends EventDispatcher
 		});
 		
 		
-		scope.fpsvrcamera.position.set(0, 100, 0);
-		scope.fpsvrcontrols = new FirstPersonVRControls(scope.fpsvrcamera, scope.scene.getScene());
-		scope.fpsvrcontrols.verticalMovement = false;
-		scope.fpsvrcontrols.strafing = true;
-		
 		scope.hud = new HUD(scope, scope.scene);
 		scope.controller = new Controller(scope, scope.model, scope.camera, scope.element, scope.controls, scope.hud);
 
@@ -187,26 +177,18 @@ export class Main extends EventDispatcher
 		scope.lights = new Lights(scope.scene, scope.model.floorplan);
 		scope.floorplan = new Floorplan(scope.scene, scope.model.floorplan, scope.controls);
 		
+		
+		
 		function animate() 
 		{			
-			requestAnimationFrame(animate);
+//			requestAnimationFrame(animate);
+			scope.renderer.setAnimationLoop(function(){scope.render();});
 			scope.render();
 		}
 		scope.switchFPSMode(false);
 		animate();
+		
 		scope.element.mouseenter(function () {scope.mouseOver = true;}).mouseleave(function () {scope.mouseOver = false;}).click(function () {scope.hasClicked = true;});
-	
-		
-		var md = new MobileDetect(window.navigator.userAgent);
-		scope.isMobile = md.mobile();
-		scope.isTablet = md.tablet();
-		
-		if(scope.isMobile != null)
-		{
-			console.log('ENABLE THE VR MODE');
-			window.renderer = scope.renderer;
-			scope.renderer.vr.enabled = true;
-		}
 	}
 	
 	itemIsSelected(item)
@@ -500,19 +482,12 @@ export class Main extends EventDispatcher
 		if(flag)
 		{
 			this.skybox.toggleEnvironment(true);
-			if(this.isMobile == null)
-			{
-				this.fpscontrols.lock();
-			}
-			
+			this.fpscontrols.lock();			
 		}
 		else
 		{
 			this.skybox.toggleEnvironment(false);
-			if(this.isMobile == null)
-			{
-				this.fpscontrols.unlock();
-			}			
+			this.fpscontrols.unlock();
 		}
 		
 		this.model.switchWireframe(false);
@@ -537,6 +512,11 @@ export class Main extends EventDispatcher
 			return false;
 		}
 	}
+	
+	rendervr()
+	{
+		
+	}
 
 	render(forced) 
 	{
@@ -550,16 +530,8 @@ export class Main extends EventDispatcher
 		scope.spin();		
 		if(scope.firstpersonmode)
 		{
-			if(scope.isMobile == null)
-			{
-				scope.fpscontrols.update(scope.fpsclock.getDelta());
-				scope.renderer.render(scope.scene.getScene(), scope.fpscamera);
-			}
-			else
-			{
-				scope.fpsvrcontrols.update(scope.fpsclock.getDelta());
-				scope.renderer.render(scope.scene.getScene(), scope.fpsvrcamera);				
-			}			
+			scope.fpscontrols.update(scope.fpsclock.getDelta());
+			scope.renderer.render(scope.scene.getScene(), scope.fpscamera);			
 			
 		}
 		else

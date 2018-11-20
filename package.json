@@ -48,6 +48,7 @@
     "three": "^0.98.0",
     "three-firstperson-vr-controls": "^0.2.0",
     "three-gltf-loader": "^1.98.0",
-    "three-reflector2": "0.0.5"
+    "three-reflector2": "0.0.5",
+    "webvr-ui": "^0.10.0"
   }
 }
