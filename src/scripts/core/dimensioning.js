@@ -105,7 +105,7 @@ export class Dimensioning
 			return floorFeet + '" ' + remainingInches + '`';
 		case dimInch:
 			var inches = Math.round(decimals * (cm * 0.393700)) / decimals;
-			return inches + '`';
+			return inches + '\'';
 		case dimMilliMeter:
 			var mm = Math.round(decimals * (10 * cm)) / decimals;
 			return '' + mm + ' mm';
