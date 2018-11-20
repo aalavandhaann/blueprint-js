@@ -5,6 +5,8 @@ import {PCFSoftShadowMap} from 'three';
 import {Clock} from 'three';
 // import {FirstPersonControls} from './first-person-controls.js';
 import {PointerLockControls} from './pointerlockcontrols.js';
+import FirstPersonVRControls from 'three-firstperson-vr-controls';
+
 
 import {EVENT_UPDATED, EVENT_WALL_CLICKED, EVENT_NOTHING_CLICKED, EVENT_FLOOR_CLICKED, EVENT_ITEM_SELECTED, EVENT_ITEM_UNSELECTED} from '../core/events.js';
 import {EVENT_CAMERA_ACTIVE_STATUS, EVENT_FPS_EXIT, EVENT_CAMERA_VIEW_CHANGE} from '../core/events.js';
@@ -19,6 +21,7 @@ import {Floorplan} from './floorPlan.js';
 import {Lights} from './lights.js';
 import {Skybox} from './skybox.js';
 
+import MobileDetect from 'mobile-detect';
 
 export class Main extends EventDispatcher
 {
@@ -91,6 +94,8 @@ export class Main extends EventDispatcher
 		this.clippingEmpty = Object.freeze([]);
 		this.clippingEnabled = false;
 		
+//		console.log('THIS ON MOBILE DEVICE ::: ', isMobile, isTablet);
+		
 		this.init();
 	}
 	
@@ -144,21 +149,22 @@ export class Main extends EventDispatcher
 		scope.controls.maxDistance = 3000;
 		scope.controls.minZoom = 0.9;
 		scope.controls.screenSpacePanning = true;
-// scope.controls.maxZoom = 3500/ orthoWidth;
 		
 		scope.fpscontrols = new PointerLockControls(scope.fpscamera);
 		scope.fpscontrols.characterHeight = 160;
 		
 		this.scene.add(scope.fpscontrols.getObject());
-// this.fpscamera.position.set(0, 125, 0);
 		this.fpscontrols.getObject().position.set(0, 200, 0);
 		
 		this.fpscontrols.addEventListener('unlock', function(){
 			scope.switchFPSMode(false);
 			scope.dispatchEvent({type:EVENT_FPS_EXIT});
 		});
-				
-// scope.controls2 = new Controls(scope.camera, scope.domElement);
+		
+		
+		scope.fpsvrcontrols = new FirstPersonVRControls(scope.camera, scope.scene.getScene());
+		scope.fpsvrcontrols.verticalMovement = false;
+		scope.fpsvrcontrols.strafing = true;
 		
 		scope.hud = new HUD(scope, scope.scene);
 		scope.controller = new Controller(scope, scope.model, scope.camera, scope.element, scope.controls, scope.hud);
@@ -173,22 +179,24 @@ export class Main extends EventDispatcher
 		// setup camera nicely
 		scope.centerCamera();
 
-// model.floorplan.fireOnUpdatedRooms(scope.centerCamera);
 		scope.model.floorplan.addEventListener(EVENT_UPDATED, this.updatedevent);
 		
 		scope.lights = new Lights(scope.scene, scope.model.floorplan);
 		scope.floorplan = new Floorplan(scope.scene, scope.model.floorplan, scope.controls);
 		
-// var delay = 50;
 		function animate() 
 		{			
-// setTimeout(function () {requestAnimationFrame(animate);}, delay);
 			requestAnimationFrame(animate);
 			scope.render();
 		}
 		scope.switchFPSMode(false);
 		animate();
 		scope.element.mouseenter(function () {scope.mouseOver = true;}).mouseleave(function () {scope.mouseOver = false;}).click(function () {scope.hasClicked = true;});
+	
+		
+		var md = new MobileDetect(window.navigator.userAgent);
+		scope.isMobile = md.mobile();
+		scope.isTablet = md.tablet();
 	}
 	
 	itemIsSelected(item)
@@ -478,15 +486,23 @@ export class Main extends EventDispatcher
 		this.controls.enabled = !flag;
 		this.controller.enabled = !flag;
 		this.controls.dispatchEvent({type:EVENT_CAMERA_ACTIVE_STATUS});
+		
 		if(flag)
 		{
 			this.skybox.toggleEnvironment(true);
-			this.fpscontrols.lock();
+			if(this.isMobile == null)
+			{
+				this.fpscontrols.lock();
+			}
+			
 		}
 		else
 		{
 			this.skybox.toggleEnvironment(false);
-			this.fpscontrols.unlock();
+			if(this.isMobile == null)
+			{
+				this.fpscontrols.unlock();
+			}			
 		}
 		
 		this.model.switchWireframe(false);
@@ -524,14 +540,20 @@ export class Main extends EventDispatcher
 		scope.spin();		
 		if(scope.firstpersonmode)
 		{
-			scope.fpscontrols.update(scope.fpsclock.getDelta());
+			if(scope.isMobile == null)
+			{
+				scope.fpscontrols.update(scope.fpsclock.getDelta());
+			}
+			else
+			{
+				scope.fpsvrcontrols.update(scope.fpsclock.getDelta());
+			}			
 			scope.renderer.render(scope.scene.getScene(), scope.fpscamera);
 		}
 		else
 		{
 			if(this.shouldRender() || forced)
 			{
-// scope.controls.update();
 				scope.renderer.render(scope.scene.getScene(), scope.camera);
 			}			
 		}

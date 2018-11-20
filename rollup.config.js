@@ -30,6 +30,8 @@ export default {
         'node_modules/three-gltf-loader/**',
         'node_modules/@calvinscofield/three-objloader/**',
         'node_modules/@calvinscofield/three-reflector2/**',
+        'node_modules/three-firstperson-vr-controls/**',
+        'node_modules/mobile-detect/**',
       ]
     }),
       postcss({extensions: [ '.css' ],plugins: [cssnano()]}),
