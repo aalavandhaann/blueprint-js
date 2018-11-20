@@ -200,6 +200,12 @@ export class Main extends EventDispatcher
 		var md = new MobileDetect(window.navigator.userAgent);
 		scope.isMobile = md.mobile();
 		scope.isTablet = md.tablet();
+		
+		if(scope.isMobile != null)
+		{
+			console.log('ENABLE THE VR MODE');
+			scope.renderer.vr.enabled = true;
+		}
 	}
 	
 	itemIsSelected(item)
