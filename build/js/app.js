@@ -628,7 +628,7 @@ $(document).ready(function()
 		$('#showFirstPerson').removeClass('active');
 		$('#showAddItems').hide();
 		$('#viewcontrols').hide();
-		gui.closed = true;
+//		gui.closed = true;
 		blueprint3d.three.pauseTheRendering(true);
 		blueprint3d.three.getController().setSelectedObject(null);
 	});
@@ -637,7 +637,7 @@ $(document).ready(function()
 	{ 
 		blueprint3d.model.floorplan.update();
 		$('.card').flip(true);
-		gui.closed = false;
+//		gui.closed = false;
 		$(this).addClass('active');
 		$('#showFloorPlan').removeClass('active');
 		$('#showFirstPerson').removeClass('active');	
@@ -652,7 +652,7 @@ $(document).ready(function()
 	{ 
 		blueprint3d.model.floorplan.update();
 		$('.card').flip(true);
-		gui.closed = true;
+//		gui.closed = true;
 		$(this).addClass('active');
 		$('#showFloorPlan').removeClass('active');
 		$('#showDesign').removeClass('active');
