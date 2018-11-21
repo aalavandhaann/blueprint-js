@@ -10,6 +10,8 @@ export {EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED, EVENT_NOTHING_CLICKED, EVENT_FLO
 export {Utils} from './core/utils.js';
 export {ELogContext, ELogLevel, logContext, isLogging, log} from './core/log.js';
 export {dimInch, dimFeetAndInch, dimMeter, dimCentiMeter, dimMilliMeter, decimals, Dimensioning} from './core/dimensioning.js';
+export {cmPerFoot, pixelsPerFoot, cmPerPixel, pixelsPerCm} from './core/dimensioning.js';
+
 export {configDimUnit, configWallHeight, configWallThickness, Configuration} from './core/configuration.js';
 export {VIEW_TOP, VIEW_FRONT, VIEW_RIGHT, VIEW_LEFT, VIEW_ISOMETRY} from './core/constants.js';
 
@@ -25,6 +27,7 @@ export {defaultWallTexture, Wall} from './model/wall.js';
 //Classes from floorplanner module
 export {floorplannerModes, gridSpacing, gridWidth, gridColor, roomColor, wallWidth, wallWidthHover, edgeColor, edgeColorHover, edgeWidth, deleteColor, cornerRadius, cornerRadiusHover, cornerColor, cornerColorHover, FloorplannerView} from './floorplanner/floorplanner_view.js';
 export {snapTolerance, Floorplanner} from './floorplanner/floorplanner.js';
+export {CarbonSheet} from './floorplanner/carbonsheet.js';
 
 //Classes from items module
 export {item_types, Factory} from './items/factory.js';
@@ -58,6 +61,8 @@ export {OBJExporter} from './exporters/OBJExporter.js';
 import {Model} from './model/model.js';
 import {Main} from './three/main.js';
 import {Floorplanner} from './floorplanner/floorplanner.js';
+import {Configuration, configDimUnit} from './core/configuration.js';
+import {dimMeter} from './core/dimensioning.js';
 //
 ///** VestaDesigner core application. */
 export class BlueprintJS 
@@ -70,10 +75,12 @@ export class BlueprintJS
 	 */
 	constructor(options) 
 	{
+		Configuration.setValue(configDimUnit, dimMeter);
+		
 		this.options = options;
 		this.model = new Model(options.textureDir);
 		this.three = new Main(this.model, options.threeElement, options.threeCanvasElement, {});
-
+		
 		if (!options.widget) 
 		{
 			this.floorplanner = new Floorplanner(options.floorplannerElement, this.model.floorplan);

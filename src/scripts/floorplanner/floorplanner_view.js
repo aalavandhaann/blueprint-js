@@ -1,6 +1,9 @@
 import $ from 'jquery';
 import {Utils} from '../core/utils.js';
+import {EVENT_UPDATED} from '../core/events.js';
+
 import {Dimensioning} from '../core/dimensioning.js';
+import {CarbonSheet} from './carbonsheet.js';
 
 /** */
 export const floorplannerModes = {MOVE: 0,DRAW: 1,DELETE: 2};
@@ -41,10 +44,21 @@ export class FloorplannerView
 		this.context = this.canvasElement.getContext('2d');
 		this.floorplan = floorplan;
 		this.viewmodel = viewmodel;
-
+		
 		var scope = this;
+		this._carbonsheet = new CarbonSheet(floorplan, viewmodel, canvas);
+		this._carbonsheet.addEventListener(EVENT_UPDATED, function()
+				{
+					scope.draw();
+				});
+
 		$(window).resize(() => {scope.handleWindowResize();});
 		this.handleWindowResize();
+	}
+	
+	get carbonSheet()
+	{
+		return this._carbonsheet;
 	}
 
 	/** */
@@ -62,7 +76,8 @@ export class FloorplannerView
 	/** */
 	draw() 
 	{
-		this.context.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);      
+		this.context.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
+		this._carbonsheet.draw();
 		this.drawGrid();
 		this.floorplan.getRooms().forEach((room) => {this.drawRoom(room);});
 		this.floorplan.getWalls().forEach((wall) => {this.drawWall(wall);});

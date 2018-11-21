@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import {EventDispatcher} from 'three';
+import {cmPerPixel, pixelsPerCm} from '../core/dimensioning.js';
 import {EVENT_MODE_RESET, EVENT_LOADED} from '../core/events.js';
 import {FloorplannerView, floorplannerModes} from './floorplanner_view.js';
 
@@ -57,12 +58,13 @@ export class Floorplanner extends EventDispatcher
 		this.floorplan = floorplan;
 		this.canvasElement = $('#' + canvas);
 		this.view = new FloorplannerView(this.floorplan, this, canvas);
-		var cmPerFoot = 30.48;
-		var pixelsPerFoot = 15.0;
-		this.cmPerPixel = cmPerFoot * (1.0 / pixelsPerFoot);
-		this.pixelsPerCm = 1.0 / this.cmPerPixel;
-		this.wallWidth = 10.0 * this.pixelsPerCm;
 		
+//		var cmPerFoot = cmPerFoot;
+//		var pixelsPerFoot = pixelsPerFoot;
+		this.cmPerPixel = cmPerPixel;
+		this.pixelsPerCm = pixelsPerCm;
+		
+		this.wallWidth = 10.0 * this.pixelsPerCm;		
 		this.gridsnapmode = false;
 		this.shiftkey = false;
 		// Initialization:
@@ -115,6 +117,11 @@ export class Floorplanner extends EventDispatcher
 			scope.gridsnapmode = e.shiftKey;			
 		});
 		floorplan.addEventListener(EVENT_LOADED, function(){scope.reset();});
+	}
+	
+	get carbonSheet()
+	{
+		return this.view.carbonSheet;
 	}
 
 	/** */
@@ -314,6 +321,7 @@ export class Floorplanner extends EventDispatcher
 	/** */
 	reset() 
 	{
+		this.view.carbonSheet.clear();
 		this.resizeView();
 		this.setMode(floorplannerModes.MOVE);
 		this.resetOrigin();

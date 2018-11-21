@@ -162,9 +162,9 @@ var GlobalProperties = function()
 {
 	this.name = 'Global';
 	//a - feet and inches, b = inches, c - cms, d - millimeters, e - meters
-	this.units = {a:false, b:false, c:true, d:false, e:false};	
+	this.units = {a:false, b:false, c:false, d:false, e:true};	
 	this.unitslabel = {a:BP3DJS.dimFeetAndInch, b:BP3DJS.dimInch, c:BP3DJS.dimCentiMeter, d:BP3DJS.dimMilliMeter, e:BP3DJS.dimMeter};
-	this.guicontrollers = null;
+	this.guiControllers = null;
 	
 	this.setUnit = function(unit)
 	{
@@ -182,7 +182,7 @@ var GlobalProperties = function()
 		{
 			this.guiControllers[i].updateDisplay();
 	    }
-	}	
+	}
 	
 	this.setGUIControllers = function(guiControls)
 	{
@@ -466,8 +466,39 @@ function getGlobalPropertiesFolder(gui, global)
 	var icontrol = f.add(global.units, 'b',).name("Inches'").onChange(function(){global.setUnit("b")});
 	var ccontrol = f.add(global.units, 'c',).name('Cm').onChange(function(){global.setUnit("c")});
 	var mmcontrol = f.add(global.units, 'd',).name('mm').onChange(function(){global.setUnit("d")});
-	var mcontrol = f.add(global.units, 'e',).name('m').onChange(function(){global.setUnit("e")});	
+	var mcontrol = f.add(global.units, 'e',).name('m').onChange(function(){global.setUnit("e")});
 	global.setGUIControllers([ficontrol, icontrol, ccontrol, mmcontrol, mcontrol]);
+	
+	return f;
+}
+
+function getCarbonSheetPropertiesFolder(gui, carbonsheet, globalproperties)
+{
+	console.log('CARBON SHEET ', carbonsheet, carbonsheet.x);
+	var f = gui.addFolder('Carbon Sheet');
+	var url = f.add(carbonsheet, 'url').name('Url');
+	var width = f.add(carbonsheet, 'width').name('Real Width').max(1000);
+	var height = f.add(carbonsheet, 'height').name('Real Height').max(1000);
+	var proportion = f.add(carbonsheet, 'maintainProportion').name('Maintain Proportion');
+	var x = f.add(carbonsheet, 'x').name('Move in X');
+	var y = f.add(carbonsheet, 'y').name('Move in Y');
+	
+	var ax = f.add(carbonsheet, 'anchorX').name('Anchor X');
+	var ay = f.add(carbonsheet, 'anchorY').name('Anchor Y');
+	var transparency = f.add(carbonsheet, 'transparency').name('Transparency').min(0).max(1.0).step(0.05);
+	carbonsheet.addEventListener(BP3DJS.EVENT_UPDATED, function(){
+		url.updateDisplay();
+		width.updateDisplay();
+		height.updateDisplay();
+		x.updateDisplay();
+		y.updateDisplay();
+		ax.updateDisplay();
+		ay.updateDisplay();
+		transparency.updateDisplay(width);
+	});
+	
+	globalproperties.guiControllers.push(width);
+	globalproperties.guiControllers.push(height);
 	return f;
 }
 
@@ -530,7 +561,7 @@ function getWallAndFloorPropertiesFolder(gui, aWall)
 	return f;
 }
 
-function datGUI(three)
+function datGUI(three, floorplanner)
 {
 	gui = new dat.GUI();
 	aGlobal = new GlobalProperties();
@@ -541,6 +572,8 @@ function datGUI(three)
 	aCameraRange.three = three;
 	
 	globalPropFolder = getGlobalPropertiesFolder(gui, aGlobal);
+	carbonPropsFolder = getCarbonSheetPropertiesFolder(globalPropFolder, floorplanner.carbonSheet, aGlobal);
+	
 	cameraPropFolder = getCameraRangePropertiesFolder(gui, aCameraRange);
 	wallPropFolder = getWallAndFloorPropertiesFolder(gui, aWall);
 	itemPropFolder = getItemPropertiesFolder(gui, anItem);
@@ -578,7 +611,7 @@ $(document).ready(function()
 	
 	
 	addBlueprintListeners(blueprint3d);
-	datGUI(blueprint3d.three);
+	datGUI(blueprint3d.three, blueprint3d.floorplanner);
 	blueprint3d.three.stopSpin();
 	gui.closed = true;
 	

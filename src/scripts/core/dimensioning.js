@@ -16,6 +16,12 @@ export const dimMilliMeter = 'mm';
 
 export const decimals = 10;
 
+export const cmPerFoot = 30.48;
+export const pixelsPerFoot = 15.0;
+export const cmPerPixel = cmPerFoot * (1.0 / pixelsPerFoot);
+export const pixelsPerCm = 1.0 / cmPerPixel;
+
+
 /** Dimensioning functions. */
 export class Dimensioning 
 {	
@@ -37,7 +43,7 @@ export class Dimensioning
 			return measure;
 		case dimMeter:
 		default:
-			return Math.round(decimals * measure) / decimals;
+			return Math.round(decimals * 100 * measure) / decimals;
 		}
 	}
 	
@@ -59,7 +65,7 @@ export class Dimensioning
 			return measure;
 		case dimMeter:
 		default:
-			return Math.round(decimals * measure) / decimals + 'cm';
+			return Math.round(decimals * 100 * measure) / decimals + 'cm';
 		}
 	}
 	
