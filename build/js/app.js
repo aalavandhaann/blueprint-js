@@ -613,7 +613,7 @@ $(document).ready(function()
 	addBlueprintListeners(blueprint3d);
 	datGUI(blueprint3d.three, blueprint3d.floorplanner);
 	blueprint3d.three.stopSpin();
-	gui.closed = true;
+//	gui.closed = true;
 	
 	
 	$('#showAddItems').hide();
