@@ -357,12 +357,12 @@ export class Floorplanner extends EventDispatcher
 	/** Convert from THREEjs coords to canvas coords. */
 	convertX(x) 
 	{
-		return (x - this.originX * this.cmPerPixel) * this.pixelsPerCm;
+		return (x - (this.originX * this.cmPerPixel)) * this.pixelsPerCm;
 	}
 
 	/** Convert from THREEjs coords to canvas coords. */
 	convertY(y)
 	{
-		return (y - this.originY * this.cmPerPixel) * this.pixelsPerCm;
+		return (y - (this.originY * this.cmPerPixel)) * this.pixelsPerCm;
 	}
 }

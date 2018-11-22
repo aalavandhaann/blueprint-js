@@ -477,8 +477,8 @@ function getCarbonSheetPropertiesFolder(gui, carbonsheet, globalproperties)
 	console.log('CARBON SHEET ', carbonsheet, carbonsheet.x);
 	var f = gui.addFolder('Carbon Sheet');
 	var url = f.add(carbonsheet, 'url').name('Url');
-	var width = f.add(carbonsheet, 'width').name('Real Width').max(1000);
-	var height = f.add(carbonsheet, 'height').name('Real Height').max(1000);
+	var width = f.add(carbonsheet, 'width').name('Real Width').max(1000.0).step(0.01);
+	var height = f.add(carbonsheet, 'height').name('Real Height').max(1000.0).step(0.01);
 	var proportion = f.add(carbonsheet, 'maintainProportion').name('Maintain Proportion');
 	var x = f.add(carbonsheet, 'x').name('Move in X');
 	var y = f.add(carbonsheet, 'y').name('Move in Y');

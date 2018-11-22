@@ -78,8 +78,11 @@ export class FloorplannerView
 	{
 		this.context.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
 		this._carbonsheet.draw();
-		this.drawGrid();
+		this.drawGrid();		
+		this.context.globalAlpha = 0.3;
 		this.floorplan.getRooms().forEach((room) => {this.drawRoom(room);});
+		this.context.globalAlpha = 1.0;
+		
 		this.floorplan.getWalls().forEach((wall) => {this.drawWall(wall);});
 		this.floorplan.getCorners().forEach((corner) => {this.drawCorner(corner);});
 		if (this.viewmodel.mode == floorplannerModes.DRAW) 
@@ -104,7 +107,7 @@ export class FloorplannerView
 		// we'll just draw the shorter label... idk
 		if (wall.backEdge && wall.frontEdge) 
 		{
-			if (wall.backEdge.interiorDistance < wall.frontEdge.interiorDistance) 
+			if (wall.backEdge.interiorDistance() < wall.frontEdge.interiorDistance()) 
 			{
 				this.drawEdgeLabel(wall.backEdge);
 			} 
@@ -163,7 +166,7 @@ export class FloorplannerView
 		this.context.textAlign = 'center';
 		this.context.strokeStyle = '#ffffff';
 		this.context.lineWidth = 4;
-
+		
 		this.context.strokeText(Dimensioning.cmToMeasure(length),this.viewmodel.convertX(pos.x),this.viewmodel.convertY(pos.y));
 		this.context.fillText(Dimensioning.cmToMeasure(length),this.viewmodel.convertX(pos.x),this.viewmodel.convertY(pos.y));
 	}

@@ -22,7 +22,9 @@ export class CarbonSheet extends EventDispatcher
 		
 		this._loaded = false;
 		this._transparency = 1.0;		
-		this._x = this._y = this._anchorX = this._anchorY = 0.0;	
+		this._x = this._y = 250.0;
+		this._anchorX = 147.0;
+		this._anchorY = 85.0;	
 		//The values in pixels for width and height that will reflect the image's original size
 		this._rawWidthPixels = this._rawHeightPixels = 1.0;
 		//The values in cms for width and height that will reflect the images's original size
@@ -60,7 +62,9 @@ export class CarbonSheet extends EventDispatcher
 	{
 		this._loaded = false;
 		this._transparency = 1.0;		
-		this._x = this._y = this._anchorX = this._anchorY = 0.0;		
+		this._x = this._y = 250.0;
+		this._anchorX = 147.0;
+		this._anchorY = 85.0;			
 		this._rawWidthPixels = this._rawHeightPixels = 1.0;
 		this._rawWidth = this._rawHeight = 1.0;
 		this._widthPixels = this._heightPixels = 1.0;
