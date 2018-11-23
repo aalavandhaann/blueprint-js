@@ -9,32 +9,45 @@ import {Room} from './room.js';
 /** */
 export const defaultFloorPlanTolerance = 10.0;
 
-/** 
- * A Floorplan represents a number of Walls, Corners and Rooms. This is an abstract that keeps the 2d and 3d in sync
- **/
+/**
+ * A Floorplan represents a number of Walls, Corners and Rooms. This is an
+ * abstract that keeps the 2d and 3d in sync
+ */
 export class Floorplans extends EventDispatcher
 {
 	/** Constructs a floorplan. */
 	constructor() 
 	{
 		super();
-		//List of elements of Wall instance
+		// List of elements of Wall instance
 		this.walls = [];
-		//List of elements of Corner instance
+		// List of elements of Corner instance
 		this.corners = [];
-		//List of elements of Room instance
+		// List of elements of Room instance
 		this.rooms = [];
-		//List with reference to callback on a new wall insert event
+		// List with reference to callback on a new wall insert event
 		this.new_wall_callbacks = [];
-		//List with reference to callbacks on a new corner insert event
+		// List with reference to callbacks on a new corner insert event
 		this.new_corner_callbacks = [];
-		//List with reference to callbacks on redraw event
+		// List with reference to callbacks on redraw event
 		this.redraw_callbacks = [];
-		//List with reference to callbacks for updated_rooms event
+		// List with reference to callbacks for updated_rooms event
 		this.updated_rooms = [];
-		//List with reference to callbacks for roomLoaded event
+		// List with reference to callbacks for roomLoaded event
 		this.roomLoadedCallbacks = [];
 		this.floorTextures = {};
+		
+		this._carbonSheet = null;
+	}
+	
+	set carbonSheet(val)
+	{
+		this._carbonSheet = val;
+	}
+	
+	get carbonSheet()
+	{
+		return this._carbonSheet;
 	}
 
 	// hack
@@ -98,20 +111,20 @@ export class Floorplans extends EventDispatcher
 		this.updated_rooms.add(callback);
 	}
 	
-	//This method needs to be called from the 2d floorplan whenever
-	// the other method newWall is called. 
-	//This is to ensure that there are no floating walls going across 
+	// This method needs to be called from the 2d floorplan whenever
+	// the other method newWall is called.
+	// This is to ensure that there are no floating walls going across
 	// other walls. If two walls are intersecting then the intersection point
 	// has to create a new wall.
 	
 	newWallsForIntersections(start, end)
 	{
 		var intersections = false;
-		//This is a bug in the logic
-		//When creating a new wall with a start and end
-		//it needs to be checked if it is cutting other walls
-		//If it cuts then all those walls have to removed and introduced as 
-		//new walls along with this new wall
+		// This is a bug in the logic
+		// When creating a new wall with a start and end
+		// it needs to be checked if it is cutting other walls
+		// If it cuts then all those walls have to removed and introduced as
+		// new walls along with this new wall
 		var cStart = new Vector2(start.getX(), start.getY());
 		var cEnd = new Vector2(end.getX(), end.getY());
 		var newCorners = [];
@@ -155,12 +168,15 @@ export class Floorplans extends EventDispatcher
 
 	/**
 	 * Creates a new wall.
-	 * @param start The start corner.
-	 * @param end he end corner.
+	 * 
+	 * @param start
+	 *            The start corner.
+	 * @param end
+	 *            he end corner.
 	 * @returns The new wall.
 	 */
 	newWall(start, end) 
-	{		
+	{
 		var wall = new Wall(start, end);
 		this.walls.push(wall);
 		var scope = this;
@@ -174,9 +190,14 @@ export class Floorplans extends EventDispatcher
 	
 	/**
 	 * Creates a new corner.
-	 * @param x The x coordinate.
-	 * @param y The y coordinate.
-	 * @param id An optional id. If unspecified, the id will be created internally.
+	 * 
+	 * @param x
+	 *            The x coordinate.
+	 * @param y
+	 *            The y coordinate.
+	 * @param id
+	 *            An optional id. If unspecified, the id will be created
+	 *            internally.
 	 * @returns The new corner.
 	 */
 	newCorner(x, y, id)
@@ -188,14 +209,18 @@ export class Floorplans extends EventDispatcher
 		corner.addEventListener(EVENT_DELETED, function(o){scope.removeCorner(o.item);});
 		this.dispatchEvent({type: EVENT_NEW, item: this, newItem: corner});
 		
-		//This code has been added by #0K. There should be an update whenever a new corner is inserted
-//		this.update();
+		// This code has been added by #0K. There should be an update whenever a
+		// new corner is inserted
+// this.update();
 
 		return corner;
 	}
 
-	/** Removes a wall.
-	 * @param wall The wall to be removed.
+	/**
+	 * Removes a wall.
+	 * 
+	 * @param wall
+	 *            The wall to be removed.
 	 */
 	removeWall(wall)
 	{
@@ -203,8 +228,11 @@ export class Floorplans extends EventDispatcher
 		this.update();
 	}	
 
-	/** Removes a corner.
-	 * @param corner The corner to be removed.
+	/**
+	 * Removes a corner.
+	 * 
+	 * @param corner
+	 *            The corner to be removed.
 	 */
 	removeCorner(corner) 
 	{
@@ -259,20 +287,46 @@ export class Floorplans extends EventDispatcher
 
 	saveFloorplan() 
 	{
-		var floorplans = {corners: {}, walls: [], wallTextures: [], floorTextures: {},newFloorTextures: {}};
-
-		this.corners.forEach((corner) => {
-			floorplans.corners[corner.id] = {'x': corner.x,'y': corner.y};
-		});
+		var floorplans = {corners: {}, walls: [], wallTextures: [], floorTextures: {},newFloorTextures: {}, carbonSheet:{}};
+		var cornerIds = [];
+// writing all the corners based on the corners array
+// is having a bug. This is because some walls have corners
+// that aren't part of the corners array anymore. This is a quick fix
+// by adding the corners to the json file based on the corners in the walls
+// this.corners.forEach((corner) => {
+// floorplans.corners[corner.id] = {'x': corner.x,'y': corner.y};
+// });
 
 		this.walls.forEach((wall) => {
-			floorplans.walls.push({
-				'corner1': wall.getStart().id,
-				'corner2': wall.getEnd().id,
-				'frontTexture': wall.frontTexture,
-				'backTexture': wall.backTexture
-			});
+			if(wall.getStart() && wall.getEnd())
+			{
+				floorplans.walls.push({
+					'corner1': wall.getStart().id,
+					'corner2': wall.getEnd().id,
+					'frontTexture': wall.frontTexture,
+					'backTexture': wall.backTexture
+				});
+				cornerIds.push(wall.getStart());
+				cornerIds.push(wall.getEnd());
+			}			
 		});
+		
+		cornerIds.forEach((corner)=>{
+			floorplans.corners[corner.id] = {'x': corner.x,'y': corner.y};
+		});
+		
+		if(this.carbonSheet)
+		{
+			floorplans.carbonSheet['url'] = this.carbonSheet.url;
+			floorplans.carbonSheet['transparency'] = this.carbonSheet.transparency;
+			floorplans.carbonSheet['x'] = this.carbonSheet.x;
+			floorplans.carbonSheet['y'] = this.carbonSheet.y;
+			floorplans.carbonSheet['anchorX'] = this.carbonSheet.anchorX;
+			floorplans.carbonSheet['anchorY'] = this.carbonSheet.anchorY;
+			floorplans.carbonSheet['width'] = this.carbonSheet.width;
+			floorplans.carbonSheet['height'] = this.carbonSheet.height;
+		}
+		
 		floorplans.newFloorTextures = this.floorTextures;
 		return floorplans;
 	}
@@ -308,10 +362,24 @@ export class Floorplans extends EventDispatcher
 		{
 			this.floorTextures = floorplan.newFloorTextures;
 		}
-
+		
 		this.update();
 		this.dispatchEvent({type: EVENT_LOADED, item: this});
-//		this.roomLoadedCallbacks.fire();
+		if('carbonSheet' in floorplan)
+		{
+			this.carbonSheet.clear();
+			this.carbonSheet.maintainProportion = false;
+			this.carbonSheet.x = floorplan.carbonSheet['x'];
+			this.carbonSheet.y = floorplan.carbonSheet['y'];
+			this.carbonSheet.transparency = floorplan.carbonSheet['transparency']; 
+			this.carbonSheet.anchorX = floorplan.carbonSheet['anchorX'];
+			this.carbonSheet.anchorY = floorplan.carbonSheet['anchorY'];
+			this.carbonSheet.width = floorplan.carbonSheet['width'];
+			this.carbonSheet.height = floorplan.carbonSheet['height'];
+			this.carbonSheet.url = floorplan.carbonSheet['url'];
+			this.carbonSheet.maintainProportion = true;
+		}
+// this.roomLoadedCallbacks.fire();
 	}
 
 	getFloorTexture(uuid) 
@@ -356,7 +424,7 @@ export class Floorplans extends EventDispatcher
 		this.walls = [];
 	}
 
-	/** 
+	/**
 	 * Update rooms
 	 */
 	update() 
@@ -380,10 +448,10 @@ export class Floorplans extends EventDispatcher
 		this.assignOrphanEdges();
 		this.updateFloorTextures();
 		this.dispatchEvent({type: EVENT_UPDATED, item: this});
-//		this.updated_rooms.fire();
+// this.updated_rooms.fire();
 	}
 
-	/** 
+	/**
 	 * Returns the center of the floorplan in the y plane
 	 */
 	getCenter() 
@@ -452,10 +520,10 @@ export class Floorplans extends EventDispatcher
 	}
 
 	/*
-	 * Find the "rooms" in our planar straight-line graph.
-	 * Rooms are set of the smallest (by area) possible cycles in this graph.
-	 * @param corners The corners of the floorplan.
-	 * @returns The rooms, each room as an array of corners.
+	 * Find the "rooms" in our planar straight-line graph. Rooms are set of the
+	 * smallest (by area) possible cycles in this graph. @param corners The
+	 * corners of the floorplan. @returns The rooms, each room as an array of
+	 * corners.
 	 */
 	findRooms(corners) 
 	{
@@ -524,13 +592,14 @@ export class Floorplans extends EventDispatcher
 					var nextCorner = adjacentCorners[i];
 
 					// is this where we came from?
-					// give an exception if its the first corner and we aren't at the second corner
+					// give an exception if its the first corner and we aren't
+					// at the second corner
 					if (nextCorner.id in visited && !(nextCorner === firstCorner && currentCorner !== secondCorner)) 
 					{
 						continue;
 					}
 
-					// nope, throw it on the queue  
+					// nope, throw it on the queue
 					addToStack.push(nextCorner);
 				}
 
@@ -558,7 +627,8 @@ export class Floorplans extends EventDispatcher
 		}
 
 		// find tightest loops, for each corner, for each adjacent
-		// TODO: optimize this, only check corners with > 2 adjacents, or isolated cycles
+		// TODO: optimize this, only check corners with > 2 adjacents, or
+		// isolated cycles
 		var loops = [];
 
 		corners.forEach((firstCorner) => {
@@ -569,7 +639,7 @@ export class Floorplans extends EventDispatcher
 
 		// remove duplicates
 		var uniqueLoops = _removeDuplicateRooms(loops);
-		//remove CW loops
+		// remove CW loops
 		var uniqueCCWLoops = Utils.removeIf(uniqueLoops, Utils.isClockwise);
 		return uniqueCCWLoops;
 	}

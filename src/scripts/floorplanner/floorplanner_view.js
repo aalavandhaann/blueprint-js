@@ -51,7 +51,9 @@ export class FloorplannerView
 				{
 					scope.draw();
 				});
-
+		
+		this.floorplan.carbonSheet = this._carbonsheet;
+		
 		$(window).resize(() => {scope.handleWindowResize();});
 		this.handleWindowResize();
 	}
@@ -77,8 +79,11 @@ export class FloorplannerView
 	draw() 
 	{
 		this.context.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
+		
 		this._carbonsheet.draw();
 		this.drawGrid();		
+		this.drawOriginCrossHair();		
+		
 		this.context.globalAlpha = 0.3;
 		this.floorplan.getRooms().forEach((room) => {this.drawRoom(room);});
 		this.context.globalAlpha = 1.0;
@@ -99,6 +104,20 @@ export class FloorplannerView
       this.context.stroke();
       console.log('DRAWING ORIGIN MARK ', this.viewmodel.originX, this.viewmodel.originY);
 		 */
+	}
+	
+	drawOriginCrossHair()
+	{
+		var ox = this.viewmodel.convertX(0);
+		var oy = this.viewmodel.convertY(0);
+		//draw origin crosshair
+		this.context.fillStyle = '#0000FF';
+		this.context.fillRect(ox-2.5, oy-15, 2.5, 30);
+		this.context.fillRect(ox-15, oy-2.5, 28, 2.5);
+		this.context.strokeStyle = '#FF0000';
+		this.context.strokeRect(ox-2.5, oy-15, 2.5, 30);
+		this.context.strokeRect(ox-15, oy-2.5, 28, 2.5);
+		
 	}
 
 	/** */

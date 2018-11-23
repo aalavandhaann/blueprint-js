@@ -2,7 +2,6 @@ import {EventDispatcher} from 'three';
 import {EVENT_UPDATED} from '../core/events.js';
 import {cmPerPixel, pixelsPerCm, Dimensioning} from '../core/dimensioning.js';
 
-import {Configuration, configDimUnit} from '../core/configuration.js';
 /**
  * The View to be used by a Floorplanner to render in/interact with.
  */
@@ -22,9 +21,9 @@ export class CarbonSheet extends EventDispatcher
 		
 		this._loaded = false;
 		this._transparency = 1.0;		
-		this._x = this._y = 250.0;
-		this._anchorX = 147.0;
-		this._anchorY = 85.0;	
+		this._x = this._y = 0.0;
+		this._anchorX = 0;
+		this._anchorY = 0;	
 		//The values in pixels for width and height that will reflect the image's original size
 		this._rawWidthPixels = this._rawHeightPixels = 1.0;
 		//The values in cms for width and height that will reflect the images's original size
@@ -44,13 +43,14 @@ export class CarbonSheet extends EventDispatcher
 	
 	_calibrate()
 	{
-		console.log('CALIBRATION PROCESS HERE');		
+		if(!this._loaded)
+		{
+			return;
+		}
 		this._scaleX = this._widthPixels / this._rawWidthPixels;
 		this._scaleY = this._heightPixels / this._rawHeightPixels;
 		this._drawWidthPixels = this._rawWidthPixels * this._scaleX;
 		this._drawHeightPixels = this._rawHeightPixels * this._scaleY;
-		console.log('CALIBRATED WIDTH AND HEIGHT IN CMS ', this._scaleX, this._scaleY);
-		console.log('WIDHT AND HEIGHT IN CMS ', this.width, this.height);
 	}
 	
 	_updated()
@@ -62,9 +62,9 @@ export class CarbonSheet extends EventDispatcher
 	{
 		this._loaded = false;
 		this._transparency = 1.0;		
-		this._x = this._y = 250.0;
-		this._anchorX = 147.0;
-		this._anchorY = 85.0;			
+		this._x = this._y = 0.0;
+		this._anchorX = 0.0;
+		this._anchorY = 0.0;			
 		this._rawWidthPixels = this._rawHeightPixels = 1.0;
 		this._rawWidth = this._rawHeight = 1.0;
 		this._widthPixels = this._heightPixels = 1.0;
@@ -86,20 +86,21 @@ export class CarbonSheet extends EventDispatcher
 		{			
 			scope._rawWidthPixels = this.width;
 			scope._rawHeightPixels = this.height;
-			scope._widthByHeightRatio = this.width / this.height;
-			
-			scope._widthPixels = scope._rawWidthPixels;
-			scope._heightPixels = scope._rawHeightPixels;
-			
 			scope._rawWidth = scope._rawWidthPixels * cmPerPixel;
 			scope._rawHeight = scope._rawHeightPixels * cmPerPixel;
 			
-			console.log('ORIGINAL CMS VALUES OF W AND H  ', scope._rawWidth, scope._rawHeight);
-			console.log('CURRENT UNITS OF THE SYSTEM : ', Configuration.getStringValue(configDimUnit));
-			scope.width = Dimensioning.cmToMeasureRaw(scope._rawWidth);
-			scope.height = Dimensioning.cmToMeasureRaw(scope._rawHeight);			
-			console.log('CONVERTED CMS VALUES OF W AND H  ', scope.width, scope.height);
+			scope._widthByHeightRatio = this.width / this.height;
 			
+			if(scope._widthPixels < 2.0)
+			{
+				scope._widthPixels = scope._rawWidthPixels;
+				scope.width = Dimensioning.cmToMeasureRaw(scope._rawWidth);
+			}	
+			if(scope._heightPixels < 2.0)
+			{
+				scope._heightPixels = scope._rawHeightPixels;				
+				scope.height = Dimensioning.cmToMeasureRaw(scope._rawHeight);
+			}
 			scope._loaded = true;
 			scope._calibrate();
 			scope._updated();
@@ -192,9 +193,7 @@ export class CarbonSheet extends EventDispatcher
 	
 	set width(val)
 	{
-		console.log('CARBON SHEET SET WIDTH TO VALUE ', val);
 		this._width = Dimensioning.cmFromMeasureRaw(val);
-		console.log('CARBON SHEET SET WIDTH CONVERTED ', this._width);
 		this._widthPixels = this._width * pixelsPerCm;
 		
 		if(this._maintainProportion)
@@ -232,27 +231,40 @@ export class CarbonSheet extends EventDispatcher
 		return Dimensioning.cmToMeasureRaw(this._height);
 	}
 	
+	drawOriginCrossHair()
+	{
+		var ox = 0;
+		var oy = 0;
+		//draw origin crosshair
+		this.context.fillStyle = '#FF0000';
+		this.context.fillRect(ox-1.5, oy-15, 3, 30);
+		this.context.fillRect(ox-15, oy-1.5, 30, 3);
+//		this.context.lineWidth = 1;
+//		this.context.strokeStyle = '#FF0000';
+//		this.context.strokeRect(ox-1.5, oy-15, 1.5, 30);
+//		this.context.strokeRect(ox-15, oy-1.5, 28, 1.5);
+	}	
 
 	/** */
 	draw() 
 	{
 		if(this._loaded)
 		{
-//			var dx = this._anchorX - this._x;
-//			var dy = this._anchorY - this._y;
-			this.context.translate(this._x, this._y);
-			this.context.globalAlpha = this._transparency;
+			var conX = this.viewmodel.convertX(this._x);
+			var conY = this.viewmodel.convertY(this._y);
+			this.context.translate(conX, conY);
+			
+			this.context.globalAlpha = this._transparency;			
 			this.context.drawImage(this._image, -this._anchorX*this._scaleX, -this._anchorY*this._scaleY, this._drawWidthPixels, this._drawHeightPixels);
 			this.context.globalAlpha = 1.0;
-//			this.context.fillStyle = '#CCCCCC';
-//			this.context.fillRect(-this._anchorX, -this._anchorY, this._drawWidthPixels, this._drawHeightPixels);
 			
 			this.context.beginPath();			
-			this.context.fillStyle = 'red';
+			this.context.fillStyle = 'blue';
 			this.context.arc(0, 0, 5, 0, 6.28);
 			this.context.fill();
 			this.context.closePath();
-			this.context.translate(-this._x, -this._y);
+			this.drawOriginCrossHair();
+			this.context.translate(-conX, -conY);
 		}
 			
 	}

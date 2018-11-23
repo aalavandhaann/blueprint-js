@@ -2,7 +2,7 @@ import {EventDispatcher, PlaneGeometry, SphereGeometry, MeshBasicMaterial, Shade
 import {RepeatWrapping} from 'three';
 import {GroundSceneReflector} from 'three-reflector2';
 
-//import {AxesHelper} from 'three';
+import {AxesHelper} from 'three';
 
 export class Skybox extends EventDispatcher
 {
@@ -58,8 +58,8 @@ export class Skybox extends EventDispatcher
 		this.scene.add(this.sky);
 		this.scene.add(this.ground);
 		
-//		var axesHelper = new AxesHelper( 100 );
-//		this.scene.add( axesHelper );
+		var axesHelper = new AxesHelper( 100 );
+		this.scene.add( axesHelper );
 		
 		this.init();
 	}
