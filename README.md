@@ -8,7 +8,8 @@ This is a javascript floorplanner tool based on the existing typescript based pr
 ## DEMO VR ##
 The ability to export the floorplan as GLTF gives the scope of having easy VR with A-Frame. Export the layout to use it directly with A-Frame or process it further using Blender and then use it with A-Frame. 
 
-[Cick for example of VR](https://aalavandhaann.github.io/blueprint-js/build/vrtest)
+[Cick for example of VR - 1](https://aalavandhaann.github.io/blueprint-js/build/vrtest)
+[VR - 2](https://aalavandhaann.github.io/blueprint-js/build/vrtest/minimal.html)
 
 You will notice a lot of flickering in the VR mode. This is because of the overlapping materials in the floorplan.
 
