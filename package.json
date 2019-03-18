@@ -25,7 +25,8 @@
     "cssnano": "^3.10.0",
     "eslint": "^3.19.0",
     "eslint-plugin-import": "^2.3.0",
-    "livereload": "^0.6.2",
+    "event-stream": ">4.0.0",
+    "livereload": "^0.7.0",
     "npm-run-all": "^4.0.2",
     "rollup": "^0.67.0",
     "rollup-plugin-babel": "^2.7.1",
@@ -47,6 +48,7 @@
     "three": "^0.98.0",
     "three-gltf-exporter": "0.0.1",
     "three-gltf-loader": "^1.98.0",
+    "three-reflector": "^1.0.2",
     "three-reflector2": "0.0.5"
   }
 }
