@@ -438,7 +438,7 @@ export class Item extends Mesh
 	{
 		if (intersection) 
 		{
-			this.moveToPosition(intersection.point, intersection);
+			this.moveToPosition(intersection.point.sub(this.dragOffset), intersection);
 		}
 	}
 
