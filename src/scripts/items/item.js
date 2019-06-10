@@ -107,7 +107,6 @@ export class Item extends Mesh
 		}
 
 		this.halfSize = this.objectHalfSize();
-
 		this.canvasWH = document.createElement('canvas');
 		this.canvasWH.width = this.getWidth()+1.0;
 		this.canvasWH.height = this.getHeight()+1.0;
@@ -118,7 +117,6 @@ export class Item extends Mesh
 		this.canvasPlaneWH = new Mesh(new PlaneGeometry(this.getWidth(), this.getHeight(), 1, 1), this.canvasMaterialWH);
 		this.canvasPlaneWH.scale.set(1, 1, 1);
 		this.canvasPlaneWH.position.set(0, 0, this.getDepth()*0.5 + 0.3);
-
 
 		this.canvasWD = document.createElement('canvas');
 		this.canvasWD.width = this.getWidth()+1.0;
@@ -131,11 +129,10 @@ export class Item extends Mesh
 		this.canvasPlaneWD.rotateX(-Math.PI * 0.5);
 		this.canvasPlaneWD.scale.set(1, 1, 1);
 		this.canvasPlaneWD.position.set(0, this.getHeight()*0.5 + 0.3, 0);
-		this.add(this.canvasPlaneWH);
-		this.add(this.canvasPlaneWD);
-
 		this.canvasPlaneWH.visible = this.canvasPlaneWD.visible = false;
 
+    this.add(this.canvasPlaneWH);
+		this.add(this.canvasPlaneWD);
 		this.resizeProportionally = true;
 
 		if (rotation)
@@ -168,7 +165,6 @@ export class Item extends Mesh
 	}
 
 
-
 	updateCanvasTexture(canvas, context, material, w, h, wPrefix, hPrefix)
 	{
 		if(w < 1 || h < 1)
@@ -187,7 +183,7 @@ export class Item extends Mesh
 		canvas.style.letterSpacing = '-22.5px';
 
 		context.font = 'bold 45pt Courier';
-		context.fillStyle = '#DADADA33';
+		context.fillStyle = '#DADADA99';
 		context.fillRect(0, 0, w, h);
 		context.textAlign = 'center';
 		context.textBaseline = 'middle';
@@ -573,8 +569,10 @@ export class Item extends Mesh
 	/** */
 	objectHalfSize()
 	{
-		var objectBox = new Box3();
-		objectBox.setFromObject(this);
+		// var objectBox = new Box3();
+		// objectBox.setFromObject(this);
+    this.geometry.computeBoundingBox();
+    var objectBox = this.geometry.boundingBox.clone();
 		return objectBox.max.clone().sub(objectBox.min).divideScalar(2);
 	}
 
