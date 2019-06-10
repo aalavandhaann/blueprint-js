@@ -7,14 +7,14 @@ import {Utils} from '../core/utils.js';
 /** The default wall texture. */
 export const defaultWallTexture = {url: 'rooms/textures/wallmap.png', stretch: true, scale: 0};
 
-/** 
+/**
  * A Wall is the basic element to create Rooms.
- * 
+ *
  * Walls consists of two half edges.
  */
 export class Wall extends EventDispatcher
 {
-	/** 
+	/**
 	 * Constructs a new wall.
 	 * @param start Start corner.
 	 * @param end End corner.
@@ -25,12 +25,12 @@ export class Wall extends EventDispatcher
 		this.start = start;
 		this.end = end;
 		this.name = 'wall';
-		
+
 		this.id = this.getUuid();
-		
+
 		this.start.attachStart(this);
 		this.end.attachEnd(this);
-		
+
 		/** Front is the plane from start to end. */
 		this.frontEdge = null;
 
@@ -65,74 +65,74 @@ export class Wall extends EventDispatcher
 		this.deleted_callbacks = null;
 
 		/** Actions to be applied explicitly. */
-		this.action_callbacks = null;		
+		this.action_callbacks = null;
 	}
 
-	getUuid() 
+	getUuid()
 	{
 		return [this.start.id, this.end.id].join();
 	}
 
-	resetFrontBack() 
+	resetFrontBack()
 	{
 		this.frontEdge = null;
 		this.backEdge = null;
 		this.orphan = false;
 	}
 
-	snapToAxis(tolerance) 
+	snapToAxis(tolerance)
 	{
 		// order here is important, but unfortunately arbitrary
 		this.start.snapToAxis(tolerance);
 		this.end.snapToAxis(tolerance);
 	}
 
-	fireOnMove(func) 
+	fireOnMove(func)
 	{
 		this.moved_callbacks.add(func);
 	}
 
-	fireOnDelete(func) 
+	fireOnDelete(func)
 	{
 		this.deleted_callbacks.add(func);
 	}
 
-	dontFireOnDelete(func) 
+	dontFireOnDelete(func)
 	{
 		this.deleted_callbacks.remove(func);
 	}
 
-	fireOnAction(func) 
+	fireOnAction(func)
 	{
 		this.action_callbacks.add(func);
 	}
 
-	fireAction(action) 
+	fireAction(action)
 	{
 		this.dispatchEvent({type:EVENT_ACTION, action: action});
 		//this.action_callbacks.fire(action);
 	}
 
-	relativeMove(dx, dy) 
+	relativeMove(dx, dy)
 	{
 		this.start.relativeMove(dx, dy);
 		this.end.relativeMove(dx, dy);
 	}
 
-	fireMoved() 
+	fireMoved()
 	{
 		this.dispatchEvent({type: EVENT_MOVED, position: null});
 	}
 
-	fireRedraw() 
+	fireRedraw()
 	{
-		if (this.frontEdge) 
+		if (this.frontEdge)
 		{
 //			this.frontEdge.dispatchEvent({type: EVENT_REDRAW});
 			this.frontEdge.dispatchRedrawEvent();
 			//this.frontEdge.redrawCallbacks.fire();
 		}
-		if (this.backEdge) 
+		if (this.backEdge)
 		{
 //			this.backEdge.dispatchEvent({type: EVENT_REDRAW});
 			this.backEdge.dispatchRedrawEvent();
@@ -170,7 +170,19 @@ export class Wall extends EventDispatcher
 		return this.end.getY();
 	}
 
-	remove() 
+	wallLength()
+	{
+		var start = this.getStart();
+		var end = this.getEnd();
+		return Utils.distance(start, end);
+	}
+
+	wallCenter()
+	{
+		return new Vector2((this.getStart().x + this.getEnd().x) / 2.0, (this.getStart().y + this.getEnd().y) / 2.0);
+	}
+
+	remove()
 	{
 		this.start.detachWall(this);
 		this.end.detachWall(this);
@@ -178,7 +190,7 @@ export class Wall extends EventDispatcher
 		//this.deleted_callbacks.fire(this);
 	}
 
-	setStart(corner) 
+	setStart(corner)
 	{
 		this.start.detachWall(this);
 		corner.attachStart(this);
@@ -186,7 +198,7 @@ export class Wall extends EventDispatcher
 		this.fireMoved();
 	}
 
-	setEnd(corner) 
+	setEnd(corner)
 	{
 		this.end.detachWall(this);
 		corner.attachEnd(this);
@@ -205,18 +217,45 @@ export class Wall extends EventDispatcher
 	 */
 	oppositeCorner(corner)
 	{
-		if (this.start === corner) 
+		if (this.start === corner)
 		{
 			return this.end;
-		} 
-		else if (this.end === corner) 
+		}
+		else if (this.end === corner)
 		{
 			return this.start;
-		} 
-		else 
+		}
+		else
 		{
 			console.log('Wall does not connect to corner');
 			return null;
+		}
+	}
+
+	getClosestCorner(point)
+	{
+			var startVector = new Vector2(this.start.x, this.start.y);
+			var endVector = new Vector2(this.end.x, this.end.y);
+			if(point.distanceTo(startVector) < 10)
+			{
+				return this.start;
+			}
+			else if(point.distanceTo(endVector) < 10)
+			{
+				return this.end;
+			}
+			return null;
+	}
+
+	updateAttachedRooms()
+	{
+		if(this.start != null)
+		{
+				this.start.updateAttachedRooms();
+		}
+		if(this.end)
+		{
+			this.end.updateAttachedRooms();
 		}
 	}
 }

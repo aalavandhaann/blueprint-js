@@ -39,6 +39,7 @@ export {WallFloorItem} from './items/wall_floor_item.js';
 export {OnFloorItem} from './items/on_floor_item.js';
 export {InWallItem} from './items/in_wall_item.js';
 export {InWallFloorItem} from './items/in_wall_floor_item.js';
+export {RoofItem} from './items/roof_item.js';
 
 //Classes from three module
 export {states, Controller} from './three/controller.js';
@@ -65,27 +66,27 @@ import {Configuration, configDimUnit} from './core/configuration.js';
 import {dimMeter} from './core/dimensioning.js';
 //
 ///** VestaDesigner core application. */
-export class BlueprintJS 
+export class BlueprintJS
 {
 	/**
 	 * Creates an instance.
-	 * 
+	 *
 	 * @param options
 	 *            The initialization options.
 	 */
-	constructor(options) 
+	constructor(options)
 	{
 		Configuration.setValue(configDimUnit, dimMeter);
-		
+
 		this.options = options;
 		this.model = new Model(options.textureDir);
 		this.three = new Main(this.model, options.threeElement, options.threeCanvasElement, {});
-		
-		if (!options.widget) 
+
+		if (!options.widget)
 		{
 			this.floorplanner = new Floorplanner(options.floorplannerElement, this.model.floorplan);
 		}
-		else 
+		else
 		{
 			this.three.getController().enabled = false;
 		}

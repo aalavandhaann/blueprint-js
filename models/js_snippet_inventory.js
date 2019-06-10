@@ -1,5 +1,5 @@
-var modelTypesNum = ["1","2","3","7","8","9"];
-var modelTypesIds = ["floor-items", "wall-items", "in-wall-items", "in-wall-floor-items", "on-floor-items", "wall-floor-items"];
+var modelTypesNum = ["0", "1", "2", "3", "4", "7", "8", "9"];
+var modelTypesIds = ["item-items", "floor-items", "wall-items", "in-wall-items", "roof-items", "in-wall-floor-items", "on-floor-items", "wall-floor-items"];
 var itemsDiv = $("#items-wrapper");
 for (var i = 0; i < items.length; i++) 
 {

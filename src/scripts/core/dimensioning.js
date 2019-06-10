@@ -23,15 +23,19 @@ export const pixelsPerCm = 1.0 / cmPerPixel;
 
 
 /** Dimensioning functions. */
-export class Dimensioning 
-{	
+export class Dimensioning
+{
+	static roundOff(value, decimals)
+	{
+			return Math.round(decimals * value) / decimals;
+	}
 	/** Converts cm to dimensioning number.
 	 * @param cm Centi meter value to be converted.
 	 * @returns Number representation.
 	 */
 	static cmFromMeasureRaw(measure)
 	{
-		switch (Configuration.getStringValue(configDimUnit)) 
+		switch (Configuration.getStringValue(configDimUnit))
 		{
 		case dimFeetAndInch:
 			return Math.round(decimals * (measure * 30.480016459203095991)) / decimals;
@@ -46,14 +50,14 @@ export class Dimensioning
 			return Math.round(decimals * 100 * measure) / decimals;
 		}
 	}
-	
+
 	/** Converts cm to dimensioning string.
 	 * @param cm Centi meter value to be converted.
 	 * @returns String representation.
 	 */
 	static cmFromMeasure(measure)
 	{
-		switch (Configuration.getStringValue(configDimUnit)) 
+		switch (Configuration.getStringValue(configDimUnit))
 		{
 		case dimFeetAndInch:
 			return Math.round(decimals * (measure * 30.480016459203095991)) / decimals + 'cm';
@@ -68,58 +72,58 @@ export class Dimensioning
 			return Math.round(decimals * 100 * measure) / decimals + 'cm';
 		}
 	}
-	
+
 	/** Converts cm to dimensioning string.
 	 * @param cm Centi meter value to be converted.
 	 * @returns String representation.
 	 */
-	static cmToMeasureRaw(cm)
+	static cmToMeasureRaw(cm, power=1)
 	{
-		switch (Configuration.getStringValue(configDimUnit)) 
+		switch (Configuration.getStringValue(configDimUnit))
 		{
 		case dimFeetAndInch:// dimFeetAndInch returns only the feet
-			var allInFeet = (cm * 0.032808416666669996953);
+			var allInFeet = (cm * Math.pow(0.032808416666669996953, power));
 			return allInFeet;
 		case dimInch:
-			var inches = Math.round(decimals * (cm * 0.393700)) / decimals;
+			var inches = Math.round(decimals * (cm * Math.pow(0.393700, power))) / decimals;
 			return inches;
 		case dimMilliMeter:
-			var mm = Math.round(decimals * (10 * cm)) / decimals;
+			var mm = Math.round(decimals * (cm * Math.pow(10, power))) / decimals;
 			return mm;
 		case dimCentiMeter:
 			return Math.round(decimals * cm) / decimals;
 		case dimMeter:
 		default:
-			var m = Math.round(decimals * (0.01 * cm)) / decimals;
+			var m = Math.round(decimals * (cm  * Math.pow(0.01, power))) / decimals;
 			return m;
 		}
 	}
-	
+
 	/** Converts cm to dimensioning string.
 	 * @param cm Centi meter value to be converted.
 	 * @returns String representation.
 	 */
-	static cmToMeasure(cm)
+	static cmToMeasure(cm, power=1)
 	{
-		switch (Configuration.getStringValue(configDimUnit)) 
+		switch (Configuration.getStringValue(configDimUnit))
 		{
 		case dimFeetAndInch:
-			var allInFeet = (cm * 0.032808416666669996953);
+			var allInFeet = (cm * Math.pow(0.032808416666669996953, power));
 			var floorFeet = Math.floor(allInFeet);
 			var remainingFeet = allInFeet - floorFeet;
 			var remainingInches = Math.round(remainingFeet * 12);
 			return floorFeet + '\'' + remainingInches + '"';
 		case dimInch:
-			var inches = Math.round(decimals * (cm * 0.393700)) / decimals;
+			var inches = Math.round(decimals * (cm * Math.pow(0.393700, power))) / decimals;
 			return inches + '\'';
 		case dimMilliMeter:
-			var mm = Math.round(decimals * (10 * cm)) / decimals;
+			var mm = Math.round(decimals * (cm * Math.pow(10, power))) / decimals;
 			return '' + mm + 'mm';
 		case dimCentiMeter:
 			return '' + Math.round(decimals * cm) / decimals + 'cm';
 		case dimMeter:
 		default:
-			var m = Math.round(decimals * (cm  * 0.01)) / decimals;
+			var m = Math.round(decimals * (cm  * Math.pow(0.01, power))) / decimals;
 			return '' + m + 'm';
 		}
 	}

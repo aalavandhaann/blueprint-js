@@ -7,15 +7,15 @@ import {Utils} from '../core/utils.js';
  */
 export class FloorItem extends Item
 {
-	constructor(model, metadata, geometry, material, position, rotation, scale)
+	constructor(model, metadata, geometry, material, position, rotation, scale, isgltf=false)
 	{
-		super(model, metadata, geometry, material, position, rotation, scale);
+		super(model, metadata, geometry, material, position, rotation, scale, isgltf);
 	}
 
 	/** */
-	placeInRoom() 
+	placeInRoom()
 	{
-		if (!this.position_set) 
+		if (!this.position_set)
 		{
 			var center = this.model.floorplan.getCenter();
 			this.position.x = center.x;
@@ -25,21 +25,21 @@ export class FloorItem extends Item
 	}
 
 	/** Take action after a resize */
-	resized() 
+	resized()
 	{
 		this.position.y = this.halfSize.y;
 	}
 
 	/** */
-	moveToPosition(vec3) 
+	moveToPosition(vec3)
 	{
 		// keeps the position in the room and on the floor
-		if (!this.isValidPosition(vec3)) 
+		if (!this.isValidPosition(vec3))
 		{
 			this.showError(vec3);
 			return;
-		} 
-		else 
+		}
+		else
 		{
 			this.hideError();
 			vec3.y = this.position.y; // keep it on the floor!
@@ -55,14 +55,14 @@ export class FloorItem extends Item
 		// check if we are in a room
 		var rooms = this.model.floorplan.getRooms();
 		var isInARoom = false;
-		for (var i = 0; i < rooms.length; i++) 
+		for (var i = 0; i < rooms.length; i++)
 		{
-			if (Utils.pointInPolygon(new Vector2(vec3.x, vec3.z), rooms[i].interiorCorners) && !Utils.polygonPolygonIntersect(corners, rooms[i].interiorCorners)) 
+			if (Utils.pointInPolygon(new Vector2(vec3.x, vec3.z), rooms[i].interiorCorners) && !Utils.polygonPolygonIntersect(corners, rooms[i].interiorCorners))
 			{
 				isInARoom = true;
 			}
 		}
-		if (!isInARoom) 
+		if (!isInARoom)
 		{
 			//We do not want to check if the object is in room or not
 			//It is upto the user to place it anywhere he/she wants however

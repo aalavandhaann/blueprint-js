@@ -22,9 +22,9 @@ export class Scene extends EventDispatcher
 		super();
 		this.model = model;
 		this.textureDir = textureDir;
-		
+
 //		var grid = new GridHelper(4000, 200);
-		
+
 		this.scene = new ThreeScene();
 		this.scene.background = new Color(0xffffff);
 //		this.scene.fog = new Fog(0xFAFAFA, 0.001, 6000);
@@ -33,7 +33,7 @@ export class Scene extends EventDispatcher
 		// init item loader
 		this.loader = new JSONLoader();
 		this.loader.setCrossOrigin('');
-		
+
 		this.gltfloader = new GLTFLoader();
 		this.objloader = new OBJLoader();
 		this.gltfloader.setCrossOrigin('');
@@ -42,13 +42,13 @@ export class Scene extends EventDispatcher
 		this.itemLoadedCallbacks = null;
 		this.itemRemovedCallbacks = null;
 //		this.add(grid);
-		
+
 	}
 
 	/** Adds a non-item, basically a mesh, to the scene.
 	 * @param mesh The mesh to be added.
 	 */
-	add(mesh) 
+	add(mesh)
 	{
 		this.scene.add(mesh);
 	}
@@ -56,7 +56,7 @@ export class Scene extends EventDispatcher
 	/** Removes a non-item, basically a mesh, from the scene.
 	 * @param mesh The mesh to be removed.
 	 */
-	remove(mesh) 
+	remove(mesh)
 	{
 		this.scene.remove(mesh);
 		Utils.removeValue(this.items, mesh);
@@ -87,7 +87,7 @@ export class Scene extends EventDispatcher
 	}
 
 	/** Removes all items. */
-	clearItems() 
+	clearItems()
 	{
 		// var items_copy = this.items ;
 		var scope = this;
@@ -102,7 +102,7 @@ export class Scene extends EventDispatcher
 	 * @param item The item to be removed.
 	 * @param dontRemove If not set, also remove the item from the items list.
 	 */
-	removeItem(item, keepInList) 
+	removeItem(item, keepInList)
 	{
 		keepInList = keepInList || false;
 		// use this for item meshes
@@ -110,12 +110,12 @@ export class Scene extends EventDispatcher
 		//this.itemRemovedCallbacks.fire(item);
 		item.removed();
 		this.scene.remove(item);
-		if (!keepInList) 
+		if (!keepInList)
 		{
 			Utils.removeValue(this.items, item);
 		}
 	}
-	
+
 	switchWireframe(flag)
 	{
 		this.items.forEach((item)=>{
@@ -134,11 +134,11 @@ export class Scene extends EventDispatcher
 	 * @param fixed True if fixed.
 	 * @param newItemDefinitions - Object with position and 'edge' attribute if it is a wall item
 	 */
-	addItem(itemType, fileName, metadata, position, rotation, scale, fixed, newItemDefinitions) 
+	addItem(itemType, fileName, metadata, position, rotation, scale, fixed, newItemDefinitions)
 	{
 		itemType = itemType || 1;
 		var scope = this;
-		
+
 		function addToMaterials(materials, newmaterial)
 		{
 			for(var i=0;i<materials.length;i++)
@@ -152,11 +152,11 @@ export class Scene extends EventDispatcher
 			materials.push(newmaterial);
 			return [materials, materials.length-1];
 		}
-		
-		var loaderCallback = function (geometry, materials) 
+
+		var loaderCallback = function (geometry, materials, isgltf=false)
 		{
 //			var item = new (Factory.getClass(itemType))(scope.model, metadata, geometry, new MeshFaceMaterial(materials), position, rotation, scale);
-			var item = new (Factory.getClass(itemType))(scope.model, metadata, geometry, materials, position, rotation, scale);
+			var item = new (Factory.getClass(itemType))(scope.model, metadata, geometry, materials, position, rotation, scale, isgltf);
 			item.fixed = fixed || false;
 			scope.items.push(item);
 			scope.add(item);
@@ -172,7 +172,7 @@ export class Scene extends EventDispatcher
 		{
 			var newmaterials = [];
 			var newGeometry = new Geometry();
-			
+
 			gltfModel.scene.traverse(function (child) {
 				if(child.type == 'Mesh')
 				{
@@ -185,14 +185,14 @@ export class Scene extends EventDispatcher
 							newmaterials = newItems[0];
 							materialindices.push(newItems[1]);
 						}
-					}					
+					}
 					else
 					{
 						newItems = addToMaterials(newmaterials, child.material);//materials.push(child.material);
 						newmaterials = newItems[0];
 						materialindices.push(newItems[1]);
 					}
-					
+
 					if(child.geometry.isBufferGeometry)
 					{
 						var tGeometry = new Geometry().fromBufferGeometry(child.geometry);
@@ -200,7 +200,7 @@ export class Scene extends EventDispatcher
 //							face.materialIndex = face.materialIndex + newmaterials.length;
 							face.materialIndex = materialindices[face.materialIndex];
 						});
-						child.updateMatrix();						
+						child.updateMatrix();
 						newGeometry.merge(tGeometry, child.matrix);
 					}
 					else
@@ -212,25 +212,25 @@ export class Scene extends EventDispatcher
 						child.updateMatrix();
 						newGeometry.mergeMesh(child);
 					}
-					
 				}
 			});
 			loaderCallback(newGeometry, newmaterials);
+			// loaderCallback(gltfModel.scene, newmaterials, true);
 		};
-		
-		
+
+
 		var objCallback = function(object)
 		{
 			var materials = [];
 			var newGeometry = new Geometry();
-			object.traverse(function (child) 
+			object.traverse(function (child)
 			{
 				if(child.type == 'Mesh')
 				{
 					if(child.material.length)
 					{
 						materials = materials.concat(child.material);
-					}					
+					}
 					else
 					{
 						materials.push(child.material);
@@ -254,12 +254,12 @@ export class Scene extends EventDispatcher
 		this.dispatchEvent({type:EVENT_ITEM_LOADING});
 		if(!metadata.format)
 		{
-			this.loader.load(fileName, loaderCallback, undefined); // third parameter is undefined - TODO_Ekki 
+			this.loader.load(fileName, loaderCallback, undefined); // third parameter is undefined - TODO_Ekki
 		}
 		else if(metadata.format == 'gltf')
 		{
 			this.gltfloader.load(fileName, gltfCallback, null, null);
-		}	
+		}
 		else if(metadata.format == 'obj')
 		{
 			this.objloader.load(fileName, objCallback, null, null);

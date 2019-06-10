@@ -1,4 +1,4 @@
-import {EventDispatcher, TextureLoader, RepeatWrapping, MeshBasicMaterial, MeshPhongMaterial,  FrontSide, DoubleSide, Vector2, Shape, ShapeGeometry, Mesh} from 'three';
+import {EventDispatcher, TextureLoader, RepeatWrapping, MeshBasicMaterial, MeshPhongMaterial,  FrontSide, DoubleSide, Vector2, Vector3, Face3, Geometry, Shape, ShapeGeometry, Mesh} from 'three';
 import {EVENT_CHANGED} from '../core/events.js';
 import {Configuration, configWallHeight} from '../core/configuration.js';
 
@@ -14,31 +14,33 @@ export class Floor extends EventDispatcher
 		this.changedevent = () => {this.redraw();};
 		this.init();
 	}
-	
+
 	switchWireframe(flag)
 	{
 		this.floorPlane.visible = !flag;
 		this.roofPlane.visible = !flag;
 	}
 
-	init() 
+	init()
 	{
 //		this.room.fireOnFloorChange(redraw);
 		this.room.addEventListener(EVENT_CHANGED, this.changedevent);
 
 		this.floorPlane = this.buildFloor();
 		// roofs look weird, so commented out
-		this.roofPlane = this.buildRoof();
+		// this.roofPlane = this.buildRoofUniformHeight();
+		this.roofPlane = this.buildRoofVaryingHeight();
 	}
 
-	redraw() 
+	redraw()
 	{
 		this.removeFromScene();
 		this.floorPlane = this.buildFloor();
+		this.roofPlane = this.buildRoofVaryingHeight();
 		this.addToScene();
 	}
 
-	buildFloor() 
+	buildFloor()
 	{
 		var textureSettings = this.room.getTexture();
 		// setup texture
@@ -74,7 +76,29 @@ export class Floor extends EventDispatcher
 		return floor;
 	}
 
-	buildRoof()
+	buildRoofVaryingHeight()
+	{
+		// setup texture
+		var roofMaterial = new MeshBasicMaterial({side: FrontSide,color: 0xe5e5e5});
+		var geometry = new Geometry();
+
+		this.room.corners.forEach((corner) => {
+			var vertex = new Vector3(corner.x,corner.elevation, corner.y);
+			geometry.vertices.push(vertex);
+		});
+		for (var i=2;i<geometry.vertices.length;i++)
+		{
+			var face = new Face3(0, i-1, i);
+			geometry.faces.push(face);
+		}
+		var roof = new Mesh(geometry, roofMaterial);
+		// roof.rotation.set(Math.PI / 2, 0, 0);
+		// roof.position.y = Configuration.getNumericValue(configWallHeight);
+		return roof;
+	}
+
+
+	buildRoofUniformHeight()
 	{
 		// setup texture
 		var roofMaterial = new MeshBasicMaterial({side: FrontSide,color: 0xe5e5e5});
@@ -88,26 +112,29 @@ export class Floor extends EventDispatcher
 		roof.rotation.set(Math.PI / 2, 0, 0);
 		roof.position.y = Configuration.getNumericValue(configWallHeight);
 		return roof;
-	} 
+	}
 
-	addToScene() 
+	addToScene()
 	{
 		this.scene.add(this.floorPlane);
 		this.scene.add(this.roofPlane);
 		//scene.add(roofPlane);
 		// hack so we can do intersect testing
 		this.scene.add(this.room.floorPlane);
+		this.scene.add(this.room.roofPlane);
 	}
 
-	removeFromScene() 
+	removeFromScene()
 	{
 		this.scene.remove(this.floorPlane);
 		this.scene.remove(this.roofPlane);
 		this.scene.remove(this.room.floorPlane);
-	}	
-	
+		this.scene.remove(this.room.roofPlane);
+	}
+
 	showRoof(flag)
 	{
-		this.roofPlane.visible = flag;
+		console.log(flag);
+		// this.roofPlane.visible = flag;
 	}
 }

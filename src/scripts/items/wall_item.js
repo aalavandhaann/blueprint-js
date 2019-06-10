@@ -8,9 +8,9 @@ import {Item} from './item.js';
  */
 export class WallItem extends Item
 {
-	constructor(model, metadata, geometry, material, position, rotation, scale) 
+	constructor(model, metadata, geometry, material, position, rotation, scale, isgltf=false)
 	{
-		super(model, metadata, geometry, material, position, rotation, scale);
+		super(model, metadata, geometry, material, position, rotation, scale, isgltf);
 		/** The currently applied wall edge. */
 		this.currentWallEdge = null;
 		/* TODO:
@@ -21,9 +21,9 @@ export class WallItem extends Item
 		 */
 
 		/** used for finding rotations */
-		this.refVec = new Vector2(0, 1.0);  
+		this.refVec = new Vector2(0, 1.0);
 		/** */
-		this.wallOffsetScalar = 0;  
+		this.wallOffsetScalar = 0;
 		/** */
 		this.sizeX = 0;
 		/** */
@@ -51,7 +51,7 @@ export class WallItem extends Item
 		var itemZ = this.position.z;
 		wallEdges.forEach((edge) => {
 			var distance = edge.distanceTo(itemX, itemZ);
-			if (minDistance === null || distance < minDistance) 
+			if (minDistance === null || distance < minDistance)
 			{
 				minDistance = distance;
 				wallEdge = edge;
@@ -61,9 +61,9 @@ export class WallItem extends Item
 	}
 
 	/** */
-	removed() 
+	removed()
 	{
-		if (this.currentWallEdge != null && this.addToWall) 
+		if (this.currentWallEdge != null && this.addToWall)
 		{
 			Utils.removeValue(this.currentWallEdge.wall.items, this);
 			this.redrawWall();
@@ -71,22 +71,22 @@ export class WallItem extends Item
 	}
 
 	/** */
-	redrawWall() 
+	redrawWall()
 	{
-		if (this.addToWall) 
+		if (this.addToWall)
 		{
 			this.currentWallEdge.wall.fireRedraw();
 		}
 	}
 
 	/** */
-	updateEdgeVisibility(visible, front) 
+	updateEdgeVisibility(visible, front)
 	{
-		if (front) 
+		if (front)
 		{
 			this.frontVisible = visible;
-		} 
-		else 
+		}
+		else
 		{
 			this.backVisible = visible;
 		}
@@ -94,7 +94,7 @@ export class WallItem extends Item
 	}
 
 	/** */
-	updateSize() 
+	updateSize()
 	{
 		this.wallOffsetScalar = (this.geometry.boundingBox.max.z - this.geometry.boundingBox.min.z) * this.scale.z / 2.0;
 		this.sizeX = (this.geometry.boundingBox.max.x - this.geometry.boundingBox.min.x) * this.scale.x;
@@ -102,9 +102,9 @@ export class WallItem extends Item
 	}
 
 	/** */
-	resized() 
+	resized()
 	{
-		if (this.boundToFloor) 
+		if (this.boundToFloor)
 		{
 			this.position.y = 0.5 * (this.geometry.boundingBox.max.y - this.geometry.boundingBox.min.y) * this.scale.y + 0.01;
 		}
@@ -113,13 +113,13 @@ export class WallItem extends Item
 	}
 
 	/** */
-	placeInRoom() 
+	placeInRoom()
 	{
 		var closestWallEdge = this.closestWallEdge();
 		this.changeWallEdge(closestWallEdge);
 		this.updateSize();
 
-		if (!this.position_set) 
+		if (!this.position_set)
 		{
 			// position not set
 			var center = closestWallEdge.interiorCenter();
@@ -131,33 +131,34 @@ export class WallItem extends Item
 	}
 
 	/** */
-	moveToPosition(vec3, intersection) 
+	moveToPosition(vec3, intersection)
 	{
-		var intersectionEdge = (intersection) ? (intersection.object) ? intersection.object.edge: intersection : this.closestWallEdge(); 
+		var intersectionEdge = (intersection) ? (intersection.object) ? intersection.object.edge: intersection : this.closestWallEdge();
 		this.changeWallEdge(intersectionEdge);
 		this.boundMove(vec3);
+
 //		this.position.copy(vec3);
 		super.moveToPosition(vec3);
 		this.redrawWall();
 	}
 
 	/** */
-	getWallOffset() 
+	getWallOffset()
 	{
 		return this.wallOffsetScalar;
 	}
 
 	/** */
-	changeWallEdge(wallEdge) 
+	changeWallEdge(wallEdge)
 	{
-		if (this.currentWallEdge != null) 
+		if (this.currentWallEdge != null)
 		{
-			if (this.addToWall) 
+			if (this.addToWall)
 			{
 				Utils.removeValue(this.currentWallEdge.wall.items, this);
 				this.redrawWall();
-			} 
-			else 
+			}
+			else
 			{
 				Utils.removeValue(this.currentWallEdge.wall.onItems, this);
 			}
@@ -171,7 +172,7 @@ export class WallItem extends Item
 		}
 
 		// handle subscription to wall being removed
-		if (this.currentWallEdge != null) 
+		if (this.currentWallEdge != null)
 		{
 //			this.currentWallEdge.wall.dontFireOnDelete(this.remove.bind(this));
 			this.currentWallEdge.wall.removeEventListener(EVENT_DELETED, __remove);
@@ -189,12 +190,12 @@ export class WallItem extends Item
 		this.rotation.y = angle;
 		// update currentWall
 		this.currentWallEdge = wallEdge;
-		if (this.addToWall) 
+		if (this.addToWall)
 		{
 			wallEdge.wall.items.push(this);
 			this.redrawWall();
-		} 
-		else 
+		}
+		else
 		{
 			wallEdge.wall.onItems.push(this);
 		}
@@ -202,37 +203,37 @@ export class WallItem extends Item
 
 	/** Returns an array of planes to use other than the ground plane
 	 * for passing intersection to clickPressed and clickDragged */
-	customIntersectionPlanes() 
+	customIntersectionPlanes()
 	{
 		return this.model.floorplan.wallEdgePlanes();
 	}
 
 	/** takes the move vec3, and makes sure object stays bounded on plane */
-	boundMove(vec3) 
+	boundMove(vec3)
 	{
 		var tolerance = 1;
 		var edge = this.currentWallEdge;
 		vec3.applyMatrix4(edge.interiorTransform);
-		if (vec3.x < this.sizeX / 2.0 + tolerance) 
+		if (vec3.x < this.sizeX / 2.0 + tolerance)
 		{
 			vec3.x = this.sizeX / 2.0 + tolerance;
-		} 
-		else if (vec3.x > (edge.interiorDistance() - this.sizeX / 2.0 - tolerance)) 
+		}
+		else if (vec3.x > (edge.interiorDistance() - this.sizeX / 2.0 - tolerance))
 		{
 			vec3.x = edge.interiorDistance() - this.sizeX / 2.0 - tolerance;
 		}
 
-		if (this.boundToFloor) 
+		if (this.boundToFloor)
 		{
 			vec3.y = 0.5 * (this.geometry.boundingBox.max.y - this.geometry.boundingBox.min.y) * this.scale.y + 0.01;
-		} 
-		else 
+		}
+		else
 		{
-			if (vec3.y < this.sizeY / 2.0 + tolerance) 
+			if (vec3.y < this.sizeY / 2.0 + tolerance)
 			{
 				vec3.y = this.sizeY / 2.0 + tolerance;
-			} 
-			else if (vec3.y > edge.height - this.sizeY / 2.0 - tolerance) 
+			}
+			else if (vec3.y > edge.height - this.sizeY / 2.0 - tolerance)
 			{
 				vec3.y = edge.height - this.sizeY / 2.0 - tolerance;
 			}

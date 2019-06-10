@@ -1,6 +1,7 @@
 import {EVENT_ACTION, EVENT_DELETED, EVENT_MOVED} from '../core/events.js';
 import {EventDispatcher, Vector2} from 'three';
 import {Utils} from '../core/utils.js';
+import {Configuration, configWallHeight} from '../core/configuration.js';
 
 /** */
 export const cornerTolerance = 20;
@@ -11,13 +12,13 @@ export const cornerTolerance = 20;
 export class Corner extends EventDispatcher
 {
 
-	/** Constructs a corner. 
+	/** Constructs a corner.
 	 * @param floorplan The associated floorplan.
 	 * @param x X coordinate.
 	 * @param y Y coordinate.
 	 * @param id An optional unique id. If not set, created internally.
 	 */
-	constructor(floorplan, x, y, id) 
+	constructor(floorplan, x, y, id)
 	{
 		super();
 		this.wallStarts = [];
@@ -27,11 +28,22 @@ export class Corner extends EventDispatcher
 		this.action_callbacks = null;
 		this.floorplan = floorplan;
 		this.x = x;
-		this.y = y;      
+		this.y = y;
+		this._elevation = Configuration.getNumericValue(configWallHeight);
 		this.id = id || Utils.guide();
 		this.attachedRooms = [];
 	}
-	
+
+	set elevation(value)
+	{
+		this._elevation = value;
+	}
+
+	get elevation()
+	{
+		return this._elevation;
+	}
+
 	attachRoom(room)
 	{
 		if(room)
@@ -39,12 +51,12 @@ export class Corner extends EventDispatcher
 			this.attachedRooms.push(room);
 		}
 	}
-	
+
 	getAttachedRooms()
 	{
 		return this.attachedRooms;
 	}
-	
+
 	clearAttachedRooms()
 	{
 		this.attachedRooms = [];
@@ -53,7 +65,7 @@ export class Corner extends EventDispatcher
 	/** Add function to moved callbacks.
 	 * @param func The function to be added.
 	 */
-	fireOnMove(func) 
+	fireOnMove(func)
 	{
 		this.moved_callbacks.add(func);
 	}
@@ -61,7 +73,7 @@ export class Corner extends EventDispatcher
 	/** Add function to deleted callbacks.
 	 * @param func The function to be added.
 	 */
-	fireOnDelete(func) 
+	fireOnDelete(func)
 	{
 		this.deleted_callbacks.add(func);
 	}
@@ -69,12 +81,12 @@ export class Corner extends EventDispatcher
 	/** Add function to action callbacks.
 	 * @param func The function to be added.
 	 */
-	fireOnAction(func) 
+	fireOnAction(func)
 	{
 		this.action_callbacks.add(func);
 	}
-	
-	fireAction(action) 
+
+	fireAction(action)
 	{
 		this.dispatchEvent({type:EVENT_ACTION, item: this, action:action});
 		//      this.action_callbacks.fire(action)
@@ -99,7 +111,7 @@ export class Corner extends EventDispatcher
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	snapToAxis(tolerance)
 	{
@@ -108,12 +120,12 @@ export class Corner extends EventDispatcher
 		var scope = this;
 
 		this.adjacentCorners().forEach((corner) => {
-			if (Math.abs(corner.x - scope.x) < tolerance) 
+			if (Math.abs(corner.x - scope.x) < tolerance)
 			{
 				scope.x = corner.x;
 				snapped.x = true;
 			}
-			if (Math.abs(corner.y - scope.y) < tolerance) 
+			if (Math.abs(corner.y - scope.y) < tolerance)
 			{
 				scope.y = corner.y;
 				snapped.y = true;
@@ -126,27 +138,27 @@ export class Corner extends EventDispatcher
 	 * @param dx The delta x.
 	 * @param dy The delta y.
 	 */
-	relativeMove(dx, dy) 
+	relativeMove(dx, dy)
 	{
 		this.move(this.x + dx, this.y + dy);
-	}	
+	}
 
 	/** Remove callback. Fires the delete callbacks. */
-	remove() 
+	remove()
 	{
 		this.dispatchEvent({type:EVENT_DELETED, item:this});
 		//      this.deleted_callbacks.fire(this);
 	}
 
 	/** Removes all walls. */
-	removeAll() 
+	removeAll()
 	{
 		var i = 0;
-		for (i = 0; i < this.wallStarts.length; i++) 
+		for (i = 0; i < this.wallStarts.length; i++)
 		{
 			this.wallStarts[i].remove();
 		}
-		for (i = 0; i < this.wallEnds.length; i++) 
+		for (i = 0; i < this.wallEnds.length; i++)
 		{
 			this.wallEnds[i].remove();
 		}
@@ -157,13 +169,13 @@ export class Corner extends EventDispatcher
 	 * @param newX The new x position.
 	 * @param newY The new y position.
 	 */
-	move(newX, newY) 
+	move(newX, newY)
 	{
 		this.x = newX;
 		this.y = newY;
 		this.mergeWithIntersected();
 
-		this.dispatchEvent({type:EVENT_MOVED, item: this, position: new Vector2(this.x, this.y)});      
+		this.dispatchEvent({type:EVENT_MOVED, item: this, position: new Vector2(this.x, this.y)});
 		//      this.moved_callbacks.fire(this.x, this.y);
 
 		this.wallStarts.forEach((wall) => {
@@ -175,6 +187,13 @@ export class Corner extends EventDispatcher
 		});
 	}
 
+	updateAttachedRooms()
+	{
+		this.attachedRooms.forEach((room)=>{
+				room.updateArea();
+		});
+	}
+
 	/** Gets the adjacent corners.
 	 * @returns Array of corners.
 	 */
@@ -182,11 +201,11 @@ export class Corner extends EventDispatcher
 	{
 		var retArray = [];
 		var i = 0;
-		for (i = 0; i < this.wallStarts.length; i++) 
+		for (i = 0; i < this.wallStarts.length; i++)
 		{
 			retArray.push(this.wallStarts[i].getEnd());
 		}
-		for (i = 0; i < this.wallEnds.length; i++) 
+		for (i = 0; i < this.wallEnds.length; i++)
 		{
 			retArray.push(this.wallEnds[i].getStart());
 		}
@@ -200,16 +219,16 @@ export class Corner extends EventDispatcher
 	isWallConnected(wall)
 	{
 		var i =0;
-		for (i = 0; i < this.wallStarts.length; i++) 
+		for (i = 0; i < this.wallStarts.length; i++)
 		{
-			if (this.wallStarts[i] == wall) 
+			if (this.wallStarts[i] == wall)
 			{
 				return true;
 			}
 		}
-		for (i = 0; i < this.wallEnds.length; i++) 
+		for (i = 0; i < this.wallEnds.length; i++)
 		{
-			if (this.wallEnds[i] == wall) 
+			if (this.wallEnds[i] == wall)
 			{
 				return true;
 			}
@@ -218,9 +237,9 @@ export class Corner extends EventDispatcher
 	}
 
 	/**
-	 * 
+	 *
 	 */
-	distanceFrom(point) 
+	distanceFrom(point)
 	{
 		var distance = Utils.distance(point, new Vector2(this.x, this.y));
 		//console.log('x,y ' + x + ',' + y + ' to ' + this.getX() + ',' + this.getY() + ' is ' + distance);
@@ -248,12 +267,12 @@ export class Corner extends EventDispatcher
 	/** Detaches a wall.
 	 * @param wall A wall.
 	 */
-	detachWall(wall) 
+	detachWall(wall)
 	{
 		Utils.removeValue(this.wallStarts, wall);
 		Utils.removeValue(this.wallEnds, wall);
 
-		if (this.wallStarts.length == 0 && this.wallEnds.length == 0) 
+		if (this.wallStarts.length == 0 && this.wallEnds.length == 0)
 		{
 			this.remove();
 		}
@@ -262,7 +281,7 @@ export class Corner extends EventDispatcher
 	/** Attaches a start wall.
 	 * @param wall A wall.
 	 */
-	attachStart(wall) 
+	attachStart(wall)
 	{
 		this.wallStarts.push(wall);
 	}
@@ -270,7 +289,7 @@ export class Corner extends EventDispatcher
 	/** Attaches an end wall.
 	 * @param wall A wall.
 	 */
-	attachEnd(wall) 
+	attachEnd(wall)
 	{
 		this.wallEnds.push(wall);
 	}
@@ -281,9 +300,9 @@ export class Corner extends EventDispatcher
 	 */
 	wallTo(corner)
 	{
-		for (var i = 0; i < this.wallStarts.length; i++) 
+		for (var i = 0; i < this.wallStarts.length; i++)
 		{
-			if (this.wallStarts[i].getEnd() === corner) 
+			if (this.wallStarts[i].getEnd() === corner)
 			{
 				return this.wallStarts[i];
 			}
@@ -297,9 +316,9 @@ export class Corner extends EventDispatcher
 	 */
 	wallFrom(corner)
 	{
-		for (var i = 0; i < this.wallEnds.length; i++) 
+		for (var i = 0; i < this.wallEnds.length; i++)
 		{
-			if (this.wallEnds[i].getStart() === corner) 
+			if (this.wallEnds[i].getStart() === corner)
 			{
 				return this.wallEnds[i];
 			}
@@ -311,26 +330,26 @@ export class Corner extends EventDispatcher
 	 * @param corner A corner.
 	 * @return The associated wall or null.
 	 */
-	wallToOrFrom(corner) 
+	wallToOrFrom(corner)
 	{
 		return this.wallTo(corner) || this.wallFrom(corner);
 	}
 
 	/**
-	 * 
+	 *
 	 */
-	combineWithCorner(corner) 
+	combineWithCorner(corner)
 	{
 		var i = 0;
 		// update position to other corner's
 		this.x = corner.x;
 		this.y = corner.y;
 		// absorb the other corner's wallStarts and wallEnds
-		for (i = corner.wallStarts.length - 1; i >= 0; i--) 
+		for (i = corner.wallStarts.length - 1; i >= 0; i--)
 		{
 			corner.wallStarts[i].setStart(this);
 		}
-		for (i = corner.wallEnds.length - 1; i >= 0; i--) 
+		for (i = corner.wallEnds.length - 1; i >= 0; i--)
 		{
 			corner.wallEnds[i].setEnd(this);
 		}
@@ -345,20 +364,20 @@ export class Corner extends EventDispatcher
 		var i =0;
 		//console.log('mergeWithIntersected for object: ' + this.type);
 		// check corners
-		for (i = 0; i < this.floorplan.getCorners().length; i++) 
+		for (i = 0; i < this.floorplan.getCorners().length; i++)
 		{
 			var corner = this.floorplan.getCorners()[i];
-			if (this.distanceFromCorner(corner) < cornerTolerance && corner != this) 
+			if (this.distanceFromCorner(corner) < cornerTolerance && corner != this)
 			{
 				this.combineWithCorner(corner);
 				return true;
 			}
 		}
 		// check walls
-		for (i = 0; i < this.floorplan.getWalls().length; i++) 
+		for (i = 0; i < this.floorplan.getWalls().length; i++)
 		{
 			var wall = this.floorplan.getWalls()[i];
-			if (this.distanceFromWall(wall) < cornerTolerance && !this.isWallConnected(wall)) 
+			if (this.distanceFromWall(wall) < cornerTolerance && !this.isWallConnected(wall))
 			{
 				// update position to be on wall
 				var intersection = Utils.closestPointOnLine(new Vector2(this.x, this.y), wall.getStart(), wall.getEnd());
@@ -381,36 +400,36 @@ export class Corner extends EventDispatcher
 		// delete the wall between these corners, if it exists
 		var wallEndpoints = {};
 		var wallStartpoints = {};
-		for (i = this.wallStarts.length - 1; i >= 0; i--) 
+		for (i = this.wallStarts.length - 1; i >= 0; i--)
 		{
-			if (this.wallStarts[i].getEnd() === this) 
+			if (this.wallStarts[i].getEnd() === this)
 			{
-				// remove zero length wall 
+				// remove zero length wall
 				this.wallStarts[i].remove();
-			} 
-			else if (this.wallStarts[i].getEnd().id in wallEndpoints) 
+			}
+			else if (this.wallStarts[i].getEnd().id in wallEndpoints)
 			{
 				// remove duplicated wall
 				this.wallStarts[i].remove();
-			} 
-			else 
+			}
+			else
 			{
 				wallEndpoints[this.wallStarts[i].getEnd().id] = true;
 			}
 		}
-		for (i = this.wallEnds.length - 1; i >= 0; i--) 
+		for (i = this.wallEnds.length - 1; i >= 0; i--)
 		{
-			if (this.wallEnds[i].getStart() === this) 
+			if (this.wallEnds[i].getStart() === this)
 			{
-				// removed zero length wall 
+				// removed zero length wall
 				this.wallEnds[i].remove();
-			} 
-			else if (this.wallEnds[i].getStart().id in wallStartpoints) 
+			}
+			else if (this.wallEnds[i].getStart().id in wallStartpoints)
 			{
 				// removed duplicated wall
 				this.wallEnds[i].remove();
-			} 
-			else 
+			}
+			else
 			{
 				wallStartpoints[this.wallEnds[i].getStart().id] = true;
 			}
