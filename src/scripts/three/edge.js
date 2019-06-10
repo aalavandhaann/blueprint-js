@@ -182,6 +182,15 @@ export class Edge extends EventDispatcher
 
 	updatePlanes()
 	{
+		var extStartCorner = this.wall.getClosestCorner(this.edge.exteriorStart());
+		var extEndCorner = this.wall.getClosestCorner(this.edge.exteriorEnd());
+
+		if(extStartCorner == null || extEndCorner == null)
+		{
+				//Maybe this is an orphan wall. Let the garbage collector clean this up later
+				return;
+		}
+
 		var color = 0xFFFFFF;
 		var wallMaterial = new MeshBasicMaterial({
 			color: color,
@@ -219,8 +228,8 @@ export class Edge extends EventDispatcher
 		}
 
 		// sides
-		this.planes.push(this.buildSideFillter(this.edge.interiorStart(), this.edge.exteriorStart(), this.wall.getClosestCorner(this.edge.exteriorStart()).elevation, this.sideColor));
-		this.planes.push(this.buildSideFillter(this.edge.interiorEnd(), this.edge.exteriorEnd(), this.wall.getClosestCorner(this.edge.exteriorEnd()).elevation, this.sideColor));
+		this.planes.push(this.buildSideFillter(this.edge.interiorStart(), this.edge.exteriorStart(), extStartCorner.elevation, this.sideColor));
+		this.planes.push(this.buildSideFillter(this.edge.interiorEnd(), this.edge.exteriorEnd(), extEndCorner.elevation, this.sideColor));
 	}
 
 	// start, end have x and y attributes (i.e. corners)

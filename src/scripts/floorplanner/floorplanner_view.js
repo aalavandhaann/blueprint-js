@@ -84,7 +84,7 @@ export class FloorplannerView
 
 		this._carbonsheet.draw();
 		this.drawGrid();
-		// this.drawOriginCrossHair();
+		this.drawOriginCrossHair();
 
 		// this.context.globalAlpha = 0.3;
 		this.floorplan.getRooms().forEach((room) => {this.drawRoom(room);});
@@ -114,11 +114,11 @@ export class FloorplannerView
 		var oy = this.viewmodel.convertY(0);
 		//draw origin crosshair
 		this.context.fillStyle = '#0000FF';
-		this.context.fillRect(ox-2.5, oy-15, 2.5, 30);
-		this.context.fillRect(ox-15, oy-2.5, 28, 2.5);
+		this.context.fillRect(ox-2, oy-7.5, 4, 15);
+		this.context.fillRect(ox-7.5, oy-2, 15, 4);
 		this.context.strokeStyle = '#FF0000';
-		this.context.strokeRect(ox-2.5, oy-15, 2.5, 30);
-		this.context.strokeRect(ox-15, oy-2.5, 28, 2.5);
+		this.context.fillRect(ox-1.25, oy-5, 2.5, 10);
+		this.context.fillRect(ox-5, oy-1.25, 10, 2.5);
 	}
 
 
@@ -155,34 +155,50 @@ export class FloorplannerView
 			if (wall.backEdge.interiorDistance() < wall.frontEdge.interiorDistance())
 			{
 				this.drawEdgeLabel(wall.backEdge);
+				this.drawEdgeLabelExterior(wall.backEdge);
 			}
 			else
 			{
 				this.drawEdgeLabel(wall.frontEdge);
+				this.drawEdgeLabelExterior(wall.frontEdge);
 			}
 		}
 		else if (wall.backEdge)
 		{
 			this.drawEdgeLabel(wall.backEdge);
+			this.drawEdgeLabelExterior(wall.backEdge);
 		}
 		else if (wall.frontEdge)
 		{
 			this.drawEdgeLabel(wall.frontEdge);
+			this.drawEdgeLabelExterior(wall.frontEdge);
 		}
-		this.drawWallLabelsExterior(wall);
+		this.drawWallLabelsMiddle(wall);
+	}
+
+	drawWallLabelsMiddle(wall)
+	{
+			var pos = wall.wallCenter();
+			var length = wall.wallLength();
+			if (length < 60)
+			{
+				// dont draw labels on walls this short
+				return;
+			}
+			this.drawTextLabel(`m:${Dimensioning.cmToMeasure(length)}` ,this.viewmodel.convertX(pos.x),this.viewmodel.convertY(pos.y));
 	}
 
 	/** */
-	drawWallLabelsExterior(wall)
+	drawEdgeLabelExterior(edge)
 	{
-		var pos = wall.wallCenter();
-		var length = wall.wallLength();
+		var pos = edge.exteriorCenter();
+		var length = edge.exteriorDistance();
 		if (length < 60)
 		{
 			// dont draw labels on walls this short
 			return;
 		}
-		this.drawTextLabel(`e:${Dimensioning.cmToMeasure(length)}` ,this.viewmodel.convertX(pos.x),this.viewmodel.convertY(pos.y+20));
+		this.drawTextLabel(`e:${Dimensioning.cmToMeasure(length)}` ,this.viewmodel.convertX(pos.x),this.viewmodel.convertY(pos.y+40));
 	}
 
 	/** */
@@ -195,7 +211,7 @@ export class FloorplannerView
 			// dont draw labels on walls this short
 			return;
 		}
-		this.drawTextLabel(`i:${Dimensioning.cmToMeasure(length)}` ,this.viewmodel.convertX(pos.x),this.viewmodel.convertY(pos.y-20));
+		this.drawTextLabel(`i:${Dimensioning.cmToMeasure(length)}` ,this.viewmodel.convertX(pos.x),this.viewmodel.convertY(pos.y-40));
 	}
 
 	drawTextLabel(label, x, y, textcolor='#000000', strokecolor='#ffffff', style='normal')

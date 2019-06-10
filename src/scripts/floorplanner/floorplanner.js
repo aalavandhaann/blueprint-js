@@ -281,7 +281,7 @@ export class Floorplanner extends EventDispatcher
 				{
 						var mx = (Math.abs(this.mouseX - this.activeCorner.x) < snapTolerance) ? this.activeCorner.x : this.mouseX;
 						var my = (Math.abs(this.mouseY - this.activeCorner.y) < snapTolerance) ? this.activeCorner.y : this.mouseY;
-						this.activeCorner.move(mx, my);
+						this.activeCorner.move(Math.round(mx), Math.round(my));
 				}
 				else
 				{

@@ -188,7 +188,7 @@ export class Floorplans extends EventDispatcher
 	newWall(start, end)
 	{
 		var wall = new Wall(start, end);
-		this.walls.push(wall);
+    this.walls.push(wall);
 		var scope = this;
 		wall.addEventListener(EVENT_DELETED, function(o){scope.removeWall(o.item);});
 		this.dispatchEvent({type: EVENT_NEW, item: this, newItem: wall});
@@ -216,9 +216,9 @@ export class Floorplans extends EventDispatcher
 		for (var i=0;i<this.corners.length;i++)
 		{
 				var existingCorner = this.corners[i];
-				if(existingCorner.distanceFromCorner(corner) < 50)
+				if(existingCorner.distanceFromCorner(corner) < 20)
 				{
-					return existingCorner;
+          return existingCorner;
 				}
 		}
 
@@ -583,7 +583,6 @@ export class Floorplans extends EventDispatcher
 				orphanWalls.push(wall);
 			}
 		});
-
 	}
 
 	/*

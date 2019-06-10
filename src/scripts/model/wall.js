@@ -232,11 +232,11 @@ export class Wall extends EventDispatcher
 		}
 	}
 
-	getClosestCorner(point)
+  getClosestCorner(point)
 	{
 			var startVector = new Vector2(this.start.x, this.start.y);
 			var endVector = new Vector2(this.end.x, this.end.y);
-			if(point.distanceTo(startVector) < 10)
+      if(point.distanceTo(startVector) < 10)
 			{
 				return this.start;
 			}
