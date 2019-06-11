@@ -538,7 +538,6 @@ function getItemPropertiesFolder(gui, anItem)
 	pcontrol.onChange(proportionFlagChanged);
 	lockcontrol.onChange(lockChanged);
 
-
 	anItem.setGUIControllers([inamecontrol, wcontrol, hcontrol, dcontrol, pcontrol, lockcontrol, deleteItemControl]);
 
 	return f;

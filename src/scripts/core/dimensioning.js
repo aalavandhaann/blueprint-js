@@ -21,6 +21,8 @@ export const pixelsPerFoot = 15.0;
 export const cmPerPixel = cmPerFoot * (1.0 / pixelsPerFoot);
 export const pixelsPerCm = 1.0 / cmPerPixel;
 
+export const dimensioningOptions = [dimInch, dimFeetAndInch, dimMeter, dimCentiMeter, dimMilliMeter];
+
 
 /** Dimensioning functions. */
 export class Dimensioning

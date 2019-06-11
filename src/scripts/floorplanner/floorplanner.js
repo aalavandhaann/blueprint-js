@@ -3,6 +3,9 @@ import {EventDispatcher} from 'three';
 import {cmPerPixel, pixelsPerCm, Dimensioning} from '../core/dimensioning.js';
 import {configDimUnit, Configuration} from '../core/configuration.js';
 import {EVENT_MODE_RESET, EVENT_LOADED} from '../core/events.js';
+import {EVENT_CORNER_2D_HOVER, EVENT_WALL_2D_HOVER, EVENT_ROOM_2D_HOVER} from '../core/events.js';
+import {EVENT_CORNER_2D_DOUBLE_CLICKED, EVENT_ROOM_2D_DOUBLE_CLICKED, EVENT_WALL_2D_DOUBLE_CLICKED} from '../core/events.js';
+import {EVENT_NOTHING_CLICKED} from '../core/events.js';
 import {FloorplannerView, floorplannerModes} from './floorplanner_view.js';
 
 /** how much will we move a corner to make a wall axis aligned (cm) */
@@ -97,22 +100,29 @@ export class Floorplanner extends EventDispatcher
 			var units = Configuration.getStringValue(configDimUnit);
 			if(this.activeCorner)
 			{
+        this.floorplan.dispatchEvent({type:EVENT_CORNER_2D_DOUBLE_CLICKED, item: this.activeCorner});
 				cid = this.activeCorner.id;
 				userinput = window.prompt(`Elevation at this point (in ${units},\n${cid}): `, Dimensioning.cmToMeasureRaw(this.activeCorner.elevation));
 				if(userinput != null)
 				{
-					this.activeCorner.elevation = Dimensioning.cmFromMeasureRaw(Number(userinput));
+					this.activeCorner.elevation = Number(userinput);
 				}
+
 			}
-			// else if(this.activeRoom)
-			// {
-			// 		userinput = window.prompt('Enter a name for this Room: ', this.activeRoom.name);
-			// 		if(userinput != null)
-			// 		{
-			// 			this.activeRoom.name = userinput;
-			// 		}
-			// 		this.view.draw();
-			// }
+      else if(this.activeWall)
+      {
+          this.floorplan.dispatchEvent({type:EVENT_WALL_2D_DOUBLE_CLICKED, item: this.activeWall});
+      }
+			else if(this.activeRoom)
+			{
+          this.floorplan.dispatchEvent({type:EVENT_ROOM_2D_DOUBLE_CLICKED, item: this.activeRoom});
+					userinput = window.prompt('Enter a name for this Room: ', this.activeRoom.name);
+					if(userinput != null)
+					{
+						this.activeRoom.name = userinput;
+					}
+					this.view.draw();
+			}
 	}
 
 	keyUp(e)
@@ -202,6 +212,11 @@ export class Floorplanner extends EventDispatcher
 //				this.setMode(floorplannerModes.MOVE);
 			}
 		}
+
+    if(this.activeCorner == null && this.activeWall == null && this.activeRoom == null)
+    {
+        this.floorplan.dispatchEvent({type:EVENT_NOTHING_CLICKED});
+    }
 	}
 
 	/** */
@@ -238,6 +253,7 @@ export class Floorplanner extends EventDispatcher
 			if (hoverCorner != this.activeCorner)
 			{
 				this.activeCorner = hoverCorner;
+        this.floorplan.dispatchEvent({type:EVENT_CORNER_2D_HOVER, item: hoverCorner});
 				draw = true;
 			}
 			// corner takes precendence
@@ -246,6 +262,7 @@ export class Floorplanner extends EventDispatcher
 				if (hoverWall != this.activeWall)
 				{
 					this.activeWall = hoverWall;
+          this.floorplan.dispatchEvent({type:EVENT_WALL_2D_HOVER, item: hoverWall});
 					draw = true;
 				}
 			}
@@ -255,6 +272,11 @@ export class Floorplanner extends EventDispatcher
 			}
 
 			this.activeRoom = hoverRoom;
+      if(this.activeCorner == null && this.activeWall == null && this.activeRoom !=null)
+      {
+          this.floorplan.dispatchEvent({type:EVENT_ROOM_2D_HOVER, item: hoverRoom});
+      }
+
 
 			if (draw)
 			{

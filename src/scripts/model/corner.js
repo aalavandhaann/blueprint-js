@@ -1,6 +1,7 @@
 import {EVENT_ACTION, EVENT_DELETED, EVENT_MOVED} from '../core/events.js';
 import {EventDispatcher, Vector2} from 'three';
 import {Utils} from '../core/utils.js';
+import {Dimensioning} from '../core/dimensioning.js';
 import {Configuration, configWallHeight} from '../core/configuration.js';
 
 /** */
@@ -36,7 +37,7 @@ export class Corner extends EventDispatcher
 
 	set elevation(value)
 	{
-		this._elevation = value;
+		this._elevation = Dimensioning.cmFromMeasureRaw(Number(value));
 	}
 
 	get elevation()
