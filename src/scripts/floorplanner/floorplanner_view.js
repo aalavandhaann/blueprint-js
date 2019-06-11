@@ -1,5 +1,5 @@
 import $ from 'jquery';
-// import {Vector2} from 'three';
+import {Vector2} from 'three';
 import {Utils} from '../core/utils.js';
 import {EVENT_UPDATED} from '../core/events.js';
 
@@ -96,14 +96,14 @@ export class FloorplannerView
 		{
 			this.drawTarget(this.viewmodel.targetX, this.viewmodel.targetY, this.viewmodel.lastNode);
 			//Enable the below lines for measurement while drawing, still needs work as it is crashing the whole thing
-			// if(this.viewmodel.lastNode != null)
-			// {
-			// 	var a = new Vector2(this.viewmodel.lastNode.x,this.viewmodel.lastNode.y);
-			// 	var b = new Vector2(this.viewmodel.targetX, this.viewmodel.targetY);
-			// 	var abvector = b.clone().sub(a);
-			// 	var midPoint = abvector.multiplyScalar(0.5).add(a);
-			// 	this.drawTextLabel(Dimensioning.cmToMeasure(a.distanceTo(b)), this.viewmodel.convertX(midPoint.x), this.viewmodel.convertY(midPoint.y));
-			// }
+			if(this.viewmodel.lastNode != null)
+			{
+				var a = new Vector2(this.viewmodel.lastNode.x,this.viewmodel.lastNode.y);
+				var b = new Vector2(this.viewmodel.targetX, this.viewmodel.targetY);
+				var abvector = b.clone().sub(a);
+				var midPoint = abvector.multiplyScalar(0.5).add(a);
+				this.drawTextLabel(Dimensioning.cmToMeasure(a.distanceTo(b)), this.viewmodel.convertX(midPoint.x), this.viewmodel.convertY(midPoint.y));
+			}
 		}
 		this.floorplan.getWalls().forEach((wall) => {this.drawWallLabels(wall);});
 	}
@@ -224,8 +224,6 @@ export class FloorplannerView
 		this.context.lineWidth = 4;
 		this.context.strokeText(label,x,y);
 		this.context.fillText(label,x,y);
-		// this.context.strokeText(Dimensioning.cmToMeasure(length),this.viewmodel.convertX(pos.x),this.viewmodel.convertY(pos.y));
-		// this.context.fillText(Dimensioning.cmToMeasure(length),this.viewmodel.convertX(pos.x),this.viewmodel.convertY(pos.y));
 	}
 
 	/** */
@@ -251,8 +249,8 @@ export class FloorplannerView
 	{
 		var scope = this;
 		this.drawPolygon(Utils.map(room.corners, (corner) => {return scope.viewmodel.convertX(corner.x);}),Utils.map(room.corners, (corner) =>  {return scope.viewmodel.convertY(corner.y);}), true,roomColor);
-		// this.drawTextLabel(Dimensioning.cmToMeasure(room.area, 2)+String.fromCharCode(178), this.viewmodel.convertX(room.areaCenter.x), this.viewmodel.convertY(room.areaCenter.y), '#0000FF', '#00FF0000', 'bold');
-		// this.drawTextLabel(room.name, this.viewmodel.convertX(room.areaCenter.x), this.viewmodel.convertY(room.areaCenter.y+30), '#363636', '#00FF0000', 'bold italic');
+		this.drawTextLabel(Dimensioning.cmToMeasure(room.area, 2)+String.fromCharCode(178), this.viewmodel.convertX(room.areaCenter.x), this.viewmodel.convertY(room.areaCenter.y), '#0000FF', '#00FF0000', 'bold');
+		this.drawTextLabel(room.name, this.viewmodel.convertX(room.areaCenter.x), this.viewmodel.convertY(room.areaCenter.y+30), '#363636', '#00FF0000', 'bold italic');
 	}
 
 	/** */

@@ -14,7 +14,7 @@ var cache;
 
 export default {
   input: 'src/scripts/blueprint.js',
-  output:{name: 'BP3DJS',file: 'build/js/bp3djs.min.js',format: 'iife',sourceMap: true,},
+  output:{name: 'BP3DJS',file: (isProduction)?'build/js/bp3djs.min.js': 'build/js/bp3djs.js',format: 'iife',sourceMap: true,},
   cache: cache,
   treeshake: true,
   plugins: [
