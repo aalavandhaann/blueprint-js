@@ -3,6 +3,7 @@ export {Version} from './core/version.js';
 
 export {EVENT_SAVED, EVENT_UPDATED, EVENT_LOADING, EVENT_LOADED, EVENT_NEW, EVENT_ACTION, EVENT_GLTF_READY} from './core/events.js';
 export {EVENT_DELETED, EVENT_MOVED, EVENT_REDRAW, EVENT_CHANGED, EVENT_MODE_RESET} from './core/events.js';
+export {EVENT_ROOM_NAME_CHANGED} from './core/events.js';
 export {EVENT_ITEM_LOADING, EVENT_ITEM_LOADED, EVENT_ITEM_REMOVED, EVENT_ITEM_SELECTED, EVENT_ITEM_UNSELECTED} from './core/events.js';
 export {EVENT_CAMERA_MOVED, EVENT_CAMERA_ACTIVE_STATUS, EVENT_FPS_EXIT, EVENT_CAMERA_VIEW_CHANGE} from './core/events.js';
 export {EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED, EVENT_NOTHING_CLICKED, EVENT_FLOOR_CLICKED} from './core/events.js';
@@ -75,14 +76,25 @@ export class BlueprintJS
 	/**
 	 * Creates an instance.
 	 *
-	 * @param options
-	 *            The initialization options.
+	 * @param options {Object} - The initialization options.
+	 * @param options.floorplannerElement {string} - Id of the html element to use as canvas. Needs to exist in the html
+	 * @param options.threeElement {string} - Id of the html element to use as canvas. Needs to exist in the html and should be #idofhtmlelement
+	 * @param options.threeCanvasElement {string} - Id of the html element to use as threejs-canvas. This is created automatically
+	 * @param options.textureDir {string} - path to texture directory. No effect
+	 * @param options.widget {bool} - If widget mode then disable the controller from interactions
+	 * @example
+	 * let blueprint3d = new BP3DJS.BlueprintJS(opts);
 	 */
 	constructor(options)
 	{
 		Configuration.setValue(configDimUnit, dimMeter);
 
 		this.options = options;
+		/**
+			* @property {Model} blueprint3d.model
+			* @property {Main} blueprint3d.three
+			* @property {Floorplanner} blueprint3d.floorplanner
+		**/
 		this.model = new Model(options.textureDir);
 		this.three = new Main(this.model, options.threeElement, options.threeCanvasElement, {});
 

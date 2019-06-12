@@ -1,0 +1,249 @@
+[
+  {
+    "name": "Dimensioning.cmFromMeasureRaw",
+    "filePath": "scripts/core/dimensioning.js",
+    "lines": [
+      {
+        "lineNumber": 33,
+        "line": "\t/** Converts cm to dimensioning number."
+      },
+      {
+        "lineNumber": 34,
+        "line": "\t * @param cm Centi meter value to be converted."
+      },
+      {
+        "lineNumber": 35,
+        "line": "\t * @returns Number representation."
+      },
+      {
+        "lineNumber": 36,
+        "line": "\t */"
+      },
+      {
+        "lineNumber": 37,
+        "line": "\tstatic cmFromMeasureRaw(measure)"
+      }
+    ],
+    "codeParams": [
+      "measure"
+    ],
+    "docParams": [
+      "cm"
+    ]
+  },
+  {
+    "name": "Dimensioning.cmFromMeasure",
+    "filePath": "scripts/core/dimensioning.js",
+    "lines": [
+      {
+        "lineNumber": 55,
+        "line": "\t/** Converts cm to dimensioning string."
+      },
+      {
+        "lineNumber": 56,
+        "line": "\t * @param cm Centi meter value to be converted."
+      },
+      {
+        "lineNumber": 57,
+        "line": "\t * @returns String representation."
+      },
+      {
+        "lineNumber": 58,
+        "line": "\t */"
+      },
+      {
+        "lineNumber": 59,
+        "line": "\tstatic cmFromMeasure(measure)"
+      }
+    ],
+    "codeParams": [
+      "measure"
+    ],
+    "docParams": [
+      "cm"
+    ]
+  },
+  {
+    "name": "Dimensioning.cmToMeasureRaw",
+    "filePath": "scripts/core/dimensioning.js",
+    "lines": [
+      {
+        "lineNumber": 77,
+        "line": "\t/** Converts cm to dimensioning string."
+      },
+      {
+        "lineNumber": 78,
+        "line": "\t * @param cm Centi meter value to be converted."
+      },
+      {
+        "lineNumber": 79,
+        "line": "\t * @returns String representation."
+      },
+      {
+        "lineNumber": 80,
+        "line": "\t */"
+      },
+      {
+        "lineNumber": 81,
+        "line": "\tstatic cmToMeasureRaw(cm, power=1)"
+      }
+    ],
+    "codeParams": [
+      "cm",
+      "power"
+    ],
+    "docParams": [
+      "cm"
+    ]
+  },
+  {
+    "name": "Dimensioning.cmToMeasure",
+    "filePath": "scripts/core/dimensioning.js",
+    "lines": [
+      {
+        "lineNumber": 103,
+        "line": "\t/** Converts cm to dimensioning string."
+      },
+      {
+        "lineNumber": 104,
+        "line": "\t * @param cm Centi meter value to be converted."
+      },
+      {
+        "lineNumber": 105,
+        "line": "\t * @returns String representation."
+      },
+      {
+        "lineNumber": 106,
+        "line": "\t */"
+      },
+      {
+        "lineNumber": 107,
+        "line": "\tstatic cmToMeasure(cm, power=1)"
+      }
+    ],
+    "codeParams": [
+      "cm",
+      "power"
+    ],
+    "docParams": [
+      "cm"
+    ]
+  },
+  {
+    "name": "Utils.pointInPolygon2",
+    "filePath": "scripts/core/utils.js",
+    "lines": [
+      {
+        "lineNumber": 210,
+        "line": "\t/**"
+      },
+      {
+        "lineNumber": 211,
+        "line": "     @param corners Is an array of points with x,y attributes"
+      },
+      {
+        "lineNumber": 212,
+        "line": "      @param startX X start coord for raycast"
+      },
+      {
+        "lineNumber": 213,
+        "line": "      @param startY Y start coord for raycast"
+      },
+      {
+        "lineNumber": 214,
+        "line": "\t */"
+      },
+      {
+        "lineNumber": 215,
+        "line": "\t static pointInPolygon2(point, polygon)"
+      }
+    ],
+    "codeParams": [
+      "point",
+      "polygon"
+    ],
+    "docParams": [
+      "corners",
+      "startX",
+      "startY"
+    ]
+  },
+  {
+    "name": "Utils.pointInPolygon",
+    "filePath": "scripts/core/utils.js",
+    "lines": [
+      {
+        "lineNumber": 230,
+        "line": "\t/**"
+      },
+      {
+        "lineNumber": 231,
+        "line": "     @param corners Is an array of points with x,y attributes"
+      },
+      {
+        "lineNumber": 232,
+        "line": "      @param startX X start coord for raycast"
+      },
+      {
+        "lineNumber": 233,
+        "line": "      @param startY Y start coord for raycast"
+      },
+      {
+        "lineNumber": 234,
+        "line": "\t */"
+      },
+      {
+        "lineNumber": 235,
+        "line": "\tstatic pointInPolygon(point, corners, start)"
+      }
+    ],
+    "codeParams": [
+      "point",
+      "corners",
+      "start"
+    ],
+    "docParams": [
+      "corners",
+      "startX",
+      "startY"
+    ]
+  },
+  {
+    "name": "Scene#removeItem",
+    "filePath": "scripts/model/scene.js",
+    "lines": [
+      {
+        "lineNumber": 99,
+        "line": "\t/**"
+      },
+      {
+        "lineNumber": 100,
+        "line": "\t * Removes an item."
+      },
+      {
+        "lineNumber": 101,
+        "line": "\t * @param item The item to be removed."
+      },
+      {
+        "lineNumber": 102,
+        "line": "\t * @param dontRemove If not set, also remove the item from the items list."
+      },
+      {
+        "lineNumber": 103,
+        "line": "\t */"
+      },
+      {
+        "lineNumber": 104,
+        "line": "\tremoveItem(item, keepInList)"
+      }
+    ],
+    "codeParams": [
+      "item",
+      "keepInList"
+    ],
+    "docParams": [
+      "item",
+      "dontRemove"
+    ]
+  }
+]

@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href>
+  <title data-ice="title">Source | blueprint3d-js</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="This is the core framework of Blueprint-js for creating floorplans in 2d and 3d"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="blueprint3d-js"><meta property="twitter:description" content="This is the core framework of Blueprint-js for creating floorplans in 2d and 3d"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/blueprint.js~BlueprintJS.html">BlueprintJS</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#core">core</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/core/configuration.js~Configuration.html">Configuration</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/core/dimensioning.js~Dimensioning.html">Dimensioning</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/core/utils.js~Utils.html">Utils</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/core/version.js~Version.html">Version</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isLogging">isLogging</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-log">log</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-config">config</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-configDimUnit">configDimUnit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-configWallHeight">configWallHeight</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-configWallThickness">configWallThickness</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-VIEW_FRONT">VIEW_FRONT</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-VIEW_ISOMETRY">VIEW_ISOMETRY</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-VIEW_LEFT">VIEW_LEFT</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-VIEW_RIGHT">VIEW_RIGHT</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-VIEW_TOP">VIEW_TOP</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-cmPerFoot">cmPerFoot</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-cmPerPixel">cmPerPixel</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-decimals">decimals</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-dimCentiMeter">dimCentiMeter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-dimFeetAndInch">dimFeetAndInch</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-dimInch">dimInch</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-dimMeter">dimMeter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-dimMilliMeter">dimMilliMeter</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-dimensioningOptions">dimensioningOptions</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-pixelsPerCm">pixelsPerCm</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-pixelsPerFoot">pixelsPerFoot</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_ACTION">EVENT_ACTION</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_CAMERA_ACTIVE_STATUS">EVENT_CAMERA_ACTIVE_STATUS</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_CAMERA_MOVED">EVENT_CAMERA_MOVED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_CAMERA_VIEW_CHANGE">EVENT_CAMERA_VIEW_CHANGE</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_CHANGED">EVENT_CHANGED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_CORNER_2D_CLICKED">EVENT_CORNER_2D_CLICKED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_CORNER_2D_DOUBLE_CLICKED">EVENT_CORNER_2D_DOUBLE_CLICKED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_CORNER_2D_HOVER">EVENT_CORNER_2D_HOVER</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_DELETED">EVENT_DELETED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_FLOOR_CLICKED">EVENT_FLOOR_CLICKED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_FPS_EXIT">EVENT_FPS_EXIT</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_GLTF_READY">EVENT_GLTF_READY</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_ITEM_LOADED">EVENT_ITEM_LOADED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_ITEM_LOADING">EVENT_ITEM_LOADING</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_ITEM_REMOVED">EVENT_ITEM_REMOVED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_ITEM_SELECTED">EVENT_ITEM_SELECTED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_ITEM_UNSELECTED">EVENT_ITEM_UNSELECTED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_LOADED">EVENT_LOADED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_LOADING">EVENT_LOADING</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_MODE_RESET">EVENT_MODE_RESET</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_MOVED">EVENT_MOVED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_NEW">EVENT_NEW</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_NOTHING_CLICKED">EVENT_NOTHING_CLICKED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_REDRAW">EVENT_REDRAW</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_ROOM_2D_CLICKED">EVENT_ROOM_2D_CLICKED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_ROOM_2D_DOUBLE_CLICKED">EVENT_ROOM_2D_DOUBLE_CLICKED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_ROOM_2D_HOVER">EVENT_ROOM_2D_HOVER</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_ROOM_CLICKED">EVENT_ROOM_CLICKED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_ROOM_NAME_CHANGED">EVENT_ROOM_NAME_CHANGED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_SAVED">EVENT_SAVED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_UPDATED">EVENT_UPDATED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_WALL_2D_CLICKED">EVENT_WALL_2D_CLICKED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_WALL_2D_DOUBLE_CLICKED">EVENT_WALL_2D_DOUBLE_CLICKED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_WALL_2D_HOVER">EVENT_WALL_2D_HOVER</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EVENT_WALL_CLICKED">EVENT_WALL_CLICKED</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ELogContext">ELogContext</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ELogLevel">ELogLevel</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-logContext">logContext</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#exporters">exporters</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-OBJExporter">OBJExporter</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#floorplanner">floorplanner</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/carbonsheet.js~CarbonSheet.html">CarbonSheet</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/floorplanner.js~Floorplanner.html">Floorplanner</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html">FloorplannerView</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-snapTolerance">snapTolerance</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-cornerColor">cornerColor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-cornerColorHover">cornerColorHover</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-cornerRadius">cornerRadius</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-cornerRadiusHover">cornerRadiusHover</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-deleteColor">deleteColor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-edgeColor">edgeColor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-edgeColorHover">edgeColorHover</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-edgeWidth">edgeWidth</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-floorplannerModes">floorplannerModes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-gridColor">gridColor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-gridSpacing">gridSpacing</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-gridWidth">gridWidth</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-roomColor">roomColor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-wallColor">wallColor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-wallColorHover">wallColorHover</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-wallWidth">wallWidth</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-wallWidthHover">wallWidthHover</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#items">items</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/items/factory.js~Factory.html">Factory</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/items/floor_item.js~FloorItem.html">FloorItem</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/items/in_wall_floor_item.js~InWallFloorItem.html">InWallFloorItem</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/items/in_wall_item.js~InWallItem.html">InWallItem</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/items/item.js~Item.html">Item</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/items/metadata.js~Metadata.html">Metadata</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/items/on_floor_item.js~OnFloorItem.html">OnFloorItem</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/items/roof_item.js~RoofItem.html">RoofItem</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/items/wall_floor_item.js~WallFloorItem.html">WallFloorItem</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/items/wall_item.js~WallItem.html">WallItem</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-item_types">item_types</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#model">model</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/corner.js~Corner.html">Corner</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/floorplan.js~Floorplans.html">Floorplans</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html">HalfEdge</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/model.js~Model.html">Model</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/room.js~Room.html">Room</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/scene.js~Scene.html">Scene</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/wall.js~Wall.html">Wall</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-cornerTolerance">cornerTolerance</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-defaultFloorPlanTolerance">defaultFloorPlanTolerance</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-defaultRoomTexture">defaultRoomTexture</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-defaultWallTexture">defaultWallTexture</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#three">three</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/controller.js~Controller.html">Controller</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/controls.js~Controls.html">Controls</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/edge.js~Edge.html">Edge</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/first-person-controls.js~FirstPersonControls.html">FirstPersonControls</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/floor.js~Floor.html">Floor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/floorPlan.js~Floorplan.html">Floorplan</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/hud.js~HUD.html">HUD</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/lights.js~Lights.html">Lights</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/main.js~Main.html">Main</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/skybox.js~Skybox.html">Skybox</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-OrbitControls">OrbitControls</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-PointerLockControls">PointerLockControls</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-states">states</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-STATE">STATE</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1>Source <img data-ice="coverageBadge" src="./badge.svg"><span data-ice="totalCoverageCount" class="total-coverage-count">279/1060</span></h1>
+
+<table class="files-summary" data-ice="files" data-use-coverage="true">
+  <thead>
+    <tr>
+      <td>File</td>
+      <td>Identifier</td>
+      <td class="coverage">Document</td>
+      <td style="display: none;">Size</td>
+      <td style="display: none;">Lines</td>
+      <td style="display: none;">Updated</td>
+    </tr>
+  </thead>
+  <tbody>
+    
+  <tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/blueprint.js.html#errorLines=103,74,92,99">scripts/blueprint.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/blueprint.js~BlueprintJS.html">BlueprintJS</a></span></td>
+      <td class="coverage"><span data-ice="coverage">33 %</span><span data-ice="coverageCount" class="coverage-count">2/6</span></td>
+      <td style="display: none;" data-ice="size">5355 byte</td>
+      <td style="display: none;" data-ice="lines">110</td>
+      <td style="display: none;" data-ice="updated">2019-06-04 22:57:06 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/core/configuration.js.html#errorLines=12,17,23">scripts/core/configuration.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/core/configuration.js~Configuration.html">Configuration</a></span>
+<span><a href="variable/index.html#static-variable-config">config</a></span>
+<span><a href="variable/index.html#static-variable-configDimUnit">configDimUnit</a></span>
+<span><a href="variable/index.html#static-variable-configWallHeight">configWallHeight</a></span>
+<span><a href="variable/index.html#static-variable-configWallThickness">configWallThickness</a></span></td>
+      <td class="coverage"><span data-ice="coverage">70 %</span><span data-ice="coverageCount" class="coverage-count">7/10</span></td>
+      <td style="display: none;" data-ice="size">1538 byte</td>
+      <td style="display: none;" data-ice="lines">61</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/core/constants.js.html#errorLines=1,2,3,4,5">scripts/core/constants.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="variable/index.html#static-variable-VIEW_FRONT">VIEW_FRONT</a></span>
+<span><a href="variable/index.html#static-variable-VIEW_ISOMETRY">VIEW_ISOMETRY</a></span>
+<span><a href="variable/index.html#static-variable-VIEW_LEFT">VIEW_LEFT</a></span>
+<span><a href="variable/index.html#static-variable-VIEW_RIGHT">VIEW_RIGHT</a></span>
+<span><a href="variable/index.html#static-variable-VIEW_TOP">VIEW_TOP</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/5</span></td>
+      <td style="display: none;" data-ice="size">194 byte</td>
+      <td style="display: none;" data-ice="lines">4</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/core/dimensioning.js.html#errorLines=17,19,20,21,22,24,30">scripts/core/dimensioning.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/core/dimensioning.js~Dimensioning.html">Dimensioning</a></span>
+<span><a href="variable/index.html#static-variable-cmPerFoot">cmPerFoot</a></span>
+<span><a href="variable/index.html#static-variable-cmPerPixel">cmPerPixel</a></span>
+<span><a href="variable/index.html#static-variable-decimals">decimals</a></span>
+<span><a href="variable/index.html#static-variable-dimCentiMeter">dimCentiMeter</a></span>
+<span><a href="variable/index.html#static-variable-dimFeetAndInch">dimFeetAndInch</a></span>
+<span><a href="variable/index.html#static-variable-dimInch">dimInch</a></span>
+<span><a href="variable/index.html#static-variable-dimMeter">dimMeter</a></span>
+<span><a href="variable/index.html#static-variable-dimMilliMeter">dimMilliMeter</a></span>
+<span><a href="variable/index.html#static-variable-dimensioningOptions">dimensioningOptions</a></span>
+<span><a href="variable/index.html#static-variable-pixelsPerCm">pixelsPerCm</a></span>
+<span><a href="variable/index.html#static-variable-pixelsPerFoot">pixelsPerFoot</a></span></td>
+      <td class="coverage"><span data-ice="coverage">58 %</span><span data-ice="coverageCount" class="coverage-count">10/17</span></td>
+      <td style="display: none;" data-ice="size">3997 byte</td>
+      <td style="display: none;" data-ice="lines">132</td>
+      <td style="display: none;" data-ice="updated">2019-06-04 21:32:13 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/core/events.js.html#errorLines=1,10,11,13,14,15,16,17,19,2,20,21,22,23,25,26,27,28,3,30,32,33,34,36,37,38,4,40,41,42,5,6,7,8,9">scripts/core/events.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="variable/index.html#static-variable-EVENT_ACTION">EVENT_ACTION</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_CAMERA_ACTIVE_STATUS">EVENT_CAMERA_ACTIVE_STATUS</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_CAMERA_MOVED">EVENT_CAMERA_MOVED</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_CAMERA_VIEW_CHANGE">EVENT_CAMERA_VIEW_CHANGE</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_CHANGED">EVENT_CHANGED</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_CORNER_2D_CLICKED">EVENT_CORNER_2D_CLICKED</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_CORNER_2D_DOUBLE_CLICKED">EVENT_CORNER_2D_DOUBLE_CLICKED</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_CORNER_2D_HOVER">EVENT_CORNER_2D_HOVER</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_DELETED">EVENT_DELETED</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_FLOOR_CLICKED">EVENT_FLOOR_CLICKED</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_FPS_EXIT">EVENT_FPS_EXIT</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_GLTF_READY">EVENT_GLTF_READY</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_ITEM_LOADED">EVENT_ITEM_LOADED</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_ITEM_LOADING">EVENT_ITEM_LOADING</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_ITEM_REMOVED">EVENT_ITEM_REMOVED</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_ITEM_SELECTED">EVENT_ITEM_SELECTED</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_ITEM_UNSELECTED">EVENT_ITEM_UNSELECTED</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_LOADED">EVENT_LOADED</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_LOADING">EVENT_LOADING</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_MODE_RESET">EVENT_MODE_RESET</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_MOVED">EVENT_MOVED</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_NEW">EVENT_NEW</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_NOTHING_CLICKED">EVENT_NOTHING_CLICKED</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_REDRAW">EVENT_REDRAW</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_ROOM_2D_CLICKED">EVENT_ROOM_2D_CLICKED</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_ROOM_2D_DOUBLE_CLICKED">EVENT_ROOM_2D_DOUBLE_CLICKED</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_ROOM_2D_HOVER">EVENT_ROOM_2D_HOVER</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_ROOM_CLICKED">EVENT_ROOM_CLICKED</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_ROOM_NAME_CHANGED">EVENT_ROOM_NAME_CHANGED</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_SAVED">EVENT_SAVED</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_UPDATED">EVENT_UPDATED</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_WALL_2D_CLICKED">EVENT_WALL_2D_CLICKED</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_WALL_2D_DOUBLE_CLICKED">EVENT_WALL_2D_DOUBLE_CLICKED</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_WALL_2D_HOVER">EVENT_WALL_2D_HOVER</a></span>
+<span><a href="variable/index.html#static-variable-EVENT_WALL_CLICKED">EVENT_WALL_CLICKED</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/35</span></td>
+      <td style="display: none;" data-ice="size">1984 byte</td>
+      <td style="display: none;" data-ice="lines">42</td>
+      <td style="display: none;" data-ice="updated">2019-06-04 22:22:32 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/core/exposable.js.html#errorLines=104,106,12,13,14,15,16,19,27,32,37,4,42,48,50,53,54,55,56,59,6,64,69,76,78,81,84,98">scripts/core/exposable.js</a></span></td>
+      <td data-ice="identifier" class="identifiers">-</td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/28</span></td>
+      <td style="display: none;" data-ice="size">1758 byte</td>
+      <td style="display: none;" data-ice="lines">111</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/core/log.js.html#errorLines=3,4">scripts/core/log.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="variable/index.html#static-variable-ELogContext">ELogContext</a></span>
+<span><a href="variable/index.html#static-variable-ELogLevel">ELogLevel</a></span>
+<span><a href="function/index.html#static-function-isLogging">isLogging</a></span>
+<span><a href="function/index.html#static-function-log">log</a></span>
+<span><a href="variable/index.html#static-variable-logContext">logContext</a></span></td>
+      <td class="coverage"><span data-ice="coverage">60 %</span><span data-ice="coverageCount" class="coverage-count">3/5</span></td>
+      <td style="display: none;" data-ice="size">1502 byte</td>
+      <td style="display: none;" data-ice="lines">49</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/core/utils.js.html#errorLines=313,321,329,4">scripts/core/utils.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/core/utils.js~Utils.html">Utils</a></span></td>
+      <td class="coverage"><span data-ice="coverage">84 %</span><span data-ice="coverageCount" class="coverage-count">21/25</span></td>
+      <td style="display: none;" data-ice="size">9661 byte</td>
+      <td style="display: none;" data-ice="lines">406</td>
+      <td style="display: none;" data-ice="updated">2019-06-07 19:53:19 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/core/version.js.html#errorLines=1,3,8">scripts/core/version.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/core/version.js~Version.html">Version</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/3</span></td>
+      <td style="display: none;" data-ice="size">135 byte</td>
+      <td style="display: none;" data-ice="lines">11</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/exporters/ColladaExporter.js.html">scripts/exporters/ColladaExporter.js</a></span></td>
+      <td data-ice="identifier" class="identifiers">-</td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">1/1</span></td>
+      <td style="display: none;" data-ice="size">16017 byte</td>
+      <td style="display: none;" data-ice="lines">602</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/exporters/GLTFExporter.js.html#errorLines=1,35,46,54">scripts/exporters/GLTFExporter.js</a></span></td>
+      <td data-ice="identifier" class="identifiers">-</td>
+      <td class="coverage"><span data-ice="coverage">20 %</span><span data-ice="coverageCount" class="coverage-count">1/5</span></td>
+      <td style="display: none;" data-ice="size">44437 byte</td>
+      <td style="display: none;" data-ice="lines">1951</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/exporters/MMDExporter.js.html">scripts/exporters/MMDExporter.js</a></span></td>
+      <td data-ice="identifier" class="identifiers">-</td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">1/1</span></td>
+      <td style="display: none;" data-ice="size">3997 byte</td>
+      <td style="display: none;" data-ice="lines">210</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/exporters/OBJExporter.js.html">scripts/exporters/OBJExporter.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="function/index.html#static-function-OBJExporter">OBJExporter</a></span></td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">1/1</span></td>
+      <td style="display: none;" data-ice="size">5327 byte</td>
+      <td style="display: none;" data-ice="lines">261</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/exporters/PLYExporter.js.html">scripts/exporters/PLYExporter.js</a></span></td>
+      <td data-ice="identifier" class="identifiers">-</td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">1/1</span></td>
+      <td style="display: none;" data-ice="size">12265 byte</td>
+      <td style="display: none;" data-ice="lines">549</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/exporters/STLExporter.js.html">scripts/exporters/STLExporter.js</a></span></td>
+      <td data-ice="identifier" class="identifiers">-</td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">1/1</span></td>
+      <td style="display: none;" data-ice="size">3707 byte</td>
+      <td style="display: none;" data-ice="lines">166</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/exporters/TypedGeometryExporter.js.html">scripts/exporters/TypedGeometryExporter.js</a></span></td>
+      <td data-ice="identifier" class="identifiers">-</td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">1/1</span></td>
+      <td style="display: none;" data-ice="size">902 byte</td>
+      <td style="display: none;" data-ice="lines">55</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/floorplanner/carbonsheet.js.html#errorLines=10,116,121,127,13,132,137,14,143,148,15,155,16,160,162,167,17,172,178,183,189,19,194,20,201,202,209,214,22,229,23,234,24,25,26,28,30,33,35,37,39,40,41,44,51,53,56,61,76">scripts/floorplanner/carbonsheet.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/floorplanner/carbonsheet.js~CarbonSheet.html">CarbonSheet</a></span></td>
+      <td class="coverage"><span data-ice="coverage">3 %</span><span data-ice="coverageCount" class="coverage-count">2/51</span></td>
+      <td style="display: none;" data-ice="size">5897 byte</td>
+      <td style="display: none;" data-ice="lines">270</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/floorplanner/floorplanner.js.html#errorLines=128,138,63,64,65,66,70,71,74,75,92,97">scripts/floorplanner/floorplanner.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/floorplanner/floorplanner.js~Floorplanner.html">Floorplanner</a></span>
+<span><a href="variable/index.html#static-variable-snapTolerance">snapTolerance</a></span></td>
+      <td class="coverage"><span data-ice="coverage">73 %</span><span data-ice="coverageCount" class="coverage-count">34/46</span></td>
+      <td style="display: none;" data-ice="size">10590 byte</td>
+      <td style="display: none;" data-ice="lines">424</td>
+      <td style="display: none;" data-ice="updated">2019-06-04 21:32:13 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/floorplanner/floorplanner_view.js.html#errorLines=111,13,14,15,179,19,217,22,23,24,25,26,27,28,30,33,34,35,36,42,44,45,46,47,48,51,63">scripts/floorplanner/floorplanner_view.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html">FloorplannerView</a></span>
+<span><a href="variable/index.html#static-variable-cornerColor">cornerColor</a></span>
+<span><a href="variable/index.html#static-variable-cornerColorHover">cornerColorHover</a></span>
+<span><a href="variable/index.html#static-variable-cornerRadius">cornerRadius</a></span>
+<span><a href="variable/index.html#static-variable-cornerRadiusHover">cornerRadiusHover</a></span>
+<span><a href="variable/index.html#static-variable-deleteColor">deleteColor</a></span>
+<span><a href="variable/index.html#static-variable-edgeColor">edgeColor</a></span>
+<span><a href="variable/index.html#static-variable-edgeColorHover">edgeColorHover</a></span>
+<span><a href="variable/index.html#static-variable-edgeWidth">edgeWidth</a></span>
+<span><a href="variable/index.html#static-variable-floorplannerModes">floorplannerModes</a></span>
+<span><a href="variable/index.html#static-variable-gridColor">gridColor</a></span>
+<span><a href="variable/index.html#static-variable-gridSpacing">gridSpacing</a></span>
+<span><a href="variable/index.html#static-variable-gridWidth">gridWidth</a></span>
+<span><a href="variable/index.html#static-variable-roomColor">roomColor</a></span>
+<span><a href="variable/index.html#static-variable-wallColor">wallColor</a></span>
+<span><a href="variable/index.html#static-variable-wallColorHover">wallColorHover</a></span>
+<span><a href="variable/index.html#static-variable-wallWidth">wallWidth</a></span>
+<span><a href="variable/index.html#static-variable-wallWidthHover">wallWidthHover</a></span></td>
+      <td class="coverage"><span data-ice="coverage">38 %</span><span data-ice="coverageCount" class="coverage-count">17/44</span></td>
+      <td style="display: none;" data-ice="size">10492 byte</td>
+      <td style="display: none;" data-ice="lines">365</td>
+      <td style="display: none;" data-ice="updated">2019-06-04 21:32:13 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/items/factory.js.html#errorLines=10">scripts/items/factory.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/items/factory.js~Factory.html">Factory</a></span>
+<span><a href="variable/index.html#static-variable-item_types">item_types</a></span></td>
+      <td class="coverage"><span data-ice="coverage">66 %</span><span data-ice="coverageCount" class="coverage-count">2/3</span></td>
+      <td style="display: none;" data-ice="size">682 byte</td>
+      <td style="display: none;" data-ice="lines">20</td>
+      <td style="display: none;" data-ice="updated">2019-06-01 18:48:16 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/items/floor_item.js.html#errorLines=10">scripts/items/floor_item.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/items/floor_item.js~FloorItem.html">FloorItem</a></span></td>
+      <td class="coverage"><span data-ice="coverage">83 %</span><span data-ice="coverageCount" class="coverage-count">5/6</span></td>
+      <td style="display: none;" data-ice="size">2342 byte</td>
+      <td style="display: none;" data-ice="lines">90</td>
+      <td style="display: none;" data-ice="updated">2019-06-01 23:09:00 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/items/in_wall_floor_item.js.html#errorLines=10,13">scripts/items/in_wall_floor_item.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/items/in_wall_floor_item.js~InWallFloorItem.html">InWallFloorItem</a></span></td>
+      <td class="coverage"><span data-ice="coverage">33 %</span><span data-ice="coverageCount" class="coverage-count">1/3</span></td>
+      <td style="display: none;" data-ice="size">479 byte</td>
+      <td style="display: none;" data-ice="lines">15</td>
+      <td style="display: none;" data-ice="updated">2019-06-01 23:09:09 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/items/in_wall_item.js.html#errorLines=12,9">scripts/items/in_wall_item.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/items/in_wall_item.js~InWallItem.html">InWallItem</a></span></td>
+      <td class="coverage"><span data-ice="coverage">50 %</span><span data-ice="coverageCount" class="coverage-count">2/4</span></td>
+      <td style="display: none;" data-ice="size">585 byte</td>
+      <td style="display: none;" data-ice="lines">21</td>
+      <td style="display: none;" data-ice="updated">2019-06-01 23:09:23 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/items/item.js.html#errorLines=100,110,114,115,116,117,121,125,126,127,128,136,168,226,263,268,279,312,317,35,36,593,62,64,68,69,90,92,94,96,97,99">scripts/items/item.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/items/item.js~Item.html">Item</a></span></td>
+      <td class="coverage"><span data-ice="coverage">56 %</span><span data-ice="coverageCount" class="coverage-count">42/74</span></td>
+      <td style="display: none;" data-ice="size">14043 byte</td>
+      <td style="display: none;" data-ice="lines">614</td>
+      <td style="display: none;" data-ice="updated">2019-06-04 21:32:13 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/items/metadata.js.html#errorLines=4,6,7,8,9">scripts/items/metadata.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/items/metadata.js~Metadata.html">Metadata</a></span></td>
+      <td class="coverage"><span data-ice="coverage">16 %</span><span data-ice="coverageCount" class="coverage-count">1/6</span></td>
+      <td style="display: none;" data-ice="size">167 byte</td>
+      <td style="display: none;" data-ice="lines">10</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/items/on_floor_item.js.html#errorLines=10,13,14">scripts/items/on_floor_item.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/items/on_floor_item.js~OnFloorItem.html">OnFloorItem</a></span></td>
+      <td class="coverage"><span data-ice="coverage">25 %</span><span data-ice="coverageCount" class="coverage-count">1/4</span></td>
+      <td style="display: none;" data-ice="size">505 byte</td>
+      <td style="display: none;" data-ice="lines">16</td>
+      <td style="display: none;" data-ice="updated">2019-06-01 23:09:42 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/items/roof_item.js.html#errorLines=11,12,18,33,69,8">scripts/items/roof_item.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/items/roof_item.js~RoofItem.html">RoofItem</a></span></td>
+      <td class="coverage"><span data-ice="coverage">33 %</span><span data-ice="coverageCount" class="coverage-count">3/9</span></td>
+      <td style="display: none;" data-ice="size">3239 byte</td>
+      <td style="display: none;" data-ice="lines">102</td>
+      <td style="display: none;" data-ice="updated">2019-06-04 21:32:13 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/items/wall_floor_item.js.html#errorLines=12,9">scripts/items/wall_floor_item.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/items/wall_floor_item.js~WallFloorItem.html">WallFloorItem</a></span></td>
+      <td class="coverage"><span data-ice="coverage">33 %</span><span data-ice="coverageCount" class="coverage-count">1/3</span></td>
+      <td style="display: none;" data-ice="size">466 byte</td>
+      <td style="display: none;" data-ice="lines">14</td>
+      <td style="display: none;" data-ice="updated">2019-06-01 23:10:11 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/items/wall_item.js.html#errorLines=11,39,93">scripts/items/wall_item.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/items/wall_item.js~WallItem.html">WallItem</a></span></td>
+      <td class="coverage"><span data-ice="coverage">88 %</span><span data-ice="coverageCount" class="coverage-count">22/25</span></td>
+      <td style="display: none;" data-ice="size">5820 byte</td>
+      <td style="display: none;" data-ice="lines">244</td>
+      <td style="display: none;" data-ice="updated">2019-06-01 23:10:23 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/model/corner.js.html#errorLines=191,25,26,27,28,29,30,31,32,33,34,35,363,38,43,48,56,61,90">scripts/model/corner.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/model/corner.js~Corner.html">Corner</a></span>
+<span><a href="variable/index.html#static-variable-cornerTolerance">cornerTolerance</a></span></td>
+      <td class="coverage"><span data-ice="coverage">57 %</span><span data-ice="coverageCount" class="coverage-count">26/45</span></td>
+      <td style="display: none;" data-ice="size">8769 byte</td>
+      <td style="display: none;" data-ice="lines">439</td>
+      <td style="display: none;" data-ice="updated">2019-06-04 21:32:13 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/model/floorplan.js.html#errorLines=106,111,116,121,132,25,27,280,29,295,30,308,32,321,339,34,36,38,397,40,41,43,454,46,463,496,51,565,57,570,605,630,73,83,99">scripts/model/floorplan.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/model/floorplan.js~Floorplans.html">Floorplans</a></span>
+<span><a href="variable/index.html#static-variable-defaultFloorPlanTolerance">defaultFloorPlanTolerance</a></span></td>
+      <td class="coverage"><span data-ice="coverage">28 %</span><span data-ice="coverageCount" class="coverage-count">14/49</span></td>
+      <td style="display: none;" data-ice="size">17743 byte</td>
+      <td style="display: none;" data-ice="lines">748</td>
+      <td style="display: none;" data-ice="updated">2019-06-04 22:36:21 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/model/half_edge.js.html#errorLines=145,172,184,196,209,216,223,228,235,241,247,25,252,26,27,29,30,31,32,33,34,35,36,37,38,39,40,42,92,97">scripts/model/half_edge.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html">HalfEdge</a></span></td>
+      <td class="coverage"><span data-ice="coverage">21 %</span><span data-ice="coverageCount" class="coverage-count">8/38</span></td>
+      <td style="display: none;" data-ice="size">7598 byte</td>
+      <td style="display: none;" data-ice="lines">329</td>
+      <td style="display: none;" data-ice="updated">2019-06-01 17:09:37 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/model/model.js.html#errorLines=101,21,22,23,24,25,26,30,35,49,55,86">scripts/model/model.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/model/model.js~Model.html">Model</a></span></td>
+      <td class="coverage"><span data-ice="coverage">14 %</span><span data-ice="coverageCount" class="coverage-count">2/14</span></td>
+      <td style="display: none;" data-ice="size">3250 byte</td>
+      <td style="display: none;" data-ice="lines">113</td>
+      <td style="display: none;" data-ice="updated">2019-06-02 14:35:39 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/model/room.js.html#errorLines=123,148,171,183,193,20,21,212,22,23,24,244,25,254,27,28,29,30,31,32,33,34,45,48,53,59,64,74,81,86,93">scripts/model/room.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/model/room.js~Room.html">Room</a></span>
+<span><a href="variable/index.html#static-variable-defaultRoomTexture">defaultRoomTexture</a></span></td>
+      <td class="coverage"><span data-ice="coverage">13 %</span><span data-ice="coverageCount" class="coverage-count">5/36</span></td>
+      <td style="display: none;" data-ice="size">7066 byte</td>
+      <td style="display: none;" data-ice="lines">321</td>
+      <td style="display: none;" data-ice="updated">2019-06-04 22:23:56 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/model/scene.js.html#errorLines=119,23,24,28,31,32,34,37,38,41,42,43">scripts/model/scene.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/model/scene.js~Scene.html">Scene</a></span></td>
+      <td class="coverage"><span data-ice="coverage">45 %</span><span data-ice="coverageCount" class="coverage-count">10/22</span></td>
+      <td style="display: none;" data-ice="size">6818 byte</td>
+      <td style="display: none;" data-ice="lines">268</td>
+      <td style="display: none;" data-ice="updated">2019-06-02 14:35:58 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/model/wall.js.html#errorLines=100,105,110,116,122,127,143,148,153,158,163,168,173,180,185,193,201,209,235,25,250,26,27,29,71,76,83,90,95">scripts/model/wall.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/model/wall.js~Wall.html">Wall</a></span>
+<span><a href="variable/index.html#static-variable-defaultWallTexture">defaultWallTexture</a></span></td>
+      <td class="coverage"><span data-ice="coverage">35 %</span><span data-ice="coverageCount" class="coverage-count">16/45</span></td>
+      <td style="display: none;" data-ice="size">4820 byte</td>
+      <td style="display: none;" data-ice="lines">261</td>
+      <td style="display: none;" data-ice="updated">2019-06-04 21:32:13 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/three/controller.js.html#errorLines=10,104,12,122,127,141,15,16,17,172,178,18,19,20,22,23,234,25,26,27,278,29,30,316,327,33,34,349,35,37,371,379,38,41,411,42,434,44,443,45,453,46,493,51,520,555,6,67,79,94">scripts/three/controller.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/three/controller.js~Controller.html">Controller</a></span>
+<span><a href="variable/index.html#static-variable-states">states</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/50</span></td>
+      <td style="display: none;" data-ice="size">13257 byte</td>
+      <td style="display: none;" data-ice="lines">559</td>
+      <td style="display: none;" data-ice="updated">2019-06-01 04:03:03 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/three/controls.js.html#errorLines=101,106,114,123,133,147,16,162,18,192,198,207,21,216,22,24,266,27,271,276,29,305,32,33,35,36,363,375,38,39,405,41,42,44,442,45,48,484,49,51,53,54,55,558,60,61,62,63,64,65,66,67,68,69,71,72,73,74,75,77,78,79,80,81,82,83,84,96">scripts/three/controls.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/three/controls.js~Controls.html">Controls</a></span>
+<span><a href="variable/index.html#static-variable-STATE">STATE</a></span></td>
+      <td class="coverage"><span data-ice="coverage">1 %</span><span data-ice="coverageCount" class="coverage-count">1/69</span></td>
+      <td style="display: none;" data-ice="size">14884 byte</td>
+      <td style="display: none;" data-ice="lines">565</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/three/edge.js.html#errorLines=10,11,110,12,120,13,15,150,16,161,18,183,19,20,21,23,236,24,25,26,27,298,31,314,32,33,331,344,349,35,39,47,5,58,66,7,79,91">scripts/three/edge.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/three/edge.js~Edge.html">Edge</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/38</span></td>
+      <td style="display: none;" data-ice="size">10669 byte</td>
+      <td style="display: none;" data-ice="lines">354</td>
+      <td style="display: none;" data-ice="updated">2019-06-04 21:32:13 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/three/first-person-controls.js.html#errorLines=20,21,219,222,23,25,27,28,30,31,33,35,36,37,38,40,41,42,44,46,47,49,50,51,52,54,55,56,57,59,61,62,68,69,70,71,72,73">scripts/three/first-person-controls.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/three/first-person-controls.js~FirstPersonControls.html">FirstPersonControls</a></span></td>
+      <td class="coverage"><span data-ice="coverage">24 %</span><span data-ice="coverageCount" class="coverage-count">12/50</span></td>
+      <td style="display: none;" data-ice="size">7744 byte</td>
+      <td style="display: none;" data-ice="lines">377</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/three/floor.js.html#errorLines=10,101,11,117,12,127,13,135,14,18,24,35,43,5,7,79">scripts/three/floor.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/three/floor.js~Floor.html">Floor</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/16</span></td>
+      <td style="display: none;" data-ice="size">3906 byte</td>
+      <td style="display: none;" data-ice="lines">140</td>
+      <td style="display: none;" data-ice="updated">2019-06-01 18:24:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/three/floorPlan.js.html#errorLines=12,13,14,15,16,19,23,33,64,7,9">scripts/three/floorPlan.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/three/floorPlan.js~Floorplan.html">Floorplan</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/11</span></td>
+      <td style="display: none;" data-ice="size">1501 byte</td>
+      <td style="display: none;" data-ice="lines">70</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/three/hud.js.html#errorLines=104,115,12,120,130,137,143,149,15,159,167,23,25,26,28,29,30,32,33,35,38,39,44,52,57,63,7,73,87,9,92,98">scripts/three/hud.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/three/hud.js~HUD.html">HUD</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/32</span></td>
+      <td style="display: none;" data-ice="size">4030 byte</td>
+      <td style="display: none;" data-ice="lines">181</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/three/lights.js.html#errorLines=10,11,12,13,14,18,23,4,51,6,9">scripts/three/lights.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/three/lights.js~Lights.html">Lights</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/11</span></td>
+      <td style="display: none;" data-ice="size">2247 byte</td>
+      <td style="display: none;" data-ice="lines">74</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/three/main.js.html#errorLines=119,193,200,207,212,217,22,222,227,232,238,24,244,250,255,260,265,270,281,286,291,296,301,334,350,36,37,371,378,38,385,39,390,40,429,43,436,44,45,455,46,464,47,48,487,50,51,511,529,53,534,54,55,56,58,59,61,62,64,65,67,69,70,71,72,75,76,78,79,80,82,85,86,88,89,90,91,92,99">scripts/three/main.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/three/main.js~Main.html">Main</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/79</span></td>
+      <td style="display: none;" data-ice="size">14437 byte</td>
+      <td style="display: none;" data-ice="lines">559</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/three/orbitcontrols.js.html">scripts/three/orbitcontrols.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="function/index.html#static-function-OrbitControls">OrbitControls</a></span></td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">1/1</span></td>
+      <td style="display: none;" data-ice="size">22681 byte</td>
+      <td style="display: none;" data-ice="lines">1042</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/three/pointerlockcontrols.js.html">scripts/three/pointerlockcontrols.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="function/index.html#static-function-PointerLockControls">PointerLockControls</a></span></td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">1/1</span></td>
+      <td style="display: none;" data-ice="size">5598 byte</td>
+      <td style="display: none;" data-ice="lines">256</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/scripts/three/skybox.js.html#errorLines=108,123,13,14,15,16,17,18,22,23,25,26,27,28,30,31,33,34,36,37,38,40,50,51,52,56,67,7,82,9">scripts/three/skybox.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/three/skybox.js~Skybox.html">Skybox</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/30</span></td>
+      <td style="display: none;" data-ice="size">4814 byte</td>
+      <td style="display: none;" data-ice="lines">127</td>
+      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+    </tr>
+</tbody>
+</table>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

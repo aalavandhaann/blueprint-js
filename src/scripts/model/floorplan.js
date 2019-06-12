@@ -1,6 +1,8 @@
-import {EVENT_UPDATED, EVENT_LOADED, EVENT_NEW, EVENT_DELETED} from '../core/events.js';
+import {EVENT_UPDATED, EVENT_LOADED, EVENT_NEW, EVENT_DELETED, EVENT_ROOM_NAME_CHANGED} from '../core/events.js';
 import {EventDispatcher, Vector2, Vector3} from 'three';
 import {Utils} from '../core/utils.js';
+import {Dimensioning} from '../core/dimensioning.js';
+
 import {HalfEdge} from './half_edge.js';
 import {Corner} from './corner.js';
 import {Wall} from './wall.js';
@@ -25,7 +27,7 @@ export class Floorplans extends EventDispatcher
 		this.corners = [];
 		// List of elements of Room instance
 		this.rooms = [];
-		this.metaroomsdata = null;
+		this.metaroomsdata = {};
 		// List with reference to callback on a new wall insert event
 		this.new_wall_callbacks = [];
 		// List with reference to callbacks on a new corner insert event
@@ -216,7 +218,7 @@ export class Floorplans extends EventDispatcher
 		for (var i=0;i<this.corners.length;i++)
 		{
 				var existingCorner = this.corners[i];
-				if(existingCorner.distanceFromCorner(corner) < 20)
+				if(existingCorner.distanceFromCorner(corner) < 50)
 				{
           return existingCorner;
 				}
@@ -229,7 +231,7 @@ export class Floorplans extends EventDispatcher
 
 		// This code has been added by #0K. There should be an update whenever a
 		// new corner is inserted
-// this.update();
+		this.update();
 
 		return corner;
 	}
@@ -316,8 +318,24 @@ export class Floorplans extends EventDispatcher
 		return null;
 	}
 
-	// import and export -- cleanup
+	getMetaRoomData()
+	{
+		  var metaRoomData = {};
+			this.rooms.forEach((room)=>{
+				var metaroom = {};
+				// var cornerids = [];
+				// room.corners.forEach((corner)=>{
+				// 		cornerids.push(corner.id);
+				// });
+				// var ids = cornerids.join(',');
+				var ids = room.roomByCornersId;
+				metaroom['name'] = room.name;
+				metaRoomData[ids] = metaroom;
+			});
+			return metaRoomData;
+	}
 
+	// import and export -- cleanup
 	saveFloorplan()
 	{
 		var floorplans = {corners: {}, walls: [], rooms: {}, wallTextures: [], floorTextures: {}, newFloorTextures: {}, carbonSheet:{}};
@@ -345,7 +363,7 @@ export class Floorplans extends EventDispatcher
 		});
 
 		cornerIds.forEach((corner)=>{
-			floorplans.corners[corner.id] = {'x': corner.x,'y': corner.y, 'elevation': corner.elevation};
+			floorplans.corners[corner.id] = {'x': corner.x,'y': corner.y, 'elevation': Dimensioning.cmToMeasureRaw(corner.elevation)};
 		});
 
 		this.rooms.forEach((room)=>{
@@ -358,6 +376,7 @@ export class Floorplans extends EventDispatcher
 			metaroom['name'] = room.name;
 			floorplans.rooms[ids] = metaroom;
 		});
+		// floorplans.rooms = this.getMetaRoomData();
 
 		if(this.carbonSheet)
 		{
@@ -474,18 +493,29 @@ export class Floorplans extends EventDispatcher
 		this.walls = [];
 	}
 
+	roomNameChanged(e)
+	{
+			if(this.metaroomsdata)
+			{
+					this.metaroomsdata[e.item.roomByCornersId] = e.newname;
+			}
+	}
+
 	/**
 	 * Update rooms
 	 */
 	update()
 	{
+		var scope = this;
 		this.walls.forEach((wall) => {
 			wall.resetFrontBack();
 		});
 
+		// this.rooms.forEach((room)=>{room.removeEventListener(EVENT_ROOM_NAME_CHANGED, scope.roomNameChanged)});
+
 		var roomCorners = this.findRooms(this.corners);
 		this.rooms = [];
-		var scope = this;
+
 
 		this.corners.forEach((corner)=>{
 			corner.clearAttachedRooms();
@@ -494,24 +524,30 @@ export class Floorplans extends EventDispatcher
 		roomCorners.forEach((corners) =>
 		{
 			var room = new Room(scope, corners);
-			if(scope.metaroomsdata)
-			{
-					var allids = Object.keys(scope.metaroomsdata);
-					for (var i=0;i<allids.length;i++)
-					{
-							var keyName = allids[i];
-							var ids = keyName.split(',');
-							var isThisRoom = room.hasAllCornersById(ids);
-							if(isThisRoom)
-							{
-									room.name = scope.metaroomsdata[keyName]['name'];
-							}
-					}
-			}
 			room.updateArea();
 			scope.rooms.push(room);
+			room.addEventListener(EVENT_ROOM_NAME_CHANGED, (e)=>{scope.roomNameChanged(e);});
+			if(scope.metaroomsdata)
+			{
+				// var allids = Object.keys(scope.metaroomsdata);
+				if(scope.metaroomsdata[room.roomByCornersId])
+				{
+					room.name = scope.metaroomsdata[room.roomByCornersId];
+				}
+				// for (var i=0;i<allids.length;i++)
+				// {
+				// 		var keyName = allids[i];
+				// 		var ids = keyName.split(',');
+				// 		var isThisRoom = room.hasAllCornersById(ids);
+				// 		if(isThisRoom)
+				// 		{
+				// 				room.name = scope.metaroomsdata[keyName]['name'];
+				// 		}
+				// }
+			}
 		});
 
+		// this.metaroomsdata = this.getMetaRoomData();
 		this.assignOrphanEdges();
 		this.updateFloorTextures();
 		this.dispatchEvent({type: EVENT_UPDATED, item: this});

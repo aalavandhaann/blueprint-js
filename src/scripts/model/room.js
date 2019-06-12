@@ -1,4 +1,4 @@
-import {EVENT_CHANGED} from '../core/events.js';
+import {EVENT_CHANGED, EVENT_ROOM_NAME_CHANGED} from '../core/events.js';
 import {EventDispatcher, Vector2, Vector3, Face3, Geometry, Shape, ShapeGeometry, Mesh, MeshBasicMaterial, DoubleSide, Box3} from 'three';
 import {Utils} from '../core/utils.js';
 import {HalfEdge} from './half_edge.js';
@@ -21,7 +21,6 @@ export class Room extends EventDispatcher
 		this.min = null;
 		this.max = null;
 		this.center = null;
-
 		this.area = 0.0;
 		this.areaCenter = null;
 
@@ -38,14 +37,24 @@ export class Room extends EventDispatcher
 		this.generatePlane();
 		this.generateRoofPlane();
 
+		var cornerids = [];
 		this.corners.forEach((corner)=>{
 			corner.attachRoom(this);
+			cornerids.push(corner.id);
 		});
+		this._roomByCornersId = cornerids.join(',');
+	}
+
+	get roomByCornersId()
+	{
+		return this._roomByCornersId;
 	}
 
 	set name(value)
 	{
+		var oldname = this._name;
 		this._name = value;
+		this.dispatchEvent({type:EVENT_ROOM_NAME_CHANGED, item:this, oldname: oldname, newname: this._name});
 	}
 	get name()
 	{
