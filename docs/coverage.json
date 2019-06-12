@@ -1,16 +1,14 @@
 {
-  "coverage": "26.32%",
+  "coverage": "26.5%",
   "expectCount": 1060,
-  "actualCount": 279,
+  "actualCount": 281,
   "files": {
     "scripts/blueprint.js": {
       "expectCount": 6,
-      "actualCount": 2,
+      "actualCount": 4,
       "undocumentLines": [
         74,
-        92,
-        99,
-        103
+        92
       ]
     },
     "scripts/core/configuration.js": {

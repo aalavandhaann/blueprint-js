@@ -239,8 +239,8 @@ export class BlueprintJS
 	 * @param options.floorplannerElement {string} - Id of the html element to use as canvas. Needs to exist in the html
 	 * @param options.threeElement {string} - Id of the html element to use as canvas. Needs to exist in the html and should be #idofhtmlelement
 	 * @param options.threeCanvasElement {string} - Id of the html element to use as threejs-canvas. This is created automatically
-	 * @deprecated options.textureDir {string} - path to texture directory. No effect
-	 * @deprecated options.widget {bool} - If widget mode then disable the controller from interactions
+	 * @param options.textureDir {string} - path to texture directory. No effect
+	 * @param options.widget {bool} - If widget mode then disable the controller from interactions
 	 * @example
 	 * let blueprint3d = new BP3DJS.BlueprintJS(opts);
 	 */
@@ -251,14 +251,18 @@ export class BlueprintJS
 		this.options = options;
 		/**
 			* @property {Model} blueprint3d.model
-			* @property {Main} blueprint3d.three
-			* @property {Floorplanner} blueprint3d.floorplanner
 		**/
 		this.model = new Model(options.textureDir);
+		/**
+		* @property {Main} blueprint3d.three
+		**/
 		this.three = new Main(this.model, options.threeElement, options.threeCanvasElement, {});
 
 		if (!options.widget)
 		{
+			/**			
+			* @property {Floorplanner} blueprint3d.floorplanner
+			**/
 			this.floorplanner = new Floorplanner(options.floorplannerElement, this.model.floorplan);
 		}
 		else

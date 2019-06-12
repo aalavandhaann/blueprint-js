@@ -567,7 +567,7 @@
     "__docId__": 48,
     "kind": "file",
     "name": "scripts/blueprint.js",
-    "content": "//Classes from core module\nexport {Version} from './core/version.js';\n\nexport {EVENT_SAVED, EVENT_UPDATED, EVENT_LOADING, EVENT_LOADED, EVENT_NEW, EVENT_ACTION, EVENT_GLTF_READY} from './core/events.js';\nexport {EVENT_DELETED, EVENT_MOVED, EVENT_REDRAW, EVENT_CHANGED, EVENT_MODE_RESET} from './core/events.js';\nexport {EVENT_ROOM_NAME_CHANGED} from './core/events.js';\nexport {EVENT_ITEM_LOADING, EVENT_ITEM_LOADED, EVENT_ITEM_REMOVED, EVENT_ITEM_SELECTED, EVENT_ITEM_UNSELECTED} from './core/events.js';\nexport {EVENT_CAMERA_MOVED, EVENT_CAMERA_ACTIVE_STATUS, EVENT_FPS_EXIT, EVENT_CAMERA_VIEW_CHANGE} from './core/events.js';\nexport {EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED, EVENT_NOTHING_CLICKED, EVENT_FLOOR_CLICKED} from './core/events.js';\nexport {EVENT_CORNER_2D_CLICKED, EVENT_CORNER_2D_DOUBLE_CLICKED, EVENT_CORNER_2D_HOVER} from './core/events.js';\nexport {EVENT_WALL_2D_CLICKED, EVENT_WALL_2D_DOUBLE_CLICKED, EVENT_WALL_2D_HOVER} from './core/events.js';\nexport {EVENT_ROOM_2D_CLICKED, EVENT_ROOM_2D_DOUBLE_CLICKED, EVENT_ROOM_2D_HOVER} from './core/events.js';\n\n\nexport {Utils} from './core/utils.js';\nexport {ELogContext, ELogLevel, logContext, isLogging, log} from './core/log.js';\nexport {dimInch, dimFeetAndInch, dimMeter, dimCentiMeter, dimMilliMeter, dimensioningOptions, decimals, Dimensioning} from './core/dimensioning.js';\nexport {cmPerFoot, pixelsPerFoot, cmPerPixel, pixelsPerCm} from './core/dimensioning.js';\n\nexport {configDimUnit, configWallHeight, configWallThickness, Configuration} from './core/configuration.js';\nexport {VIEW_TOP, VIEW_FRONT, VIEW_RIGHT, VIEW_LEFT, VIEW_ISOMETRY} from './core/constants.js';\n\n//Classes from model module\nexport {HalfEdge} from './model/half_edge.js';\nexport {cornerTolerance, Corner} from './model/corner.js';\nexport {defaultFloorPlanTolerance, Floorplans} from './model/floorplan.js';\nexport {Model} from './model/model.js';\nexport {defaultRoomTexture, Room} from './model/room.js';\nexport {Scene} from './model/scene.js';\nexport {defaultWallTexture, Wall} from './model/wall.js';\n\n//Classes from floorplanner module\nexport {floorplannerModes, gridSpacing, gridWidth, gridColor, roomColor, wallWidth, wallWidthHover, edgeColor, edgeColorHover, edgeWidth, deleteColor, cornerRadius, cornerRadiusHover, cornerColor, cornerColorHover, FloorplannerView} from './floorplanner/floorplanner_view.js';\nexport {snapTolerance, Floorplanner} from './floorplanner/floorplanner.js';\nexport {CarbonSheet} from './floorplanner/carbonsheet.js';\n\n//Classes from items module\nexport {item_types, Factory} from './items/factory.js';\nexport {Metadata} from './items/metadata.js';\nexport {Item} from './items/item.js';\nexport {FloorItem} from './items/floor_item.js';\nexport {WallItem} from './items/wall_item.js';\nexport {WallFloorItem} from './items/wall_floor_item.js';\nexport {OnFloorItem} from './items/on_floor_item.js';\nexport {InWallItem} from './items/in_wall_item.js';\nexport {InWallFloorItem} from './items/in_wall_floor_item.js';\nexport {RoofItem} from './items/roof_item.js';\n\n//Classes from three module\nexport {states, Controller} from './three/controller.js';\nexport {OrbitControls} from './three/orbitcontrols.js';\nexport {FirstPersonControls} from './three/first-person-controls.js';\nexport {PointerLockControls} from './three/pointerlockcontrols.js';\nexport {STATE, Controls} from './three/controls.js';\nexport {Edge} from './three/edge.js';\nexport {Floor} from './three/floor.js';\nexport {Floorplan} from './three/floorPlan.js';\nexport {HUD} from './three/hud.js';\nexport {Lights} from './three/lights.js';\nexport {Main} from './three/main.js';\nexport {Skybox} from './three/skybox.js';\n\nexport {OBJExporter} from './exporters/OBJExporter.js';\n\n\n\nimport {Model} from './model/model.js';\nimport {Main} from './three/main.js';\nimport {Floorplanner} from './floorplanner/floorplanner.js';\nimport {Configuration, configDimUnit} from './core/configuration.js';\nimport {dimMeter} from './core/dimensioning.js';\n//\n///** VestaDesigner core application. */\nexport class BlueprintJS\n{\n\t/**\n\t * Creates an instance.\n\t *\n\t * @param options {Object} - The initialization options.\n\t * @param options.floorplannerElement {string} - Id of the html element to use as canvas. Needs to exist in the html\n\t * @param options.threeElement {string} - Id of the html element to use as canvas. Needs to exist in the html and should be #idofhtmlelement\n\t * @param options.threeCanvasElement {string} - Id of the html element to use as threejs-canvas. This is created automatically\n\t * @deprecated options.textureDir {string} - path to texture directory. No effect\n\t * @deprecated options.widget {bool} - If widget mode then disable the controller from interactions\n\t * @example\n\t * let blueprint3d = new BP3DJS.BlueprintJS(opts);\n\t */\n\tconstructor(options)\n\t{\n\t\tConfiguration.setValue(configDimUnit, dimMeter);\n\n\t\tthis.options = options;\n\t\t/**\n\t\t\t* @property {Model} blueprint3d.model\n\t\t\t* @property {Main} blueprint3d.three\n\t\t\t* @property {Floorplanner} blueprint3d.floorplanner\n\t\t**/\n\t\tthis.model = new Model(options.textureDir);\n\t\tthis.three = new Main(this.model, options.threeElement, options.threeCanvasElement, {});\n\n\t\tif (!options.widget)\n\t\t{\n\t\t\tthis.floorplanner = new Floorplanner(options.floorplannerElement, this.model.floorplan);\n\t\t}\n\t\telse\n\t\t{\n\t\t\tthis.three.getController().enabled = false;\n\t\t}\n\t}\n}\n",
+    "content": "//Classes from core module\nexport {Version} from './core/version.js';\n\nexport {EVENT_SAVED, EVENT_UPDATED, EVENT_LOADING, EVENT_LOADED, EVENT_NEW, EVENT_ACTION, EVENT_GLTF_READY} from './core/events.js';\nexport {EVENT_DELETED, EVENT_MOVED, EVENT_REDRAW, EVENT_CHANGED, EVENT_MODE_RESET} from './core/events.js';\nexport {EVENT_ROOM_NAME_CHANGED} from './core/events.js';\nexport {EVENT_ITEM_LOADING, EVENT_ITEM_LOADED, EVENT_ITEM_REMOVED, EVENT_ITEM_SELECTED, EVENT_ITEM_UNSELECTED} from './core/events.js';\nexport {EVENT_CAMERA_MOVED, EVENT_CAMERA_ACTIVE_STATUS, EVENT_FPS_EXIT, EVENT_CAMERA_VIEW_CHANGE} from './core/events.js';\nexport {EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED, EVENT_NOTHING_CLICKED, EVENT_FLOOR_CLICKED} from './core/events.js';\nexport {EVENT_CORNER_2D_CLICKED, EVENT_CORNER_2D_DOUBLE_CLICKED, EVENT_CORNER_2D_HOVER} from './core/events.js';\nexport {EVENT_WALL_2D_CLICKED, EVENT_WALL_2D_DOUBLE_CLICKED, EVENT_WALL_2D_HOVER} from './core/events.js';\nexport {EVENT_ROOM_2D_CLICKED, EVENT_ROOM_2D_DOUBLE_CLICKED, EVENT_ROOM_2D_HOVER} from './core/events.js';\n\n\nexport {Utils} from './core/utils.js';\nexport {ELogContext, ELogLevel, logContext, isLogging, log} from './core/log.js';\nexport {dimInch, dimFeetAndInch, dimMeter, dimCentiMeter, dimMilliMeter, dimensioningOptions, decimals, Dimensioning} from './core/dimensioning.js';\nexport {cmPerFoot, pixelsPerFoot, cmPerPixel, pixelsPerCm} from './core/dimensioning.js';\n\nexport {configDimUnit, configWallHeight, configWallThickness, Configuration} from './core/configuration.js';\nexport {VIEW_TOP, VIEW_FRONT, VIEW_RIGHT, VIEW_LEFT, VIEW_ISOMETRY} from './core/constants.js';\n\n//Classes from model module\nexport {HalfEdge} from './model/half_edge.js';\nexport {cornerTolerance, Corner} from './model/corner.js';\nexport {defaultFloorPlanTolerance, Floorplans} from './model/floorplan.js';\nexport {Model} from './model/model.js';\nexport {defaultRoomTexture, Room} from './model/room.js';\nexport {Scene} from './model/scene.js';\nexport {defaultWallTexture, Wall} from './model/wall.js';\n\n//Classes from floorplanner module\nexport {floorplannerModes, gridSpacing, gridWidth, gridColor, roomColor, wallWidth, wallWidthHover, edgeColor, edgeColorHover, edgeWidth, deleteColor, cornerRadius, cornerRadiusHover, cornerColor, cornerColorHover, FloorplannerView} from './floorplanner/floorplanner_view.js';\nexport {snapTolerance, Floorplanner} from './floorplanner/floorplanner.js';\nexport {CarbonSheet} from './floorplanner/carbonsheet.js';\n\n//Classes from items module\nexport {item_types, Factory} from './items/factory.js';\nexport {Metadata} from './items/metadata.js';\nexport {Item} from './items/item.js';\nexport {FloorItem} from './items/floor_item.js';\nexport {WallItem} from './items/wall_item.js';\nexport {WallFloorItem} from './items/wall_floor_item.js';\nexport {OnFloorItem} from './items/on_floor_item.js';\nexport {InWallItem} from './items/in_wall_item.js';\nexport {InWallFloorItem} from './items/in_wall_floor_item.js';\nexport {RoofItem} from './items/roof_item.js';\n\n//Classes from three module\nexport {states, Controller} from './three/controller.js';\nexport {OrbitControls} from './three/orbitcontrols.js';\nexport {FirstPersonControls} from './three/first-person-controls.js';\nexport {PointerLockControls} from './three/pointerlockcontrols.js';\nexport {STATE, Controls} from './three/controls.js';\nexport {Edge} from './three/edge.js';\nexport {Floor} from './three/floor.js';\nexport {Floorplan} from './three/floorPlan.js';\nexport {HUD} from './three/hud.js';\nexport {Lights} from './three/lights.js';\nexport {Main} from './three/main.js';\nexport {Skybox} from './three/skybox.js';\n\nexport {OBJExporter} from './exporters/OBJExporter.js';\n\n\n\nimport {Model} from './model/model.js';\nimport {Main} from './three/main.js';\nimport {Floorplanner} from './floorplanner/floorplanner.js';\nimport {Configuration, configDimUnit} from './core/configuration.js';\nimport {dimMeter} from './core/dimensioning.js';\n//\n///** VestaDesigner core application. */\nexport class BlueprintJS\n{\n\t/**\n\t * Creates an instance.\n\t *\n\t * @param options {Object} - The initialization options.\n\t * @param options.floorplannerElement {string} - Id of the html element to use as canvas. Needs to exist in the html\n\t * @param options.threeElement {string} - Id of the html element to use as canvas. Needs to exist in the html and should be #idofhtmlelement\n\t * @param options.threeCanvasElement {string} - Id of the html element to use as threejs-canvas. This is created automatically\n\t * @param options.textureDir {string} - path to texture directory. No effect\n\t * @param options.widget {bool} - If widget mode then disable the controller from interactions\n\t * @example\n\t * let blueprint3d = new BP3DJS.BlueprintJS(opts);\n\t */\n\tconstructor(options)\n\t{\n\t\tConfiguration.setValue(configDimUnit, dimMeter);\n\n\t\tthis.options = options;\n\t\t/**\n\t\t\t* @property {Model} blueprint3d.model\n\t\t**/\n\t\tthis.model = new Model(options.textureDir);\n\t\t/**\n\t\t* @property {Main} blueprint3d.three\n\t\t**/\n\t\tthis.three = new Main(this.model, options.threeElement, options.threeCanvasElement, {});\n\n\t\tif (!options.widget)\n\t\t{\n\t\t\t/**\t\t\t\n\t\t\t* @property {Floorplanner} blueprint3d.floorplanner\n\t\t\t**/\n\t\t\tthis.floorplanner = new Floorplanner(options.floorplannerElement, this.model.floorplan);\n\t\t}\n\t\telse\n\t\t{\n\t\t\tthis.three.getController().enabled = false;\n\t\t}\n\t}\n}\n",
     "static": true,
     "longname": "/home/ashok/eclipse-workspace/blueprint-js/src/scripts/blueprint.js",
     "access": "public",
@@ -605,7 +605,6 @@
       "let blueprint3d = new BP3DJS.BlueprintJS(opts);"
     ],
     "lineNumber": 88,
-    "deprecated": "options.widget {bool} - If widget mode then disable the controller from interactions",
     "params": [
       {
         "nullable": null,
@@ -646,6 +645,26 @@
         "optional": false,
         "name": "options.threeCanvasElement",
         "description": "{string} - Id of the html element to use as threejs-canvas. This is created automatically"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "options.textureDir",
+        "description": "{string} - path to texture directory. No effect"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "options.widget",
+        "description": "{bool} - If widget mode then disable the controller from interactions"
       }
     ]
   },
@@ -675,7 +694,7 @@
     "longname": "scripts/blueprint.js~BlueprintJS#model",
     "access": "public",
     "description": "",
-    "lineNumber": 98,
+    "lineNumber": 96,
     "properties": [
       {
         "nullable": null,
@@ -685,26 +704,6 @@
         "spread": false,
         "optional": false,
         "name": "blueprint3d.model",
-        "description": ""
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Main"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "blueprint3d.three",
-        "description": ""
-      },
-      {
-        "nullable": null,
-        "types": [
-          "Floorplanner"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "blueprint3d.floorplanner",
         "description": ""
       }
     ],
@@ -722,9 +721,20 @@
     "static": false,
     "longname": "scripts/blueprint.js~BlueprintJS#three",
     "access": "public",
-    "description": null,
-    "lineNumber": 99,
-    "undocument": true,
+    "description": "",
+    "lineNumber": 100,
+    "properties": [
+      {
+        "nullable": null,
+        "types": [
+          "Main"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "blueprint3d.three",
+        "description": ""
+      }
+    ],
     "type": {
       "types": [
         "*"
@@ -739,9 +749,20 @@
     "static": false,
     "longname": "scripts/blueprint.js~BlueprintJS#floorplanner",
     "access": "public",
-    "description": null,
-    "lineNumber": 103,
-    "undocument": true,
+    "description": "\t\t",
+    "lineNumber": 107,
+    "properties": [
+      {
+        "nullable": null,
+        "types": [
+          "Floorplanner"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "blueprint3d.floorplanner",
+        "description": ""
+      }
+    ],
     "type": {
       "types": [
         "*"
@@ -22695,7 +22716,7 @@
   },
   {
     "kind": "index",
-    "content": "# README #\nThis is a javascript floorplanner tool based on the existing typescript based project [blueprint3d](https://github.com/furnishup/blueprint3d)\n\n## DEMO ##\n\n[Cick for example](https://aalavandhaann.github.io/blueprint-js/build)\n\n## DEMO VR ##\nThe ability to export the floorplan as GLTF gives the scope of having easy VR with A-Frame. Export the layout to use it directly with A-Frame or process it further using Blender and then use it with A-Frame. \n\n[Cick for example of VR - 1](https://aalavandhaann.github.io/blueprint-js/build/vrtest)\n[VR - 2](https://aalavandhaann.github.io/blueprint-js/build/vrtest/minimal.html)\n\nYou will notice a lot of flickering in the VR mode. This is because of the overlapping materials in the floorplan.\n\n## What is this?\n\nThis is a customizable application built on three.js that allows users to design an interior space such as a home or apartment. Below are screenshots from our Example App (link above). \n\n1) Create 2D floorplan:\n\n![floorplan](./images/floorplan2d.png)\n\n2) Add items:\n\n![add_items](./images/items.png)\n\n3) Design in 3D:\n\n![3d_design](./images/floorplan3d.png)\n\n## Developing and Running Locally\n\nTo get started, clone the repository and ensure you npm >= 3 and rollup installed, then run:\n\n    npm install\n    rollup -c\n\nThe latter command generates `build/js/bp3djs.min.js` from `src`.\n\nThe easiest way to run locally is to run a local server from the `build` directory. There are plenty of options. One uses Python's built in webserver:\n\n    cd build\n\n    # Python 3.x\n    python -m http.server\n\nThen, visit `http://localhost:8000` in your browser.\n\n## Contribute!\n\nThis project and the [original project](https://github.com/furnishup/blueprint3d) requires a lot more work. If you are someone like yodha of typescript then kindly visit the original project, the author is a wonderful human being who facilitated this idea, efforts, and materials in the first place. Else you are someone like me who likes to play around with es6 then you can use this one.\n\nPlease contact us if you are interested in contributing.\n\n### Todos and hurrays on completed ones\n\n- More complete documentation of classes (This is necessary and must do for others to contribute)\n- Make it easier to build a complete application using blueprint3d (cleaner API, more inclusive base, easier integration with a backend)\n- Better serialization format for saving/loading \"designs\"\n- JQuery is not used at all, instead I used the eventdispatcher from threejs (hurray)\n- Better use of npm conventions and packaging\n- Various bug fixes  (hurray for items that are stuck and don't move) \n- refactor three/*\n- update to current threejs  (hurray)\n- introduce a more formal persistency format\n- put all relevant settings into Core.Configuration to make them read-/writeable, User settings?\n- complete type docs for all entities\n- there're a few TODO_Ekki's left, kill them all (let me know Yodha)\n\n## Directory Structure\n\n### `src/` Directory\n\nThe `src` directory contains the core of the project. Here is a description of the various sub-directories:\n\n`core` - Basic utilities such as logging and generic functions\n\n`floorplanner` - 2D view/controller for editing the floorplan\n\n`items` - Various types of items that can go in rooms\n\n`model` - Data model representing both the 2D floorplan and all of the items in it\n\n`three` - 3D view/controller for viewing and modifying item placement\n\n## Notes about changes from the original\n- Adding routines to modify the skybox images as environment (a crude implementation)\n- Otherwise the api is ditto and the same\n- Adding a BoxHelper to show selected states of items\n",
+    "content": "# README #\nThis is a javascript floorplanner tool based on the existing typescript based project [blueprint3d](https://github.com/furnishup/blueprint3d)\n\n## DEMO ##\n\n[Cick for example](https://aalavandhaann.github.io/blueprint-js/build)\n\n## DOCS ##\nYes, the initiative has begun for the documentation. Of late I have been getting inquiries on using this framework. It is time to have the documentation rolling\n[docs](https://aalavandhaann.github.io/blueprint-js/docs)\n\n## DEMO VR ##\nThe ability to export the floorplan as GLTF gives the scope of having easy VR with A-Frame. Export the layout to use it directly with A-Frame or process it further using Blender and then use it with A-Frame.\n\n[Cick for example of VR - 1](https://aalavandhaann.github.io/blueprint-js/build/vrtest)\n[VR - 2](https://aalavandhaann.github.io/blueprint-js/build/vrtest/minimal.html)\n\nYou will notice a lot of flickering in the VR mode. This is because of the overlapping materials in the floorplan.\n\n## What is this?\n\nThis is a customizable application built on three.js that allows users to design an interior space such as a home or apartment. Below are screenshots from our Example App (link above).\n\n1) Create 2D floorplan:\n\n![floorplan](./images/floorplan2d.png)\n\n2) Add items:\n\n![add_items](./images/items.png)\n\n3) Design in 3D:\n\n![3d_design](./images/floorplan3d.png)\n\n## Developing and Running Locally\n\nTo get started, clone the repository and ensure you npm >= 3 and rollup installed, then run:\n\n    npm install\n    rollup -c\n\nThe latter command generates `build/js/bp3djs.min.js` from `src`.\n\nThe easiest way to run locally is to run a local server from the `build` directory. There are plenty of options. One uses Python's built in webserver:\n\n    cd build\n\n    # Python 3.x\n    python -m http.server\n\nThen, visit `http://localhost:8000` in your browser.\n\n## Contribute!\n\nThis project and the [original project](https://github.com/furnishup/blueprint3d) requires a lot more work. If you are someone like yodha of typescript then kindly visit the original project, the author is a wonderful human being who facilitated this idea, efforts, and materials in the first place. Else you are someone like me who likes to play around with es6 then you can use this one.\n\nPlease contact us if you are interested in contributing.\n\n### Todos and hurrays on completed ones\n\n- More complete documentation of classes (This is necessary and must do for others to contribute)\n- Make it easier to build a complete application using blueprint3d (cleaner API, more inclusive base, easier integration with a backend)\n- Better serialization format for saving/loading \"designs\"\n- JQuery is not used at all, instead I used the eventdispatcher from threejs (hurray)\n- Better use of npm conventions and packaging\n- Various bug fixes  (hurray for items that are stuck and don't move)\n- refactor three/*\n- update to current threejs  (hurray)\n- introduce a more formal persistency format\n- put all relevant settings into Core.Configuration to make them read-/writeable, User settings?\n- complete type docs for all entities\n- there're a few TODO_Ekki's left, kill them all (let me know Yodha)\n\n## Directory Structure\n\n### `src/` Directory\n\nThe `src` directory contains the core of the project. Here is a description of the various sub-directories:\n\n`core` - Basic utilities such as logging and generic functions\n\n`floorplanner` - 2D view/controller for editing the floorplan\n\n`items` - Various types of items that can go in rooms\n\n`model` - Data model representing both the 2D floorplan and all of the items in it\n\n`three` - 3D view/controller for viewing and modifying item placement\n\n## Notes about changes from the original\n- Adding routines to modify the skybox images as environment (a crude implementation)\n- Otherwise the api is ditto and the same\n- Adding a BoxHelper to show selected states of items\n",
     "longname": "/home/ashok/eclipse-workspace/blueprint-js/README.md",
     "name": "./README.md",
     "static": true,
@@ -22703,7 +22724,7 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\n  \"name\": \"blueprint3d-js\",\n  \"version\": \"0.1.0\",\n  \"description\": \"This is the core framework of Blueprint-js for creating floorplans in 2d and 3d\",\n  \"main\": \"build/js/bp3djs.min.js\",\n  \"scripts\": {\n    \"build\": \"rollup -c\",\n    \"dev\": \"rollup -c -w\",\n    \"reload\": \"livereload 'build/'\",\n    \"test\": \"echo \\\"Error: no test specified\\\" && exit 1\",\n    \"watch\": \"npm-run-all --parallel reload dev\"\n  },\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"git+ssh://git@github.com/aalavandhaann/blueprint-js.git\"\n  },\n  \"author\": \"#0K Srinivasan <ashok.srinivasan2002@gmail.com> (@aalavandhaann)\",\n  \"license\": \"ISC\",\n  \"bugs\": {\n    \"url\": \"https://github.com/aalavandhaann/blueprint-js/issues\"\n  },\n  \"devDependencies\": {\n    \"babel-plugin-external-helpers\": \"^6.22.0\",\n    \"babel-preset-latest\": \"^6.24.1\",\n    \"cssnano\": \"^3.10.0\",\n    \"eslint\": \"^3.19.0\",\n    \"eslint-plugin-import\": \"^2.17.3\",\n    \"event-stream\": \">4.0.0\",\n    \"livereload\": \"^0.7.0\",\n    \"npm-run-all\": \"^4.0.2\",\n    \"rollup\": \"^1.6.0\",\n    \"rollup-plugin-babel\": \"^2.7.1\",\n    \"rollup-plugin-commonjs\": \"^9.3.4\",\n    \"rollup-plugin-eslint\": \"^3.0.0\",\n    \"rollup-plugin-node-resolve\": \"^3.0.0\",\n    \"rollup-plugin-postcss\": \"^0.5.3\",\n    \"rollup-plugin-replace\": \"^1.1.1\",\n    \"rollup-plugin-serve\": \"^0.3.0\",\n    \"rollup-plugin-uglify\": \"^2.0.1\",\n    \"rollup-plugin-uglify-es\": \"0.0.1\",\n    \"rollup-watch\": \"^4.0.0\"\n  },\n  \"dependencies\": {\n    \"@calvinscofield/three-objloader\": \"^1.0.4\",\n    \"braces\": \"^2.3.2\",\n    \"es6-enum\": \"^1.1.0\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"jquery\": \"^3.4.1\",\n    \"line-intersect\": \"^2.2.1\",\n    \"three\": \"^0.98.0\",\n    \"three-gltf-exporter\": \"0.0.1\",\n    \"three-gltf-loader\": \"^1.105.0\",\n    \"three-reflector\": \"^1.0.2\",\n    \"three-reflector2\": \"0.0.5\"\n  }\n}\n",
+    "content": "{\n  \"name\": \"blueprint3d-js\",\n  \"version\": \"0.1.0\",\n  \"description\": \"This is the core framework of Blueprint-js for creating floorplans in 2d and 3d\",\n  \"main\": \"build/js/bp3djs.min.js\",\n  \"scripts\": {\n    \"build\": \"rollup -c\",\n    \"dev\": \"rollup -c -w\",\n    \"reload\": \"livereload 'build/'\",\n    \"test\": \"echo \\\"Error: no test specified\\\" && exit 1\",\n    \"watch\": \"npm-run-all --parallel reload dev\"\n  },\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"git+ssh://git@github.com/aalavandhaann/blueprint-js.git\"\n  },\n  \"author\": \"#0K Srinivasan <ashok.srinivasan2002@gmail.com> (@aalavandhaann)\",\n  \"license\": \"ISC\",\n  \"bugs\": {\n    \"url\": \"https://github.com/aalavandhaann/blueprint-js/issues\"\n  },\n  \"devDependencies\": {\n    \"babel-plugin-external-helpers\": \"^6.22.0\",\n    \"babel-preset-latest\": \"^6.24.1\",\n    \"cssnano\": \"^3.10.0\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"eslint\": \"^3.19.0\",\n    \"eslint-plugin-import\": \"^2.17.3\",\n    \"event-stream\": \">4.0.0\",\n    \"livereload\": \"^0.7.0\",\n    \"npm-run-all\": \"^4.0.2\",\n    \"rollup\": \"^1.6.0\",\n    \"rollup-plugin-babel\": \"^2.7.1\",\n    \"rollup-plugin-commonjs\": \"^9.3.4\",\n    \"rollup-plugin-eslint\": \"^3.0.0\",\n    \"rollup-plugin-node-resolve\": \"^3.0.0\",\n    \"rollup-plugin-postcss\": \"^0.5.3\",\n    \"rollup-plugin-replace\": \"^1.1.1\",\n    \"rollup-plugin-serve\": \"^0.3.0\",\n    \"rollup-plugin-uglify\": \"^2.0.1\",\n    \"rollup-plugin-uglify-es\": \"0.0.1\",\n    \"rollup-watch\": \"^4.0.0\"\n  },\n  \"dependencies\": {\n    \"@calvinscofield/three-objloader\": \"^1.0.4\",\n    \"braces\": \"^2.3.2\",\n    \"es6-enum\": \"^1.1.0\",\n    \"jquery\": \"^3.4.1\",\n    \"line-intersect\": \"^2.2.1\",\n    \"three\": \"^0.98.0\",\n    \"three-gltf-exporter\": \"0.0.1\",\n    \"three-gltf-loader\": \"^1.105.0\",\n    \"three-reflector\": \"^1.0.2\",\n    \"three-reflector2\": \"0.0.5\"\n  }\n}\n",
     "longname": "/home/ashok/eclipse-workspace/blueprint-js/package.json",
     "name": "package.json",
     "static": true,

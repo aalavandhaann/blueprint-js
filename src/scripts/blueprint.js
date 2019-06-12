@@ -92,14 +92,18 @@ export class BlueprintJS
 		this.options = options;
 		/**
 			* @property {Model} blueprint3d.model
-			* @property {Main} blueprint3d.three
-			* @property {Floorplanner} blueprint3d.floorplanner
 		**/
 		this.model = new Model(options.textureDir);
+		/**
+		* @property {Main} blueprint3d.three
+		**/
 		this.three = new Main(this.model, options.threeElement, options.threeCanvasElement, {});
 
 		if (!options.widget)
 		{
+			/**			
+			* @property {Floorplanner} blueprint3d.floorplanner
+			**/
 			this.floorplanner = new Floorplanner(options.floorplannerElement, this.model.floorplan);
 		}
 		else
