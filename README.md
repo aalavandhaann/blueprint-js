@@ -5,8 +5,12 @@ This is a javascript floorplanner tool based on the existing typescript based pr
 
 [Cick for example](https://aalavandhaann.github.io/blueprint-js/build)
 
+## DOCS ##
+Yes, the initiative has begun for the documentation. Of late I have been getting inquiries on using this framework. It is time to have the documentation rolling
+[Cick for example](https://aalavandhaann.github.io/blueprint-js/docs)
+
 ## DEMO VR ##
-The ability to export the floorplan as GLTF gives the scope of having easy VR with A-Frame. Export the layout to use it directly with A-Frame or process it further using Blender and then use it with A-Frame. 
+The ability to export the floorplan as GLTF gives the scope of having easy VR with A-Frame. Export the layout to use it directly with A-Frame or process it further using Blender and then use it with A-Frame.
 
 [Cick for example of VR - 1](https://aalavandhaann.github.io/blueprint-js/build/vrtest)
 [VR - 2](https://aalavandhaann.github.io/blueprint-js/build/vrtest/minimal.html)
@@ -15,7 +19,7 @@ You will notice a lot of flickering in the VR mode. This is because of the overl
 
 ## What is this?
 
-This is a customizable application built on three.js that allows users to design an interior space such as a home or apartment. Below are screenshots from our Example App (link above). 
+This is a customizable application built on three.js that allows users to design an interior space such as a home or apartment. Below are screenshots from our Example App (link above).
 
 1) Create 2D floorplan:
 
@@ -60,7 +64,7 @@ Please contact us if you are interested in contributing.
 - Better serialization format for saving/loading "designs"
 - JQuery is not used at all, instead I used the eventdispatcher from threejs (hurray)
 - Better use of npm conventions and packaging
-- Various bug fixes  (hurray for items that are stuck and don't move) 
+- Various bug fixes  (hurray for items that are stuck and don't move)
 - refactor three/*
 - update to current threejs  (hurray)
 - introduce a more formal persistency format
