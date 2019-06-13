@@ -117889,24 +117889,44 @@ var BP3DJS = (function (exports) {
   		key: 'doubleclick',
   		value: function doubleclick() {
   			var userinput, cid;
-  			var units = Configuration.getStringValue(configDimUnit);
-  			if (this.activeCorner) {
-  				this.floorplan.dispatchEvent({ type: EVENT_CORNER_2D_DOUBLE_CLICKED, item: this.activeCorner });
-  				cid = this.activeCorner.id;
-  				userinput = window.prompt('Elevation at this point (in ' + units + ',\n' + cid + '): ', Dimensioning.cmToMeasureRaw(this.activeCorner.elevation));
-  				if (userinput != null) {
-  					this.activeCorner.elevation = Number(userinput);
+  			function getAValidInput(message, current) {
+  				console.log('GET A VALID INPUT');
+  				var uinput = window.prompt(message, current);
+  				if (uinput != null) {
+  					return uinput;
   				}
-  			} else if (this.activeWall) {
-  				this.floorplan.dispatchEvent({ type: EVENT_WALL_2D_DOUBLE_CLICKED, item: this.activeWall });
-  			} else if (this.activeRoom) {
-  				this.floorplan.dispatchEvent({ type: EVENT_ROOM_2D_DOUBLE_CLICKED, item: this.activeRoom });
-  				userinput = window.prompt('Enter a name for this Room: ', this.activeRoom.name);
-  				if (userinput != null) {
-  					this.activeRoom.name = userinput;
-  				}
-  				this.view.draw();
+  				return current;
   			}
+  			if (this.activeCorner) {
+  				cid = this.activeCorner.id;
+  				var units = Configuration.getStringValue(configDimUnit);
+  				this.activeCorner.elevation = getAValidInput('Elevation at this point (in ' + units + ',\n' + cid + '): ', Dimensioning.cmToMeasureRaw(this.activeCorner.elevation)); //Number(userinput);
+  				var x = getAValidInput('Location: X (' + Dimensioning.cmToMeasureRaw(this.activeCorner.x) + '): ', Dimensioning.cmToMeasureRaw(this.activeCorner.x)); //Number(userinput);
+  				var y = getAValidInput('Location: Y (' + Dimensioning.cmToMeasureRaw(this.activeCorner.y) + '): ', Dimensioning.cmToMeasureRaw(this.activeCorner.y)); //Number(userinput);
+  				this.activeCorner.move(Dimensioning.cmFromMeasureRaw(x), Dimensioning.cmFromMeasureRaw(y));
+  				this.floorplan.dispatchEvent({ type: EVENT_CORNER_2D_DOUBLE_CLICKED, item: this.activeCorner });
+  			}
+  			// var userinput, cid;
+  			// var units = Configuration.getStringValue(configDimUnit);
+  			// if(this.activeCorner)
+  			// {
+  			//   this.floorplan.dispatchEvent({type:EVENT_CORNER_2D_DOUBLE_CLICKED, item: this.activeCorner});
+  			// 	cid = this.activeCorner.id;
+  			// 	userinput = window.prompt(`Elevation at this point (in ${units},\n${cid}): `, Dimensioning.cmToMeasureRaw(this.activeCorner.elevation));
+  			// 	if(userinput != null)
+  			// 	{
+  			// 		this.activeCorner.elevation = Number(userinput);
+  			// 	}
+  			else if (this.activeWall) {
+  					this.floorplan.dispatchEvent({ type: EVENT_WALL_2D_DOUBLE_CLICKED, item: this.activeWall });
+  				} else if (this.activeRoom) {
+  					this.floorplan.dispatchEvent({ type: EVENT_ROOM_2D_DOUBLE_CLICKED, item: this.activeRoom });
+  					userinput = window.prompt('Enter a name for this Room: ', this.activeRoom.name);
+  					if (userinput != null) {
+  						this.activeRoom.name = userinput;
+  					}
+  					this.view.draw();
+  				}
   		}
   	}, {
   		key: 'keyUp',
