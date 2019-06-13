@@ -62,6 +62,7 @@ export class Item extends Mesh
 		this.bhelper = null;
 
 		this.scene = this.model.scene;
+		this._freePosition = true;
 
 		if(!isgltf)
 		{
@@ -163,7 +164,11 @@ export class Item extends Mesh
 			}
 		}
 	}
-
+	
+	get freePosition()
+	{
+		return this._freePosition;
+	}
 
 	updateCanvasTexture(canvas, context, material, w, h, wPrefix, hPrefix)
 	{

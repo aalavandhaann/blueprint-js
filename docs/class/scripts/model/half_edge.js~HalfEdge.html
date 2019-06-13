@@ -218,7 +218,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-constructor-constructor">constructor</a></span></span><span class="code" data-ice="signature">(room: <span>*</span>, wall: <span>*</span>, front: <span>*</span>)</span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-constructor-constructor">constructor</a></span></span><span class="code" data-ice="signature">(room: <span><a href="class/scripts/model/room.js~Room.html">Room</a></span>, wall: <span><a href="class/scripts/model/wall.js~Wall.html">Wall</a></span>, front: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>)</span>
         </p>
       </div>
       <div>
@@ -254,13 +254,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-center">center</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-center">center</a></span></span><span class="code" data-ice="signature">: <span>Vector3</span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>The center of this half edge</p>
+</div>
       </div>
     </td>
     <td>
@@ -282,13 +283,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-exteriorTransform">exteriorTransform</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-exteriorTransform">exteriorTransform</a></span></span><span class="code" data-ice="signature">: <span>Matrix4</span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>The exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall</p>
+</div>
       </div>
     </td>
     <td>
@@ -310,13 +312,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-front">front</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-front">front</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Is this is the front edge or the back edge</p>
+</div>
       </div>
     </td>
     <td>
@@ -338,13 +341,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-height">height</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-height">height</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p> The height of a wall</p>
+</div>
       </div>
     </td>
     <td>
@@ -366,13 +370,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-interiorTransform">interiorTransform</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-interiorTransform">interiorTransform</a></span></span><span class="code" data-ice="signature">: <span>Matrix4</span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>The interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall</p>
+</div>
       </div>
     </td>
     <td>
@@ -394,13 +399,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-invExteriorTransform">invExteriorTransform</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-invExteriorTransform">invExteriorTransform</a></span></span><span class="code" data-ice="signature">: <span>Matrix4</span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>The inverse of the exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall</p>
+</div>
       </div>
     </td>
     <td>
@@ -422,13 +428,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-invInteriorTransform">invInteriorTransform</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-invInteriorTransform">invInteriorTransform</a></span></span><span class="code" data-ice="signature">: <span>Matrix4</span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>The inverse of the interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall</p>
+</div>
       </div>
     </td>
     <td>
@@ -450,13 +457,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-max">max</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-max">max</a></span></span><span class="code" data-ice="signature">: <span>Vector3</span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>The maximum point in space calculated from the bounds</p>
+</div>
       </div>
     </td>
     <td>
@@ -478,13 +486,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-min">min</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-min">min</a></span></span><span class="code" data-ice="signature">: <span>Vector3</span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p> The minimum point in space calculated from the bounds</p>
+</div>
       </div>
     </td>
     <td>
@@ -506,13 +515,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-next">next</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-next">next</a></span></span><span class="code" data-ice="signature">: <span><a href="class/scripts/model/half_edge.js~HalfEdge.html">HalfEdge</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Reference to the next halfedge instance connected to this</p>
+</div>
       </div>
     </td>
     <td>
@@ -534,13 +544,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-offset">offset</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-offset">offset</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>The offset to maintain for the front and back walls from the midline of a wall</p>
+</div>
       </div>
     </td>
     <td>
@@ -562,13 +573,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-plane">plane</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-plane">plane</a></span></span><span class="code" data-ice="signature">: <span>Mesh</span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>The plane mesh that will be used for checking intersections of wall items</p>
+</div>
       </div>
     </td>
     <td>
@@ -590,13 +602,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-prev">prev</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-prev">prev</a></span></span><span class="code" data-ice="signature">: <span><a href="class/scripts/model/half_edge.js~HalfEdge.html">HalfEdge</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Reference to the previous halfedge instance connected to this</p>
+</div>
       </div>
     </td>
     <td>
@@ -624,7 +637,8 @@
       <div>
         
         
-        
+        <div data-ice="description"><p>This is an array of callbacks to be call when redraw happens</p>
+</div>
       </div>
     </td>
     <td>
@@ -646,13 +660,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-room">room</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-room">room</a></span></span><span class="code" data-ice="signature">: <span><a href="class/scripts/model/room.js~Room.html">Room</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Reference to a Room instance</p>
+</div>
       </div>
     </td>
     <td>
@@ -674,13 +689,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-wall">wall</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-member-wall">wall</a></span></span><span class="code" data-ice="signature">: <span><a href="class/scripts/model/wall.js~Wall.html">Wall</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p> Reference to a Wall instance</p>
+</div>
       </div>
     </td>
     <td>
@@ -709,13 +725,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-computeTransforms">computeTransforms</a></span></span><span class="code" data-ice="signature">(transform: <span>*</span>, invTransform: <span>*</span>, start: <span>*</span>, end: <span>*</span>)</span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-computeTransforms">computeTransforms</a></span></span><span class="code" data-ice="signature">(transform: <span>Matrix4</span>, invTransform: <span>Matrix4</span>, start: <span>Vector2</span>, end: <span>Vector2</span>)</span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Calculate the transformation matrix for the edge (front/back) baesd on the parameters.</p>
+</div>
       </div>
     </td>
     <td>
@@ -737,7 +754,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-corners">corners</a></span></span><span class="code" data-ice="signature">(): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-corners">corners</a></span></span><span class="code" data-ice="signature">(): <span><span><a href="class/scripts/model/corner.js~Corner.html">Corner</a></span><span>[]</span></span></span>
         </p>
       </div>
       <div>
@@ -772,7 +789,8 @@
       <div>
         
         
-        
+        <div data-ice="description"><p>Emit the redraw event</p>
+</div>
       </div>
     </td>
     <td>
@@ -794,7 +812,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-distanceTo">distanceTo</a></span></span><span class="code" data-ice="signature">(x: <span>*</span>, y: <span>*</span>): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-distanceTo">distanceTo</a></span></span><span class="code" data-ice="signature">(x: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span>, y: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span></span>
         </p>
       </div>
       <div>
@@ -823,13 +841,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-exteriorCenter">exteriorCenter</a></span></span><span class="code" data-ice="signature">(): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-exteriorCenter">exteriorCenter</a></span></span><span class="code" data-ice="signature">(): <span>Vector2</span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Return the 2D exterior location that is at the center/middle.</p>
+</div>
       </div>
     </td>
     <td>
@@ -851,13 +870,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-exteriorDistance">exteriorDistance</a></span></span><span class="code" data-ice="signature">(): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-exteriorDistance">exteriorDistance</a></span></span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Return the exterior distance of the exterior wall </p>
+</div>
       </div>
     </td>
     <td>
@@ -879,13 +899,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-exteriorEnd">exteriorEnd</a></span></span><span class="code" data-ice="signature">(): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-exteriorEnd">exteriorEnd</a></span></span><span class="code" data-ice="signature">(): <span>Vector2</span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Return the 2D exterior location that is at the end.</p>
+</div>
       </div>
     </td>
     <td>
@@ -907,13 +928,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-exteriorStart">exteriorStart</a></span></span><span class="code" data-ice="signature">(): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-exteriorStart">exteriorStart</a></span></span><span class="code" data-ice="signature">(): <span>Vector2</span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Return the 2D exterior location that is at the start.</p>
+</div>
       </div>
     </td>
     <td>
@@ -941,7 +963,7 @@
       <div>
         
         
-        <div data-ice="description"><p>this feels hacky, but need wall items</p>
+        <div data-ice="description"><p>This generates the invisible planes in the scene that are used for interesection testing for the wall items</p>
 </div>
       </div>
     </td>
@@ -964,13 +986,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-getEnd">getEnd</a></span></span><span class="code" data-ice="signature">(): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-getEnd">getEnd</a></span></span><span class="code" data-ice="signature">(): <span><a href="class/scripts/model/corner.js~Corner.html">Corner</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Get the ending corner of the wall this instance represents</p>
+</div>
       </div>
     </td>
     <td>
@@ -992,13 +1015,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-getOppositeEdge">getOppositeEdge</a></span></span><span class="code" data-ice="signature">(): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-getOppositeEdge">getOppositeEdge</a></span></span><span class="code" data-ice="signature">(): <span><a href="class/scripts/model/half_edge.js~HalfEdge.html">HalfEdge</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>If this is the front edge then return the back edge.</p>
+</div>
       </div>
     </td>
     <td>
@@ -1020,13 +1044,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-getStart">getStart</a></span></span><span class="code" data-ice="signature">(): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-getStart">getStart</a></span></span><span class="code" data-ice="signature">(): <span><a href="class/scripts/model/corner.js~Corner.html">Corner</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Get the starting corner of the wall this instance represents</p>
+</div>
       </div>
     </td>
     <td>
@@ -1048,13 +1073,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-getTexture">getTexture</a></span></span><span class="code" data-ice="signature">(): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-getTexture">getTexture</a></span></span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Two separate textures are used for the walls.</p>
+</div>
       </div>
     </td>
     <td>
@@ -1076,7 +1102,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-halfAngleVector">halfAngleVector</a></span></span><span class="code" data-ice="signature">(v1: <span>*</span>, v2: <span>*</span>): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-halfAngleVector">halfAngleVector</a></span></span><span class="code" data-ice="signature">(v1: <span>Vector2</span>, v1: <span>Vector2</span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></span>
         </p>
       </div>
       <div>
@@ -1105,13 +1131,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-interiorCenter">interiorCenter</a></span></span><span class="code" data-ice="signature">(): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-interiorCenter">interiorCenter</a></span></span><span class="code" data-ice="signature">(): <span>Vector2</span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Return the 2D interior location that is at the center/middle.</p>
+</div>
       </div>
     </td>
     <td>
@@ -1133,13 +1160,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-interiorDistance">interiorDistance</a></span></span><span class="code" data-ice="signature">(): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-interiorDistance">interiorDistance</a></span></span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Return the interior distance of the interior wall </p>
+</div>
       </div>
     </td>
     <td>
@@ -1161,13 +1189,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-interiorEnd">interiorEnd</a></span></span><span class="code" data-ice="signature">(): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-interiorEnd">interiorEnd</a></span></span><span class="code" data-ice="signature">(): <span>Vector2</span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Return the 2D interior location that is at the end.</p>
+</div>
       </div>
     </td>
     <td>
@@ -1189,13 +1218,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-interiorStart">interiorStart</a></span></span><span class="code" data-ice="signature">(): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-interiorStart">interiorStart</a></span></span><span class="code" data-ice="signature">(): <span>Vector2</span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Return the 2D interior location that is at the start.</p>
+</div>
       </div>
     </td>
     <td>
@@ -1217,13 +1247,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-setTexture">setTexture</a></span></span><span class="code" data-ice="signature">(textureUrl: <span>*</span>, textureStretch: <span>*</span>, textureScale: <span>*</span>)</span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-setTexture">setTexture</a></span></span><span class="code" data-ice="signature">(textureUrl: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, textureStretch: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>, textureScale: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span>)</span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Set a Texture to the wall.</p>
+</div>
       </div>
     </td>
     <td>
@@ -1245,13 +1276,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-transformCorner">transformCorner</a></span></span><span class="code" data-ice="signature">(corner: <span>*</span>): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html#instance-method-transformCorner">transformCorner</a></span></span><span class="code" data-ice="signature">(corner: <span><a href="class/scripts/model/corner.js~Corner.html">Corner</a></span>): <span>Vector3</span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Transform the <span><a href="class/scripts/model/corner.js~Corner.html">Corner</a></span> instance to a Vector3 instance using the x and y position returned as x and z</p>
+</div>
       </div>
     </td>
     <td>
@@ -1277,7 +1309,7 @@
     
     
     
-    <span class="code" data-ice="name">constructor</span><span class="code" data-ice="signature">(room: <span>*</span>, wall: <span>*</span>, front: <span>*</span>)</span>
+    <span class="code" data-ice="name">constructor</span><span class="code" data-ice="signature">(room: <span><a href="class/scripts/model/room.js~Room.html">Room</a></span>, wall: <span><a href="class/scripts/model/wall.js~Wall.html">Wall</a></span>, front: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>)</span>
     <span class="right-info">
       
       
@@ -1303,21 +1335,21 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">room</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="class/scripts/model/room.js~Room.html">Room</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>The associated room. Instance of Room</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">wall</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="class/scripts/model/wall.js~Wall.html">Wall</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>The corresponding wall. Instance of Wall</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">front</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>True if front side. Boolean value</p>
 </td>
@@ -1355,22 +1387,40 @@
     
     
     
-    <span class="code" data-ice="name">center</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">center</span><span class="code" data-ice="signature">: <span>Vector3</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber27">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber46">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>The center of this half edge</p>
+</div>
 
   
 
-  <div data-ice="properties">
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Properties:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">center</td>
+      <td data-ice="type" class="code"><span>Vector3</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>The center of this half edge</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
 </div>
 
   
@@ -1387,7 +1437,7 @@
 
   
 
-  
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://threejs.org/docs/#api/en/math/Vector3">https://threejs.org/docs/#api/en/math/Vector3</a></span></li></ul></div>
   
 </div>
 <div class="detail" data-ice="detail">
@@ -1398,22 +1448,40 @@
     
     
     
-    <span class="code" data-ice="name">exteriorTransform</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">exteriorTransform</span><span class="code" data-ice="signature">: <span>Matrix4</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber38">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber120">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>The exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall</p>
+</div>
 
   
 
-  <div data-ice="properties">
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Properties:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">exteriorTransform</td>
+      <td data-ice="type" class="code"><span>Matrix4</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>The exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
 </div>
 
   
@@ -1430,7 +1498,7 @@
 
   
 
-  
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://threejs.org/docs/#api/en/math/Matrix4">https://threejs.org/docs/#api/en/math/Matrix4</a></span></li></ul></div>
   
 </div>
 <div class="detail" data-ice="detail">
@@ -1441,22 +1509,40 @@
     
     
     
-    <span class="code" data-ice="name">front</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">front</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber42">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber141">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Is this is the front edge or the back edge</p>
+</div>
 
   
 
-  <div data-ice="properties">
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Properties:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">front</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Is this is the front edge or the back edge</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
 </div>
 
   
@@ -1484,22 +1570,40 @@
     
     
     
-    <span class="code" data-ice="name">height</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
+    <span class="code" data-ice="name">height</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber34">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber88">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p> The height of a wall</p>
+</div>
 
   
 
-  <div data-ice="properties">
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Properties:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">height</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>The height of a wall</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
 </div>
 
   
@@ -1527,22 +1631,40 @@
     
     
     
-    <span class="code" data-ice="name">interiorTransform</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">interiorTransform</span><span class="code" data-ice="signature">: <span>Matrix4</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber36">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber104">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>The interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall</p>
+</div>
 
   
 
-  <div data-ice="properties">
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Properties:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">interiorTransform</td>
+      <td data-ice="type" class="code"><span>Matrix4</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>The interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
 </div>
 
   
@@ -1559,7 +1681,7 @@
 
   
 
-  
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://threejs.org/docs/#api/en/math/Matrix4">https://threejs.org/docs/#api/en/math/Matrix4</a></span></li></ul></div>
   
 </div>
 <div class="detail" data-ice="detail">
@@ -1570,22 +1692,40 @@
     
     
     
-    <span class="code" data-ice="name">invExteriorTransform</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">invExteriorTransform</span><span class="code" data-ice="signature">: <span>Matrix4</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber39">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber128">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>The inverse of the exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall</p>
+</div>
 
   
 
-  <div data-ice="properties">
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Properties:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">invExteriorTransform</td>
+      <td data-ice="type" class="code"><span>Matrix4</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>The inverse of the exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
 </div>
 
   
@@ -1602,7 +1742,7 @@
 
   
 
-  
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://threejs.org/docs/#api/en/math/Matrix4">https://threejs.org/docs/#api/en/math/Matrix4</a></span></li></ul></div>
   
 </div>
 <div class="detail" data-ice="detail">
@@ -1613,22 +1753,40 @@
     
     
     
-    <span class="code" data-ice="name">invInteriorTransform</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">invInteriorTransform</span><span class="code" data-ice="signature">: <span>Matrix4</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber37">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber112">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>The inverse of the interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall</p>
+</div>
 
   
 
-  <div data-ice="properties">
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Properties:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">invInteriorTransform</td>
+      <td data-ice="type" class="code"><span>Matrix4</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>The inverse of the interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
 </div>
 
   
@@ -1645,7 +1803,7 @@
 
   
 
-  
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://threejs.org/docs/#api/en/math/Matrix4">https://threejs.org/docs/#api/en/math/Matrix4</a></span></li></ul></div>
   
 </div>
 <div class="detail" data-ice="detail">
@@ -1656,22 +1814,40 @@
     
     
     
-    <span class="code" data-ice="name">max</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">max</span><span class="code" data-ice="signature">: <span>Vector3</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber26">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber38">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>The maximum point in space calculated from the bounds</p>
+</div>
 
   
 
-  <div data-ice="properties">
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Properties:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">max</td>
+      <td data-ice="type" class="code"><span>Vector3</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>The maximum point in space calculated from the bounds</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
 </div>
 
   
@@ -1688,7 +1864,7 @@
 
   
 
-  
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://threejs.org/docs/#api/en/math/Vector3">https://threejs.org/docs/#api/en/math/Vector3</a></span></li></ul></div>
   
 </div>
 <div class="detail" data-ice="detail">
@@ -1699,22 +1875,40 @@
     
     
     
-    <span class="code" data-ice="name">min</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">min</span><span class="code" data-ice="signature">: <span>Vector3</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber25">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber30">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p> The minimum point in space calculated from the bounds</p>
+</div>
 
   
 
-  <div data-ice="properties">
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Properties:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">min</td>
+      <td data-ice="type" class="code"><span>Vector3</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>The minimum point in space calculated from the bounds</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
 </div>
 
   
@@ -1731,7 +1925,7 @@
 
   
 
-  
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://threejs.org/docs/#api/en/math/Vector3">https://threejs.org/docs/#api/en/math/Vector3</a></span></li></ul></div>
   
 </div>
 <div class="detail" data-ice="detail">
@@ -1742,22 +1936,40 @@
     
     
     
-    <span class="code" data-ice="name">next</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">next</span><span class="code" data-ice="signature">: <span><a href="class/scripts/model/half_edge.js~HalfEdge.html">HalfEdge</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber31">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber67">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Reference to the next halfedge instance connected to this</p>
+</div>
 
   
 
-  <div data-ice="properties">
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Properties:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">next</td>
+      <td data-ice="type" class="code"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html">HalfEdge</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Reference to the next halfedge instance connected to this</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
 </div>
 
   
@@ -1785,22 +1997,40 @@
     
     
     
-    <span class="code" data-ice="name">offset</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
+    <span class="code" data-ice="name">offset</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber33">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber81">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>The offset to maintain for the front and back walls from the midline of a wall</p>
+</div>
 
   
 
-  <div data-ice="properties">
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Properties:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">offset</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>The offset to maintain for the front and back walls from the midline of a wall</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
 </div>
 
   
@@ -1828,22 +2058,40 @@
     
     
     
-    <span class="code" data-ice="name">plane</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">plane</span><span class="code" data-ice="signature">: <span>Mesh</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber35">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber96">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>The plane mesh that will be used for checking intersections of wall items</p>
+</div>
 
   
 
-  <div data-ice="properties">
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Properties:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">plane</td>
+      <td data-ice="type" class="code"><span>Mesh</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>The plane mesh that will be used for checking intersections of wall items</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
 </div>
 
   
@@ -1860,7 +2108,7 @@
 
   
 
-  
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://threejs.org/docs/#api/en/objects/Mesh">https://threejs.org/docs/#api/en/objects/Mesh</a></span></li></ul></div>
   
 </div>
 <div class="detail" data-ice="detail">
@@ -1871,22 +2119,40 @@
     
     
     
-    <span class="code" data-ice="name">prev</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">prev</span><span class="code" data-ice="signature">: <span><a href="class/scripts/model/half_edge.js~HalfEdge.html">HalfEdge</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber32">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber74">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Reference to the previous halfedge instance connected to this</p>
+</div>
 
   
 
-  <div data-ice="properties">
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Properties:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">prev</td>
+      <td data-ice="type" class="code"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html">HalfEdge</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Reference to the previous halfedge instance connected to this</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
 </div>
 
   
@@ -1918,14 +2184,15 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber40">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber134">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>This is an array of callbacks to be call when redraw happens</p>
+</div>
 
   
 
@@ -1957,22 +2224,40 @@
     
     
     
-    <span class="code" data-ice="name">room</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">room</span><span class="code" data-ice="signature">: <span><a href="class/scripts/model/room.js~Room.html">Room</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber29">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber53">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Reference to a Room instance</p>
+</div>
 
   
 
-  <div data-ice="properties">
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Properties:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">room</td>
+      <td data-ice="type" class="code"><span><a href="class/scripts/model/room.js~Room.html">Room</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Reference to a Room instance</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
 </div>
 
   
@@ -2000,22 +2285,40 @@
     
     
     
-    <span class="code" data-ice="name">wall</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">wall</span><span class="code" data-ice="signature">: <span><a href="class/scripts/model/wall.js~Wall.html">Wall</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber30">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber60">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p> Reference to a Wall instance</p>
+</div>
 
   
 
-  <div data-ice="properties">
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Properties:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">room</td>
+      <td data-ice="type" class="code"><span><a href="class/scripts/model/wall.js~Wall.html">Wall</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Reference to a Wall instance</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
 </div>
 
   
@@ -2046,18 +2349,19 @@
     
     
     
-    <span class="code" data-ice="name">computeTransforms</span><span class="code" data-ice="signature">(transform: <span>*</span>, invTransform: <span>*</span>, start: <span>*</span>, end: <span>*</span>)</span>
+    <span class="code" data-ice="name">computeTransforms</span><span class="code" data-ice="signature">(transform: <span>Matrix4</span>, invTransform: <span>Matrix4</span>, start: <span>Vector2</span>, end: <span>Vector2</span>)</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber145">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber268">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Calculate the transformation matrix for the edge (front/back) baesd on the parameters. </p>
+</div>
 
   
 
@@ -2071,27 +2375,31 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">transform</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span>Matrix4</span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>The matrix reference in which the transformation is stored</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">invTransform</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span>Matrix4</span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>The inverse of the transform that is stored in the invTransform</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">start</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span>Vector2</span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>The starting point location</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">end</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span>Vector2</span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>The ending point location</p>
+</td>
     </tr>
 </tbody>
   </table>
@@ -2112,7 +2420,8 @@
 
   
 
-  
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://threejs.org/docs/#api/en/math/Matrix4">https://threejs.org/docs/#api/en/math/Matrix4</a></span></li>
+<li><span><a href="https://threejs.org/docs/#api/en/math/Vector2">https://threejs.org/docs/#api/en/math/Vector2</a></span></li></ul></div>
   
 </div>
 <div class="detail" data-ice="detail">
@@ -2123,11 +2432,11 @@
     
     
     
-    <span class="code" data-ice="name">corners</span><span class="code" data-ice="signature">(): <span>*</span></span>
+    <span class="code" data-ice="name">corners</span><span class="code" data-ice="signature">(): <span><span><a href="class/scripts/model/corner.js~Corner.html">Corner</a></span><span>[]</span></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber262">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber436">source</a></span></span>
     </span>
   </h3>
 
@@ -2147,7 +2456,7 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
+          <td class="return-type code" data-ice="returnType"><span><span><a href="class/scripts/model/corner.js~Corner.html">Corner</a></span><span>[]</span></span></td>
           <td class="return-desc" data-ice="returnDescription"><p>An array of x,y pairs.</p>
 </td>
         </tr>
@@ -2184,14 +2493,15 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber92">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber200">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Emit the redraw event</p>
+</div>
 
   
 
@@ -2200,7 +2510,18 @@
 
   
 
-  
+  <div data-ice="emitWrap">
+    <h4>Emit:</h4>
+    <table>
+      <tbody>
+      
+      <tr class="emit" data-ice="emit">
+        <td><p data-ice="emitName"><span><a href="variable/index.html#static-variable-EVENT_REDRAW">EVENT_REDRAW</a></span></p></td>
+        
+      </tr>
+</tbody>
+    </table>
+  </div>
 
   
 
@@ -2223,11 +2544,11 @@
     
     
     
-    <span class="code" data-ice="name">distanceTo</span><span class="code" data-ice="signature">(x: <span>*</span>, y: <span>*</span>): <span>*</span></span>
+    <span class="code" data-ice="name">distanceTo</span><span class="code" data-ice="signature">(x: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span>, y: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber166">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber289">source</a></span></span>
     </span>
   </h3>
 
@@ -2249,14 +2570,14 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">x</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>X coordinate of the point.</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">y</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>Y coordinate of the point.</p>
 </td>
@@ -2271,7 +2592,7 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span></td>
           <td class="return-desc" data-ice="returnDescription"><p>The distance.</p>
 </td>
         </tr>
@@ -2304,18 +2625,19 @@
     
     
     
-    <span class="code" data-ice="name">exteriorCenter</span><span class="code" data-ice="signature">(): <span>*</span></span>
+    <span class="code" data-ice="name">exteriorCenter</span><span class="code" data-ice="signature">(): <span>Vector2</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber247">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber417">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Return the 2D exterior location that is at the center/middle. </p>
+</div>
 
   
 
@@ -2327,8 +2649,9 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
-          
+          <td class="return-type code" data-ice="returnType"><span>Vector2</span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>Return an object with attributes x, y</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -2348,7 +2671,7 @@
 
   
 
-  
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://threejs.org/docs/#api/en/math/Vector2">https://threejs.org/docs/#api/en/math/Vector2</a></span></li></ul></div>
   
 </div>
 <div class="detail" data-ice="detail">
@@ -2359,18 +2682,19 @@
     
     
     
-    <span class="code" data-ice="name">exteriorDistance</span><span class="code" data-ice="signature">(): <span>*</span></span>
+    <span class="code" data-ice="name">exteriorDistance</span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber252">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber426">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Return the exterior distance of the exterior wall </p>
+</div>
 
   
 
@@ -2382,8 +2706,9 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
-          
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>The distance</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -2414,18 +2739,19 @@
     
     
     
-    <span class="code" data-ice="name">exteriorEnd</span><span class="code" data-ice="signature">(): <span>*</span></span>
+    <span class="code" data-ice="name">exteriorEnd</span><span class="code" data-ice="signature">(): <span>Vector2</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber235">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber395">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Return the 2D exterior location that is at the end. </p>
+</div>
 
   
 
@@ -2437,8 +2763,9 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
-          
+          <td class="return-type code" data-ice="returnType"><span>Vector2</span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>Return an object with attributes x, y</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -2458,7 +2785,7 @@
 
   
 
-  
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://threejs.org/docs/#api/en/math/Vector2">https://threejs.org/docs/#api/en/math/Vector2</a></span></li></ul></div>
   
 </div>
 <div class="detail" data-ice="detail">
@@ -2469,18 +2796,19 @@
     
     
     
-    <span class="code" data-ice="name">exteriorStart</span><span class="code" data-ice="signature">(): <span>*</span></span>
+    <span class="code" data-ice="name">exteriorStart</span><span class="code" data-ice="signature">(): <span>Vector2</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber241">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber406">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Return the 2D exterior location that is at the start. </p>
+</div>
 
   
 
@@ -2492,8 +2820,9 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
-          
+          <td class="return-type code" data-ice="returnType"><span>Vector2</span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>Return an object with attributes x, y</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -2513,7 +2842,7 @@
 
   
 
-  
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://threejs.org/docs/#api/en/math/Vector2">https://threejs.org/docs/#api/en/math/Vector2</a></span></li></ul></div>
   
 </div>
 <div class="detail" data-ice="detail">
@@ -2528,14 +2857,14 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber106">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber220">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  <div data-ice="description"><p>this feels hacky, but need wall items</p>
+  <div data-ice="description"><p>This generates the invisible planes in the scene that are used for interesection testing for the wall items</p>
 </div>
 
   
@@ -2568,18 +2897,19 @@
     
     
     
-    <span class="code" data-ice="name">getEnd</span><span class="code" data-ice="signature">(): <span>*</span></span>
+    <span class="code" data-ice="name">getEnd</span><span class="code" data-ice="signature">(): <span><a href="class/scripts/model/corner.js~Corner.html">Corner</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber184">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber315">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Get the ending corner of the wall this instance represents</p>
+</div>
 
   
 
@@ -2591,8 +2921,9 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
-          
+          <td class="return-type code" data-ice="returnType"><span><a href="class/scripts/model/corner.js~Corner.html">Corner</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>The ending corner</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -2623,18 +2954,20 @@
     
     
     
-    <span class="code" data-ice="name">getOppositeEdge</span><span class="code" data-ice="signature">(): <span>*</span></span>
+    <span class="code" data-ice="name">getOppositeEdge</span><span class="code" data-ice="signature">(): <span><a href="class/scripts/model/half_edge.js~HalfEdge.html">HalfEdge</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber196">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber332">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>If this is the front edge then return the back edge. 
+For example in a wall there are two halfedges, i.e one for front and one back. Based on which side this halfedge lies return the opposite <span><a href="class/scripts/model/half_edge.js~HalfEdge.html">HalfEdge</a></span></p>
+</div>
 
   
 
@@ -2646,8 +2979,9 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
-          
+          <td class="return-type code" data-ice="returnType"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html">HalfEdge</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>The other HalfEdge</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -2678,18 +3012,19 @@
     
     
     
-    <span class="code" data-ice="name">getStart</span><span class="code" data-ice="signature">(): <span>*</span></span>
+    <span class="code" data-ice="name">getStart</span><span class="code" data-ice="signature">(): <span><a href="class/scripts/model/corner.js~Corner.html">Corner</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber172">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber299">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Get the starting corner of the wall this instance represents</p>
+</div>
 
   
 
@@ -2701,8 +3036,9 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
-          
+          <td class="return-type code" data-ice="returnType"><span><a href="class/scripts/model/corner.js~Corner.html">Corner</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>The starting corner</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -2733,18 +3069,19 @@
     
     
     
-    <span class="code" data-ice="name">getTexture</span><span class="code" data-ice="signature">(): <span>*</span></span>
+    <span class="code" data-ice="name">getTexture</span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber61">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber161">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Two separate textures are used for the walls. Based on which side of the wall this {HalfEdge} refers the texture is returned</p>
+</div>
 
   
 
@@ -2756,8 +3093,9 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
-          
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>front/back Two separate textures are used for the walls. Based on which side of the wall this <span><a href="class/scripts/model/half_edge.js~HalfEdge.html">HalfEdge</a></span> refers the texture is returned</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -2788,11 +3126,11 @@
     
     
     
-    <span class="code" data-ice="name">halfAngleVector</span><span class="code" data-ice="signature">(v1: <span>*</span>, v2: <span>*</span>): <span>*</span></span>
+    <span class="code" data-ice="name">halfAngleVector</span><span class="code" data-ice="signature">(v1: <span>Vector2</span>, v1: <span>Vector2</span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber270">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber447">source</a></span></span>
     </span>
   </h3>
 
@@ -2814,15 +3152,17 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">v1</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span>Vector2</span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>The point a</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
-      <td data-ice="name" class="code" data-depth="0">v2</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="name" class="code" data-depth="0">v1</td>
+      <td data-ice="type" class="code"><span>Vector2</span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>The point b</p>
+</td>
     </tr>
 </tbody>
   </table>
@@ -2834,8 +3174,9 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
-          
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>contains keys x and y with number representing the halfAngles</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -2866,18 +3207,19 @@
     
     
     
-    <span class="code" data-ice="name">interiorCenter</span><span class="code" data-ice="signature">(): <span>*</span></span>
+    <span class="code" data-ice="name">interiorCenter</span><span class="code" data-ice="signature">(): <span>Vector2</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber223">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber374">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Return the 2D interior location that is at the center/middle. </p>
+</div>
 
   
 
@@ -2889,8 +3231,9 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
-          
+          <td class="return-type code" data-ice="returnType"><span>Vector2</span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>Return an object with attributes x, y</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -2910,7 +3253,7 @@
 
   
 
-  
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://threejs.org/docs/#api/en/math/Vector2">https://threejs.org/docs/#api/en/math/Vector2</a></span></li></ul></div>
   
 </div>
 <div class="detail" data-ice="detail">
@@ -2921,18 +3264,19 @@
     
     
     
-    <span class="code" data-ice="name">interiorDistance</span><span class="code" data-ice="signature">(): <span>*</span></span>
+    <span class="code" data-ice="name">interiorDistance</span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber228">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber383">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Return the interior distance of the interior wall </p>
+</div>
 
   
 
@@ -2944,8 +3288,9 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
-          
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>The distance</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -2976,18 +3321,19 @@
     
     
     
-    <span class="code" data-ice="name">interiorEnd</span><span class="code" data-ice="signature">(): <span>*</span></span>
+    <span class="code" data-ice="name">interiorEnd</span><span class="code" data-ice="signature">(): <span>Vector2</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber209">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber350">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Return the 2D interior location that is at the end. </p>
+</div>
 
   
 
@@ -2999,8 +3345,9 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
-          
+          <td class="return-type code" data-ice="returnType"><span>Vector2</span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>Return an object with attributes x, y</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -3020,7 +3367,7 @@
 
   
 
-  
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://threejs.org/docs/#api/en/math/Vector2">https://threejs.org/docs/#api/en/math/Vector2</a></span></li></ul></div>
   
 </div>
 <div class="detail" data-ice="detail">
@@ -3031,18 +3378,19 @@
     
     
     
-    <span class="code" data-ice="name">interiorStart</span><span class="code" data-ice="signature">(): <span>*</span></span>
+    <span class="code" data-ice="name">interiorStart</span><span class="code" data-ice="signature">(): <span>Vector2</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber216">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber362">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Return the 2D interior location that is at the start. </p>
+</div>
 
   
 
@@ -3054,8 +3402,9 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
-          
+          <td class="return-type code" data-ice="returnType"><span>Vector2</span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>Return an object with attributes x, y</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -3075,7 +3424,7 @@
 
   
 
-  
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://threejs.org/docs/#api/en/math/Vector2">https://threejs.org/docs/#api/en/math/Vector2</a></span></li></ul></div>
   
 </div>
 <div class="detail" data-ice="detail">
@@ -3086,18 +3435,19 @@
     
     
     
-    <span class="code" data-ice="name">setTexture</span><span class="code" data-ice="signature">(textureUrl: <span>*</span>, textureStretch: <span>*</span>, textureScale: <span>*</span>)</span>
+    <span class="code" data-ice="name">setTexture</span><span class="code" data-ice="signature">(textureUrl: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span>, textureStretch: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>, textureScale: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span>)</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber76">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber180">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Set a Texture to the wall. Based on the edge side as front or back the texture is applied appropriately to the wall</p>
+</div>
 
   
 
@@ -3111,21 +3461,24 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">textureUrl</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>The path to the texture image</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">textureStretch</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>Can the texture stretch? If not it will be repeated</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">textureScale</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>The scale value using which the number of repetitions of the texture image is calculated</p>
+</td>
     </tr>
 </tbody>
   </table>
@@ -3134,7 +3487,18 @@
 
   
 
-  
+  <div data-ice="emitWrap">
+    <h4>Emit:</h4>
+    <table>
+      <tbody>
+      
+      <tr class="emit" data-ice="emit">
+        <td><p data-ice="emitName"><span><a href="variable/index.html#static-variable-EVENT_REDRAW">EVENT_REDRAW</a></span></p></td>
+        
+      </tr>
+</tbody>
+    </table>
+  </div>
 
   
 
@@ -3157,18 +3521,19 @@
     
     
     
-    <span class="code" data-ice="name">transformCorner</span><span class="code" data-ice="signature">(corner: <span>*</span>): <span>*</span></span>
+    <span class="code" data-ice="name">transformCorner</span><span class="code" data-ice="signature">(corner: <span><a href="class/scripts/model/corner.js~Corner.html">Corner</a></span>): <span>Vector3</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber97">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/model/half_edge.js.html#lineNumber211">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Transform the <span><a href="class/scripts/model/corner.js~Corner.html">Corner</a></span> instance to a Vector3 instance using the x and y position returned as x and z</p>
+</div>
 
   
 
@@ -3182,7 +3547,7 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">corner</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="class/scripts/model/corner.js~Corner.html">Corner</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"></td>
     </tr>
@@ -3196,7 +3561,7 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
+          <td class="return-type code" data-ice="returnType"><span>Vector3</span></td>
           
         </tr>
       </tbody>
@@ -3217,7 +3582,7 @@
 
   
 
-  
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://threejs.org/docs/#api/en/math/Vector3">https://threejs.org/docs/#api/en/math/Vector3</a></span></li></ul></div>
   
 </div>
 </div>

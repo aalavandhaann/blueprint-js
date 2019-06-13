@@ -8,7 +8,7 @@ import {OBJExporter} from '../exporters/OBJExporter.js';
 import GLTFExporter from 'three-gltf-exporter';
 
 /**
- * A Model connects a Floorplan and a Scene.
+ * A Model is an abstract concept the has the data structuring a floorplan. It connects a {@link Floorplan} and a {@link Scene}
  */
 export class Model extends EventDispatcher
 {

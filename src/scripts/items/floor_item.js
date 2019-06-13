@@ -10,6 +10,7 @@ export class FloorItem extends Item
 	constructor(model, metadata, geometry, material, position, rotation, scale, isgltf=false)
 	{
 		super(model, metadata, geometry, material, position, rotation, scale, isgltf);
+		this._freePosition = false;
 	}
 
 	/** */

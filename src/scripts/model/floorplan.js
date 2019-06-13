@@ -91,7 +91,7 @@ export class Floorplan extends EventDispatcher
 	}
 
 	/**
-		*	@return {CarbonSheet} _carbonSheet
+		*	@return {CarbonSheet} _carbonSheet reference to the instance of {@link CarbonSheet}
 	**/
 	get carbonSheet()
 	{
@@ -99,7 +99,7 @@ export class Floorplan extends EventDispatcher
 	}
 
 	/**
-		*	@return {HalfEdge[]} edges
+		*	@return {HalfEdge[]} edges The array of {@link HalfEdge} 
 	**/
 	wallEdges()
 	{
@@ -187,9 +187,10 @@ export class Floorplan extends EventDispatcher
 	// other walls. If two walls are intersecting then the intersection point
 	// has to create a new wall.
 	/**
-		* @param {Corner} start
-		* @param {Corner} end
-		* @return {boolean} intersects
+	 *  Checks existing walls for any intersections they would make. If there are intersections then introduce new corners and new walls as required at places
+	 *  @param {Corner} start
+	 *  @param {Corner} end
+	 *  @return {boolean} intersects 
 	**/
 
 	newWallsForIntersections(start, end)

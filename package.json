@@ -49,6 +49,7 @@
     "es6-enum": "^1.1.0",
     "jquery": "^3.4.1",
     "line-intersect": "^2.2.1",
+    "nodeclipse": "^0.17.2",
     "three": "^0.98.0",
     "three-gltf-exporter": "0.0.1",
     "three-gltf-loader": "^1.105.0",

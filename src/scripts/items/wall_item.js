@@ -37,6 +37,7 @@ export class WallItem extends Item
 		/** */
 		this.backVisible = false;
 		this.allowRotate = false;
+		this._freePosition = false;
 	}
 
 	/** Get the closet wall edge.

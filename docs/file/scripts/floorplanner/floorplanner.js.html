@@ -256,18 +256,37 @@ export class Floorplanner2D extends EventDispatcher
 	doubleclick()
 	{
 			var userinput, cid;
-			var units = Configuration.getStringValue(configDimUnit);
+			function getAValidInput(message, current)
+			{
+					console.log(&apos;GET A VALID INPUT&apos;);
+					var uinput = window.prompt(message, current);
+					if(uinput != null)
+					{
+						return uinput;
+					}
+					return current;
+			}
 			if(this.activeCorner)
 			{
-        this.floorplan.dispatchEvent({type:EVENT_CORNER_2D_DOUBLE_CLICKED, item: this.activeCorner});
 				cid = this.activeCorner.id;
-				userinput = window.prompt(`Elevation at this point (in ${units},\n${cid}): `, Dimensioning.cmToMeasureRaw(this.activeCorner.elevation));
-				if(userinput != null)
-				{
-					this.activeCorner.elevation = Number(userinput);
-				}
-
+				var units = Configuration.getStringValue(configDimUnit);
+				this.activeCorner.elevation = getAValidInput(`Elevation at this point (in ${units},\n${cid}): `, Dimensioning.cmToMeasureRaw(this.activeCorner.elevation));//Number(userinput);
+				var x = getAValidInput(`Location: X (${Dimensioning.cmToMeasureRaw(this.activeCorner.x)}): `, Dimensioning.cmToMeasureRaw(this.activeCorner.x));//Number(userinput);
+				var y = getAValidInput(`Location: Y (${Dimensioning.cmToMeasureRaw(this.activeCorner.y)}): `, Dimensioning.cmToMeasureRaw(this.activeCorner.y));//Number(userinput);
+				this.activeCorner.move(Dimensioning.cmFromMeasureRaw(x), Dimensioning.cmFromMeasureRaw(y));
+				this.floorplan.dispatchEvent({type:EVENT_CORNER_2D_DOUBLE_CLICKED, item: this.activeCorner});
 			}
+			// var userinput, cid;
+			// var units = Configuration.getStringValue(configDimUnit);
+			// if(this.activeCorner)
+			// {
+      //   this.floorplan.dispatchEvent({type:EVENT_CORNER_2D_DOUBLE_CLICKED, item: this.activeCorner});
+			// 	cid = this.activeCorner.id;
+			// 	userinput = window.prompt(`Elevation at this point (in ${units},\n${cid}): `, Dimensioning.cmToMeasureRaw(this.activeCorner.elevation));
+			// 	if(userinput != null)
+			// 	{
+			// 		this.activeCorner.elevation = Number(userinput);
+			// 	}
       else if(this.activeWall)
       {
           this.floorplan.dispatchEvent({type:EVENT_WALL_2D_DOUBLE_CLICKED, item: this.activeWall});

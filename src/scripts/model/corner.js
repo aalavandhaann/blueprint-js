@@ -164,7 +164,7 @@ export class Corner extends EventDispatcher
 
 	/**
 	 *	@param {Number} tolerance - The tolerance value within which it will snap to adjacent corners
-	 *  @return {Object} snapped
+	 *  @return {Object} snapped Contains keys x and y with true/false values
 	 *  @description The object with x and y that are boolean values to indicate if the snap happens in x and y
 	 */
 	snapToAxis(tolerance)
@@ -314,7 +314,7 @@ export class Corner extends EventDispatcher
 		* Returns the distance between this corner and a point in 2d space
 		* @param {Vector2} point
 		* @see https://threejs.org/docs/#api/en/math/Vector2
-		* @return {Number} distance
+		* @return {Number} distance The distance
 	**/
 	distanceFrom(point)
 	{

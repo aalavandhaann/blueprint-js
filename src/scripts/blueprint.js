@@ -108,8 +108,8 @@ export class BlueprintJS
 		if (!options.widget)
 		{
 			/**
-			* @property {Floorplanner} floorplanner
-			* @type {Floorplanner}
+			* @property {Floorplanner2D} floorplanner
+			* @type {Floorplanner2D}
 			**/
 			this.floorplanner = new Floorplanner2D(options.floorplannerElement, this.model.floorplan);
 		}

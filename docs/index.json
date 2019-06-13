@@ -567,7 +567,7 @@
     "__docId__": 48,
     "kind": "file",
     "name": "scripts/blueprint.js",
-    "content": "//Classes from core module\nexport {Version} from './core/version.js';\n\nexport {EVENT_SAVED, EVENT_UPDATED, EVENT_LOADING, EVENT_LOADED, EVENT_NEW, EVENT_ACTION, EVENT_GLTF_READY} from './core/events.js';\nexport {EVENT_DELETED, EVENT_MOVED, EVENT_REDRAW, EVENT_CHANGED, EVENT_MODE_RESET} from './core/events.js';\nexport {EVENT_ROOM_NAME_CHANGED} from './core/events.js';\nexport {EVENT_ITEM_LOADING, EVENT_ITEM_LOADED, EVENT_ITEM_REMOVED, EVENT_ITEM_SELECTED, EVENT_ITEM_UNSELECTED} from './core/events.js';\nexport {EVENT_CAMERA_MOVED, EVENT_CAMERA_ACTIVE_STATUS, EVENT_FPS_EXIT, EVENT_CAMERA_VIEW_CHANGE} from './core/events.js';\nexport {EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED, EVENT_NOTHING_CLICKED, EVENT_FLOOR_CLICKED} from './core/events.js';\nexport {EVENT_CORNER_2D_CLICKED, EVENT_CORNER_2D_DOUBLE_CLICKED, EVENT_CORNER_2D_HOVER} from './core/events.js';\nexport {EVENT_WALL_2D_CLICKED, EVENT_WALL_2D_DOUBLE_CLICKED, EVENT_WALL_2D_HOVER} from './core/events.js';\nexport {EVENT_ROOM_2D_CLICKED, EVENT_ROOM_2D_DOUBLE_CLICKED, EVENT_ROOM_2D_HOVER} from './core/events.js';\n\n\nexport {Utils} from './core/utils.js';\nexport {ELogContext, ELogLevel, logContext, isLogging, log} from './core/log.js';\nexport {dimInch, dimFeetAndInch, dimMeter, dimCentiMeter, dimMilliMeter, dimensioningOptions, decimals, Dimensioning} from './core/dimensioning.js';\nexport {cmPerFoot, pixelsPerFoot, cmPerPixel, pixelsPerCm} from './core/dimensioning.js';\n\nexport {configDimUnit, configWallHeight, configWallThickness, Configuration} from './core/configuration.js';\nexport {VIEW_TOP, VIEW_FRONT, VIEW_RIGHT, VIEW_LEFT, VIEW_ISOMETRY} from './core/constants.js';\n\n//Classes from model module\nexport {HalfEdge} from './model/half_edge.js';\nexport {cornerTolerance, Corner} from './model/corner.js';\nexport {defaultFloorPlanTolerance, Floorplan} from './model/floorplan.js';\nexport {Model} from './model/model.js';\nexport {defaultRoomTexture, Room} from './model/room.js';\nexport {Scene} from './model/scene.js';\nexport {defaultWallTexture, Wall} from './model/wall.js';\n\n//Classes from floorplanner module\nexport {floorplannerModes, gridSpacing, gridWidth, gridColor, roomColor, wallWidth, wallWidthHover, edgeColor, edgeColorHover, edgeWidth, deleteColor, cornerRadius, cornerRadiusHover, cornerColor, cornerColorHover, FloorplannerView2D} from './floorplanner/floorplanner_view.js';\nexport {snapTolerance, Floorplanner2D} from './floorplanner/floorplanner.js';\nexport {CarbonSheet} from './floorplanner/carbonsheet.js';\n\n//Classes from items module\nexport {item_types, Factory} from './items/factory.js';\nexport {Metadata} from './items/metadata.js';\nexport {Item} from './items/item.js';\nexport {FloorItem} from './items/floor_item.js';\nexport {WallItem} from './items/wall_item.js';\nexport {WallFloorItem} from './items/wall_floor_item.js';\nexport {OnFloorItem} from './items/on_floor_item.js';\nexport {InWallItem} from './items/in_wall_item.js';\nexport {InWallFloorItem} from './items/in_wall_floor_item.js';\nexport {RoofItem} from './items/roof_item.js';\n\n//Classes from three module\nexport {states, Controller} from './three/controller.js';\nexport {OrbitControls} from './three/orbitcontrols.js';\nexport {FirstPersonControls} from './three/first-person-controls.js';\nexport {PointerLockControls} from './three/pointerlockcontrols.js';\nexport {STATE, Controls} from './three/controls.js';\nexport {Edge} from './three/edge.js';\nexport {Floor} from './three/floor.js';\nexport {Floorplan3D} from './three/floorPlan.js';\nexport {HUD} from './three/hud.js';\nexport {Lights} from './three/lights.js';\nexport {Main} from './three/main.js';\nexport {Skybox} from './three/skybox.js';\n\nexport {OBJExporter} from './exporters/OBJExporter.js';\n\n\n\nimport {Model} from './model/model.js';\nimport {Main} from './three/main.js';\nimport {Floorplanner2D} from './floorplanner/floorplanner.js';\nimport {Configuration, configDimUnit} from './core/configuration.js';\nimport {dimMeter} from './core/dimensioning.js';\n//\n///** VestaDesigner core application. */\nexport class BlueprintJS\n{\n\t/**\n\t * Creates an instance of BlueprintJS. This is the entry point for the application\n\t *\n\t * @param {Object} - options The initialization options.\n\t * @param {string} options.floorplannerElement - Id of the html element to use as canvas. Needs to exist in the html\n\t * @param {string} options.threeElement - Id of the html element to use as canvas. Needs to exist in the html and should be #idofhtmlelement\n\t * @param {string} options.threeCanvasElement - Id of the html element to use as threejs-canvas. This is created automatically\n\t * @param {string} options.textureDir - path to texture directory. No effect\n\t * @param {boolean} options.widget - If widget mode then disable the controller from interactions\n\t * @example\n\t * let blueprint3d = new BP3DJS.BlueprintJS(opts);\n\t */\n\tconstructor(options)\n\t{\n\t\tConfiguration.setValue(configDimUnit, dimMeter);\n\n\t\t/**\n\t\t\t* @property {Object} options\n\t\t\t* @type {Object}\n\t\t**/\n\t\tthis.options = options;\n\t\t/**\n\t\t\t* @property {Model} model\n\t\t\t* @type {Model}\n\t\t**/\n\t\tthis.model = new Model(options.textureDir);\n\t\t/**\n\t\t* @property {Main} three\n\t\t* @type {Main}\n\t\t**/\n\t\tthis.three = new Main(this.model, options.threeElement, options.threeCanvasElement, {});\n\n\t\tif (!options.widget)\n\t\t{\n\t\t\t/**\n\t\t\t* @property {Floorplanner} floorplanner\n\t\t\t* @type {Floorplanner}\n\t\t\t**/\n\t\t\tthis.floorplanner = new Floorplanner2D(options.floorplannerElement, this.model.floorplan);\n\t\t}\n\t\telse\n\t\t{\n\t\t\tthis.three.getController().enabled = false;\n\t\t}\n\t}\n}\n",
+    "content": "//Classes from core module\nexport {Version} from './core/version.js';\n\nexport {EVENT_SAVED, EVENT_UPDATED, EVENT_LOADING, EVENT_LOADED, EVENT_NEW, EVENT_ACTION, EVENT_GLTF_READY} from './core/events.js';\nexport {EVENT_DELETED, EVENT_MOVED, EVENT_REDRAW, EVENT_CHANGED, EVENT_MODE_RESET} from './core/events.js';\nexport {EVENT_ROOM_NAME_CHANGED} from './core/events.js';\nexport {EVENT_ITEM_LOADING, EVENT_ITEM_LOADED, EVENT_ITEM_REMOVED, EVENT_ITEM_SELECTED, EVENT_ITEM_UNSELECTED} from './core/events.js';\nexport {EVENT_CAMERA_MOVED, EVENT_CAMERA_ACTIVE_STATUS, EVENT_FPS_EXIT, EVENT_CAMERA_VIEW_CHANGE} from './core/events.js';\nexport {EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED, EVENT_NOTHING_CLICKED, EVENT_FLOOR_CLICKED} from './core/events.js';\nexport {EVENT_CORNER_2D_CLICKED, EVENT_CORNER_2D_DOUBLE_CLICKED, EVENT_CORNER_2D_HOVER} from './core/events.js';\nexport {EVENT_WALL_2D_CLICKED, EVENT_WALL_2D_DOUBLE_CLICKED, EVENT_WALL_2D_HOVER} from './core/events.js';\nexport {EVENT_ROOM_2D_CLICKED, EVENT_ROOM_2D_DOUBLE_CLICKED, EVENT_ROOM_2D_HOVER} from './core/events.js';\n\n\nexport {Utils} from './core/utils.js';\nexport {ELogContext, ELogLevel, logContext, isLogging, log} from './core/log.js';\nexport {dimInch, dimFeetAndInch, dimMeter, dimCentiMeter, dimMilliMeter, dimensioningOptions, decimals, Dimensioning} from './core/dimensioning.js';\nexport {cmPerFoot, pixelsPerFoot, cmPerPixel, pixelsPerCm} from './core/dimensioning.js';\n\nexport {configDimUnit, configWallHeight, configWallThickness, Configuration} from './core/configuration.js';\nexport {VIEW_TOP, VIEW_FRONT, VIEW_RIGHT, VIEW_LEFT, VIEW_ISOMETRY} from './core/constants.js';\n\n//Classes from model module\nexport {HalfEdge} from './model/half_edge.js';\nexport {cornerTolerance, Corner} from './model/corner.js';\nexport {defaultFloorPlanTolerance, Floorplan} from './model/floorplan.js';\nexport {Model} from './model/model.js';\nexport {defaultRoomTexture, Room} from './model/room.js';\nexport {Scene} from './model/scene.js';\nexport {defaultWallTexture, Wall} from './model/wall.js';\n\n//Classes from floorplanner module\nexport {floorplannerModes, gridSpacing, gridWidth, gridColor, roomColor, wallWidth, wallWidthHover, edgeColor, edgeColorHover, edgeWidth, deleteColor, cornerRadius, cornerRadiusHover, cornerColor, cornerColorHover, FloorplannerView2D} from './floorplanner/floorplanner_view.js';\nexport {snapTolerance, Floorplanner2D} from './floorplanner/floorplanner.js';\nexport {CarbonSheet} from './floorplanner/carbonsheet.js';\n\n//Classes from items module\nexport {item_types, Factory} from './items/factory.js';\nexport {Metadata} from './items/metadata.js';\nexport {Item} from './items/item.js';\nexport {FloorItem} from './items/floor_item.js';\nexport {WallItem} from './items/wall_item.js';\nexport {WallFloorItem} from './items/wall_floor_item.js';\nexport {OnFloorItem} from './items/on_floor_item.js';\nexport {InWallItem} from './items/in_wall_item.js';\nexport {InWallFloorItem} from './items/in_wall_floor_item.js';\nexport {RoofItem} from './items/roof_item.js';\n\n//Classes from three module\nexport {states, Controller} from './three/controller.js';\nexport {OrbitControls} from './three/orbitcontrols.js';\nexport {FirstPersonControls} from './three/first-person-controls.js';\nexport {PointerLockControls} from './three/pointerlockcontrols.js';\nexport {STATE, Controls} from './three/controls.js';\nexport {Edge} from './three/edge.js';\nexport {Floor} from './three/floor.js';\nexport {Floorplan3D} from './three/floorPlan.js';\nexport {HUD} from './three/hud.js';\nexport {Lights} from './three/lights.js';\nexport {Main} from './three/main.js';\nexport {Skybox} from './three/skybox.js';\n\nexport {OBJExporter} from './exporters/OBJExporter.js';\n\n\n\nimport {Model} from './model/model.js';\nimport {Main} from './three/main.js';\nimport {Floorplanner2D} from './floorplanner/floorplanner.js';\nimport {Configuration, configDimUnit} from './core/configuration.js';\nimport {dimMeter} from './core/dimensioning.js';\n//\n///** VestaDesigner core application. */\nexport class BlueprintJS\n{\n\t/**\n\t * Creates an instance of BlueprintJS. This is the entry point for the application\n\t *\n\t * @param {Object} - options The initialization options.\n\t * @param {string} options.floorplannerElement - Id of the html element to use as canvas. Needs to exist in the html\n\t * @param {string} options.threeElement - Id of the html element to use as canvas. Needs to exist in the html and should be #idofhtmlelement\n\t * @param {string} options.threeCanvasElement - Id of the html element to use as threejs-canvas. This is created automatically\n\t * @param {string} options.textureDir - path to texture directory. No effect\n\t * @param {boolean} options.widget - If widget mode then disable the controller from interactions\n\t * @example\n\t * let blueprint3d = new BP3DJS.BlueprintJS(opts);\n\t */\n\tconstructor(options)\n\t{\n\t\tConfiguration.setValue(configDimUnit, dimMeter);\n\n\t\t/**\n\t\t\t* @property {Object} options\n\t\t\t* @type {Object}\n\t\t**/\n\t\tthis.options = options;\n\t\t/**\n\t\t\t* @property {Model} model\n\t\t\t* @type {Model}\n\t\t**/\n\t\tthis.model = new Model(options.textureDir);\n\t\t/**\n\t\t* @property {Main} three\n\t\t* @type {Main}\n\t\t**/\n\t\tthis.three = new Main(this.model, options.threeElement, options.threeCanvasElement, {});\n\n\t\tif (!options.widget)\n\t\t{\n\t\t\t/**\n\t\t\t* @property {Floorplanner2D} floorplanner\n\t\t\t* @type {Floorplanner2D}\n\t\t\t**/\n\t\t\tthis.floorplanner = new Floorplanner2D(options.floorplannerElement, this.model.floorplan);\n\t\t}\n\t\telse\n\t\t{\n\t\t\tthis.three.getController().enabled = false;\n\t\t}\n\t}\n}\n",
     "static": true,
     "longname": "/home/ashok/eclipse-workspace/blueprint-js/src/scripts/blueprint.js",
     "access": "public",
@@ -775,7 +775,7 @@
       {
         "nullable": null,
         "types": [
-          "Floorplanner"
+          "Floorplanner2D"
         ],
         "spread": false,
         "optional": false,
@@ -786,7 +786,7 @@
     "type": {
       "nullable": null,
       "types": [
-        "Floorplanner"
+        "Floorplanner2D"
       ],
       "spread": false,
       "description": null
@@ -5187,7 +5187,7 @@
     "__docId__": 288,
     "kind": "file",
     "name": "scripts/floorplanner/floorplanner.js",
-    "content": "import $ from 'jquery';\nimport {EventDispatcher} from 'three';\nimport {cmPerPixel, pixelsPerCm, Dimensioning} from '../core/dimensioning.js';\nimport {configDimUnit, Configuration} from '../core/configuration.js';\nimport {EVENT_MODE_RESET, EVENT_LOADED} from '../core/events.js';\nimport {EVENT_CORNER_2D_HOVER, EVENT_WALL_2D_HOVER, EVENT_ROOM_2D_HOVER} from '../core/events.js';\nimport {EVENT_CORNER_2D_DOUBLE_CLICKED, EVENT_ROOM_2D_DOUBLE_CLICKED, EVENT_WALL_2D_DOUBLE_CLICKED} from '../core/events.js';\nimport {EVENT_NOTHING_CLICKED} from '../core/events.js';\nimport {FloorplannerView2D, floorplannerModes} from './floorplanner_view.js';\n\n/** how much will we move a corner to make a wall axis aligned (cm) */\nexport const snapTolerance = 25;\n/**\n * The Floorplanner implements an interactive tool for creation of floorplans in\n * 2D.\n */\nexport class Floorplanner2D extends EventDispatcher\n{\n\t/** */\n\tconstructor(canvas, floorplan)\n\t{\n\t\tsuper();\n\t\t/** */\n\t\tthis.mode = 0;\n\t\t/** */\n\t\tthis.activeWall = null;\n\t\t/** */\n\t\tthis.activeCorner = null;\n\t\t/** */\n\t\tthis.activeRoom = null;\n\t\t/** */\n\t\tthis.originX = 0;\n\t\t/** */\n\t\tthis.originY = 0;\n\t\t/** drawing state */\n\t\tthis.targetX = 0;\n\t\t/** drawing state */\n\t\tthis.targetY = 0;\n\t\t/** drawing state */\n\t\tthis.lastNode = null;\n\t\t/** */\n\t\tthis.wallWidth = 0;\n\t\t/** */\n\t\tthis.modeResetCallbacks = null;\n\n\t\t/** */\n\t\tthis.mouseDown = false;\n\t\t/** */\n\t\tthis.mouseMoved = false;\n\t\t/** in ThreeJS coords */\n\t\tthis.mouseX = 0;\n\t\t/** in ThreeJS coords */\n\t\tthis.mouseY = 0;\n\t\t/** in ThreeJS coords */\n\t\tthis.rawMouseX = 0;\n\t\t/** in ThreeJS coords */\n\t\tthis.rawMouseY = 0;\n\t\t/** mouse position at last click */\n\t\tthis.lastX = 0;\n\t\t/** mouse position at last click */\n\t\tthis.lastY = 0;\n\n\t\tthis.canvas = canvas;\n\t\tthis.floorplan = floorplan;\n\t\tthis.canvasElement = $('#' + canvas);\n\t\tthis.view = new FloorplannerView2D(this.floorplan, this, canvas);\n\n//\t\tvar cmPerFoot = cmPerFoot;\n//\t\tvar pixelsPerFoot = pixelsPerFoot;\n\t\tthis.cmPerPixel = cmPerPixel;\n\t\tthis.pixelsPerCm = pixelsPerCm;\n\n\t\tthis.wallWidth = 10.0 * this.pixelsPerCm;\n\t\tthis.gridsnapmode = false;\n\t\tthis.shiftkey = false;\n\t\t// Initialization:\n\n\t\tthis.setMode(floorplannerModes.MOVE);\n\n\t\tvar scope = this;\n\t\tthis.canvasElement.bind('touchstart mousedown', (event) => {scope.mousedown(event);});\n\t\tthis.canvasElement.bind('touchmove mousemove', (event) => {scope.mousemove(event);});\n\t\tthis.canvasElement.bind('touchend mouseup', (event) => {scope.mouseup(event);});\n\t\tthis.canvasElement.bind('mouseleave', (event) => {scope.mouseleave(event);});\n\t\tthis.canvasElement.bind('dblclick', (event) => {scope.doubleclick(event);});\n\n\t\tdocument.addEventListener('keyup', function(event){scope.keyUp(event)});\n\t\tdocument.addEventListener('keydown', function(event){scope.keyDown(event)});\n\t\tfloorplan.addEventListener(EVENT_LOADED, function(){scope.reset();});\n\t}\n\n\tget carbonSheet()\n\t{\n\t\treturn this.view.carbonSheet;\n\t}\n\n\tdoubleclick()\n\t{\n\t\t\tvar userinput, cid;\n\t\t\tvar units = Configuration.getStringValue(configDimUnit);\n\t\t\tif(this.activeCorner)\n\t\t\t{\n        this.floorplan.dispatchEvent({type:EVENT_CORNER_2D_DOUBLE_CLICKED, item: this.activeCorner});\n\t\t\t\tcid = this.activeCorner.id;\n\t\t\t\tuserinput = window.prompt(`Elevation at this point (in ${units},\\n${cid}): `, Dimensioning.cmToMeasureRaw(this.activeCorner.elevation));\n\t\t\t\tif(userinput != null)\n\t\t\t\t{\n\t\t\t\t\tthis.activeCorner.elevation = Number(userinput);\n\t\t\t\t}\n\n\t\t\t}\n      else if(this.activeWall)\n      {\n          this.floorplan.dispatchEvent({type:EVENT_WALL_2D_DOUBLE_CLICKED, item: this.activeWall});\n      }\n\t\t\telse if(this.activeRoom)\n\t\t\t{\n          this.floorplan.dispatchEvent({type:EVENT_ROOM_2D_DOUBLE_CLICKED, item: this.activeRoom});\n\t\t\t\t\tuserinput = window.prompt('Enter a name for this Room: ', this.activeRoom.name);\n\t\t\t\t\tif(userinput != null)\n\t\t\t\t\t{\n\t\t\t\t\t\tthis.activeRoom.name = userinput;\n\t\t\t\t\t}\n\t\t\t\t\tthis.view.draw();\n\t\t\t}\n\t}\n\n\tkeyUp(e)\n\t{\n\t\tif (e.keyCode == 27)\n\t\t{\n\t\t\tthis.escapeKey();\n\t\t}\n\t\tthis.gridsnapmode = false;\n\t\tthis.shiftkey = false;\n\t}\n\n\tkeyDown(e)\n\t{\n\t\tif(e.shiftKey || e.keyCode == 16)\n\t\t{\n\t\t\tthis.shiftkey = true;\n\t\t}\n\t\tthis.gridsnapmode = this.shiftkey;\n\t}\n\n\t/** */\n\tescapeKey()\n\t{\n\t\tthis.setMode(floorplannerModes.MOVE);\n\t}\n\n\t/** */\n\tupdateTarget()\n\t{\n\t\tif (this.mode == floorplannerModes.DRAW && this.lastNode)\n\t\t{\n\t\t\tif (Math.abs(this.mouseX - this.lastNode.x) < snapTolerance)\n\t\t\t{\n\t\t\t\tthis.targetX = this.lastNode.x;\n\t\t\t}\n\t\t\telse\n\t\t\t{\n\t\t\t\tthis.targetX = this.mouseX;\n\t\t\t}\n\t\t\tif (Math.abs(this.mouseY - this.lastNode.y) < snapTolerance)\n\t\t\t{\n\t\t\t\tthis.targetY = this.lastNode.y;\n\t\t\t}\n\t\t\telse\n\t\t\t{\n\t\t\t\tthis.targetY = this.mouseY;\n\t\t\t}\n\t\t}\n\t\telse\n\t\t{\n\t\t\tthis.targetX = this.mouseX;\n\t\t\tthis.targetY = this.mouseY;\n\t\t}\n\n\t\tthis.view.draw();\n\t}\n\n\t/** */\n\tmousedown(event)\n\t{\n\t\tthis.mouseDown = true;\n\t\tthis.mouseMoved = false;\n\t\tif(event.touches)\n\t\t{\n\t\t\tthis.rawMouseX = event.touches[0].clientX;\n\t\t\tthis.rawMouseY = event.touches[0].clientY;\n\t\t}\n\n\t\tthis.lastX = this.rawMouseX;\n\t\tthis.lastY = this.rawMouseY;\n\n\t\t// delete\n\t\tif (this.mode == floorplannerModes.DELETE)\n\t\t{\n\t\t\tif (this.activeCorner)\n\t\t\t{\n\t\t\t\tthis.activeCorner.removeAll();\n\t\t\t}\n\t\t\telse if (this.activeWall)\n\t\t\t{\n\t\t\t\tthis.activeWall.remove();\n\t\t\t}\n\t\t\telse\n\t\t\t{\n\t\t\t\t//Continue the mode of deleting walls, this is necessary for deleting multiple walls\n//\t\t\t\tthis.setMode(floorplannerModes.MOVE);\n\t\t\t}\n\t\t}\n\n    if(this.activeCorner == null && this.activeWall == null && this.activeRoom == null)\n    {\n        this.floorplan.dispatchEvent({type:EVENT_NOTHING_CLICKED});\n    }\n\t}\n\n\t/** */\n\tmousemove(event)\n\t{\n\t\tthis.mouseMoved = true;\n\n\t\tif(event.touches)\n\t\t{\n\t\t\tevent = event.touches[0];\n\t\t}\n\n\t\t// update mouse\n\t\tthis.rawMouseX = event.clientX;\n\t\tthis.rawMouseY = event.clientY;\n\n\t\tthis.mouseX = (event.clientX - this.canvasElement.offset().left)  * this.cmPerPixel + this.originX * this.cmPerPixel;\n\t\tthis.mouseY = (event.clientY - this.canvasElement.offset().top) * this.cmPerPixel + this.originY * this.cmPerPixel;\n\n\n\t\t// update target (snapped position of actual mouse)\n\t\tif (this.mode == floorplannerModes.DRAW || (this.mode == floorplannerModes.MOVE && this.mouseDown))\n\t\t{\n\t\t\tthis.updateTarget();\n\t\t}\n\n\t\t// update object target\n\t\tif (this.mode != floorplannerModes.DRAW && !this.mouseDown)\n\t\t{\n\t\t\tvar hoverCorner = this.floorplan.overlappedCorner(this.mouseX, this.mouseY);\n\t\t\tvar hoverWall = this.floorplan.overlappedWall(this.mouseX, this.mouseY);\n\t\t\tvar hoverRoom = this.floorplan.overlappedRoom(this.mouseX, this.mouseY);\n\t\t\tvar draw = false;\n\t\t\tif (hoverCorner != this.activeCorner)\n\t\t\t{\n\t\t\t\tthis.activeCorner = hoverCorner;\n        this.floorplan.dispatchEvent({type:EVENT_CORNER_2D_HOVER, item: hoverCorner});\n\t\t\t\tdraw = true;\n\t\t\t}\n\t\t\t// corner takes precendence\n\t\t\tif (this.activeCorner == null)\n\t\t\t{\n\t\t\t\tif (hoverWall != this.activeWall)\n\t\t\t\t{\n\t\t\t\t\tthis.activeWall = hoverWall;\n          this.floorplan.dispatchEvent({type:EVENT_WALL_2D_HOVER, item: hoverWall});\n\t\t\t\t\tdraw = true;\n\t\t\t\t}\n\t\t\t}\n\t\t\telse\n\t\t\t{\n\t\t\t\tthis.activeWall = null;\n\t\t\t}\n\n\t\t\tthis.activeRoom = hoverRoom;\n      if(this.activeCorner == null && this.activeWall == null && this.activeRoom !=null)\n      {\n          this.floorplan.dispatchEvent({type:EVENT_ROOM_2D_HOVER, item: hoverRoom});\n      }\n\n\n\t\t\tif (draw)\n\t\t\t{\n\t\t\t\tthis.view.draw();\n\t\t\t}\n\t\t}\n\n\t\t// panning\n\t\tif (this.mouseDown && !this.activeCorner && !this.activeWall)\n\t\t{\n\t\t\tthis.originX += (this.lastX - this.rawMouseX);\n\t\t\tthis.originY += (this.lastY - this.rawMouseY);\n\t\t\tthis.lastX = this.rawMouseX;\n\t\t\tthis.lastY = this.rawMouseY;\n\t\t\tthis.view.draw();\n\t\t}\n\n\t\t// dragging\n\t\tif (this.mode == floorplannerModes.MOVE && this.mouseDown)\n\t\t{\n\t\t\tif (this.activeCorner)\n\t\t\t{\n\t\t\t\tif(this.gridsnapmode)\n\t\t\t\t{\n\t\t\t\t\t\tvar mx = (Math.abs(this.mouseX - this.activeCorner.x) < snapTolerance) ? this.activeCorner.x : this.mouseX;\n\t\t\t\t\t\tvar my = (Math.abs(this.mouseY - this.activeCorner.y) < snapTolerance) ? this.activeCorner.y : this.mouseY;\n\t\t\t\t\t\tthis.activeCorner.move(Math.round(mx), Math.round(my));\n\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t{\n\t\t\t\t\t\tthis.activeCorner.move(this.mouseX, this.mouseY);\n\t\t\t\t}\n\t\t\t\tif(this.shiftkey)\n\t\t\t\t{\n\t\t\t\t\tthis.activeCorner.snapToAxis(snapTolerance);\n\t\t\t\t}\n\t\t\t}\n\t\t\telse if (this.activeWall)\n\t\t\t{\n\t\t\t\tthis.activeWall.relativeMove((this.rawMouseX - this.lastX) * this.cmPerPixel, (this.rawMouseY - this.lastY) * this.cmPerPixel);\n\t\t\t\tif(this.gridsnapmode)\n\t\t\t\t{\n\t\t\t\t\tthis.activeWall.snapToAxis(snapTolerance);\n\t\t\t\t}\n\t\t\t\tthis.lastX = this.rawMouseX;\n\t\t\t\tthis.lastY = this.rawMouseY;\n\t\t\t}\n\t\t\tthis.view.draw();\n\t\t}\n\t}\n\n\t/** */\n\tmouseup()\n\t{\n\t\tthis.mouseDown = false;\n\n\t\t// drawing\n\t\tif (this.mode == floorplannerModes.DRAW && !this.mouseMoved)\n\t\t{\n\t\t\t// This creates the corner already\n\t\t\tvar corner = this.floorplan.newCorner(this.targetX, this.targetY);\n\n\t\t\t// further create a newWall based on the newly inserted corners\n\t\t\t// (one in the above line and the other in the previous mouse action\n\t\t\t// of start drawing a new wall)\n\t\t\tif (this.lastNode != null)\n\t\t\t{\n\t\t\t\tthis.floorplan.newWall(this.lastNode, corner);\n\t\t\t\tthis.floorplan.newWallsForIntersections(this.lastNode, corner);\n\t\t\t\tthis.view.draw();\n\t\t\t}\n\t\t\tif (corner.mergeWithIntersected() && this.lastNode != null)\n\t\t\t{\n\t\t\t\tthis.setMode(floorplannerModes.MOVE);\n\t\t\t}\n\t\t\tthis.lastNode = corner;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif(this.activeCorner != null)\n\t\t\t{\n\t\t\t\t\tthis.activeCorner.updateAttachedRooms();\n\t\t\t}\n\t\t\tif(this.activeWall != null)\n\t\t\t{\n\t\t\t\t\tthis.activeWall.updateAttachedRooms();\n\t\t\t}\n\t\t}\n\t}\n\n\t/** */\n\tmouseleave()\n\t{\n\t\tthis.mouseDown = false;\n\t\t// scope.setMode(scope.modes.MOVE);\n\t}\n\n\t/** */\n\treset()\n\t{\n\t\tthis.view.carbonSheet.clear();\n\t\tthis.resizeView();\n\t\tthis.setMode(floorplannerModes.MOVE);\n\t\tthis.resetOrigin();\n\t\tthis.view.draw();\n\t}\n\n\t/** */\n\tresizeView()\n\t{\n\t\tthis.view.handleWindowResize();\n\t}\n\n\t/** */\n\tsetMode(mode)\n\t{\n\t\tthis.lastNode = null;\n\t\tthis.mode = mode;\n\t\tthis.dispatchEvent({type:EVENT_MODE_RESET, mode: mode});\n\t\t// this.modeResetCallbacks.fire(mode);\n\t\tthis.updateTarget();\n\t}\n\n\t/** Sets the origin so that floorplan is centered */\n\tresetOrigin()\n\t{\n\t\tvar centerX = this.canvasElement.innerWidth() / 2.0;\n\t\tvar centerY = this.canvasElement.innerHeight() / 2.0;\n\t\tvar centerFloorplan = this.floorplan.getCenter();\n\t\tthis.originX = centerFloorplan.x * this.pixelsPerCm - centerX;\n\t\tthis.originY = centerFloorplan.z * this.pixelsPerCm - centerY;\n\t}\n\n\t/** Convert from THREEjs coords to canvas coords. */\n\tconvertX(x)\n\t{\n\t\treturn (x - (this.originX * this.cmPerPixel)) * this.pixelsPerCm;\n\t}\n\n\t/** Convert from THREEjs coords to canvas coords. */\n\tconvertY(y)\n\t{\n\t\treturn (y - (this.originY * this.cmPerPixel)) * this.pixelsPerCm;\n\t}\n}\n",
+    "content": "import $ from 'jquery';\nimport {EventDispatcher} from 'three';\nimport {cmPerPixel, pixelsPerCm, Dimensioning} from '../core/dimensioning.js';\nimport {configDimUnit, Configuration} from '../core/configuration.js';\nimport {EVENT_MODE_RESET, EVENT_LOADED} from '../core/events.js';\nimport {EVENT_CORNER_2D_HOVER, EVENT_WALL_2D_HOVER, EVENT_ROOM_2D_HOVER} from '../core/events.js';\nimport {EVENT_CORNER_2D_DOUBLE_CLICKED, EVENT_ROOM_2D_DOUBLE_CLICKED, EVENT_WALL_2D_DOUBLE_CLICKED} from '../core/events.js';\nimport {EVENT_NOTHING_CLICKED} from '../core/events.js';\nimport {FloorplannerView2D, floorplannerModes} from './floorplanner_view.js';\n\n/** how much will we move a corner to make a wall axis aligned (cm) */\nexport const snapTolerance = 25;\n/**\n * The Floorplanner implements an interactive tool for creation of floorplans in\n * 2D.\n */\nexport class Floorplanner2D extends EventDispatcher\n{\n\t/** */\n\tconstructor(canvas, floorplan)\n\t{\n\t\tsuper();\n\t\t/** */\n\t\tthis.mode = 0;\n\t\t/** */\n\t\tthis.activeWall = null;\n\t\t/** */\n\t\tthis.activeCorner = null;\n\t\t/** */\n\t\tthis.activeRoom = null;\n\t\t/** */\n\t\tthis.originX = 0;\n\t\t/** */\n\t\tthis.originY = 0;\n\t\t/** drawing state */\n\t\tthis.targetX = 0;\n\t\t/** drawing state */\n\t\tthis.targetY = 0;\n\t\t/** drawing state */\n\t\tthis.lastNode = null;\n\t\t/** */\n\t\tthis.wallWidth = 0;\n\t\t/** */\n\t\tthis.modeResetCallbacks = null;\n\n\t\t/** */\n\t\tthis.mouseDown = false;\n\t\t/** */\n\t\tthis.mouseMoved = false;\n\t\t/** in ThreeJS coords */\n\t\tthis.mouseX = 0;\n\t\t/** in ThreeJS coords */\n\t\tthis.mouseY = 0;\n\t\t/** in ThreeJS coords */\n\t\tthis.rawMouseX = 0;\n\t\t/** in ThreeJS coords */\n\t\tthis.rawMouseY = 0;\n\t\t/** mouse position at last click */\n\t\tthis.lastX = 0;\n\t\t/** mouse position at last click */\n\t\tthis.lastY = 0;\n\n\t\tthis.canvas = canvas;\n\t\tthis.floorplan = floorplan;\n\t\tthis.canvasElement = $('#' + canvas);\n\t\tthis.view = new FloorplannerView2D(this.floorplan, this, canvas);\n\n//\t\tvar cmPerFoot = cmPerFoot;\n//\t\tvar pixelsPerFoot = pixelsPerFoot;\n\t\tthis.cmPerPixel = cmPerPixel;\n\t\tthis.pixelsPerCm = pixelsPerCm;\n\n\t\tthis.wallWidth = 10.0 * this.pixelsPerCm;\n\t\tthis.gridsnapmode = false;\n\t\tthis.shiftkey = false;\n\t\t// Initialization:\n\n\t\tthis.setMode(floorplannerModes.MOVE);\n\n\t\tvar scope = this;\n\t\tthis.canvasElement.bind('touchstart mousedown', (event) => {scope.mousedown(event);});\n\t\tthis.canvasElement.bind('touchmove mousemove', (event) => {scope.mousemove(event);});\n\t\tthis.canvasElement.bind('touchend mouseup', (event) => {scope.mouseup(event);});\n\t\tthis.canvasElement.bind('mouseleave', (event) => {scope.mouseleave(event);});\n\t\tthis.canvasElement.bind('dblclick', (event) => {scope.doubleclick(event);});\n\n\t\tdocument.addEventListener('keyup', function(event){scope.keyUp(event)});\n\t\tdocument.addEventListener('keydown', function(event){scope.keyDown(event)});\n\t\tfloorplan.addEventListener(EVENT_LOADED, function(){scope.reset();});\n\t}\n\n\tget carbonSheet()\n\t{\n\t\treturn this.view.carbonSheet;\n\t}\n\n\tdoubleclick()\n\t{\n\t\t\tvar userinput, cid;\n\t\t\tfunction getAValidInput(message, current)\n\t\t\t{\n\t\t\t\t\tconsole.log('GET A VALID INPUT');\n\t\t\t\t\tvar uinput = window.prompt(message, current);\n\t\t\t\t\tif(uinput != null)\n\t\t\t\t\t{\n\t\t\t\t\t\treturn uinput;\n\t\t\t\t\t}\n\t\t\t\t\treturn current;\n\t\t\t}\n\t\t\tif(this.activeCorner)\n\t\t\t{\n\t\t\t\tcid = this.activeCorner.id;\n\t\t\t\tvar units = Configuration.getStringValue(configDimUnit);\n\t\t\t\tthis.activeCorner.elevation = getAValidInput(`Elevation at this point (in ${units},\\n${cid}): `, Dimensioning.cmToMeasureRaw(this.activeCorner.elevation));//Number(userinput);\n\t\t\t\tvar x = getAValidInput(`Location: X (${Dimensioning.cmToMeasureRaw(this.activeCorner.x)}): `, Dimensioning.cmToMeasureRaw(this.activeCorner.x));//Number(userinput);\n\t\t\t\tvar y = getAValidInput(`Location: Y (${Dimensioning.cmToMeasureRaw(this.activeCorner.y)}): `, Dimensioning.cmToMeasureRaw(this.activeCorner.y));//Number(userinput);\n\t\t\t\tthis.activeCorner.move(Dimensioning.cmFromMeasureRaw(x), Dimensioning.cmFromMeasureRaw(y));\n\t\t\t\tthis.floorplan.dispatchEvent({type:EVENT_CORNER_2D_DOUBLE_CLICKED, item: this.activeCorner});\n\t\t\t}\n\t\t\t// var userinput, cid;\n\t\t\t// var units = Configuration.getStringValue(configDimUnit);\n\t\t\t// if(this.activeCorner)\n\t\t\t// {\n      //   this.floorplan.dispatchEvent({type:EVENT_CORNER_2D_DOUBLE_CLICKED, item: this.activeCorner});\n\t\t\t// \tcid = this.activeCorner.id;\n\t\t\t// \tuserinput = window.prompt(`Elevation at this point (in ${units},\\n${cid}): `, Dimensioning.cmToMeasureRaw(this.activeCorner.elevation));\n\t\t\t// \tif(userinput != null)\n\t\t\t// \t{\n\t\t\t// \t\tthis.activeCorner.elevation = Number(userinput);\n\t\t\t// \t}\n      else if(this.activeWall)\n      {\n          this.floorplan.dispatchEvent({type:EVENT_WALL_2D_DOUBLE_CLICKED, item: this.activeWall});\n      }\n\t\t\telse if(this.activeRoom)\n\t\t\t{\n          this.floorplan.dispatchEvent({type:EVENT_ROOM_2D_DOUBLE_CLICKED, item: this.activeRoom});\n\t\t\t\t\tuserinput = window.prompt('Enter a name for this Room: ', this.activeRoom.name);\n\t\t\t\t\tif(userinput != null)\n\t\t\t\t\t{\n\t\t\t\t\t\tthis.activeRoom.name = userinput;\n\t\t\t\t\t}\n\t\t\t\t\tthis.view.draw();\n\t\t\t}\n\t}\n\n\tkeyUp(e)\n\t{\n\t\tif (e.keyCode == 27)\n\t\t{\n\t\t\tthis.escapeKey();\n\t\t}\n\t\tthis.gridsnapmode = false;\n\t\tthis.shiftkey = false;\n\t}\n\n\tkeyDown(e)\n\t{\n\t\tif(e.shiftKey || e.keyCode == 16)\n\t\t{\n\t\t\tthis.shiftkey = true;\n\t\t}\n\t\tthis.gridsnapmode = this.shiftkey;\n\t}\n\n\t/** */\n\tescapeKey()\n\t{\n\t\tthis.setMode(floorplannerModes.MOVE);\n\t}\n\n\t/** */\n\tupdateTarget()\n\t{\n\t\tif (this.mode == floorplannerModes.DRAW && this.lastNode)\n\t\t{\n\t\t\tif (Math.abs(this.mouseX - this.lastNode.x) < snapTolerance)\n\t\t\t{\n\t\t\t\tthis.targetX = this.lastNode.x;\n\t\t\t}\n\t\t\telse\n\t\t\t{\n\t\t\t\tthis.targetX = this.mouseX;\n\t\t\t}\n\t\t\tif (Math.abs(this.mouseY - this.lastNode.y) < snapTolerance)\n\t\t\t{\n\t\t\t\tthis.targetY = this.lastNode.y;\n\t\t\t}\n\t\t\telse\n\t\t\t{\n\t\t\t\tthis.targetY = this.mouseY;\n\t\t\t}\n\t\t}\n\t\telse\n\t\t{\n\t\t\tthis.targetX = this.mouseX;\n\t\t\tthis.targetY = this.mouseY;\n\t\t}\n\n\t\tthis.view.draw();\n\t}\n\n\t/** */\n\tmousedown(event)\n\t{\n\t\tthis.mouseDown = true;\n\t\tthis.mouseMoved = false;\n\t\tif(event.touches)\n\t\t{\n\t\t\tthis.rawMouseX = event.touches[0].clientX;\n\t\t\tthis.rawMouseY = event.touches[0].clientY;\n\t\t}\n\n\t\tthis.lastX = this.rawMouseX;\n\t\tthis.lastY = this.rawMouseY;\n\n\t\t// delete\n\t\tif (this.mode == floorplannerModes.DELETE)\n\t\t{\n\t\t\tif (this.activeCorner)\n\t\t\t{\n\t\t\t\tthis.activeCorner.removeAll();\n\t\t\t}\n\t\t\telse if (this.activeWall)\n\t\t\t{\n\t\t\t\tthis.activeWall.remove();\n\t\t\t}\n\t\t\telse\n\t\t\t{\n\t\t\t\t//Continue the mode of deleting walls, this is necessary for deleting multiple walls\n//\t\t\t\tthis.setMode(floorplannerModes.MOVE);\n\t\t\t}\n\t\t}\n\n    if(this.activeCorner == null && this.activeWall == null && this.activeRoom == null)\n    {\n        this.floorplan.dispatchEvent({type:EVENT_NOTHING_CLICKED});\n    }\n\t}\n\n\t/** */\n\tmousemove(event)\n\t{\n\t\tthis.mouseMoved = true;\n\n\t\tif(event.touches)\n\t\t{\n\t\t\tevent = event.touches[0];\n\t\t}\n\n\t\t// update mouse\n\t\tthis.rawMouseX = event.clientX;\n\t\tthis.rawMouseY = event.clientY;\n\n\t\tthis.mouseX = (event.clientX - this.canvasElement.offset().left)  * this.cmPerPixel + this.originX * this.cmPerPixel;\n\t\tthis.mouseY = (event.clientY - this.canvasElement.offset().top) * this.cmPerPixel + this.originY * this.cmPerPixel;\n\n\n\t\t// update target (snapped position of actual mouse)\n\t\tif (this.mode == floorplannerModes.DRAW || (this.mode == floorplannerModes.MOVE && this.mouseDown))\n\t\t{\n\t\t\tthis.updateTarget();\n\t\t}\n\n\t\t// update object target\n\t\tif (this.mode != floorplannerModes.DRAW && !this.mouseDown)\n\t\t{\n\t\t\tvar hoverCorner = this.floorplan.overlappedCorner(this.mouseX, this.mouseY);\n\t\t\tvar hoverWall = this.floorplan.overlappedWall(this.mouseX, this.mouseY);\n\t\t\tvar hoverRoom = this.floorplan.overlappedRoom(this.mouseX, this.mouseY);\n\t\t\tvar draw = false;\n\t\t\tif (hoverCorner != this.activeCorner)\n\t\t\t{\n\t\t\t\tthis.activeCorner = hoverCorner;\n        this.floorplan.dispatchEvent({type:EVENT_CORNER_2D_HOVER, item: hoverCorner});\n\t\t\t\tdraw = true;\n\t\t\t}\n\t\t\t// corner takes precendence\n\t\t\tif (this.activeCorner == null)\n\t\t\t{\n\t\t\t\tif (hoverWall != this.activeWall)\n\t\t\t\t{\n\t\t\t\t\tthis.activeWall = hoverWall;\n          this.floorplan.dispatchEvent({type:EVENT_WALL_2D_HOVER, item: hoverWall});\n\t\t\t\t\tdraw = true;\n\t\t\t\t}\n\t\t\t}\n\t\t\telse\n\t\t\t{\n\t\t\t\tthis.activeWall = null;\n\t\t\t}\n\n\t\t\tthis.activeRoom = hoverRoom;\n      if(this.activeCorner == null && this.activeWall == null && this.activeRoom !=null)\n      {\n          this.floorplan.dispatchEvent({type:EVENT_ROOM_2D_HOVER, item: hoverRoom});\n      }\n\n\n\t\t\tif (draw)\n\t\t\t{\n\t\t\t\tthis.view.draw();\n\t\t\t}\n\t\t}\n\n\t\t// panning\n\t\tif (this.mouseDown && !this.activeCorner && !this.activeWall)\n\t\t{\n\t\t\tthis.originX += (this.lastX - this.rawMouseX);\n\t\t\tthis.originY += (this.lastY - this.rawMouseY);\n\t\t\tthis.lastX = this.rawMouseX;\n\t\t\tthis.lastY = this.rawMouseY;\n\t\t\tthis.view.draw();\n\t\t}\n\n\t\t// dragging\n\t\tif (this.mode == floorplannerModes.MOVE && this.mouseDown)\n\t\t{\n\t\t\tif (this.activeCorner)\n\t\t\t{\n\t\t\t\tif(this.gridsnapmode)\n\t\t\t\t{\n\t\t\t\t\t\tvar mx = (Math.abs(this.mouseX - this.activeCorner.x) < snapTolerance) ? this.activeCorner.x : this.mouseX;\n\t\t\t\t\t\tvar my = (Math.abs(this.mouseY - this.activeCorner.y) < snapTolerance) ? this.activeCorner.y : this.mouseY;\n\t\t\t\t\t\tthis.activeCorner.move(Math.round(mx), Math.round(my));\n\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t{\n\t\t\t\t\t\tthis.activeCorner.move(this.mouseX, this.mouseY);\n\t\t\t\t}\n\t\t\t\tif(this.shiftkey)\n\t\t\t\t{\n\t\t\t\t\tthis.activeCorner.snapToAxis(snapTolerance);\n\t\t\t\t}\n\t\t\t}\n\t\t\telse if (this.activeWall)\n\t\t\t{\n\t\t\t\tthis.activeWall.relativeMove((this.rawMouseX - this.lastX) * this.cmPerPixel, (this.rawMouseY - this.lastY) * this.cmPerPixel);\n\t\t\t\tif(this.gridsnapmode)\n\t\t\t\t{\n\t\t\t\t\tthis.activeWall.snapToAxis(snapTolerance);\n\t\t\t\t}\n\t\t\t\tthis.lastX = this.rawMouseX;\n\t\t\t\tthis.lastY = this.rawMouseY;\n\t\t\t}\n\t\t\tthis.view.draw();\n\t\t}\n\t}\n\n\t/** */\n\tmouseup()\n\t{\n\t\tthis.mouseDown = false;\n\n\t\t// drawing\n\t\tif (this.mode == floorplannerModes.DRAW && !this.mouseMoved)\n\t\t{\n\t\t\t// This creates the corner already\n\t\t\tvar corner = this.floorplan.newCorner(this.targetX, this.targetY);\n\n\t\t\t// further create a newWall based on the newly inserted corners\n\t\t\t// (one in the above line and the other in the previous mouse action\n\t\t\t// of start drawing a new wall)\n\t\t\tif (this.lastNode != null)\n\t\t\t{\n\t\t\t\tthis.floorplan.newWall(this.lastNode, corner);\n\t\t\t\tthis.floorplan.newWallsForIntersections(this.lastNode, corner);\n\t\t\t\tthis.view.draw();\n\t\t\t}\n\t\t\tif (corner.mergeWithIntersected() && this.lastNode != null)\n\t\t\t{\n\t\t\t\tthis.setMode(floorplannerModes.MOVE);\n\t\t\t}\n\t\t\tthis.lastNode = corner;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif(this.activeCorner != null)\n\t\t\t{\n\t\t\t\t\tthis.activeCorner.updateAttachedRooms();\n\t\t\t}\n\t\t\tif(this.activeWall != null)\n\t\t\t{\n\t\t\t\t\tthis.activeWall.updateAttachedRooms();\n\t\t\t}\n\t\t}\n\t}\n\n\t/** */\n\tmouseleave()\n\t{\n\t\tthis.mouseDown = false;\n\t\t// scope.setMode(scope.modes.MOVE);\n\t}\n\n\t/** */\n\treset()\n\t{\n\t\tthis.view.carbonSheet.clear();\n\t\tthis.resizeView();\n\t\tthis.setMode(floorplannerModes.MOVE);\n\t\tthis.resetOrigin();\n\t\tthis.view.draw();\n\t}\n\n\t/** */\n\tresizeView()\n\t{\n\t\tthis.view.handleWindowResize();\n\t}\n\n\t/** */\n\tsetMode(mode)\n\t{\n\t\tthis.lastNode = null;\n\t\tthis.mode = mode;\n\t\tthis.dispatchEvent({type:EVENT_MODE_RESET, mode: mode});\n\t\t// this.modeResetCallbacks.fire(mode);\n\t\tthis.updateTarget();\n\t}\n\n\t/** Sets the origin so that floorplan is centered */\n\tresetOrigin()\n\t{\n\t\tvar centerX = this.canvasElement.innerWidth() / 2.0;\n\t\tvar centerY = this.canvasElement.innerHeight() / 2.0;\n\t\tvar centerFloorplan = this.floorplan.getCenter();\n\t\tthis.originX = centerFloorplan.x * this.pixelsPerCm - centerX;\n\t\tthis.originY = centerFloorplan.z * this.pixelsPerCm - centerY;\n\t}\n\n\t/** Convert from THREEjs coords to canvas coords. */\n\tconvertX(x)\n\t{\n\t\treturn (x - (this.originX * this.cmPerPixel)) * this.pixelsPerCm;\n\t}\n\n\t/** Convert from THREEjs coords to canvas coords. */\n\tconvertY(y)\n\t{\n\t\treturn (y - (this.originY * this.cmPerPixel)) * this.pixelsPerCm;\n\t}\n}\n",
     "static": true,
     "longname": "/home/ashok/eclipse-workspace/blueprint-js/src/scripts/floorplanner/floorplanner.js",
     "access": "public",
@@ -5730,7 +5730,7 @@
     "longname": "scripts/floorplanner/floorplanner.js~Floorplanner2D#keyUp",
     "access": "public",
     "description": null,
-    "lineNumber": 128,
+    "lineNumber": 147,
     "undocument": true,
     "params": [
       {
@@ -5753,7 +5753,7 @@
     "longname": "scripts/floorplanner/floorplanner.js~Floorplanner2D#keyDown",
     "access": "public",
     "description": null,
-    "lineNumber": 138,
+    "lineNumber": 157,
     "undocument": true,
     "params": [
       {
@@ -5776,7 +5776,7 @@
     "longname": "scripts/floorplanner/floorplanner.js~Floorplanner2D#escapeKey",
     "access": "public",
     "description": "",
-    "lineNumber": 148,
+    "lineNumber": 167,
     "params": [],
     "return": null
   },
@@ -5791,7 +5791,7 @@
     "longname": "scripts/floorplanner/floorplanner.js~Floorplanner2D#updateTarget",
     "access": "public",
     "description": "",
-    "lineNumber": 154,
+    "lineNumber": 173,
     "params": [],
     "return": null
   },
@@ -5806,7 +5806,7 @@
     "longname": "scripts/floorplanner/floorplanner.js~Floorplanner2D#mousedown",
     "access": "public",
     "description": "",
-    "lineNumber": 185,
+    "lineNumber": 204,
     "params": [
       {
         "name": "event",
@@ -5828,7 +5828,7 @@
     "longname": "scripts/floorplanner/floorplanner.js~Floorplanner2D#mousemove",
     "access": "public",
     "description": "",
-    "lineNumber": 223,
+    "lineNumber": 242,
     "params": [
       {
         "name": "event",
@@ -5850,7 +5850,7 @@
     "longname": "scripts/floorplanner/floorplanner.js~Floorplanner2D#mouseup",
     "access": "public",
     "description": "",
-    "lineNumber": 332,
+    "lineNumber": 351,
     "params": [],
     "return": null
   },
@@ -5865,7 +5865,7 @@
     "longname": "scripts/floorplanner/floorplanner.js~Floorplanner2D#mouseleave",
     "access": "public",
     "description": "",
-    "lineNumber": 371,
+    "lineNumber": 390,
     "params": [],
     "return": null
   },
@@ -5880,7 +5880,7 @@
     "longname": "scripts/floorplanner/floorplanner.js~Floorplanner2D#reset",
     "access": "public",
     "description": "",
-    "lineNumber": 378,
+    "lineNumber": 397,
     "params": [],
     "return": null
   },
@@ -5895,7 +5895,7 @@
     "longname": "scripts/floorplanner/floorplanner.js~Floorplanner2D#resizeView",
     "access": "public",
     "description": "",
-    "lineNumber": 388,
+    "lineNumber": 407,
     "params": [],
     "return": null
   },
@@ -5910,7 +5910,7 @@
     "longname": "scripts/floorplanner/floorplanner.js~Floorplanner2D#setMode",
     "access": "public",
     "description": "",
-    "lineNumber": 394,
+    "lineNumber": 413,
     "params": [
       {
         "name": "mode",
@@ -5932,7 +5932,7 @@
     "longname": "scripts/floorplanner/floorplanner.js~Floorplanner2D#resetOrigin",
     "access": "public",
     "description": "Sets the origin so that floorplan is centered",
-    "lineNumber": 404,
+    "lineNumber": 423,
     "params": [],
     "return": null
   },
@@ -5947,7 +5947,7 @@
     "longname": "scripts/floorplanner/floorplanner.js~Floorplanner2D#convertX",
     "access": "public",
     "description": "Convert from THREEjs coords to canvas coords.",
-    "lineNumber": 414,
+    "lineNumber": 433,
     "params": [
       {
         "name": "x",
@@ -5973,7 +5973,7 @@
     "longname": "scripts/floorplanner/floorplanner.js~Floorplanner2D#convertY",
     "access": "public",
     "description": "Convert from THREEjs coords to canvas coords.",
-    "lineNumber": 420,
+    "lineNumber": 439,
     "params": [
       {
         "name": "y",
@@ -9733,7 +9733,7 @@
     "__docId__": 589,
     "kind": "file",
     "name": "scripts/model/corner.js",
-    "content": "import {EVENT_ACTION, EVENT_DELETED, EVENT_MOVED} from '../core/events.js';\nimport {EventDispatcher, Vector2} from 'three';\nimport {Utils} from '../core/utils.js';\nimport {Dimensioning} from '../core/dimensioning.js';\nimport {Configuration, configWallHeight} from '../core/configuration.js';\n\n/** */\nexport const cornerTolerance = 20;\n\n/**\n * Corners are used to define Walls.\n */\nexport class Corner extends EventDispatcher\n{\n\n\t/** Constructs a corner.\n\t * @param {Floorplan} floorplan The associated model floorplan.\n\t * @param {Number} x X coordinate.\n\t * @param {Number} y Y coordinate.\n\t * @param {String} id An optional unique id. If not set, created internally.\n\t */\n\tconstructor(floorplan, x, y, id)\n\t{\n\t\tsuper();\n\t\t/** @property {Array} wallStarts Array of walls that are start walls\n\t\t\t* @type {Array}\n\t\t**/\n\t\tthis.wallStarts = [];\n\t\t/** @property {Array} wallEnds Array of walls that are end walls\n\t\t\t* @type {Array}\n\t\t**/\n\t\tthis.wallEnds = [];\n\t\t/**\n\t\t\t* @deprecated Not in use. The EventDispatcher from threejs is used for emit and listen events\n\t\t**/\n\t\tthis.moved_callbacks = null;\n\t\t/**\n\t\t\t* @deprecated Not in use. The EventDispatcher from threejs is used for emit and listen events\n\t\t**/\n\t\tthis.deleted_callbacks = null;\n\t\t/**\n\t\t\t* @deprecated Not in use. The EventDispatcher from threejs is used for emit and listen events\n\t\t**/\n\t\tthis.action_callbacks = null;\n\t\t/**\n\t\t\t* @property {Floorplan} floorplan Reference to the model floorplan\n\t\t\t* @type {Floorplan}\n\t\t**/\n\t\tthis.floorplan = floorplan;\n\t\t/**\n\t\t\t* @property {Number} x The position in x dimension\n\t\t\t* @type {Number}\n\t\t**/\n\t\tthis.x = x;\n\t\t/**\n\t\t\t* @property {Number} y The position in y dimension\n\t\t\t* @type {Number}\n\t\t**/\n\t\tthis.y = y;\n\t\t/**\n\t\t\t* @property {Number} _elevation The elevation at this corner\n\t\t\t* @type {Number}\n\t\t**/\n\t\tthis._elevation = Configuration.getNumericValue(configWallHeight);\n\t\t/**\n\t\t\t* @property {String} id The id of this corner. Autogenerated the first time\n\t\t\t* @type {String}\n\t\t**/\n\t\tthis.id = id || Utils.guide();\n\t\t/**\n\t\t\t* @property {Array} attachedRooms Array of rooms that have walls using this corner\n\t\t\t* @type {Array}\n\t\t**/\n\t\tthis.attachedRooms = [];\n\t}\n\n\t/** @type {Number} elevation The elevation value at this corner*/\n\tset elevation(value)\n\t{\n\t\tthis._elevation = Dimensioning.cmFromMeasureRaw(Number(value));\n\t}\n\n\t/** @type {Number} elevation The elevation value at this corner*/\n\tget elevation()\n\t{\n\t\treturn this._elevation;\n\t}\n\n\t/**\n   * @param {Room} room - The room that should be attached to this corner\n\t * @return {void}\n   */\n\tattachRoom(room)\n\t{\n\t\tif(room)\n\t\t{\n\t\t\tthis.attachedRooms.push(room);\n\t\t}\n\t}\n\n\t/**\n   * @return {Room[]} Array of rooms attached to this corner\n   */\n\tgetAttachedRooms()\n\t{\n\t\treturn this.attachedRooms;\n\t}\n\n\t/**\n   * @return {void} Clear all the rooms attached to this corner\n   */\n\tclearAttachedRooms()\n\t{\n\t\tthis.attachedRooms = [];\n\t}\n\n\t/** Add function to moved callbacks.\n\t * @param func The function to be added.\n\t */\n\tfireOnMove(func)\n\t{\n\t\tthis.moved_callbacks.add(func);\n\t}\n\n\t/** Add function to deleted callbacks.\n\t * @param func The function to be added.\n\t */\n\tfireOnDelete(func)\n\t{\n\t\tthis.deleted_callbacks.add(func);\n\t}\n\n\t/** Add function to action callbacks.\n\t * @param func The function to be added.\n\t */\n\tfireOnAction(func)\n\t{\n\t\tthis.action_callbacks.add(func);\n\t}\n\n\tfireAction(action)\n\t{\n\t\tthis.dispatchEvent({type:EVENT_ACTION, item: this, action:action});\n\t\t//      this.action_callbacks.fire(action)\n\t}\n\n\t/**\n\t * @returns\n\t * @deprecated\n\t */\n\tgetX()\n\t{\n\t\treturn this.x;\n\t}\n\n\t/**\n\t * @returns\n\t * @deprecated\n\t */\n\tgetY()\n\t{\n\t\treturn this.y;\n\t}\n\n\t/**\n\t *\t@param {Number} tolerance - The tolerance value within which it will snap to adjacent corners\n\t *  @return {Object} snapped\n\t *  @description The object with x and y that are boolean values to indicate if the snap happens in x and y\n\t */\n\tsnapToAxis(tolerance)\n\t{\n\t\t// try to snap this corner to an axis\n\t\tvar snapped = {x: false,y: false};\n\t\tvar scope = this;\n\n\t\tthis.adjacentCorners().forEach((corner) => {\n\t\t\tif (Math.abs(corner.x - scope.x) < tolerance)\n\t\t\t{\n\t\t\t\tscope.x = corner.x;\n\t\t\t\tsnapped.x = true;\n\t\t\t}\n\t\t\tif (Math.abs(corner.y - scope.y) < tolerance)\n\t\t\t{\n\t\t\t\tscope.y = corner.y;\n\t\t\t\tsnapped.y = true;\n\t\t\t}\n\t\t});\n\t\treturn snapped;\n\t}\n\n\t/** Moves corner relatively to new position.\n\t * @param {Number} dx The delta x.\n\t * @param {Number} dy The delta y.\n\t */\n\trelativeMove(dx, dy)\n\t{\n\t\tthis.move(this.x + dx, this.y + dy);\n\t}\n\n\t/**\n\t\t* Dispatches an event when removed from the floorplan({@link Floorplan}) instance. The event object contains reference to this {@link Corner} instance as item.\n\t\t* @example\n\t\t* let corner = new Corner(floorplan, 0, 0);\n\t\t* function cornerRemoved(e) { console.log('I WAS REMOVED FROM LOCATION ', e.item.x, e.item.y) };\n\t\t* corner.remove();\n\t\t* @emits {EVENT_DELETED}\n\t**/\n\tremove()\n\t{\n\t\tthis.dispatchEvent({type:EVENT_DELETED, item:this});\n\t\t//      this.deleted_callbacks.fire(this);\n\t}\n\n\t/**\n\t\t* Removes all the connected corners and itself. This in essence removes all the walls({@link Wall}) this corner is connected to.\n\t\t* @example\n\t\t* let corner1 = new Corner(floorplan, 0, 0);\n\t\t* let corner2 = new Corner(floorplan, 10, 0);\n\t\t* function cornerRemoved(e) { console.log('I WAS REMOVED FROM LOCATION ', e.item.x, e.item.y) } //Will log twice for two corners;\n\t\t* corner.removeAll();\n\t**/\n\tremoveAll()\n\t{\n\t\tvar i = 0;\n\t\tfor (i = 0; i < this.wallStarts.length; i++)\n\t\t{\n\t\t\tthis.wallStarts[i].remove();\n\t\t}\n\t\tfor (i = 0; i < this.wallEnds.length; i++)\n\t\t{\n\t\t\tthis.wallEnds[i].remove();\n\t\t}\n\t\tthis.remove();\n\t}\n\n\t/** Moves corner to new position.\n\t * @param {Number} newX The new x position.\n\t * @param {Number} newY The new y position.\n\t */\n\tmove(newX, newY)\n\t{\n\t\tthis.x = newX;\n\t\tthis.y = newY;\n\t\tthis.mergeWithIntersected();\n\n\t\tthis.dispatchEvent({type:EVENT_MOVED, item: this, position: new Vector2(this.x, this.y)});\n\t\t//      this.moved_callbacks.fire(this.x, this.y);\n\n\t\tthis.wallStarts.forEach((wall) => {\n\t\t\twall.fireMoved();\n\t\t});\n\n\t\tthis.wallEnds.forEach((wall) => {\n\t\t\twall.fireMoved();\n\t\t});\n\t}\n\n\t/**\n\t\t* When a corner is moved from its location it will impact the connected rooms ({@link Room}) shape, thus their areas. This will update the rooms\n\t\t* @example\n\t\t* let corner = new Corner(floorplan, 0, 0);\n\t\t* corner.move(10, 0);\n\t**/\n\tupdateAttachedRooms()\n\t{\n\t\tthis.attachedRooms.forEach((room)=>{\n\t\t\t\troom.updateArea();\n\t\t});\n\t}\n\n\t/** Gets the adjacent corners that are connected to this corner by walls ({@link Wall}).\n\t * @returns {Corner[]} Array of corners.\n\t */\n\tadjacentCorners()\n\t{\n\t\tvar retArray = [];\n\t\tvar i = 0;\n\t\tfor (i = 0; i < this.wallStarts.length; i++)\n\t\t{\n\t\t\tretArray.push(this.wallStarts[i].getEnd());\n\t\t}\n\t\tfor (i = 0; i < this.wallEnds.length; i++)\n\t\t{\n\t\t\tretArray.push(this.wallEnds[i].getStart());\n\t\t}\n\t\treturn retArray;\n\t}\n\n\t/** Checks if a wall is connected.\n\t * @param {Wall} wall A wall.\n\t * @returns {boolean} in case of connection.\n\t */\n\tisWallConnected(wall)\n\t{\n\t\tvar i =0;\n\t\tfor (i = 0; i < this.wallStarts.length; i++)\n\t\t{\n\t\t\tif (this.wallStarts[i] == wall)\n\t\t\t{\n\t\t\t\treturn true;\n\t\t\t}\n\t\t}\n\t\tfor (i = 0; i < this.wallEnds.length; i++)\n\t\t{\n\t\t\tif (this.wallEnds[i] == wall)\n\t\t\t{\n\t\t\t\treturn true;\n\t\t\t}\n\t\t}\n\t\treturn false;\n\t}\n\n\t/**\n\t\t* Returns the distance between this corner and a point in 2d space\n\t\t* @param {Vector2} point\n\t\t* @see https://threejs.org/docs/#api/en/math/Vector2\n\t\t* @return {Number} distance\n\t**/\n\tdistanceFrom(point)\n\t{\n\t\tvar distance = Utils.distance(point, new Vector2(this.x, this.y));\n\t\t//console.log('x,y ' + x + ',' + y + ' to ' + this.getX() + ',' + this.getY() + ' is ' + distance);\n\t\treturn distance;\n\t}\n\n\t/** Gets the distance from a wall.\n\t * @param {Wall} wall A wall.\n\t * @returns {Number} distance The distance.\n\t */\n\tdistanceFromWall(wall)\n\t{\n\t\treturn wall.distanceFrom(new Vector2(this.x, this.y));\n\t}\n\n\t/** Gets the distance from a corner.\n\t * @param {Corner} corner A corner.\n\t * @returns {Number} The distance.\n\t */\n\tdistanceFromCorner(corner)\n\t{\n\t\treturn this.distanceFrom(new Vector2(corner.x, corner.y));\n\t}\n\n\t/** Detaches a wall.\n\t * @param {Wall} wall A wall.\n\t */\n\tdetachWall(wall)\n\t{\n\t\tUtils.removeValue(this.wallStarts, wall);\n\t\tUtils.removeValue(this.wallEnds, wall);\n\n\t\tif (this.wallStarts.length == 0 && this.wallEnds.length == 0)\n\t\t{\n\t\t\tthis.remove();\n\t\t}\n\t}\n\n\t/** Attaches a start wall.\n\t * @param {Wall} wall A wall.\n\t */\n\tattachStart(wall)\n\t{\n\t\tthis.wallStarts.push(wall);\n\t}\n\n\t/** Attaches an end wall.\n\t * @param {Wall} wall A wall.\n\t */\n\tattachEnd(wall)\n\t{\n\t\tthis.wallEnds.push(wall);\n\t}\n\n\t/** Get wall to corner.\n\t * @param {Corner} corner A corner.\n\t * @return {Wall} The associated wall or null.\n\t */\n\twallTo(corner)\n\t{\n\t\tfor (var i = 0; i < this.wallStarts.length; i++)\n\t\t{\n\t\t\tif (this.wallStarts[i].getEnd() === corner)\n\t\t\t{\n\t\t\t\treturn this.wallStarts[i];\n\t\t\t}\n\t\t}\n\t\treturn null;\n\t}\n\n\t/** Get wall from corner.\n\t * @param {Corner}  corner A corner.\n\t * @return {Wall} The associated wall or null.\n\t */\n\twallFrom(corner)\n\t{\n\t\tfor (var i = 0; i < this.wallEnds.length; i++)\n\t\t{\n\t\t\tif (this.wallEnds[i].getStart() === corner)\n\t\t\t{\n\t\t\t\treturn this.wallEnds[i];\n\t\t\t}\n\t\t}\n\t\treturn null;\n\t}\n\n\t/** Get wall to or from corner.\n\t * @param {Corner} corner A corner.\n\t * @return {Wall} The associated wall or null.\n\t */\n\twallToOrFrom(corner)\n\t{\n\t\treturn this.wallTo(corner) || this.wallFrom(corner);\n\t}\n\n\t/** Get wall from corner.\n\t * @param {Corner}  corner A corner.\n\t */\n\tcombineWithCorner(corner)\n\t{\n\t\tvar i = 0;\n\t\t// update position to other corner's\n\t\tthis.x = corner.x;\n\t\tthis.y = corner.y;\n\t\t// absorb the other corner's wallStarts and wallEnds\n\t\tfor (i = corner.wallStarts.length - 1; i >= 0; i--)\n\t\t{\n\t\t\tcorner.wallStarts[i].setStart(this);\n\t\t}\n\t\tfor (i = corner.wallEnds.length - 1; i >= 0; i--)\n\t\t{\n\t\t\tcorner.wallEnds[i].setEnd(this);\n\t\t}\n\t\t// delete the other corner\n\t\tcorner.removeAll();\n\t\tthis.removeDuplicateWalls();\n\t\tthis.floorplan.update();\n\t}\n\n\tmergeWithIntersected()\n\t{\n\t\tvar i =0;\n\t\t//console.log('mergeWithIntersected for object: ' + this.type);\n\t\t// check corners\n\t\tfor (i = 0; i < this.floorplan.getCorners().length; i++)\n\t\t{\n\t\t\tvar corner = this.floorplan.getCorners()[i];\n\t\t\tif (this.distanceFromCorner(corner) < cornerTolerance && corner != this)\n\t\t\t{\n\t\t\t\tthis.combineWithCorner(corner);\n\t\t\t\treturn true;\n\t\t\t}\n\t\t}\n\t\t// check walls\n\t\tfor (i = 0; i < this.floorplan.getWalls().length; i++)\n\t\t{\n\t\t\tvar wall = this.floorplan.getWalls()[i];\n\t\t\tif (this.distanceFromWall(wall) < cornerTolerance && !this.isWallConnected(wall))\n\t\t\t{\n\t\t\t\t// update position to be on wall\n\t\t\t\tvar intersection = Utils.closestPointOnLine(new Vector2(this.x, this.y), wall.getStart(), wall.getEnd());\n\t\t\t\tthis.x = intersection.x;\n\t\t\t\tthis.y = intersection.y;\n\t\t\t\t// merge this corner into wall by breaking wall into two parts\n\t\t\t\tthis.floorplan.newWall(this, wall.getEnd());\n\t\t\t\twall.setEnd(this);\n\t\t\t\tthis.floorplan.update();\n\t\t\t\treturn true;\n\t\t\t}\n\t\t}\n\t\treturn false;\n\t}\n\n\t/** Ensure we do not have duplicate walls (i.e. same start and end points) */\n\tremoveDuplicateWalls()\n\t{\n\t\tvar i = 0;\n\t\t// delete the wall between these corners, if it exists\n\t\tvar wallEndpoints = {};\n\t\tvar wallStartpoints = {};\n\t\tfor (i = this.wallStarts.length - 1; i >= 0; i--)\n\t\t{\n\t\t\tif (this.wallStarts[i].getEnd() === this)\n\t\t\t{\n\t\t\t\t// remove zero length wall\n\t\t\t\tthis.wallStarts[i].remove();\n\t\t\t}\n\t\t\telse if (this.wallStarts[i].getEnd().id in wallEndpoints)\n\t\t\t{\n\t\t\t\t// remove duplicated wall\n\t\t\t\tthis.wallStarts[i].remove();\n\t\t\t}\n\t\t\telse\n\t\t\t{\n\t\t\t\twallEndpoints[this.wallStarts[i].getEnd().id] = true;\n\t\t\t}\n\t\t}\n\t\tfor (i = this.wallEnds.length - 1; i >= 0; i--)\n\t\t{\n\t\t\tif (this.wallEnds[i].getStart() === this)\n\t\t\t{\n\t\t\t\t// removed zero length wall\n\t\t\t\tthis.wallEnds[i].remove();\n\t\t\t}\n\t\t\telse if (this.wallEnds[i].getStart().id in wallStartpoints)\n\t\t\t{\n\t\t\t\t// removed duplicated wall\n\t\t\t\tthis.wallEnds[i].remove();\n\t\t\t}\n\t\t\telse\n\t\t\t{\n\t\t\t\twallStartpoints[this.wallEnds[i].getStart().id] = true;\n\t\t\t}\n\t\t}\n\t}\n}\n",
+    "content": "import {EVENT_ACTION, EVENT_DELETED, EVENT_MOVED} from '../core/events.js';\nimport {EventDispatcher, Vector2} from 'three';\nimport {Utils} from '../core/utils.js';\nimport {Dimensioning} from '../core/dimensioning.js';\nimport {Configuration, configWallHeight} from '../core/configuration.js';\n\n/** */\nexport const cornerTolerance = 20;\n\n/**\n * Corners are used to define Walls.\n */\nexport class Corner extends EventDispatcher\n{\n\n\t/** Constructs a corner.\n\t * @param {Floorplan} floorplan The associated model floorplan.\n\t * @param {Number} x X coordinate.\n\t * @param {Number} y Y coordinate.\n\t * @param {String} id An optional unique id. If not set, created internally.\n\t */\n\tconstructor(floorplan, x, y, id)\n\t{\n\t\tsuper();\n\t\t/** @property {Array} wallStarts Array of walls that are start walls\n\t\t\t* @type {Array}\n\t\t**/\n\t\tthis.wallStarts = [];\n\t\t/** @property {Array} wallEnds Array of walls that are end walls\n\t\t\t* @type {Array}\n\t\t**/\n\t\tthis.wallEnds = [];\n\t\t/**\n\t\t\t* @deprecated Not in use. The EventDispatcher from threejs is used for emit and listen events\n\t\t**/\n\t\tthis.moved_callbacks = null;\n\t\t/**\n\t\t\t* @deprecated Not in use. The EventDispatcher from threejs is used for emit and listen events\n\t\t**/\n\t\tthis.deleted_callbacks = null;\n\t\t/**\n\t\t\t* @deprecated Not in use. The EventDispatcher from threejs is used for emit and listen events\n\t\t**/\n\t\tthis.action_callbacks = null;\n\t\t/**\n\t\t\t* @property {Floorplan} floorplan Reference to the model floorplan\n\t\t\t* @type {Floorplan}\n\t\t**/\n\t\tthis.floorplan = floorplan;\n\t\t/**\n\t\t\t* @property {Number} x The position in x dimension\n\t\t\t* @type {Number}\n\t\t**/\n\t\tthis.x = x;\n\t\t/**\n\t\t\t* @property {Number} y The position in y dimension\n\t\t\t* @type {Number}\n\t\t**/\n\t\tthis.y = y;\n\t\t/**\n\t\t\t* @property {Number} _elevation The elevation at this corner\n\t\t\t* @type {Number}\n\t\t**/\n\t\tthis._elevation = Configuration.getNumericValue(configWallHeight);\n\t\t/**\n\t\t\t* @property {String} id The id of this corner. Autogenerated the first time\n\t\t\t* @type {String}\n\t\t**/\n\t\tthis.id = id || Utils.guide();\n\t\t/**\n\t\t\t* @property {Array} attachedRooms Array of rooms that have walls using this corner\n\t\t\t* @type {Array}\n\t\t**/\n\t\tthis.attachedRooms = [];\n\t}\n\n\t/** @type {Number} elevation The elevation value at this corner*/\n\tset elevation(value)\n\t{\n\t\tthis._elevation = Dimensioning.cmFromMeasureRaw(Number(value));\n\t}\n\n\t/** @type {Number} elevation The elevation value at this corner*/\n\tget elevation()\n\t{\n\t\treturn this._elevation;\n\t}\n\n\t/**\n   * @param {Room} room - The room that should be attached to this corner\n\t * @return {void}\n   */\n\tattachRoom(room)\n\t{\n\t\tif(room)\n\t\t{\n\t\t\tthis.attachedRooms.push(room);\n\t\t}\n\t}\n\n\t/**\n   * @return {Room[]} Array of rooms attached to this corner\n   */\n\tgetAttachedRooms()\n\t{\n\t\treturn this.attachedRooms;\n\t}\n\n\t/**\n   * @return {void} Clear all the rooms attached to this corner\n   */\n\tclearAttachedRooms()\n\t{\n\t\tthis.attachedRooms = [];\n\t}\n\n\t/** Add function to moved callbacks.\n\t * @param func The function to be added.\n\t */\n\tfireOnMove(func)\n\t{\n\t\tthis.moved_callbacks.add(func);\n\t}\n\n\t/** Add function to deleted callbacks.\n\t * @param func The function to be added.\n\t */\n\tfireOnDelete(func)\n\t{\n\t\tthis.deleted_callbacks.add(func);\n\t}\n\n\t/** Add function to action callbacks.\n\t * @param func The function to be added.\n\t */\n\tfireOnAction(func)\n\t{\n\t\tthis.action_callbacks.add(func);\n\t}\n\n\tfireAction(action)\n\t{\n\t\tthis.dispatchEvent({type:EVENT_ACTION, item: this, action:action});\n\t\t//      this.action_callbacks.fire(action)\n\t}\n\n\t/**\n\t * @returns\n\t * @deprecated\n\t */\n\tgetX()\n\t{\n\t\treturn this.x;\n\t}\n\n\t/**\n\t * @returns\n\t * @deprecated\n\t */\n\tgetY()\n\t{\n\t\treturn this.y;\n\t}\n\n\t/**\n\t *\t@param {Number} tolerance - The tolerance value within which it will snap to adjacent corners\n\t *  @return {Object} snapped Contains keys x and y with true/false values\n\t *  @description The object with x and y that are boolean values to indicate if the snap happens in x and y\n\t */\n\tsnapToAxis(tolerance)\n\t{\n\t\t// try to snap this corner to an axis\n\t\tvar snapped = {x: false,y: false};\n\t\tvar scope = this;\n\n\t\tthis.adjacentCorners().forEach((corner) => {\n\t\t\tif (Math.abs(corner.x - scope.x) < tolerance)\n\t\t\t{\n\t\t\t\tscope.x = corner.x;\n\t\t\t\tsnapped.x = true;\n\t\t\t}\n\t\t\tif (Math.abs(corner.y - scope.y) < tolerance)\n\t\t\t{\n\t\t\t\tscope.y = corner.y;\n\t\t\t\tsnapped.y = true;\n\t\t\t}\n\t\t});\n\t\treturn snapped;\n\t}\n\n\t/** Moves corner relatively to new position.\n\t * @param {Number} dx The delta x.\n\t * @param {Number} dy The delta y.\n\t */\n\trelativeMove(dx, dy)\n\t{\n\t\tthis.move(this.x + dx, this.y + dy);\n\t}\n\n\t/**\n\t\t* Dispatches an event when removed from the floorplan({@link Floorplan}) instance. The event object contains reference to this {@link Corner} instance as item.\n\t\t* @example\n\t\t* let corner = new Corner(floorplan, 0, 0);\n\t\t* function cornerRemoved(e) { console.log('I WAS REMOVED FROM LOCATION ', e.item.x, e.item.y) };\n\t\t* corner.remove();\n\t\t* @emits {EVENT_DELETED}\n\t**/\n\tremove()\n\t{\n\t\tthis.dispatchEvent({type:EVENT_DELETED, item:this});\n\t\t//      this.deleted_callbacks.fire(this);\n\t}\n\n\t/**\n\t\t* Removes all the connected corners and itself. This in essence removes all the walls({@link Wall}) this corner is connected to.\n\t\t* @example\n\t\t* let corner1 = new Corner(floorplan, 0, 0);\n\t\t* let corner2 = new Corner(floorplan, 10, 0);\n\t\t* function cornerRemoved(e) { console.log('I WAS REMOVED FROM LOCATION ', e.item.x, e.item.y) } //Will log twice for two corners;\n\t\t* corner.removeAll();\n\t**/\n\tremoveAll()\n\t{\n\t\tvar i = 0;\n\t\tfor (i = 0; i < this.wallStarts.length; i++)\n\t\t{\n\t\t\tthis.wallStarts[i].remove();\n\t\t}\n\t\tfor (i = 0; i < this.wallEnds.length; i++)\n\t\t{\n\t\t\tthis.wallEnds[i].remove();\n\t\t}\n\t\tthis.remove();\n\t}\n\n\t/** Moves corner to new position.\n\t * @param {Number} newX The new x position.\n\t * @param {Number} newY The new y position.\n\t */\n\tmove(newX, newY)\n\t{\n\t\tthis.x = newX;\n\t\tthis.y = newY;\n\t\tthis.mergeWithIntersected();\n\n\t\tthis.dispatchEvent({type:EVENT_MOVED, item: this, position: new Vector2(this.x, this.y)});\n\t\t//      this.moved_callbacks.fire(this.x, this.y);\n\n\t\tthis.wallStarts.forEach((wall) => {\n\t\t\twall.fireMoved();\n\t\t});\n\n\t\tthis.wallEnds.forEach((wall) => {\n\t\t\twall.fireMoved();\n\t\t});\n\t}\n\n\t/**\n\t\t* When a corner is moved from its location it will impact the connected rooms ({@link Room}) shape, thus their areas. This will update the rooms\n\t\t* @example\n\t\t* let corner = new Corner(floorplan, 0, 0);\n\t\t* corner.move(10, 0);\n\t**/\n\tupdateAttachedRooms()\n\t{\n\t\tthis.attachedRooms.forEach((room)=>{\n\t\t\t\troom.updateArea();\n\t\t});\n\t}\n\n\t/** Gets the adjacent corners that are connected to this corner by walls ({@link Wall}).\n\t * @returns {Corner[]} Array of corners.\n\t */\n\tadjacentCorners()\n\t{\n\t\tvar retArray = [];\n\t\tvar i = 0;\n\t\tfor (i = 0; i < this.wallStarts.length; i++)\n\t\t{\n\t\t\tretArray.push(this.wallStarts[i].getEnd());\n\t\t}\n\t\tfor (i = 0; i < this.wallEnds.length; i++)\n\t\t{\n\t\t\tretArray.push(this.wallEnds[i].getStart());\n\t\t}\n\t\treturn retArray;\n\t}\n\n\t/** Checks if a wall is connected.\n\t * @param {Wall} wall A wall.\n\t * @returns {boolean} in case of connection.\n\t */\n\tisWallConnected(wall)\n\t{\n\t\tvar i =0;\n\t\tfor (i = 0; i < this.wallStarts.length; i++)\n\t\t{\n\t\t\tif (this.wallStarts[i] == wall)\n\t\t\t{\n\t\t\t\treturn true;\n\t\t\t}\n\t\t}\n\t\tfor (i = 0; i < this.wallEnds.length; i++)\n\t\t{\n\t\t\tif (this.wallEnds[i] == wall)\n\t\t\t{\n\t\t\t\treturn true;\n\t\t\t}\n\t\t}\n\t\treturn false;\n\t}\n\n\t/**\n\t\t* Returns the distance between this corner and a point in 2d space\n\t\t* @param {Vector2} point\n\t\t* @see https://threejs.org/docs/#api/en/math/Vector2\n\t\t* @return {Number} distance The distance\n\t**/\n\tdistanceFrom(point)\n\t{\n\t\tvar distance = Utils.distance(point, new Vector2(this.x, this.y));\n\t\t//console.log('x,y ' + x + ',' + y + ' to ' + this.getX() + ',' + this.getY() + ' is ' + distance);\n\t\treturn distance;\n\t}\n\n\t/** Gets the distance from a wall.\n\t * @param {Wall} wall A wall.\n\t * @returns {Number} distance The distance.\n\t */\n\tdistanceFromWall(wall)\n\t{\n\t\treturn wall.distanceFrom(new Vector2(this.x, this.y));\n\t}\n\n\t/** Gets the distance from a corner.\n\t * @param {Corner} corner A corner.\n\t * @returns {Number} The distance.\n\t */\n\tdistanceFromCorner(corner)\n\t{\n\t\treturn this.distanceFrom(new Vector2(corner.x, corner.y));\n\t}\n\n\t/** Detaches a wall.\n\t * @param {Wall} wall A wall.\n\t */\n\tdetachWall(wall)\n\t{\n\t\tUtils.removeValue(this.wallStarts, wall);\n\t\tUtils.removeValue(this.wallEnds, wall);\n\n\t\tif (this.wallStarts.length == 0 && this.wallEnds.length == 0)\n\t\t{\n\t\t\tthis.remove();\n\t\t}\n\t}\n\n\t/** Attaches a start wall.\n\t * @param {Wall} wall A wall.\n\t */\n\tattachStart(wall)\n\t{\n\t\tthis.wallStarts.push(wall);\n\t}\n\n\t/** Attaches an end wall.\n\t * @param {Wall} wall A wall.\n\t */\n\tattachEnd(wall)\n\t{\n\t\tthis.wallEnds.push(wall);\n\t}\n\n\t/** Get wall to corner.\n\t * @param {Corner} corner A corner.\n\t * @return {Wall} The associated wall or null.\n\t */\n\twallTo(corner)\n\t{\n\t\tfor (var i = 0; i < this.wallStarts.length; i++)\n\t\t{\n\t\t\tif (this.wallStarts[i].getEnd() === corner)\n\t\t\t{\n\t\t\t\treturn this.wallStarts[i];\n\t\t\t}\n\t\t}\n\t\treturn null;\n\t}\n\n\t/** Get wall from corner.\n\t * @param {Corner}  corner A corner.\n\t * @return {Wall} The associated wall or null.\n\t */\n\twallFrom(corner)\n\t{\n\t\tfor (var i = 0; i < this.wallEnds.length; i++)\n\t\t{\n\t\t\tif (this.wallEnds[i].getStart() === corner)\n\t\t\t{\n\t\t\t\treturn this.wallEnds[i];\n\t\t\t}\n\t\t}\n\t\treturn null;\n\t}\n\n\t/** Get wall to or from corner.\n\t * @param {Corner} corner A corner.\n\t * @return {Wall} The associated wall or null.\n\t */\n\twallToOrFrom(corner)\n\t{\n\t\treturn this.wallTo(corner) || this.wallFrom(corner);\n\t}\n\n\t/** Get wall from corner.\n\t * @param {Corner}  corner A corner.\n\t */\n\tcombineWithCorner(corner)\n\t{\n\t\tvar i = 0;\n\t\t// update position to other corner's\n\t\tthis.x = corner.x;\n\t\tthis.y = corner.y;\n\t\t// absorb the other corner's wallStarts and wallEnds\n\t\tfor (i = corner.wallStarts.length - 1; i >= 0; i--)\n\t\t{\n\t\t\tcorner.wallStarts[i].setStart(this);\n\t\t}\n\t\tfor (i = corner.wallEnds.length - 1; i >= 0; i--)\n\t\t{\n\t\t\tcorner.wallEnds[i].setEnd(this);\n\t\t}\n\t\t// delete the other corner\n\t\tcorner.removeAll();\n\t\tthis.removeDuplicateWalls();\n\t\tthis.floorplan.update();\n\t}\n\n\tmergeWithIntersected()\n\t{\n\t\tvar i =0;\n\t\t//console.log('mergeWithIntersected for object: ' + this.type);\n\t\t// check corners\n\t\tfor (i = 0; i < this.floorplan.getCorners().length; i++)\n\t\t{\n\t\t\tvar corner = this.floorplan.getCorners()[i];\n\t\t\tif (this.distanceFromCorner(corner) < cornerTolerance && corner != this)\n\t\t\t{\n\t\t\t\tthis.combineWithCorner(corner);\n\t\t\t\treturn true;\n\t\t\t}\n\t\t}\n\t\t// check walls\n\t\tfor (i = 0; i < this.floorplan.getWalls().length; i++)\n\t\t{\n\t\t\tvar wall = this.floorplan.getWalls()[i];\n\t\t\tif (this.distanceFromWall(wall) < cornerTolerance && !this.isWallConnected(wall))\n\t\t\t{\n\t\t\t\t// update position to be on wall\n\t\t\t\tvar intersection = Utils.closestPointOnLine(new Vector2(this.x, this.y), wall.getStart(), wall.getEnd());\n\t\t\t\tthis.x = intersection.x;\n\t\t\t\tthis.y = intersection.y;\n\t\t\t\t// merge this corner into wall by breaking wall into two parts\n\t\t\t\tthis.floorplan.newWall(this, wall.getEnd());\n\t\t\t\twall.setEnd(this);\n\t\t\t\tthis.floorplan.update();\n\t\t\t\treturn true;\n\t\t\t}\n\t\t}\n\t\treturn false;\n\t}\n\n\t/** Ensure we do not have duplicate walls (i.e. same start and end points) */\n\tremoveDuplicateWalls()\n\t{\n\t\tvar i = 0;\n\t\t// delete the wall between these corners, if it exists\n\t\tvar wallEndpoints = {};\n\t\tvar wallStartpoints = {};\n\t\tfor (i = this.wallStarts.length - 1; i >= 0; i--)\n\t\t{\n\t\t\tif (this.wallStarts[i].getEnd() === this)\n\t\t\t{\n\t\t\t\t// remove zero length wall\n\t\t\t\tthis.wallStarts[i].remove();\n\t\t\t}\n\t\t\telse if (this.wallStarts[i].getEnd().id in wallEndpoints)\n\t\t\t{\n\t\t\t\t// remove duplicated wall\n\t\t\t\tthis.wallStarts[i].remove();\n\t\t\t}\n\t\t\telse\n\t\t\t{\n\t\t\t\twallEndpoints[this.wallStarts[i].getEnd().id] = true;\n\t\t\t}\n\t\t}\n\t\tfor (i = this.wallEnds.length - 1; i >= 0; i--)\n\t\t{\n\t\t\tif (this.wallEnds[i].getStart() === this)\n\t\t\t{\n\t\t\t\t// removed zero length wall\n\t\t\t\tthis.wallEnds[i].remove();\n\t\t\t}\n\t\t\telse if (this.wallEnds[i].getStart().id in wallStartpoints)\n\t\t\t{\n\t\t\t\t// removed duplicated wall\n\t\t\t\tthis.wallEnds[i].remove();\n\t\t\t}\n\t\t\telse\n\t\t\t{\n\t\t\t\twallStartpoints[this.wallEnds[i].getStart().id] = true;\n\t\t\t}\n\t\t}\n\t}\n}\n",
     "static": true,
     "longname": "/home/ashok/eclipse-workspace/blueprint-js/src/scripts/model/corner.js",
     "access": "public",
@@ -10439,7 +10439,7 @@
         "Object"
       ],
       "spread": false,
-      "description": "snapped"
+      "description": "snapped Contains keys x and y with true/false values"
     }
   },
   {
@@ -10676,7 +10676,7 @@
         "Number"
       ],
       "spread": false,
-      "description": "distance"
+      "description": "distance The distance"
     }
   },
   {
@@ -10999,7 +10999,7 @@
     "__docId__": 643,
     "kind": "file",
     "name": "scripts/model/floorplan.js",
-    "content": "import {EVENT_UPDATED, EVENT_LOADED, EVENT_NEW, EVENT_DELETED, EVENT_ROOM_NAME_CHANGED} from '../core/events.js';\nimport {EventDispatcher, Vector2, Vector3} from 'three';\nimport {Utils} from '../core/utils.js';\nimport {Dimensioning} from '../core/dimensioning.js';\n\nimport {HalfEdge} from './half_edge.js';\nimport {Corner} from './corner.js';\nimport {Wall} from './wall.js';\nimport {Room} from './room.js';\n\n/** */\nexport const defaultFloorPlanTolerance = 10.0;\n\n/**\n * A Floorplan represents a number of Walls, Corners and Rooms. This is an\n * abstract that keeps the 2d and 3d in sync\n */\nexport class Floorplan extends EventDispatcher\n{\n\t/** Constructs a floorplan. */\n\tconstructor()\n\t{\n\t\tsuper();\n\t\t/**\n\t\t\t* List of elements of Wall instance\n\t\t\t* @property {Wall[]} walls Array of walls\n\t\t\t* @type {Wall[]}\n\t\t**/\n\t\tthis.walls = [];\n\t\t/**\n\t\t\t* List of elements of Corner instance\n\t\t\t* @property {Corner[]} corners array of corners\n\t\t\t* @type {Corner[]}\n\t\t**/\n\t\tthis.corners = [];\n\n\t\t/**\n\t\t* List of elements of Room instance\n\t\t* @property {Room[]} walls Array of walls\n\t\t* @type {Room[]}\n\t\t**/\n\t\tthis.rooms = [];\n\n\t\t/**\n\t\t\t* An {@link Object} that stores the metadata of rooms like name\n\t\t\t* @property {Object} metaroomsdata  stores the metadata of rooms like name\n\t\t\t* @type {Object}\n\t\t**/\n\t\tthis.metaroomsdata = {};\n\t\t// List with reference to callback on a new wall insert event\n\t\t/**\n\t\t\t@deprecated\n\t\t**/\n\t\tthis.new_wall_callbacks = [];\n\t\t// List with reference to callbacks on a new corner insert event\n\t\t/**\n\t\t\t@deprecated\n\t\t**/\n\t\tthis.new_corner_callbacks = [];\n\t\t// List with reference to callbacks on redraw event\n\t\t/**\n\t\t\t@deprecated\n\t\t**/\n\t\tthis.redraw_callbacks = [];\n\t\t// List with reference to callbacks for updated_rooms event\n\t\t/**\n\t\t\t@deprecated\n\t\t**/\n\t\tthis.updated_rooms = [];\n\t\t// List with reference to callbacks for roomLoaded event\n\t\t/**\n\t\t\t@deprecated\n\t\t**/\n\t\tthis.roomLoadedCallbacks = [];\n\n\t\tthis.floorTextures = {};\n\t\t/**\n\t\t\t* The {@link CarbonSheet} that handles the background image to show in the 2D view\n\t\t\t* @property {CarbonSheet} _carbonSheet  The carbonsheet instance\n\t\t\t* @type {Object}\n\t\t**/\n\t\tthis._carbonSheet = null;\n\t}\n\n\t/**\n\t\t*\t@param {CarbonSheet} val\n\t**/\n\tset carbonSheet(val)\n\t{\n\t\tthis._carbonSheet = val;\n\t}\n\n\t/**\n\t\t*\t@return {CarbonSheet} _carbonSheet\n\t**/\n\tget carbonSheet()\n\t{\n\t\treturn this._carbonSheet;\n\t}\n\n\t/**\n\t\t*\t@return {HalfEdge[]} edges\n\t**/\n\twallEdges()\n\t{\n\t\tvar edges = [];\n\t\tthis.walls.forEach((wall) => {\n\t\t\tif (wall.frontEdge)\n\t\t\t{\n\t\t\t\tedges.push(wall.frontEdge);\n\t\t\t}\n\t\t\tif (wall.backEdge)\n\t\t\t{\n\t\t\t\tedges.push(wall.backEdge);\n\t\t\t}\n\t\t});\n\t\treturn edges;\n\t}\n\n\t/**\n\t\t* Returns the roof planes in the floorplan for intersection testing\n\t\t*\t@return {Mesh[]} planes @see <https://threejs.org/docs/#api/en/objects/Mesh>\n\t**/\n\troofPlanes()\n\t{\n\t\tvar planes = [];\n\t\tthis.rooms.forEach((room) => {\n\t\t\tplanes.push(room.roofPlane);\n\t\t});\n\t\treturn planes;\n\t}\n\n\t/**\n\t\t*\tReturns all the planes for intersection for the walls\n\t\t* @return {Mesh[]} planes @see <https://threejs.org/docs/#api/en/objects/Mesh>\n\t**/\n\twallEdgePlanes()\n\t{\n\t\tvar planes = [];\n\t\tthis.walls.forEach((wall) => {\n\t\t\tif (wall.frontEdge)\n\t\t\t{\n\t\t\t\tplanes.push(wall.frontEdge.plane);\n\t\t\t}\n\t\t\tif (wall.backEdge)\n\t\t\t{\n\t\t\t\tplanes.push(wall.backEdge.plane);\n\t\t\t}\n\t\t});\n\t\treturn planes;\n\t}\n\n\t/**\n\t\t*\tReturns all the planes for intersection of the floors in all room\n\t\t* @return {Mesh[]} planes @see <https://threejs.org/docs/#api/en/objects/Mesh>\n\t**/\n\tfloorPlanes()\n\t{\n\t\treturn Utils.map(this.rooms, (room) => {\n\t\t\treturn room.floorPlane;\n\t\t});\n\t}\n\n\tfireOnNewWall(callback)\n\t{\n\t\tthis.new_wall_callbacks.add(callback);\n\t}\n\n\tfireOnNewCorner(callback)\n\t{\n\t\tthis.new_corner_callbacks.add(callback);\n\t}\n\n\tfireOnRedraw(callback)\n\t{\n\t\tthis.redraw_callbacks.add(callback);\n\t}\n\n\tfireOnUpdatedRooms(callback)\n\t{\n\t\tthis.updated_rooms.add(callback);\n\t}\n\n\t// This method needs to be called from the 2d floorplan whenever\n\t// the other method newWall is called.\n\t// This is to ensure that there are no floating walls going across\n\t// other walls. If two walls are intersecting then the intersection point\n\t// has to create a new wall.\n\t/**\n\t\t* @param {Corner} start\n\t\t* @param {Corner} end\n\t\t* @return {boolean} intersects\n\t**/\n\n\tnewWallsForIntersections(start, end)\n\t{\n\t\tvar intersections = false;\n\t\t// This is a bug in the logic\n\t\t// When creating a new wall with a start and end\n\t\t// it needs to be checked if it is cutting other walls\n\t\t// If it cuts then all those walls have to removed and introduced as\n\t\t// new walls along with this new wall\n\t\tvar cStart = new Vector2(start.getX(), start.getY());\n\t\tvar cEnd = new Vector2(end.getX(), end.getY());\n\t\tvar newCorners = [];\n\n\t\tfor (var i=0;i<this.walls.length;i++)\n\t\t{\n\t\t\tvar twall = this.walls[i];\n\t\t\tvar bstart = {x:twall.getStartX(), y:twall.getStartY()};\n\t\t\tvar bend = {x:twall.getEndX(), y:twall.getEndY()};\n\t\t\tvar iPoint = Utils.lineLineIntersectPoint(cStart, cEnd, bstart, bend);\n\t\t\tif(iPoint)\n\t\t\t{\n\t\t\t\tvar nCorner = this.newCorner(iPoint.x, iPoint.y);\n\t\t\t\tnewCorners.push(nCorner);\n\t\t\t\tintersections = true;\n\t\t\t}\n\t\t}\n\t\tfor( i=0;i<this.corners.length;i++)\n\t\t{\n\t\t\tvar aCorner = this.corners[i];\n\t\t\tif(aCorner)\n\t\t\t{\n\t\t\t\taCorner.relativeMove(0, 0);\n\t\t\t\taCorner.snapToAxis(25);\n\t\t\t}\n\t\t}\n\t\tthis.update();\n\t\tfor( i=0;i<this.corners.length;i++)\n\t\t{\n\t\t\taCorner = this.corners[i];\n\t\t\tif(aCorner)\n\t\t\t{\n\t\t\t\taCorner.relativeMove(0, 0);\n\t\t\t\taCorner.snapToAxis(25);\n\t\t\t}\n\t\t}\n\n\t\tthis.update();\n\t\treturn intersections;\n\t}\n\n\t/**\n\t * Creates a new wall.\n\t *\n\t * @param {Corner} start The start corner.\n\t * @param {Corner} end The end corner.\n\t * @returns {Wall} The new wall.\n\t */\n\tnewWall(start, end)\n\t{\n\t\tvar wall = new Wall(start, end);\n    this.walls.push(wall);\n\t\tvar scope = this;\n\t\twall.addEventListener(EVENT_DELETED, function(o){scope.removeWall(o.item);});\n\t\tthis.dispatchEvent({type: EVENT_NEW, item: this, newItem: wall});\n\t\tthis.update();\n\t\treturn wall;\n\t}\n\n\n\n\t/**\n\t * Creates a new corner.\n\t *\n\t * @param {Number} x The x coordinate.\n\t * @param {Number} y The y coordinate.\n\t * @param {String} id An optional id. If unspecified, the id will be created internally.\n\t * @returns {Corner} The new corner.\n\t */\n\tnewCorner(x, y, id)\n\t{\n\t\tvar corner = new Corner(this, x, y, id);\n\t\tfor (var i=0;i<this.corners.length;i++)\n\t\t{\n\t\t\t\tvar existingCorner = this.corners[i];\n\t\t\t\tif(existingCorner.distanceFromCorner(corner) < 50)\n\t\t\t\t{\n          return existingCorner;\n\t\t\t\t}\n\t\t}\n\n\t\tvar scope = this;\n\t\tthis.corners.push(corner);\n\t\tcorner.addEventListener(EVENT_DELETED, function(o){scope.removeCorner(o.item);});\n\t\tthis.dispatchEvent({type: EVENT_NEW, item: this, newItem: corner});\n\n\t\t// This code has been added by #0K. There should be an update whenever a\n\t\t// new corner is inserted\n\t\tthis.update();\n\n\t\treturn corner;\n\t}\n\n\t/**\n\t * Removes a wall.\n\t *\n\t * @param {Wall} wall The wall to be removed.\n\t */\n\tremoveWall(wall)\n\t{\n\t\tUtils.removeValue(this.walls, wall);\n\t\tthis.update();\n\t}\n\n\t/**\n\t * Removes a corner.\n\t *\n\t * @param {Corner} corner The corner to be removed.\n\t */\n\tremoveCorner(corner)\n\t{\n\t\tUtils.removeValue(this.corners, corner);\n\t}\n\n\t/** Gets the walls.\n\t\t* @return {Wall[]}\n\t **/\n\tgetWalls()\n\t{\n\t\treturn this.walls;\n\t}\n\n\t/** Gets the corners.\n\t\t* @return {Corner[]}\n\t**/\n\tgetCorners()\n\t{\n\t\treturn this.corners;\n\t}\n\n\t/** Gets the rooms.\n\t\t* @return {Room[]}\n\t**/\n\tgetRooms()\n\t{\n\t\treturn this.rooms;\n\t}\n\n\t/** Gets the room overlapping the location x, y.\n\t\t* @param {Number} mx\n\t\t* @param {Number} my\n\t\t* @return {Room}\n\t**/\n\toverlappedRoom(mx, my)\n\t{\n\t\t\tfor (var i=0;i<this.rooms.length;i++)\n\t\t\t{\n\t\t\t\t\tvar room = this.rooms[i];\n\t\t\t\t\tvar flag = room.pointInRoom(new Vector2(mx, my));\n\t\t\t\t\tif(flag)\n\t\t\t\t\t{\n\t\t\t\t\t\treturn room;\n\t\t\t\t\t}\n\t\t\t}\n\n\t\t\treturn null;\n\t}\n\n\t/** Gets the Corner overlapping the location x, y at a tolerance.\n\t\t* @param {Number} x\n\t\t* @param {Number} y\n\t\t* @param {Number} tolerance\n\t\t* @return {Corner}\n\t**/\n\toverlappedCorner(x, y, tolerance)\n\t{\n\t\ttolerance = tolerance || defaultFloorPlanTolerance;\n\t\tfor (var i = 0; i < this.corners.length; i++)\n\t\t{\n\t\t\tif (this.corners[i].distanceFrom(new Vector2(x, y)) < tolerance)\n\t\t\t{\n\t\t\t\treturn this.corners[i];\n\t\t\t}\n\t\t}\n\t\treturn null;\n\t}\n\n\t/** Gets the Wall overlapping the location x, y at a tolerance.\n\t\t* @param {Number} x\n\t\t* @param {Number} y\n\t\t* @param {Number} tolerance\n\t\t* @return {Wall}\n\t**/\n\toverlappedWall(x, y, tolerance)\n\t{\n\t\ttolerance = tolerance || defaultFloorPlanTolerance;\n\t\tfor (var i = 0; i < this.walls.length; i++)\n\t\t{\n\t\t\tif (this.walls[i].distanceFrom(new Vector2(x, y)) < tolerance)\n\t\t\t{\n\t\t\t\treturn this.walls[i];\n\t\t\t}\n\t\t}\n\t\treturn null;\n\t}\n\n\t/** The metadata object with information about the rooms.\n\t\t* @return {Object} metaroomdata an object with room corner ids as key and names as values\n\t**/\n\tgetMetaRoomData()\n\t{\n\t\t  var metaRoomData = {};\n\t\t\tthis.rooms.forEach((room)=>{\n\t\t\t\tvar metaroom = {};\n\t\t\t\t// var cornerids = [];\n\t\t\t\t// room.corners.forEach((corner)=>{\n\t\t\t\t// \t\tcornerids.push(corner.id);\n\t\t\t\t// });\n\t\t\t\t// var ids = cornerids.join(',');\n\t\t\t\tvar ids = room.roomByCornersId;\n\t\t\t\tmetaroom['name'] = room.name;\n\t\t\t\tmetaRoomData[ids] = metaroom;\n\t\t\t});\n\t\t\treturn metaRoomData;\n\t}\n\n\t// Save the floorplan as a json object file\n\t/**\n\t\t*\t@return {void}\n\t**/\n\tsaveFloorplan()\n\t{\n\t\tvar floorplans = {corners: {}, walls: [], rooms: {}, wallTextures: [], floorTextures: {}, newFloorTextures: {}, carbonSheet:{}};\n\t\tvar cornerIds = [];\n// writing all the corners based on the corners array\n// is having a bug. This is because some walls have corners\n// that aren't part of the corners array anymore. This is a quick fix\n// by adding the corners to the json file based on the corners in the walls\n// this.corners.forEach((corner) => {\n// floorplans.corners[corner.id] = {'x': corner.x,'y': corner.y};\n// });\n\n\t\tthis.walls.forEach((wall) => {\n\t\t\tif(wall.getStart() && wall.getEnd())\n\t\t\t{\n\t\t\t\tfloorplans.walls.push({\n\t\t\t\t\t'corner1': wall.getStart().id,\n\t\t\t\t\t'corner2': wall.getEnd().id,\n\t\t\t\t\t'frontTexture': wall.frontTexture,\n\t\t\t\t\t'backTexture': wall.backTexture\n\t\t\t\t});\n\t\t\t\tcornerIds.push(wall.getStart());\n\t\t\t\tcornerIds.push(wall.getEnd());\n\t\t\t}\n\t\t});\n\n\t\tcornerIds.forEach((corner)=>{\n\t\t\tfloorplans.corners[corner.id] = {'x': corner.x,'y': corner.y, 'elevation': Dimensioning.cmToMeasureRaw(corner.elevation)};\n\t\t});\n\n\t\tthis.rooms.forEach((room)=>{\n\t\t\tvar metaroom = {};\n\t\t\tvar cornerids = [];\n\t\t\troom.corners.forEach((corner)=>{\n\t\t\t\t\tcornerids.push(corner.id);\n\t\t\t});\n\t\t\tvar ids = cornerids.join(',');\n\t\t\tmetaroom['name'] = room.name;\n\t\t\tfloorplans.rooms[ids] = metaroom;\n\t\t});\n\t\t// floorplans.rooms = this.getMetaRoomData();\n\n\t\tif(this.carbonSheet)\n\t\t{\n\t\t\tfloorplans.carbonSheet['url'] = this.carbonSheet.url;\n\t\t\tfloorplans.carbonSheet['transparency'] = this.carbonSheet.transparency;\n\t\t\tfloorplans.carbonSheet['x'] = this.carbonSheet.x;\n\t\t\tfloorplans.carbonSheet['y'] = this.carbonSheet.y;\n\t\t\tfloorplans.carbonSheet['anchorX'] = this.carbonSheet.anchorX;\n\t\t\tfloorplans.carbonSheet['anchorY'] = this.carbonSheet.anchorY;\n\t\t\tfloorplans.carbonSheet['width'] = this.carbonSheet.width;\n\t\t\tfloorplans.carbonSheet['height'] = this.carbonSheet.height;\n\t\t}\n\n\t\tfloorplans.newFloorTextures = this.floorTextures;\n\t\treturn floorplans;\n\t}\n\n\t//Load the floorplan from a previously saved json object file\n\t/**\n\t\t*\t@param {JSON} floorplan\n\t\t*\t@return {void}\n\t\t*\t@emits {EVENT_LOADED}\n\t**/\n\tloadFloorplan(floorplan)\n\t{\n\t\tthis.reset();\n\n\t\tvar corners = {};\n\t\tif (floorplan == null || !('corners' in floorplan) || !('walls' in floorplan))\n\t\t{\n\t\t\treturn;\n\t\t}\n\t\tfor (var id in floorplan.corners)\n\t\t{\n\t\t\tvar corner = floorplan.corners[id];\n\t\t\tcorners[id] = this.newCorner(corner.x, corner.y, id);\n\t\t\tif(corner.elevation)\n\t\t\t{\n\t\t\t\t\tcorners[id].elevation = corner.elevation;\n\t\t\t}\n\t\t}\n\t\tvar scope = this;\n\t\tfloorplan.walls.forEach((wall) => {\n\t\t\tvar newWall = scope.newWall(corners[wall.corner1], corners[wall.corner2]);\n\t\t\tif (wall.frontTexture)\n\t\t\t{\n\t\t\t\tnewWall.frontTexture = wall.frontTexture;\n\t\t\t}\n\t\t\tif (wall.backTexture)\n\t\t\t{\n\t\t\t\tnewWall.backTexture = wall.backTexture;\n\t\t\t}\n\t\t});\n\n\t\tif ('newFloorTextures' in floorplan)\n\t\t{\n\t\t\tthis.floorTextures = floorplan.newFloorTextures;\n\t\t}\n\t\tthis.metaroomsdata = floorplan.rooms;\n\n\t\tthis.update();\n\n\t\tif('carbonSheet' in floorplan)\n\t\t{\n\t\t\tthis.carbonSheet.clear();\n\t\t\tthis.carbonSheet.maintainProportion = false;\n\t\t\tthis.carbonSheet.x = floorplan.carbonSheet['x'];\n\t\t\tthis.carbonSheet.y = floorplan.carbonSheet['y'];\n\t\t\tthis.carbonSheet.transparency = floorplan.carbonSheet['transparency'];\n\t\t\tthis.carbonSheet.anchorX = floorplan.carbonSheet['anchorX'];\n\t\t\tthis.carbonSheet.anchorY = floorplan.carbonSheet['anchorY'];\n\t\t\tthis.carbonSheet.width = floorplan.carbonSheet['width'];\n\t\t\tthis.carbonSheet.height = floorplan.carbonSheet['height'];\n\t\t\tthis.carbonSheet.url = floorplan.carbonSheet['url'];\n\t\t\tthis.carbonSheet.maintainProportion = true;\n\t\t}\n\t\tthis.dispatchEvent({type: EVENT_LOADED, item: this});\n// this.roomLoadedCallbacks.fire();\n\t}\n\n\t/**\n\t\t* @deprecated\n\t**/\n\tgetFloorTexture(uuid)\n\t{\n\t\tif (uuid in this.floorTextures)\n\t\t{\n\t\t\treturn this.floorTextures[uuid];\n\t\t}\n\t\treturn null;\n\t}\n\n\t/**\n\t\t* @deprecated\n\t**/\n\tsetFloorTexture(uuid, url, scale)\n\t{\n\t\tthis.floorTextures[uuid] = {url: url,scale: scale};\n\t}\n\n\t/** clear out obsolete floor textures */\n\t/**\n\t\t* @deprecated\n\t**/\n\tupdateFloorTextures()\n\t{\n\t\tvar uuids = Utils.map(this.rooms, function (room){return room.getUuid();});\n\t\tfor (var uuid in this.floorTextures)\n\t\t{\n\t\t\tif (!Utils.hasValue(uuids, uuid))\n\t\t\t{\n\t\t\t\tdelete this.floorTextures[uuid];\n\t\t\t}\n\t\t}\n\t}\n\n\t/**\n\t\t* Resets the floorplan data to empty\n\t\t* @return {void}\n\t**/\n\treset()\n\t{\n\t\tvar tmpCorners = this.corners.slice(0);\n\t\tvar tmpWalls = this.walls.slice(0);\n\t\ttmpCorners.forEach((corner) => {\n\t\t\tcorner.remove();\n\t\t});\n\t\ttmpWalls.forEach((wall) => {\n\t\t\twall.remove();\n\t\t});\n\t\tthis.corners = [];\n\t\tthis.walls = [];\n\t}\n\n\t/**\n\t\t* @param {Object} event\n\t\t* @listens {EVENT_ROOM_NAME_CHANGED} When a room name is changed and updates to metaroomdata\n\t**/\n\troomNameChanged(e)\n\t{\n\t\t\tif(this.metaroomsdata)\n\t\t\t{\n\t\t\t\t\tthis.metaroomsdata[e.item.roomByCornersId] = e.newname;\n\t\t\t}\n\t}\n\n\t/**\n\t *\tUpdate the floorplan with new rooms, remove old rooms etc.\n\t */\n\tupdate()\n\t{\n\t\tvar scope = this;\n\t\tthis.walls.forEach((wall) => {\n\t\t\twall.resetFrontBack();\n\t\t});\n\n\t\t// this.rooms.forEach((room)=>{room.removeEventListener(EVENT_ROOM_NAME_CHANGED, scope.roomNameChanged)});\n\n\t\tvar roomCorners = this.findRooms(this.corners);\n\t\tthis.rooms = [];\n\n\n\t\tthis.corners.forEach((corner)=>{\n\t\t\tcorner.clearAttachedRooms();\n\t\t});\n\n\t\troomCorners.forEach((corners) =>\n\t\t{\n\t\t\tvar room = new Room(scope, corners);\n\t\t\troom.updateArea();\n\t\t\tscope.rooms.push(room);\n\t\t\troom.addEventListener(EVENT_ROOM_NAME_CHANGED, (e)=>{scope.roomNameChanged(e);});\n\t\t\tif(scope.metaroomsdata)\n\t\t\t{\n\t\t\t\t// var allids = Object.keys(scope.metaroomsdata);\n\t\t\t\tif(scope.metaroomsdata[room.roomByCornersId])\n\t\t\t\t{\n\t\t\t\t\troom.name = scope.metaroomsdata[room.roomByCornersId];\n\t\t\t\t}\n\t\t\t\t// for (var i=0;i<allids.length;i++)\n\t\t\t\t// {\n\t\t\t\t// \t\tvar keyName = allids[i];\n\t\t\t\t// \t\tvar ids = keyName.split(',');\n\t\t\t\t// \t\tvar isThisRoom = room.hasAllCornersById(ids);\n\t\t\t\t// \t\tif(isThisRoom)\n\t\t\t\t// \t\t{\n\t\t\t\t// \t\t\t\troom.name = scope.metaroomsdata[keyName]['name'];\n\t\t\t\t// \t\t}\n\t\t\t\t// }\n\t\t\t}\n\t\t});\n\n\t\t// this.metaroomsdata = this.getMetaRoomData();\n\t\tthis.assignOrphanEdges();\n\t\tthis.updateFloorTextures();\n\t\tthis.dispatchEvent({type: EVENT_UPDATED, item: this});\n// this.updated_rooms.fire();\n\t}\n\n\t/**\n\t * Returns the center of the floorplan in the y plane\n\t * @return {Vector2} center\n\t *\t@see https://threejs.org/docs/#api/en/math/Vector2\n\t */\n\tgetCenter()\n\t{\n\t\treturn this.getDimensions(true);\n\t}\n\n\t/**\n\t * Returns the bounding volume of the full floorplan\n\t * @return {Vector3} size\n\t *\t@see https://threejs.org/docs/#api/en/math/Vector3\n\t */\n\tgetSize()\n\t{\n\t\treturn this.getDimensions(false);\n\t}\n\n\t/**\n\t * Returns the bounding size or the center location of the full floorplan\n\t *\t@param {boolean} center If true return the center else the size\n\t * @return {Vector3} size\n\t *\t@see https://threejs.org/docs/#api/en/math/Vector3\n\t */\n\tgetDimensions(center)\n\t{\n\t\tcenter = center || false; // otherwise, get size\n\n\t\tvar xMin = Infinity;\n\t\tvar xMax = -Infinity;\n\t\tvar zMin = Infinity;\n\t\tvar zMax = -Infinity;\n\t\tthis.corners.forEach((corner) => {\n\t\t\tif (corner.x < xMin) xMin = corner.x;\n\t\t\tif (corner.x > xMax) xMax = corner.x;\n\t\t\tif (corner.y < zMin) zMin = corner.y;\n\t\t\tif (corner.y > zMax) zMax = corner.y;\n\t\t});\n\t\tvar ret;\n\t\tif (xMin == Infinity || xMax == -Infinity || zMin == Infinity || zMax == -Infinity)\n\t\t{\n\t\t\tret = new Vector3();\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (center)\n\t\t\t{\n\t\t\t\t// center\n\t\t\t\tret = new Vector3((xMin + xMax) * 0.5, 0, (zMin + zMax) * 0.5);\n\t\t\t}\n\t\t\telse\n\t\t\t{\n\t\t\t\t// size\n\t\t\t\tret = new Vector3((xMax - xMin), 0, (zMax - zMin));\n\t\t\t}\n\t\t}\n\t\treturn ret;\n\t}\n\n\t/**\n\t * An internal cleanup method\n\t */\n\tassignOrphanEdges()\n\t{\n\t\t// kinda hacky\n\t\t// find orphaned wall segments (i.e. not part of rooms) and\n\t\t// give them edges\n\t\tvar orphanWalls = [];\n\t\tthis.walls.forEach((wall) => {\n\t\t\tif (!wall.backEdge && !wall.frontEdge)\n\t\t\t{\n\t\t\t\twall.orphan = true;\n\t\t\t\tvar back = new HalfEdge(null, wall, false);\n\t\t\t\tvar front = new HalfEdge(null, wall, true);\n\t\t\t\tback.generatePlane();\n\t\t\t\tfront.generatePlane();\n\t\t\t\torphanWalls.push(wall);\n\t\t\t}\n\t\t});\n\t}\n\n\t/**\n\t * Find the \"rooms\" in our planar straight-line graph. Rooms are set of the\n\t * smallest (by area) possible cycles in this graph. @param corners The\n\t * corners of the floorplan. @returns The rooms, each room as an array of\n\t * corners.\n\t *\t@param {Corners[]} corners\n\t * @return {Corners[][]} loops\n\t **/\n\tfindRooms(corners)\n\t{\n\n\t\tfunction _calculateTheta(previousCorner, currentCorner, nextCorner)\n\t\t{\n\t\t\tvar theta = Utils.angle2pi(new Vector2(previousCorner.x - currentCorner.x, previousCorner.y - currentCorner.y), new Vector2(nextCorner.x - currentCorner.x, nextCorner.y - currentCorner.y));\n\t\t\treturn theta;\n\t\t}\n\n\t\tfunction _removeDuplicateRooms(roomArray)\n\t\t{\n\t\t\tvar results = [];\n\t\t\tvar lookup = {};\n\t\t\tvar hashFunc = function (corner)\n\t\t\t{\n\t\t\t\treturn corner.id;\n\t\t\t};\n\t\t\tvar sep = '-';\n\t\t\tfor (var i = 0; i < roomArray.length; i++)\n\t\t\t{\n\t\t\t\t// rooms are cycles, shift it around to check uniqueness\n\t\t\t\tvar add = true;\n\t\t\t\tvar room = roomArray[i];\n\t\t\t\tfor (var j = 0; j < room.length; j++)\n\t\t\t\t{\n\t\t\t\t\tvar roomShift = Utils.cycle(room, j);\n\t\t\t\t\tvar str = Utils.map(roomShift, hashFunc).join(sep);\n\t\t\t\t\tif (lookup.hasOwnProperty(str))\n\t\t\t\t\t{\n\t\t\t\t\t\tadd = false;\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tif (add)\n\t\t\t\t{\n\t\t\t\t\tresults.push(roomArray[i]);\n\t\t\t\t\tlookup[str] = true;\n\t\t\t\t}\n\t\t\t}\n\t\t\treturn results;\n\t\t}\n\n\t\t/**\n\t\t * An internal method to find rooms based on corners and their connectivities\n\t\t */\n\t\tfunction _findTightestCycle(firstCorner, secondCorner)\n\t\t{\n\t\t\tvar stack = [];\n\t\t\tvar next = {corner: secondCorner,previousCorners: [firstCorner]};\n\t\t\tvar visited = {};\n\t\t\tvisited[firstCorner.id] = true;\n\n\t\t\twhile (next)\n\t\t\t{\n\t\t\t\t// update previous corners, current corner, and visited corners\n\t\t\t\tvar currentCorner = next.corner;\n\t\t\t\tvisited[currentCorner.id] = true;\n\n\t\t\t\t// did we make it back to the startCorner?\n\t\t\t\tif (next.corner === firstCorner && currentCorner !== secondCorner)\n\t\t\t\t{\n\t\t\t\t\treturn next.previousCorners;\n\t\t\t\t}\n\n\t\t\t\tvar addToStack = [];\n\t\t\t\tvar adjacentCorners = next.corner.adjacentCorners();\n\t\t\t\tfor (var i = 0; i < adjacentCorners.length; i++)\n\t\t\t\t{\n\t\t\t\t\tvar nextCorner = adjacentCorners[i];\n\n\t\t\t\t\t// is this where we came from?\n\t\t\t\t\t// give an exception if its the first corner and we aren't\n\t\t\t\t\t// at the second corner\n\t\t\t\t\tif (nextCorner.id in visited && !(nextCorner === firstCorner && currentCorner !== secondCorner))\n\t\t\t\t\t{\n\t\t\t\t\t\tcontinue;\n\t\t\t\t\t}\n\n\t\t\t\t\t// nope, throw it on the queue\n\t\t\t\t\taddToStack.push(nextCorner);\n\t\t\t\t}\n\n\t\t\t\tvar previousCorners = next.previousCorners.slice(0);\n\t\t\t\tpreviousCorners.push(currentCorner);\n\t\t\t\tif (addToStack.length > 1)\n\t\t\t\t{\n\t\t\t\t\t// visit the ones with smallest theta first\n\t\t\t\t\tvar previousCorner = next.previousCorners[next.previousCorners.length - 1];\n\t\t\t\t\taddToStack.sort(function (a, b){return (_calculateTheta(previousCorner, currentCorner, b) - _calculateTheta(previousCorner, currentCorner, a));});\n\t\t\t\t}\n\n\t\t\t\tif (addToStack.length > 0)\n\t\t\t\t{\n\t\t\t\t\t// add to the stack\n\t\t\t\t\taddToStack.forEach((corner) => {\n\t\t\t\t\t\tstack.push({ corner: corner, previousCorners: previousCorners});\n\t\t\t\t\t});\n\t\t\t\t}\n\n\t\t\t\t// pop off the next one\n\t\t\t\tnext = stack.pop();\n\t\t\t}\n\t\t\treturn [];\n\t\t}\n\n\t\t// find tightest loops, for each corner, for each adjacent\n\t\t// TODO: optimize this, only check corners with > 2 adjacents, or\n\t\t// isolated cycles\n\t\tvar loops = [];\n\n\t\tcorners.forEach((firstCorner) => {\n\t\t\tfirstCorner.adjacentCorners().forEach((secondCorner) => {\n\t\t\t\tloops.push(_findTightestCycle(firstCorner, secondCorner));\n\t\t\t});\n\t\t});\n\n\t\t// remove duplicates\n\t\tvar uniqueLoops = _removeDuplicateRooms(loops);\n\t\t// remove CW loops\n\t\tvar uniqueCCWLoops = Utils.removeIf(uniqueLoops, Utils.isClockwise);\n\t\treturn uniqueCCWLoops;\n\t}\n}\n",
+    "content": "import {EVENT_UPDATED, EVENT_LOADED, EVENT_NEW, EVENT_DELETED, EVENT_ROOM_NAME_CHANGED} from '../core/events.js';\nimport {EventDispatcher, Vector2, Vector3} from 'three';\nimport {Utils} from '../core/utils.js';\nimport {Dimensioning} from '../core/dimensioning.js';\n\nimport {HalfEdge} from './half_edge.js';\nimport {Corner} from './corner.js';\nimport {Wall} from './wall.js';\nimport {Room} from './room.js';\n\n/** */\nexport const defaultFloorPlanTolerance = 10.0;\n\n/**\n * A Floorplan represents a number of Walls, Corners and Rooms. This is an\n * abstract that keeps the 2d and 3d in sync\n */\nexport class Floorplan extends EventDispatcher\n{\n\t/** Constructs a floorplan. */\n\tconstructor()\n\t{\n\t\tsuper();\n\t\t/**\n\t\t\t* List of elements of Wall instance\n\t\t\t* @property {Wall[]} walls Array of walls\n\t\t\t* @type {Wall[]}\n\t\t**/\n\t\tthis.walls = [];\n\t\t/**\n\t\t\t* List of elements of Corner instance\n\t\t\t* @property {Corner[]} corners array of corners\n\t\t\t* @type {Corner[]}\n\t\t**/\n\t\tthis.corners = [];\n\n\t\t/**\n\t\t* List of elements of Room instance\n\t\t* @property {Room[]} walls Array of walls\n\t\t* @type {Room[]}\n\t\t**/\n\t\tthis.rooms = [];\n\n\t\t/**\n\t\t\t* An {@link Object} that stores the metadata of rooms like name\n\t\t\t* @property {Object} metaroomsdata  stores the metadata of rooms like name\n\t\t\t* @type {Object}\n\t\t**/\n\t\tthis.metaroomsdata = {};\n\t\t// List with reference to callback on a new wall insert event\n\t\t/**\n\t\t\t@deprecated\n\t\t**/\n\t\tthis.new_wall_callbacks = [];\n\t\t// List with reference to callbacks on a new corner insert event\n\t\t/**\n\t\t\t@deprecated\n\t\t**/\n\t\tthis.new_corner_callbacks = [];\n\t\t// List with reference to callbacks on redraw event\n\t\t/**\n\t\t\t@deprecated\n\t\t**/\n\t\tthis.redraw_callbacks = [];\n\t\t// List with reference to callbacks for updated_rooms event\n\t\t/**\n\t\t\t@deprecated\n\t\t**/\n\t\tthis.updated_rooms = [];\n\t\t// List with reference to callbacks for roomLoaded event\n\t\t/**\n\t\t\t@deprecated\n\t\t**/\n\t\tthis.roomLoadedCallbacks = [];\n\n\t\tthis.floorTextures = {};\n\t\t/**\n\t\t\t* The {@link CarbonSheet} that handles the background image to show in the 2D view\n\t\t\t* @property {CarbonSheet} _carbonSheet  The carbonsheet instance\n\t\t\t* @type {Object}\n\t\t**/\n\t\tthis._carbonSheet = null;\n\t}\n\n\t/**\n\t\t*\t@param {CarbonSheet} val\n\t**/\n\tset carbonSheet(val)\n\t{\n\t\tthis._carbonSheet = val;\n\t}\n\n\t/**\n\t\t*\t@return {CarbonSheet} _carbonSheet reference to the instance of {@link CarbonSheet}\n\t**/\n\tget carbonSheet()\n\t{\n\t\treturn this._carbonSheet;\n\t}\n\n\t/**\n\t\t*\t@return {HalfEdge[]} edges The array of {@link HalfEdge} \n\t**/\n\twallEdges()\n\t{\n\t\tvar edges = [];\n\t\tthis.walls.forEach((wall) => {\n\t\t\tif (wall.frontEdge)\n\t\t\t{\n\t\t\t\tedges.push(wall.frontEdge);\n\t\t\t}\n\t\t\tif (wall.backEdge)\n\t\t\t{\n\t\t\t\tedges.push(wall.backEdge);\n\t\t\t}\n\t\t});\n\t\treturn edges;\n\t}\n\n\t/**\n\t\t* Returns the roof planes in the floorplan for intersection testing\n\t\t*\t@return {Mesh[]} planes @see <https://threejs.org/docs/#api/en/objects/Mesh>\n\t**/\n\troofPlanes()\n\t{\n\t\tvar planes = [];\n\t\tthis.rooms.forEach((room) => {\n\t\t\tplanes.push(room.roofPlane);\n\t\t});\n\t\treturn planes;\n\t}\n\n\t/**\n\t\t*\tReturns all the planes for intersection for the walls\n\t\t* @return {Mesh[]} planes @see <https://threejs.org/docs/#api/en/objects/Mesh>\n\t**/\n\twallEdgePlanes()\n\t{\n\t\tvar planes = [];\n\t\tthis.walls.forEach((wall) => {\n\t\t\tif (wall.frontEdge)\n\t\t\t{\n\t\t\t\tplanes.push(wall.frontEdge.plane);\n\t\t\t}\n\t\t\tif (wall.backEdge)\n\t\t\t{\n\t\t\t\tplanes.push(wall.backEdge.plane);\n\t\t\t}\n\t\t});\n\t\treturn planes;\n\t}\n\n\t/**\n\t\t*\tReturns all the planes for intersection of the floors in all room\n\t\t* @return {Mesh[]} planes @see <https://threejs.org/docs/#api/en/objects/Mesh>\n\t**/\n\tfloorPlanes()\n\t{\n\t\treturn Utils.map(this.rooms, (room) => {\n\t\t\treturn room.floorPlane;\n\t\t});\n\t}\n\n\tfireOnNewWall(callback)\n\t{\n\t\tthis.new_wall_callbacks.add(callback);\n\t}\n\n\tfireOnNewCorner(callback)\n\t{\n\t\tthis.new_corner_callbacks.add(callback);\n\t}\n\n\tfireOnRedraw(callback)\n\t{\n\t\tthis.redraw_callbacks.add(callback);\n\t}\n\n\tfireOnUpdatedRooms(callback)\n\t{\n\t\tthis.updated_rooms.add(callback);\n\t}\n\n\t// This method needs to be called from the 2d floorplan whenever\n\t// the other method newWall is called.\n\t// This is to ensure that there are no floating walls going across\n\t// other walls. If two walls are intersecting then the intersection point\n\t// has to create a new wall.\n\t/**\n\t *  Checks existing walls for any intersections they would make. If there are intersections then introduce new corners and new walls as required at places\n\t *  @param {Corner} start\n\t *  @param {Corner} end\n\t *  @return {boolean} intersects \n\t**/\n\n\tnewWallsForIntersections(start, end)\n\t{\n\t\tvar intersections = false;\n\t\t// This is a bug in the logic\n\t\t// When creating a new wall with a start and end\n\t\t// it needs to be checked if it is cutting other walls\n\t\t// If it cuts then all those walls have to removed and introduced as\n\t\t// new walls along with this new wall\n\t\tvar cStart = new Vector2(start.getX(), start.getY());\n\t\tvar cEnd = new Vector2(end.getX(), end.getY());\n\t\tvar newCorners = [];\n\n\t\tfor (var i=0;i<this.walls.length;i++)\n\t\t{\n\t\t\tvar twall = this.walls[i];\n\t\t\tvar bstart = {x:twall.getStartX(), y:twall.getStartY()};\n\t\t\tvar bend = {x:twall.getEndX(), y:twall.getEndY()};\n\t\t\tvar iPoint = Utils.lineLineIntersectPoint(cStart, cEnd, bstart, bend);\n\t\t\tif(iPoint)\n\t\t\t{\n\t\t\t\tvar nCorner = this.newCorner(iPoint.x, iPoint.y);\n\t\t\t\tnewCorners.push(nCorner);\n\t\t\t\tintersections = true;\n\t\t\t}\n\t\t}\n\t\tfor( i=0;i<this.corners.length;i++)\n\t\t{\n\t\t\tvar aCorner = this.corners[i];\n\t\t\tif(aCorner)\n\t\t\t{\n\t\t\t\taCorner.relativeMove(0, 0);\n\t\t\t\taCorner.snapToAxis(25);\n\t\t\t}\n\t\t}\n\t\tthis.update();\n\t\tfor( i=0;i<this.corners.length;i++)\n\t\t{\n\t\t\taCorner = this.corners[i];\n\t\t\tif(aCorner)\n\t\t\t{\n\t\t\t\taCorner.relativeMove(0, 0);\n\t\t\t\taCorner.snapToAxis(25);\n\t\t\t}\n\t\t}\n\n\t\tthis.update();\n\t\treturn intersections;\n\t}\n\n\t/**\n\t * Creates a new wall.\n\t *\n\t * @param {Corner} start The start corner.\n\t * @param {Corner} end The end corner.\n\t * @returns {Wall} The new wall.\n\t */\n\tnewWall(start, end)\n\t{\n\t\tvar wall = new Wall(start, end);\n    this.walls.push(wall);\n\t\tvar scope = this;\n\t\twall.addEventListener(EVENT_DELETED, function(o){scope.removeWall(o.item);});\n\t\tthis.dispatchEvent({type: EVENT_NEW, item: this, newItem: wall});\n\t\tthis.update();\n\t\treturn wall;\n\t}\n\n\n\n\t/**\n\t * Creates a new corner.\n\t *\n\t * @param {Number} x The x coordinate.\n\t * @param {Number} y The y coordinate.\n\t * @param {String} id An optional id. If unspecified, the id will be created internally.\n\t * @returns {Corner} The new corner.\n\t */\n\tnewCorner(x, y, id)\n\t{\n\t\tvar corner = new Corner(this, x, y, id);\n\t\tfor (var i=0;i<this.corners.length;i++)\n\t\t{\n\t\t\t\tvar existingCorner = this.corners[i];\n\t\t\t\tif(existingCorner.distanceFromCorner(corner) < 50)\n\t\t\t\t{\n          return existingCorner;\n\t\t\t\t}\n\t\t}\n\n\t\tvar scope = this;\n\t\tthis.corners.push(corner);\n\t\tcorner.addEventListener(EVENT_DELETED, function(o){scope.removeCorner(o.item);});\n\t\tthis.dispatchEvent({type: EVENT_NEW, item: this, newItem: corner});\n\n\t\t// This code has been added by #0K. There should be an update whenever a\n\t\t// new corner is inserted\n\t\tthis.update();\n\n\t\treturn corner;\n\t}\n\n\t/**\n\t * Removes a wall.\n\t *\n\t * @param {Wall} wall The wall to be removed.\n\t */\n\tremoveWall(wall)\n\t{\n\t\tUtils.removeValue(this.walls, wall);\n\t\tthis.update();\n\t}\n\n\t/**\n\t * Removes a corner.\n\t *\n\t * @param {Corner} corner The corner to be removed.\n\t */\n\tremoveCorner(corner)\n\t{\n\t\tUtils.removeValue(this.corners, corner);\n\t}\n\n\t/** Gets the walls.\n\t\t* @return {Wall[]}\n\t **/\n\tgetWalls()\n\t{\n\t\treturn this.walls;\n\t}\n\n\t/** Gets the corners.\n\t\t* @return {Corner[]}\n\t**/\n\tgetCorners()\n\t{\n\t\treturn this.corners;\n\t}\n\n\t/** Gets the rooms.\n\t\t* @return {Room[]}\n\t**/\n\tgetRooms()\n\t{\n\t\treturn this.rooms;\n\t}\n\n\t/** Gets the room overlapping the location x, y.\n\t\t* @param {Number} mx\n\t\t* @param {Number} my\n\t\t* @return {Room}\n\t**/\n\toverlappedRoom(mx, my)\n\t{\n\t\t\tfor (var i=0;i<this.rooms.length;i++)\n\t\t\t{\n\t\t\t\t\tvar room = this.rooms[i];\n\t\t\t\t\tvar flag = room.pointInRoom(new Vector2(mx, my));\n\t\t\t\t\tif(flag)\n\t\t\t\t\t{\n\t\t\t\t\t\treturn room;\n\t\t\t\t\t}\n\t\t\t}\n\n\t\t\treturn null;\n\t}\n\n\t/** Gets the Corner overlapping the location x, y at a tolerance.\n\t\t* @param {Number} x\n\t\t* @param {Number} y\n\t\t* @param {Number} tolerance\n\t\t* @return {Corner}\n\t**/\n\toverlappedCorner(x, y, tolerance)\n\t{\n\t\ttolerance = tolerance || defaultFloorPlanTolerance;\n\t\tfor (var i = 0; i < this.corners.length; i++)\n\t\t{\n\t\t\tif (this.corners[i].distanceFrom(new Vector2(x, y)) < tolerance)\n\t\t\t{\n\t\t\t\treturn this.corners[i];\n\t\t\t}\n\t\t}\n\t\treturn null;\n\t}\n\n\t/** Gets the Wall overlapping the location x, y at a tolerance.\n\t\t* @param {Number} x\n\t\t* @param {Number} y\n\t\t* @param {Number} tolerance\n\t\t* @return {Wall}\n\t**/\n\toverlappedWall(x, y, tolerance)\n\t{\n\t\ttolerance = tolerance || defaultFloorPlanTolerance;\n\t\tfor (var i = 0; i < this.walls.length; i++)\n\t\t{\n\t\t\tif (this.walls[i].distanceFrom(new Vector2(x, y)) < tolerance)\n\t\t\t{\n\t\t\t\treturn this.walls[i];\n\t\t\t}\n\t\t}\n\t\treturn null;\n\t}\n\n\t/** The metadata object with information about the rooms.\n\t\t* @return {Object} metaroomdata an object with room corner ids as key and names as values\n\t**/\n\tgetMetaRoomData()\n\t{\n\t\t  var metaRoomData = {};\n\t\t\tthis.rooms.forEach((room)=>{\n\t\t\t\tvar metaroom = {};\n\t\t\t\t// var cornerids = [];\n\t\t\t\t// room.corners.forEach((corner)=>{\n\t\t\t\t// \t\tcornerids.push(corner.id);\n\t\t\t\t// });\n\t\t\t\t// var ids = cornerids.join(',');\n\t\t\t\tvar ids = room.roomByCornersId;\n\t\t\t\tmetaroom['name'] = room.name;\n\t\t\t\tmetaRoomData[ids] = metaroom;\n\t\t\t});\n\t\t\treturn metaRoomData;\n\t}\n\n\t// Save the floorplan as a json object file\n\t/**\n\t\t*\t@return {void}\n\t**/\n\tsaveFloorplan()\n\t{\n\t\tvar floorplans = {corners: {}, walls: [], rooms: {}, wallTextures: [], floorTextures: {}, newFloorTextures: {}, carbonSheet:{}};\n\t\tvar cornerIds = [];\n// writing all the corners based on the corners array\n// is having a bug. This is because some walls have corners\n// that aren't part of the corners array anymore. This is a quick fix\n// by adding the corners to the json file based on the corners in the walls\n// this.corners.forEach((corner) => {\n// floorplans.corners[corner.id] = {'x': corner.x,'y': corner.y};\n// });\n\n\t\tthis.walls.forEach((wall) => {\n\t\t\tif(wall.getStart() && wall.getEnd())\n\t\t\t{\n\t\t\t\tfloorplans.walls.push({\n\t\t\t\t\t'corner1': wall.getStart().id,\n\t\t\t\t\t'corner2': wall.getEnd().id,\n\t\t\t\t\t'frontTexture': wall.frontTexture,\n\t\t\t\t\t'backTexture': wall.backTexture\n\t\t\t\t});\n\t\t\t\tcornerIds.push(wall.getStart());\n\t\t\t\tcornerIds.push(wall.getEnd());\n\t\t\t}\n\t\t});\n\n\t\tcornerIds.forEach((corner)=>{\n\t\t\tfloorplans.corners[corner.id] = {'x': corner.x,'y': corner.y, 'elevation': Dimensioning.cmToMeasureRaw(corner.elevation)};\n\t\t});\n\n\t\tthis.rooms.forEach((room)=>{\n\t\t\tvar metaroom = {};\n\t\t\tvar cornerids = [];\n\t\t\troom.corners.forEach((corner)=>{\n\t\t\t\t\tcornerids.push(corner.id);\n\t\t\t});\n\t\t\tvar ids = cornerids.join(',');\n\t\t\tmetaroom['name'] = room.name;\n\t\t\tfloorplans.rooms[ids] = metaroom;\n\t\t});\n\t\t// floorplans.rooms = this.getMetaRoomData();\n\n\t\tif(this.carbonSheet)\n\t\t{\n\t\t\tfloorplans.carbonSheet['url'] = this.carbonSheet.url;\n\t\t\tfloorplans.carbonSheet['transparency'] = this.carbonSheet.transparency;\n\t\t\tfloorplans.carbonSheet['x'] = this.carbonSheet.x;\n\t\t\tfloorplans.carbonSheet['y'] = this.carbonSheet.y;\n\t\t\tfloorplans.carbonSheet['anchorX'] = this.carbonSheet.anchorX;\n\t\t\tfloorplans.carbonSheet['anchorY'] = this.carbonSheet.anchorY;\n\t\t\tfloorplans.carbonSheet['width'] = this.carbonSheet.width;\n\t\t\tfloorplans.carbonSheet['height'] = this.carbonSheet.height;\n\t\t}\n\n\t\tfloorplans.newFloorTextures = this.floorTextures;\n\t\treturn floorplans;\n\t}\n\n\t//Load the floorplan from a previously saved json object file\n\t/**\n\t\t*\t@param {JSON} floorplan\n\t\t*\t@return {void}\n\t\t*\t@emits {EVENT_LOADED}\n\t**/\n\tloadFloorplan(floorplan)\n\t{\n\t\tthis.reset();\n\n\t\tvar corners = {};\n\t\tif (floorplan == null || !('corners' in floorplan) || !('walls' in floorplan))\n\t\t{\n\t\t\treturn;\n\t\t}\n\t\tfor (var id in floorplan.corners)\n\t\t{\n\t\t\tvar corner = floorplan.corners[id];\n\t\t\tcorners[id] = this.newCorner(corner.x, corner.y, id);\n\t\t\tif(corner.elevation)\n\t\t\t{\n\t\t\t\t\tcorners[id].elevation = corner.elevation;\n\t\t\t}\n\t\t}\n\t\tvar scope = this;\n\t\tfloorplan.walls.forEach((wall) => {\n\t\t\tvar newWall = scope.newWall(corners[wall.corner1], corners[wall.corner2]);\n\t\t\tif (wall.frontTexture)\n\t\t\t{\n\t\t\t\tnewWall.frontTexture = wall.frontTexture;\n\t\t\t}\n\t\t\tif (wall.backTexture)\n\t\t\t{\n\t\t\t\tnewWall.backTexture = wall.backTexture;\n\t\t\t}\n\t\t});\n\n\t\tif ('newFloorTextures' in floorplan)\n\t\t{\n\t\t\tthis.floorTextures = floorplan.newFloorTextures;\n\t\t}\n\t\tthis.metaroomsdata = floorplan.rooms;\n\n\t\tthis.update();\n\n\t\tif('carbonSheet' in floorplan)\n\t\t{\n\t\t\tthis.carbonSheet.clear();\n\t\t\tthis.carbonSheet.maintainProportion = false;\n\t\t\tthis.carbonSheet.x = floorplan.carbonSheet['x'];\n\t\t\tthis.carbonSheet.y = floorplan.carbonSheet['y'];\n\t\t\tthis.carbonSheet.transparency = floorplan.carbonSheet['transparency'];\n\t\t\tthis.carbonSheet.anchorX = floorplan.carbonSheet['anchorX'];\n\t\t\tthis.carbonSheet.anchorY = floorplan.carbonSheet['anchorY'];\n\t\t\tthis.carbonSheet.width = floorplan.carbonSheet['width'];\n\t\t\tthis.carbonSheet.height = floorplan.carbonSheet['height'];\n\t\t\tthis.carbonSheet.url = floorplan.carbonSheet['url'];\n\t\t\tthis.carbonSheet.maintainProportion = true;\n\t\t}\n\t\tthis.dispatchEvent({type: EVENT_LOADED, item: this});\n// this.roomLoadedCallbacks.fire();\n\t}\n\n\t/**\n\t\t* @deprecated\n\t**/\n\tgetFloorTexture(uuid)\n\t{\n\t\tif (uuid in this.floorTextures)\n\t\t{\n\t\t\treturn this.floorTextures[uuid];\n\t\t}\n\t\treturn null;\n\t}\n\n\t/**\n\t\t* @deprecated\n\t**/\n\tsetFloorTexture(uuid, url, scale)\n\t{\n\t\tthis.floorTextures[uuid] = {url: url,scale: scale};\n\t}\n\n\t/** clear out obsolete floor textures */\n\t/**\n\t\t* @deprecated\n\t**/\n\tupdateFloorTextures()\n\t{\n\t\tvar uuids = Utils.map(this.rooms, function (room){return room.getUuid();});\n\t\tfor (var uuid in this.floorTextures)\n\t\t{\n\t\t\tif (!Utils.hasValue(uuids, uuid))\n\t\t\t{\n\t\t\t\tdelete this.floorTextures[uuid];\n\t\t\t}\n\t\t}\n\t}\n\n\t/**\n\t\t* Resets the floorplan data to empty\n\t\t* @return {void}\n\t**/\n\treset()\n\t{\n\t\tvar tmpCorners = this.corners.slice(0);\n\t\tvar tmpWalls = this.walls.slice(0);\n\t\ttmpCorners.forEach((corner) => {\n\t\t\tcorner.remove();\n\t\t});\n\t\ttmpWalls.forEach((wall) => {\n\t\t\twall.remove();\n\t\t});\n\t\tthis.corners = [];\n\t\tthis.walls = [];\n\t}\n\n\t/**\n\t\t* @param {Object} event\n\t\t* @listens {EVENT_ROOM_NAME_CHANGED} When a room name is changed and updates to metaroomdata\n\t**/\n\troomNameChanged(e)\n\t{\n\t\t\tif(this.metaroomsdata)\n\t\t\t{\n\t\t\t\t\tthis.metaroomsdata[e.item.roomByCornersId] = e.newname;\n\t\t\t}\n\t}\n\n\t/**\n\t *\tUpdate the floorplan with new rooms, remove old rooms etc.\n\t */\n\tupdate()\n\t{\n\t\tvar scope = this;\n\t\tthis.walls.forEach((wall) => {\n\t\t\twall.resetFrontBack();\n\t\t});\n\n\t\t// this.rooms.forEach((room)=>{room.removeEventListener(EVENT_ROOM_NAME_CHANGED, scope.roomNameChanged)});\n\n\t\tvar roomCorners = this.findRooms(this.corners);\n\t\tthis.rooms = [];\n\n\n\t\tthis.corners.forEach((corner)=>{\n\t\t\tcorner.clearAttachedRooms();\n\t\t});\n\n\t\troomCorners.forEach((corners) =>\n\t\t{\n\t\t\tvar room = new Room(scope, corners);\n\t\t\troom.updateArea();\n\t\t\tscope.rooms.push(room);\n\t\t\troom.addEventListener(EVENT_ROOM_NAME_CHANGED, (e)=>{scope.roomNameChanged(e);});\n\t\t\tif(scope.metaroomsdata)\n\t\t\t{\n\t\t\t\t// var allids = Object.keys(scope.metaroomsdata);\n\t\t\t\tif(scope.metaroomsdata[room.roomByCornersId])\n\t\t\t\t{\n\t\t\t\t\troom.name = scope.metaroomsdata[room.roomByCornersId];\n\t\t\t\t}\n\t\t\t\t// for (var i=0;i<allids.length;i++)\n\t\t\t\t// {\n\t\t\t\t// \t\tvar keyName = allids[i];\n\t\t\t\t// \t\tvar ids = keyName.split(',');\n\t\t\t\t// \t\tvar isThisRoom = room.hasAllCornersById(ids);\n\t\t\t\t// \t\tif(isThisRoom)\n\t\t\t\t// \t\t{\n\t\t\t\t// \t\t\t\troom.name = scope.metaroomsdata[keyName]['name'];\n\t\t\t\t// \t\t}\n\t\t\t\t// }\n\t\t\t}\n\t\t});\n\n\t\t// this.metaroomsdata = this.getMetaRoomData();\n\t\tthis.assignOrphanEdges();\n\t\tthis.updateFloorTextures();\n\t\tthis.dispatchEvent({type: EVENT_UPDATED, item: this});\n// this.updated_rooms.fire();\n\t}\n\n\t/**\n\t * Returns the center of the floorplan in the y plane\n\t * @return {Vector2} center\n\t *\t@see https://threejs.org/docs/#api/en/math/Vector2\n\t */\n\tgetCenter()\n\t{\n\t\treturn this.getDimensions(true);\n\t}\n\n\t/**\n\t * Returns the bounding volume of the full floorplan\n\t * @return {Vector3} size\n\t *\t@see https://threejs.org/docs/#api/en/math/Vector3\n\t */\n\tgetSize()\n\t{\n\t\treturn this.getDimensions(false);\n\t}\n\n\t/**\n\t * Returns the bounding size or the center location of the full floorplan\n\t *\t@param {boolean} center If true return the center else the size\n\t * @return {Vector3} size\n\t *\t@see https://threejs.org/docs/#api/en/math/Vector3\n\t */\n\tgetDimensions(center)\n\t{\n\t\tcenter = center || false; // otherwise, get size\n\n\t\tvar xMin = Infinity;\n\t\tvar xMax = -Infinity;\n\t\tvar zMin = Infinity;\n\t\tvar zMax = -Infinity;\n\t\tthis.corners.forEach((corner) => {\n\t\t\tif (corner.x < xMin) xMin = corner.x;\n\t\t\tif (corner.x > xMax) xMax = corner.x;\n\t\t\tif (corner.y < zMin) zMin = corner.y;\n\t\t\tif (corner.y > zMax) zMax = corner.y;\n\t\t});\n\t\tvar ret;\n\t\tif (xMin == Infinity || xMax == -Infinity || zMin == Infinity || zMax == -Infinity)\n\t\t{\n\t\t\tret = new Vector3();\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (center)\n\t\t\t{\n\t\t\t\t// center\n\t\t\t\tret = new Vector3((xMin + xMax) * 0.5, 0, (zMin + zMax) * 0.5);\n\t\t\t}\n\t\t\telse\n\t\t\t{\n\t\t\t\t// size\n\t\t\t\tret = new Vector3((xMax - xMin), 0, (zMax - zMin));\n\t\t\t}\n\t\t}\n\t\treturn ret;\n\t}\n\n\t/**\n\t * An internal cleanup method\n\t */\n\tassignOrphanEdges()\n\t{\n\t\t// kinda hacky\n\t\t// find orphaned wall segments (i.e. not part of rooms) and\n\t\t// give them edges\n\t\tvar orphanWalls = [];\n\t\tthis.walls.forEach((wall) => {\n\t\t\tif (!wall.backEdge && !wall.frontEdge)\n\t\t\t{\n\t\t\t\twall.orphan = true;\n\t\t\t\tvar back = new HalfEdge(null, wall, false);\n\t\t\t\tvar front = new HalfEdge(null, wall, true);\n\t\t\t\tback.generatePlane();\n\t\t\t\tfront.generatePlane();\n\t\t\t\torphanWalls.push(wall);\n\t\t\t}\n\t\t});\n\t}\n\n\t/**\n\t * Find the \"rooms\" in our planar straight-line graph. Rooms are set of the\n\t * smallest (by area) possible cycles in this graph. @param corners The\n\t * corners of the floorplan. @returns The rooms, each room as an array of\n\t * corners.\n\t *\t@param {Corners[]} corners\n\t * @return {Corners[][]} loops\n\t **/\n\tfindRooms(corners)\n\t{\n\n\t\tfunction _calculateTheta(previousCorner, currentCorner, nextCorner)\n\t\t{\n\t\t\tvar theta = Utils.angle2pi(new Vector2(previousCorner.x - currentCorner.x, previousCorner.y - currentCorner.y), new Vector2(nextCorner.x - currentCorner.x, nextCorner.y - currentCorner.y));\n\t\t\treturn theta;\n\t\t}\n\n\t\tfunction _removeDuplicateRooms(roomArray)\n\t\t{\n\t\t\tvar results = [];\n\t\t\tvar lookup = {};\n\t\t\tvar hashFunc = function (corner)\n\t\t\t{\n\t\t\t\treturn corner.id;\n\t\t\t};\n\t\t\tvar sep = '-';\n\t\t\tfor (var i = 0; i < roomArray.length; i++)\n\t\t\t{\n\t\t\t\t// rooms are cycles, shift it around to check uniqueness\n\t\t\t\tvar add = true;\n\t\t\t\tvar room = roomArray[i];\n\t\t\t\tfor (var j = 0; j < room.length; j++)\n\t\t\t\t{\n\t\t\t\t\tvar roomShift = Utils.cycle(room, j);\n\t\t\t\t\tvar str = Utils.map(roomShift, hashFunc).join(sep);\n\t\t\t\t\tif (lookup.hasOwnProperty(str))\n\t\t\t\t\t{\n\t\t\t\t\t\tadd = false;\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tif (add)\n\t\t\t\t{\n\t\t\t\t\tresults.push(roomArray[i]);\n\t\t\t\t\tlookup[str] = true;\n\t\t\t\t}\n\t\t\t}\n\t\t\treturn results;\n\t\t}\n\n\t\t/**\n\t\t * An internal method to find rooms based on corners and their connectivities\n\t\t */\n\t\tfunction _findTightestCycle(firstCorner, secondCorner)\n\t\t{\n\t\t\tvar stack = [];\n\t\t\tvar next = {corner: secondCorner,previousCorners: [firstCorner]};\n\t\t\tvar visited = {};\n\t\t\tvisited[firstCorner.id] = true;\n\n\t\t\twhile (next)\n\t\t\t{\n\t\t\t\t// update previous corners, current corner, and visited corners\n\t\t\t\tvar currentCorner = next.corner;\n\t\t\t\tvisited[currentCorner.id] = true;\n\n\t\t\t\t// did we make it back to the startCorner?\n\t\t\t\tif (next.corner === firstCorner && currentCorner !== secondCorner)\n\t\t\t\t{\n\t\t\t\t\treturn next.previousCorners;\n\t\t\t\t}\n\n\t\t\t\tvar addToStack = [];\n\t\t\t\tvar adjacentCorners = next.corner.adjacentCorners();\n\t\t\t\tfor (var i = 0; i < adjacentCorners.length; i++)\n\t\t\t\t{\n\t\t\t\t\tvar nextCorner = adjacentCorners[i];\n\n\t\t\t\t\t// is this where we came from?\n\t\t\t\t\t// give an exception if its the first corner and we aren't\n\t\t\t\t\t// at the second corner\n\t\t\t\t\tif (nextCorner.id in visited && !(nextCorner === firstCorner && currentCorner !== secondCorner))\n\t\t\t\t\t{\n\t\t\t\t\t\tcontinue;\n\t\t\t\t\t}\n\n\t\t\t\t\t// nope, throw it on the queue\n\t\t\t\t\taddToStack.push(nextCorner);\n\t\t\t\t}\n\n\t\t\t\tvar previousCorners = next.previousCorners.slice(0);\n\t\t\t\tpreviousCorners.push(currentCorner);\n\t\t\t\tif (addToStack.length > 1)\n\t\t\t\t{\n\t\t\t\t\t// visit the ones with smallest theta first\n\t\t\t\t\tvar previousCorner = next.previousCorners[next.previousCorners.length - 1];\n\t\t\t\t\taddToStack.sort(function (a, b){return (_calculateTheta(previousCorner, currentCorner, b) - _calculateTheta(previousCorner, currentCorner, a));});\n\t\t\t\t}\n\n\t\t\t\tif (addToStack.length > 0)\n\t\t\t\t{\n\t\t\t\t\t// add to the stack\n\t\t\t\t\taddToStack.forEach((corner) => {\n\t\t\t\t\t\tstack.push({ corner: corner, previousCorners: previousCorners});\n\t\t\t\t\t});\n\t\t\t\t}\n\n\t\t\t\t// pop off the next one\n\t\t\t\tnext = stack.pop();\n\t\t\t}\n\t\t\treturn [];\n\t\t}\n\n\t\t// find tightest loops, for each corner, for each adjacent\n\t\t// TODO: optimize this, only check corners with > 2 adjacents, or\n\t\t// isolated cycles\n\t\tvar loops = [];\n\n\t\tcorners.forEach((firstCorner) => {\n\t\t\tfirstCorner.adjacentCorners().forEach((secondCorner) => {\n\t\t\t\tloops.push(_findTightestCycle(firstCorner, secondCorner));\n\t\t\t});\n\t\t});\n\n\t\t// remove duplicates\n\t\tvar uniqueLoops = _removeDuplicateRooms(loops);\n\t\t// remove CW loops\n\t\tvar uniqueCCWLoops = Utils.removeIf(uniqueLoops, Utils.isClockwise);\n\t\treturn uniqueCCWLoops;\n\t}\n}\n",
     "static": true,
     "longname": "/home/ashok/eclipse-workspace/blueprint-js/src/scripts/model/floorplan.js",
     "access": "public",
@@ -11356,7 +11356,7 @@
         "CarbonSheet"
       ],
       "spread": false,
-      "description": "_carbonSheet"
+      "description": "_carbonSheet reference to the instance of {@link CarbonSheet}"
     },
     "type": {
       "types": [
@@ -11382,7 +11382,7 @@
         "HalfEdge[]"
       ],
       "spread": false,
-      "description": "edges"
+      "description": "edges The array of {@link HalfEdge}"
     },
     "params": []
   },
@@ -11554,8 +11554,8 @@
     "static": false,
     "longname": "scripts/model/floorplan.js~Floorplan#newWallsForIntersections",
     "access": "public",
-    "description": "",
-    "lineNumber": 195,
+    "description": " Checks existing walls for any intersections they would make. If there are intersections then introduce new corners and new walls as required at places",
+    "lineNumber": 196,
     "params": [
       {
         "nullable": null,
@@ -11598,7 +11598,7 @@
     "longname": "scripts/model/floorplan.js~Floorplan#newWall",
     "access": "public",
     "description": "Creates a new wall.",
-    "lineNumber": 251,
+    "lineNumber": 252,
     "unknown": [
       {
         "tagName": "@returns",
@@ -11647,7 +11647,7 @@
     "longname": "scripts/model/floorplan.js~Floorplan#newCorner",
     "access": "public",
     "description": "Creates a new corner.",
-    "lineNumber": 272,
+    "lineNumber": 273,
     "unknown": [
       {
         "tagName": "@returns",
@@ -11706,7 +11706,7 @@
     "longname": "scripts/model/floorplan.js~Floorplan#removeWall",
     "access": "public",
     "description": "Removes a wall.",
-    "lineNumber": 301,
+    "lineNumber": 302,
     "params": [
       {
         "nullable": null,
@@ -11732,7 +11732,7 @@
     "longname": "scripts/model/floorplan.js~Floorplan#removeCorner",
     "access": "public",
     "description": "Removes a corner.",
-    "lineNumber": 312,
+    "lineNumber": 313,
     "params": [
       {
         "nullable": null,
@@ -11758,7 +11758,7 @@
     "longname": "scripts/model/floorplan.js~Floorplan#getWalls",
     "access": "public",
     "description": "Gets the walls.",
-    "lineNumber": 320,
+    "lineNumber": 321,
     "return": {
       "nullable": null,
       "types": [
@@ -11780,7 +11780,7 @@
     "longname": "scripts/model/floorplan.js~Floorplan#getCorners",
     "access": "public",
     "description": "Gets the corners.",
-    "lineNumber": 328,
+    "lineNumber": 329,
     "return": {
       "nullable": null,
       "types": [
@@ -11802,7 +11802,7 @@
     "longname": "scripts/model/floorplan.js~Floorplan#getRooms",
     "access": "public",
     "description": "Gets the rooms.",
-    "lineNumber": 336,
+    "lineNumber": 337,
     "return": {
       "nullable": null,
       "types": [
@@ -11824,7 +11824,7 @@
     "longname": "scripts/model/floorplan.js~Floorplan#overlappedRoom",
     "access": "public",
     "description": "Gets the room overlapping the location x, y.",
-    "lineNumber": 346,
+    "lineNumber": 347,
     "params": [
       {
         "nullable": null,
@@ -11867,7 +11867,7 @@
     "longname": "scripts/model/floorplan.js~Floorplan#overlappedCorner",
     "access": "public",
     "description": "Gets the Corner overlapping the location x, y at a tolerance.",
-    "lineNumber": 367,
+    "lineNumber": 368,
     "params": [
       {
         "nullable": null,
@@ -11920,7 +11920,7 @@
     "longname": "scripts/model/floorplan.js~Floorplan#overlappedWall",
     "access": "public",
     "description": "Gets the Wall overlapping the location x, y at a tolerance.",
-    "lineNumber": 386,
+    "lineNumber": 387,
     "params": [
       {
         "nullable": null,
@@ -11973,7 +11973,7 @@
     "longname": "scripts/model/floorplan.js~Floorplan#getMetaRoomData",
     "access": "public",
     "description": "The metadata object with information about the rooms.",
-    "lineNumber": 402,
+    "lineNumber": 403,
     "return": {
       "nullable": null,
       "types": [
@@ -11995,7 +11995,7 @@
     "longname": "scripts/model/floorplan.js~Floorplan#saveFloorplan",
     "access": "public",
     "description": "",
-    "lineNumber": 423,
+    "lineNumber": 424,
     "return": {
       "nullable": null,
       "types": [
@@ -12017,7 +12017,7 @@
     "longname": "scripts/model/floorplan.js~Floorplan#loadFloorplan",
     "access": "public",
     "description": "",
-    "lineNumber": 487,
+    "lineNumber": 488,
     "params": [
       {
         "nullable": null,
@@ -12058,7 +12058,7 @@
     "longname": "scripts/model/floorplan.js~Floorplan#getFloorTexture",
     "access": "public",
     "description": "",
-    "lineNumber": 547,
+    "lineNumber": 548,
     "deprecated": true,
     "params": [
       {
@@ -12085,7 +12085,7 @@
     "longname": "scripts/model/floorplan.js~Floorplan#setFloorTexture",
     "access": "public",
     "description": "",
-    "lineNumber": 559,
+    "lineNumber": 560,
     "deprecated": true,
     "params": [
       {
@@ -12120,7 +12120,7 @@
     "longname": "scripts/model/floorplan.js~Floorplan#updateFloorTextures",
     "access": "public",
     "description": "",
-    "lineNumber": 568,
+    "lineNumber": 569,
     "deprecated": true,
     "params": [],
     "return": null
@@ -12136,7 +12136,7 @@
     "longname": "scripts/model/floorplan.js~Floorplan#reset",
     "access": "public",
     "description": "Resets the floorplan data to empty",
-    "lineNumber": 584,
+    "lineNumber": 585,
     "return": {
       "nullable": null,
       "types": [
@@ -12158,7 +12158,7 @@
     "longname": "scripts/model/floorplan.js~Floorplan#roomNameChanged",
     "access": "public",
     "description": "",
-    "lineNumber": 602,
+    "lineNumber": 603,
     "params": [
       {
         "nullable": null,
@@ -12192,7 +12192,7 @@
     "longname": "scripts/model/floorplan.js~Floorplan#update",
     "access": "public",
     "description": "Update the floorplan with new rooms, remove old rooms etc.",
-    "lineNumber": 613,
+    "lineNumber": 614,
     "params": [],
     "return": null
   },
@@ -12210,7 +12210,7 @@
     "see": [
       "https://threejs.org/docs/#api/en/math/Vector2"
     ],
-    "lineNumber": 668,
+    "lineNumber": 669,
     "return": {
       "nullable": null,
       "types": [
@@ -12235,7 +12235,7 @@
     "see": [
       "https://threejs.org/docs/#api/en/math/Vector3"
     ],
-    "lineNumber": 678,
+    "lineNumber": 679,
     "return": {
       "nullable": null,
       "types": [
@@ -12260,7 +12260,7 @@
     "see": [
       "https://threejs.org/docs/#api/en/math/Vector3"
     ],
-    "lineNumber": 689,
+    "lineNumber": 690,
     "params": [
       {
         "nullable": null,
@@ -12293,7 +12293,7 @@
     "longname": "scripts/model/floorplan.js~Floorplan#assignOrphanEdges",
     "access": "public",
     "description": "An internal cleanup method",
-    "lineNumber": 727,
+    "lineNumber": 728,
     "params": [],
     "return": null
   },
@@ -12308,7 +12308,7 @@
     "longname": "scripts/model/floorplan.js~Floorplan#findRooms",
     "access": "public",
     "description": "Find the \"rooms\" in our planar straight-line graph. Rooms are set of the\nsmallest (by area) possible cycles in this graph. @param corners The\ncorners of the floorplan. @returns The rooms, each room as an array of\ncorners.",
-    "lineNumber": 754,
+    "lineNumber": 755,
     "params": [
       {
         "nullable": null,
@@ -12334,7 +12334,7 @@
     "__docId__": 699,
     "kind": "file",
     "name": "scripts/model/half_edge.js",
-    "content": "import {EventDispatcher, Vector2, Vector3, Matrix4, Face3, Mesh, Geometry, MeshBasicMaterial, Box3} from 'three';\nimport {EVENT_REDRAW} from '../core/events.js';\nimport {Utils} from '../core/utils.js';\n\n\n/**\n * Half Edges are created by Room.\n *\n * Once rooms have been identified, Half Edges are created for each interior wall.\n *\n * A wall can have two half edges if it is visible from both sides.\n */\nexport class HalfEdge extends EventDispatcher\n{\n\t/**\n\t * Constructs a half edge.\n\t * @param room The associated room. Instance of Room\n\t * @param wall The corresponding wall. Instance of Wall\n\t * @param front True if front side. Boolean value\n\t */\n\tconstructor(room, wall, front)\n\t{\n\t\tsuper();\n\n\t\tthis.min = null;\n\t\tthis.max = null;\n\t\tthis.center = null;\n\n\t\tthis.room = room;\n\t\tthis.wall = wall;\n\t\tthis.next = null;\n\t\tthis.prev = null;\n\t\tthis.offset = 0.0;\n\t\tthis.height = 0.0;\n\t\tthis.plane = null;\n\t\tthis.interiorTransform = new Matrix4();\n\t\tthis.invInteriorTransform = new Matrix4();\n\t\tthis.exteriorTransform = new Matrix4();\n\t\tthis.invExteriorTransform = new Matrix4();\n\t\tthis.redrawCallbacks = null;\n\n\t\tthis.front = front || false;\n\n\t\tthis.offset = wall.thickness / 2.0;\n\t\tthis.height = wall.height;\n\n\t\tif (this.front)\n\t\t{\n\t\t\tthis.wall.frontEdge = this;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tthis.wall.backEdge = this;\n\t\t}\n\n\t}\n\n\t/**\n\t *\n\t */\n\tgetTexture()\n\t{\n\t\tif (this.front)\n\t\t{\n\t\t\treturn this.wall.frontTexture;\n\t\t}\n\t\telse\n\t\t{\n\t\t\treturn this.wall.backTexture;\n\t\t}\n\t}\n\n\t/**\n\t *\n\t */\n\tsetTexture(textureUrl, textureStretch, textureScale)\n\t{\n\t\tvar texture = {url: textureUrl, stretch: textureStretch, scale: textureScale};\n\t\tif (this.front)\n\t\t{\n\t\t\tthis.wall.frontTexture = texture;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tthis.wall.backTexture = texture;\n\t\t}\n\n\t\t//this.redrawCallbacks.fire();\n\t\tthis.dispatchEvent({type:EVENT_REDRAW, item: this});\n\t}\n\n\tdispatchRedrawEvent()\n\t{\n\t\tthis.dispatchEvent({type:EVENT_REDRAW, item: this});\n\t}\n\n\ttransformCorner(corner)\n\t{\n\t\treturn new Vector3(corner.x, 0, corner.y);\n\t}\n\n\n\t/**\n\t * this feels hacky, but need wall items\n\t */\n\tgeneratePlane()\n\t{\n\t\tvar geometry = new Geometry();\n\t\tvar v1 = this.transformCorner(this.interiorStart());\n\t\tvar v2 = this.transformCorner(this.interiorEnd());\n\t\tvar v3 = v2.clone();\n\t\tvar v4 = v1.clone();\n\n\t\t// v3.y = this.wall.height;\n\t\t// v4.y = this.wall.height;\n\n\t\tv3.y = this.wall.getStart().elevation;\n\t\tv4.y = this.wall.getEnd().elevation;\n\n\t\tgeometry.vertices = [v1, v2, v3, v4];\n\t\tgeometry.faces.push(new Face3(0, 1, 2));\n\t\tgeometry.faces.push(new Face3(0, 2, 3));\n\t\tgeometry.computeFaceNormals();\n\t\tgeometry.computeBoundingBox();\n\n\n\t\tthis.plane = new Mesh(geometry, new MeshBasicMaterial({visible:false}));\n\t\t//The below line was originally setting the plane visibility to false\n\t\t//Now its setting visibility to true. This is necessary to be detected\n\t\t//with the raycaster objects to click walls and floors.\n\t\tthis.plane.visible = true;\n\t\tthis.plane.edge = this; // js monkey patch\n\n\n\t\tthis.computeTransforms(this.interiorTransform, this.invInteriorTransform, this.interiorStart(), this.interiorEnd());\n\t\tthis.computeTransforms(this.exteriorTransform, this.invExteriorTransform, this.exteriorStart(), this.exteriorEnd());\n\n\t\tvar b3 = new Box3();\n\t\tb3.setFromObject(this.plane);\n\t\tthis.min = b3.min.clone();\n\t\tthis.max = b3.max.clone();\n\t\tthis.center = this.max.clone().sub(this.min).multiplyScalar(0.5).add(this.min);\n\t}\n\n\tcomputeTransforms(transform, invTransform, start, end)\n\t{\n\t\tvar v1 = start;\n\t\tvar v2 = end;\n\n\t\tvar angle = Utils.angle(new Vector2(1, 0), new Vector2(v2.x - v1.x, v2.y - v1.y));\n\n\t\tvar tt = new Matrix4();\n\t\tvar tr = new Matrix4();\n\n\t\ttt.makeTranslation(-v1.x, 0, -v1.y);\n\t\ttr.makeRotationY(-angle);\n\t\ttransform.multiplyMatrices(tr, tt);\n\t\tinvTransform.getInverse(transform);\n\t}\n\n\t/** Gets the distance from specified point.\n\t * @param x X coordinate of the point.\n\t * @param y Y coordinate of the point.\n\t * @returns The distance.\n\t */\n\tdistanceTo(x, y)\n\t{\n\t\t// x, y, x1, y1, x2, y2\n\t\treturn Utils.pointDistanceFromLine(new Vector2(x, y), this.interiorStart(), this.interiorEnd());\n\t}\n\n\tgetStart()\n\t{\n\t\tif (this.front)\n\t\t{\n\t\t\treturn this.wall.getStart();\n\t\t}\n\t\telse\n\t\t{\n\t\t\treturn this.wall.getEnd();\n\t\t}\n\t}\n\n\tgetEnd()\n\t{\n\t\tif (this.front)\n\t\t{\n\t\t\treturn this.wall.getEnd();\n\t\t}\n\t\telse\n\t\t{\n\t\t\treturn this.wall.getStart();\n\t\t}\n\t}\n\n\tgetOppositeEdge()\n\t{\n\t\tif (this.front)\n\t\t{\n\t\t\treturn this.wall.backEdge;\n\t\t}\n\t\telse\n\t\t{\n\t\t\treturn this.wall.frontEdge;\n\t\t}\n\t}\n\n\t// these return an object with attributes x, y\n\tinteriorEnd()\n\t{\n\t\tvar vec = this.halfAngleVector(this, this.next);\n\t\treturn new Vector2(this.getEnd().x + vec.x, this.getEnd().y + vec.y);\n\t\t// return {x:this.getEnd().x + vec.x, y:this.getEnd().y + vec.y};\n\t}\n\n\tinteriorStart()\n\t{\n\t\tvar vec = this.halfAngleVector(this.prev, this);\n\t\treturn new Vector2(this.getStart().x + vec.x, this.getStart().y + vec.y);\n\t\t// return {x:this.getStart().x + vec.x, y:this.getStart().y + vec.y};\n\t}\n\n\tinteriorCenter()\n\t{\n\t\treturn new Vector2((this.interiorStart().x + this.interiorEnd().x) / 2.0, (this.interiorStart().y + this.interiorEnd().y) / 2.0);\n\t}\n\n\tinteriorDistance()\n\t{\n\t\tvar start = this.interiorStart();\n\t\tvar end = this.interiorEnd();\n\t\treturn Utils.distance(start, end);\n\t}\n\n\texteriorEnd()\n\t{\n\t\tvar vec = this.halfAngleVector(this, this.next);\n\t\treturn new Vector2(this.getEnd().x - vec.x, this.getEnd().y - vec.y);\n\t}\n\n\texteriorStart()\n\t{\n\t\tvar vec = this.halfAngleVector(this.prev, this);\n\t\treturn new Vector2(this.getStart().x - vec.x, this.getStart().y - vec.y);\n\t}\n\n\texteriorCenter()\n\t{\n\t\t\treturn new Vector2((this.exteriorStart().x + this.exteriorEnd().x) / 2.0, (this.exteriorStart().y + this.exteriorEnd().y) / 2.0);\n\t}\n\n\texteriorDistance()\n\t{\n\t\tvar start = this.exteriorStart();\n\t\tvar end = this.exteriorEnd();\n\t\treturn Utils.distance(start, end);\n\t}\n\n\t/** Get the corners of the half edge.\n\t * @returns An array of x,y pairs.\n\t */\n\tcorners()\n\t{\n\t\treturn [this.interiorStart(), this.interiorEnd(), this.exteriorEnd(), this.exteriorStart()];\n\t}\n\n\t/**\n\t * Gets CCW angle from v1 to v2\n\t */\n\thalfAngleVector(v1, v2)\n\t{\n\t\tvar v1startX=0.0, v1startY=0.0, v1endX=0.0, v1endY=0.0;\n\t\tvar v2startX=0.0, v2startY=0.0, v2endX=0.0, v2endY=0.0;\n\n\t\t// make the best of things if we dont have prev or next\n\t\tif (!v1)\n\t\t{\n\t\t\tv1startX = v2.getStart().x - (v2.getEnd().x - v2.getStart().x);\n\t\t\tv1startY = v2.getStart().y - (v2.getEnd().y - v2.getStart().y);\n\n\t\t\tv1endX = v2.getStart().x;\n\t\t\tv1endY = v2.getStart().y;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tv1startX = v1.getStart().x;\n\t\t\tv1startY = v1.getStart().y;\n\t\t\tv1endX = v1.getEnd().x;\n\t\t\tv1endY = v1.getEnd().y;\n\t\t}\n\n\t\tif (!v2)\n\t\t{\n\t\t\tv2startX = v1.getEnd().x;\n\t\t\tv2startY = v1.getEnd().y;\n\t\t\tv2endX = v1.getEnd().x + (v1.getEnd().x - v1.getStart().x);\n\t\t\tv2endY = v1.getEnd().y + (v1.getEnd().y - v1.getStart().y);\n\t\t}\n\t\telse\n\t\t{\n\t\t\tv2startX = v2.getStart().x;\n\t\t\tv2startY = v2.getStart().y;\n\t\t\tv2endX = v2.getEnd().x;\n\t\t\tv2endY = v2.getEnd().y;\n\t\t}\n\n\t\t// CCW angle between edges\n\t\tvar theta = Utils.angle2pi( new Vector2(v1startX - v1endX, v1startY - v1endY), new Vector2(v2endX - v1endX, v2endY - v1endY));\n\n\t\t// cosine and sine of half angle\n\t\tvar cs = Math.cos(theta / 2.0);\n\t\tvar sn = Math.sin(theta / 2.0);\n\n\t\t// rotate v2\n\t\tvar v2dx = v2endX - v2startX;\n\t\tvar v2dy = v2endY - v2startY;\n\n\t\tvar vx = v2dx * cs - v2dy * sn;\n\t\tvar vy = v2dx * sn + v2dy * cs;\n\n\t\t// normalize\n\t\tvar mag = Utils.distance(new Vector2(0, 0), new Vector2(vx, vy));\n\t\tvar desiredMag = (this.offset) / sn;\n\t\tvar scalar = desiredMag / mag;\n\n\t\tvar halfAngleVector = {x:vx * scalar, y:vy * scalar};//new Vector2(vx * scalar, vy * scalar);\n\t\treturn halfAngleVector;\n\t}\n}\n",
+    "content": "import {EventDispatcher, Vector2, Vector3, Matrix4, Face3, Mesh, Geometry, MeshBasicMaterial, Box3} from 'three';\nimport {EVENT_REDRAW} from '../core/events.js';\nimport {Utils} from '../core/utils.js';\n\n\n/**\n * Half Edges are created by Room.\n *\n * Once rooms have been identified, Half Edges are created for each interior wall.\n *\n * A wall can have two half edges if it is visible from both sides.\n */\nexport class HalfEdge extends EventDispatcher\n{\n\t/**\n\t * Constructs a half edge.\n\t * @param {Room} room The associated room. Instance of Room\n\t * @param {Wall} wall The corresponding wall. Instance of Wall\n\t * @param {boolean} front True if front side. Boolean value\n\t */\n\tconstructor(room, wall, front)\n\t{\n\t\tsuper();\n\n\t\t/**  The minimum point in space calculated from the bounds\n\t\t * @property {Vector3} min  The minimum point in space calculated from the bounds\n\t\t * @type {Vector3}\n\t\t * @see https://threejs.org/docs/#api/en/math/Vector3\n\t\t**/\n\t\tthis.min = null;\n\t\t\n\t\t/**\n\t\t * The maximum point in space calculated from the bounds\n\t\t * @property {Vector3} max\t The maximum point in space calculated from the bounds\n\t\t * @type {Vector3}\n\t\t * @see https://threejs.org/docs/#api/en/math/Vector3\n\t\t**/\n\t\tthis.max = null;\n\n\t\t/**\n\t\t * The center of this half edge\n\t\t * @property {Vector3} center The center of this half edge\n\t\t * @type {Vector3}\n\t\t * @see https://threejs.org/docs/#api/en/math/Vector3\n\t\t**/\n\t\tthis.center = null;\n\n\t\t/**\n\t\t * Reference to a Room instance\n\t\t * @property {Room} room Reference to a Room instance\n\t\t * @type {Room}\n\t\t**/\n\t\tthis.room = room;\n\t\t\n\t\t/** \n\t\t *  Reference to a Wall instance\n\t\t * @property {Wall} room Reference to a Wall instance\n\t\t * @type {Wall}\n\t\t**/\n\t\tthis.wall = wall;\n\t\t\n\t\t/**\n\t\t * Reference to the next halfedge instance connected to this\n\t\t * @property {HalfEdge} next Reference to the next halfedge instance connected to this\n\t\t * @type {HalfEdge}\n\t\t**/\n\t\tthis.next = null;\n\t\t\n\t\t/**\n\t\t * Reference to the previous halfedge instance connected to this\n\t\t * @property {HalfEdge} prev Reference to the previous halfedge instance connected to this\n\t\t * @type {HalfEdge}\n\t\t**/\n\t\tthis.prev = null;\n\t\t\n\t\t/** \n\t\t * The offset to maintain for the front and back walls from the midline of a wall\n\t\t * @property {Number} offset The offset to maintain for the front and back walls from the midline of a wall\n\t\t * @type {Number}\n\t\t**/\n\t\tthis.offset = 0.0;\n\n\t\t/**\n\t\t *  The height of a wall\n\t\t * @property {Number} height The height of a wall\n\t\t * @type {Number}\n\t\t**/\n\t\tthis.height = 0.0;\n\t\t\n\t\t/**\n\t\t * The plane mesh that will be used for checking intersections of wall items\n\t\t * @property {Mesh} plane The plane mesh that will be used for checking intersections of wall items\n\t\t * @type {Mesh}\n\t\t * @see https://threejs.org/docs/#api/en/objects/Mesh\n\t\t */\n\t\tthis.plane = null;\n\t\t\n\t\t/**\n\t\t * The interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall\n\t\t * @property {Matrix4} interiorTransform The interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall\n\t\t * @type {Matrix4} \n\t\t * @see https://threejs.org/docs/#api/en/math/Matrix4\n\t\t */\n\t\tthis.interiorTransform = new Matrix4();\n\t\t\n\t\t/**\n\t\t * The inverse of the interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall\n\t\t * @property {Matrix4} invInteriorTransform The inverse of the interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall\n\t\t * @type {Matrix4}\n\t\t * @see https://threejs.org/docs/#api/en/math/Matrix4\n\t\t */\n\t\tthis.invInteriorTransform = new Matrix4();\n\t\t\n\t\t/**\n\t\t * The exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall\n\t\t * @property {Matrix4} exteriorTransform The exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall\n\t\t * @type {Matrix4} \n\t\t * @see https://threejs.org/docs/#api/en/math/Matrix4\n\t\t */\n\t\tthis.exteriorTransform = new Matrix4();\n\t\t\n\t\t/**\n\t\t * The inverse of the exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall\n\t\t * @property {Matrix4} invExteriorTransform The inverse of the exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall\n\t\t * @type {Matrix4}\n\t\t * @see https://threejs.org/docs/#api/en/math/Matrix4\n\t\t */\n\t\tthis.invExteriorTransform = new Matrix4();\n\t\t\n\t\t/**\n\t\t * This is an array of callbacks to be call when redraw happens\n\t\t * @depreceated \n\t\t */\n\t\tthis.redrawCallbacks = null;\n\t\t\n\t\t/**\n\t\t * Is this is the front edge or the back edge\n\t\t * @property {boolean} front Is this is the front edge or the back edge\n\t\t * @type {boolean}\n\t\t */\n\t\tthis.front = front || false;\n\t\t\n\t\tthis.offset = wall.thickness / 2.0;\n\t\tthis.height = wall.height;\n\n\t\tif (this.front)\n\t\t{\n\t\t\tthis.wall.frontEdge = this;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tthis.wall.backEdge = this;\n\t\t}\n\n\t}\n\n\t/**\n\t * Two separate textures are used for the walls. Based on which side of the wall this {HalfEdge} refers the texture is returned\n\t * @return {Object} front/back Two separate textures are used for the walls. Based on which side of the wall this {@link HalfEdge} refers the texture is returned\n\t */\n\tgetTexture()\n\t{\n\t\tif (this.front)\n\t\t{\n\t\t\treturn this.wall.frontTexture;\n\t\t}\n\t\telse\n\t\t{\n\t\t\treturn this.wall.backTexture;\n\t\t}\n\t}\n\n\t/**\n\t * Set a Texture to the wall. Based on the edge side as front or back the texture is applied appropriately to the wall\n\t * @param {String} textureUrl The path to the texture image\n\t * @param {boolean} textureStretch Can the texture stretch? If not it will be repeated\n\t * @param {Number} textureScale The scale value using which the number of repetitions of the texture image is calculated\n\t * @emits {EVENT_REDRAW}\n\t */\n\tsetTexture(textureUrl, textureStretch, textureScale)\n\t{\n\t\tvar texture = {url: textureUrl, stretch: textureStretch, scale: textureScale};\n\t\tif (this.front)\n\t\t{\n\t\t\tthis.wall.frontTexture = texture;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tthis.wall.backTexture = texture;\n\t\t}\n\n\t\t//this.redrawCallbacks.fire();\n\t\tthis.dispatchEvent({type:EVENT_REDRAW, item: this});\n\t}\n\t\n\t/**\n\t * Emit the redraw event\n\t * @emits {EVENT_REDRAW}\n\t */\n\tdispatchRedrawEvent()\n\t{\n\t\tthis.dispatchEvent({type:EVENT_REDRAW, item: this});\n\t}\n\t\n\t/**\n\t * Transform the {@link Corner} instance to a Vector3 instance using the x and y position returned as x and z\n\t * @param {Corner} corner\n\t * @return {Vector3}\n\t * @see https://threejs.org/docs/#api/en/math/Vector3\n\t */\n\ttransformCorner(corner)\n\t{\n\t\treturn new Vector3(corner.x, 0, corner.y);\n\t}\n\n\n\t/**\n\t * This generates the invisible planes in the scene that are used for interesection testing for the wall items\n\t */\n\tgeneratePlane()\n\t{\n\t\tvar geometry = new Geometry();\n\t\tvar v1 = this.transformCorner(this.interiorStart());\n\t\tvar v2 = this.transformCorner(this.interiorEnd());\n\t\tvar v3 = v2.clone();\n\t\tvar v4 = v1.clone();\n\n\t\t// v3.y = this.wall.height;\n\t\t// v4.y = this.wall.height;\n\n\t\tv3.y = this.wall.getStart().elevation;\n\t\tv4.y = this.wall.getEnd().elevation;\n\n\t\tgeometry.vertices = [v1, v2, v3, v4];\n\t\tgeometry.faces.push(new Face3(0, 1, 2));\n\t\tgeometry.faces.push(new Face3(0, 2, 3));\n\t\tgeometry.computeFaceNormals();\n\t\tgeometry.computeBoundingBox();\n\n\n\t\tthis.plane = new Mesh(geometry, new MeshBasicMaterial({visible:false}));\n\t\t//The below line was originally setting the plane visibility to false\n\t\t//Now its setting visibility to true. This is necessary to be detected\n\t\t//with the raycaster objects to click walls and floors.\n\t\tthis.plane.visible = true;\n\t\tthis.plane.edge = this; // js monkey patch\n\n\n\t\tthis.computeTransforms(this.interiorTransform, this.invInteriorTransform, this.interiorStart(), this.interiorEnd());\n\t\tthis.computeTransforms(this.exteriorTransform, this.invExteriorTransform, this.exteriorStart(), this.exteriorEnd());\n\n\t\tvar b3 = new Box3();\n\t\tb3.setFromObject(this.plane);\n\t\tthis.min = b3.min.clone();\n\t\tthis.max = b3.max.clone();\n\t\tthis.center = this.max.clone().sub(this.min).multiplyScalar(0.5).add(this.min);\n\t}\n\t\n\t/**\n\t * Calculate the transformation matrix for the edge (front/back) baesd on the parameters. \n\t * @param {Matrix4} transform The matrix reference in which the transformation is stored\n\t * @param {Matrix4} invTransform The inverse of the transform that is stored in the invTransform\n\t * @param {Vector2} start The starting point location\n\t * @param {Vector2} end The ending point location\n\t * @see https://threejs.org/docs/#api/en/math/Matrix4\n\t * @see https://threejs.org/docs/#api/en/math/Vector2\n\t */\n\tcomputeTransforms(transform, invTransform, start, end)\n\t{\n\t\tvar v1 = start;\n\t\tvar v2 = end;\n\n\t\tvar angle = Utils.angle(new Vector2(1, 0), new Vector2(v2.x - v1.x, v2.y - v1.y));\n\n\t\tvar tt = new Matrix4();\n\t\tvar tr = new Matrix4();\n\n\t\ttt.makeTranslation(-v1.x, 0, -v1.y);\n\t\ttr.makeRotationY(-angle);\n\t\ttransform.multiplyMatrices(tr, tt);\n\t\tinvTransform.getInverse(transform);\n\t}\n\n\t/** Gets the distance from specified point.\n\t * @param {Number} x X coordinate of the point.\n\t * @param {Number} y Y coordinate of the point.\n\t * @returns {Number} The distance.\n\t */\n\tdistanceTo(x, y)\n\t{\n\t\t// x, y, x1, y1, x2, y2\n\t\treturn Utils.pointDistanceFromLine(new Vector2(x, y), this.interiorStart(), this.interiorEnd());\n\t}\n\t\n\t/**\n\t * Get the starting corner of the wall this instance represents\n\t * @return {Corner} The starting corner\n\t */\n\tgetStart()\n\t{\n\t\tif (this.front)\n\t\t{\n\t\t\treturn this.wall.getStart();\n\t\t}\n\t\telse\n\t\t{\n\t\t\treturn this.wall.getEnd();\n\t\t}\n\t}\n\t\n\t/**\n\t * Get the ending corner of the wall this instance represents\n\t * @return {Corner} The ending corner\n\t */\n\tgetEnd()\n\t{\n\t\tif (this.front)\n\t\t{\n\t\t\treturn this.wall.getEnd();\n\t\t}\n\t\telse\n\t\t{\n\t\t\treturn this.wall.getStart();\n\t\t}\n\t}\n\t\n\t/**\n\t * If this is the front edge then return the back edge. \n\t * For example in a wall there are two halfedges, i.e one for front and one back. Based on which side this halfedge lies return the opposite {@link HalfEdge}\n\t * @return {HalfEdge} The other HalfEdge\n\t */\n\tgetOppositeEdge()\n\t{\n\t\tif (this.front)\n\t\t{\n\t\t\treturn this.wall.backEdge;\n\t\t}\n\t\telse\n\t\t{\n\t\t\treturn this.wall.frontEdge;\n\t\t}\n\t}\n\t\n\t/**\n\t * Return the 2D interior location that is at the end. \n\t * @return {Vector2} Return an object with attributes x, y\n\t * @see https://threejs.org/docs/#api/en/math/Vector2\n\t */\n\t// \n\tinteriorEnd()\n\t{\n\t\tvar vec = this.halfAngleVector(this, this.next);\n\t\treturn new Vector2(this.getEnd().x + vec.x, this.getEnd().y + vec.y);\n\t\t// return {x:this.getEnd().x + vec.x, y:this.getEnd().y + vec.y};\n\t}\n\t\n\t/**\n\t * Return the 2D interior location that is at the start. \n\t * @return {Vector2} Return an object with attributes x, y\n\t * @see https://threejs.org/docs/#api/en/math/Vector2\n\t */\n\tinteriorStart()\n\t{\n\t\tvar vec = this.halfAngleVector(this.prev, this);\n\t\treturn new Vector2(this.getStart().x + vec.x, this.getStart().y + vec.y);\n\t\t// return {x:this.getStart().x + vec.x, y:this.getStart().y + vec.y};\n\t}\n\t\n\t/**\n\t * Return the 2D interior location that is at the center/middle. \n\t * @return {Vector2} Return an object with attributes x, y\n\t * @see https://threejs.org/docs/#api/en/math/Vector2\n\t */\n\tinteriorCenter()\n\t{\n\t\treturn new Vector2((this.interiorStart().x + this.interiorEnd().x) / 2.0, (this.interiorStart().y + this.interiorEnd().y) / 2.0);\n\t}\n\t\n\t/**\n\t * Return the interior distance of the interior wall \n\t * @return {Number} The distance\n\t */\n\tinteriorDistance()\n\t{\n\t\tvar start = this.interiorStart();\n\t\tvar end = this.interiorEnd();\n\t\treturn Utils.distance(start, end);\n\t}\n\t\n\t/**\n\t * Return the 2D exterior location that is at the end. \n\t * @return {Vector2} Return an object with attributes x, y\n\t * @see https://threejs.org/docs/#api/en/math/Vector2\n\t */\n\texteriorEnd()\n\t{\n\t\tvar vec = this.halfAngleVector(this, this.next);\n\t\treturn new Vector2(this.getEnd().x - vec.x, this.getEnd().y - vec.y);\n\t}\n\t\n\t/**\n\t * Return the 2D exterior location that is at the start. \n\t * @return {Vector2} Return an object with attributes x, y\n\t * @see https://threejs.org/docs/#api/en/math/Vector2\n\t */\n\texteriorStart()\n\t{\n\t\tvar vec = this.halfAngleVector(this.prev, this);\n\t\treturn new Vector2(this.getStart().x - vec.x, this.getStart().y - vec.y);\n\t}\n\t\n\t/**\n\t * Return the 2D exterior location that is at the center/middle. \n\t * @return {Vector2} Return an object with attributes x, y\n\t * @see https://threejs.org/docs/#api/en/math/Vector2\n\t */\n\texteriorCenter()\n\t{\n\t\t\treturn new Vector2((this.exteriorStart().x + this.exteriorEnd().x) / 2.0, (this.exteriorStart().y + this.exteriorEnd().y) / 2.0);\n\t}\n\t\n\t/**\n\t * Return the exterior distance of the exterior wall \n\t * @return {Number} The distance\n\t */\n\texteriorDistance()\n\t{\n\t\tvar start = this.exteriorStart();\n\t\tvar end = this.exteriorEnd();\n\t\treturn Utils.distance(start, end);\n\t}\n\n\t/** Get the corners of the half edge.\n\t * @returns {Corner[]} An array of x,y pairs.\n\t */\n\tcorners()\n\t{\n\t\treturn [this.interiorStart(), this.interiorEnd(), this.exteriorEnd(), this.exteriorStart()];\n\t}\n\n\t/**\n\t * Gets CCW angle from v1 to v2\n\t * @param {Vector2} v1 The point a\n\t * @param {Vector2} v1 The point b\n\t * @return {Object} contains keys x and y with number representing the halfAngles\n\t */\n\thalfAngleVector(v1, v2)\n\t{\n\t\tvar v1startX=0.0, v1startY=0.0, v1endX=0.0, v1endY=0.0;\n\t\tvar v2startX=0.0, v2startY=0.0, v2endX=0.0, v2endY=0.0;\n\n\t\t// make the best of things if we dont have prev or next\n\t\tif (!v1)\n\t\t{\n\t\t\tv1startX = v2.getStart().x - (v2.getEnd().x - v2.getStart().x);\n\t\t\tv1startY = v2.getStart().y - (v2.getEnd().y - v2.getStart().y);\n\n\t\t\tv1endX = v2.getStart().x;\n\t\t\tv1endY = v2.getStart().y;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tv1startX = v1.getStart().x;\n\t\t\tv1startY = v1.getStart().y;\n\t\t\tv1endX = v1.getEnd().x;\n\t\t\tv1endY = v1.getEnd().y;\n\t\t}\n\n\t\tif (!v2)\n\t\t{\n\t\t\tv2startX = v1.getEnd().x;\n\t\t\tv2startY = v1.getEnd().y;\n\t\t\tv2endX = v1.getEnd().x + (v1.getEnd().x - v1.getStart().x);\n\t\t\tv2endY = v1.getEnd().y + (v1.getEnd().y - v1.getStart().y);\n\t\t}\n\t\telse\n\t\t{\n\t\t\tv2startX = v2.getStart().x;\n\t\t\tv2startY = v2.getStart().y;\n\t\t\tv2endX = v2.getEnd().x;\n\t\t\tv2endY = v2.getEnd().y;\n\t\t}\n\n\t\t// CCW angle between edges\n\t\tvar theta = Utils.angle2pi( new Vector2(v1startX - v1endX, v1startY - v1endY), new Vector2(v2endX - v1endX, v2endY - v1endY));\n\n\t\t// cosine and sine of half angle\n\t\tvar cs = Math.cos(theta / 2.0);\n\t\tvar sn = Math.sin(theta / 2.0);\n\n\t\t// rotate v2\n\t\tvar v2dx = v2endX - v2startX;\n\t\tvar v2dy = v2endY - v2startY;\n\n\t\tvar vx = v2dx * cs - v2dy * sn;\n\t\tvar vy = v2dx * sn + v2dy * cs;\n\n\t\t// normalize\n\t\tvar mag = Utils.distance(new Vector2(0, 0), new Vector2(vx, vy));\n\t\tvar desiredMag = (this.offset) / sn;\n\t\tvar scalar = desiredMag / mag;\n\n\t\tvar halfAngleVector = {x:vx * scalar, y:vy * scalar};//new Vector2(vx * scalar, vy * scalar);\n\t\treturn halfAngleVector;\n\t}\n}\n",
     "static": true,
     "longname": "/home/ashok/eclipse-workspace/blueprint-js/src/scripts/model/half_edge.js",
     "access": "public",
@@ -12375,7 +12375,7 @@
       {
         "nullable": null,
         "types": [
-          "*"
+          "Room"
         ],
         "spread": false,
         "optional": false,
@@ -12385,7 +12385,7 @@
       {
         "nullable": null,
         "types": [
-          "*"
+          "Wall"
         ],
         "spread": false,
         "optional": false,
@@ -12395,7 +12395,7 @@
       {
         "nullable": null,
         "types": [
-          "*"
+          "boolean"
         ],
         "spread": false,
         "optional": false,
@@ -12412,13 +12412,30 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#min",
     "access": "public",
-    "description": null,
-    "lineNumber": 25,
-    "undocument": true,
+    "description": " The minimum point in space calculated from the bounds",
+    "see": [
+      "https://threejs.org/docs/#api/en/math/Vector3"
+    ],
+    "lineNumber": 30,
+    "properties": [
+      {
+        "nullable": null,
+        "types": [
+          "Vector3"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "min",
+        "description": "The minimum point in space calculated from the bounds"
+      }
+    ],
     "type": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "Vector3"
+      ],
+      "spread": false,
+      "description": null
     }
   },
   {
@@ -12429,13 +12446,30 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#max",
     "access": "public",
-    "description": null,
-    "lineNumber": 26,
-    "undocument": true,
+    "description": "The maximum point in space calculated from the bounds",
+    "see": [
+      "https://threejs.org/docs/#api/en/math/Vector3"
+    ],
+    "lineNumber": 38,
+    "properties": [
+      {
+        "nullable": null,
+        "types": [
+          "Vector3"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "max",
+        "description": "The maximum point in space calculated from the bounds"
+      }
+    ],
     "type": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "Vector3"
+      ],
+      "spread": false,
+      "description": null
     }
   },
   {
@@ -12446,13 +12480,30 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#center",
     "access": "public",
-    "description": null,
-    "lineNumber": 27,
-    "undocument": true,
+    "description": "The center of this half edge",
+    "see": [
+      "https://threejs.org/docs/#api/en/math/Vector3"
+    ],
+    "lineNumber": 46,
+    "properties": [
+      {
+        "nullable": null,
+        "types": [
+          "Vector3"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "center",
+        "description": "The center of this half edge"
+      }
+    ],
     "type": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "Vector3"
+      ],
+      "spread": false,
+      "description": null
     }
   },
   {
@@ -12463,13 +12514,27 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#room",
     "access": "public",
-    "description": null,
-    "lineNumber": 29,
-    "undocument": true,
+    "description": "Reference to a Room instance",
+    "lineNumber": 53,
+    "properties": [
+      {
+        "nullable": null,
+        "types": [
+          "Room"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "room",
+        "description": "Reference to a Room instance"
+      }
+    ],
     "type": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "Room"
+      ],
+      "spread": false,
+      "description": null
     }
   },
   {
@@ -12480,13 +12545,27 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#wall",
     "access": "public",
-    "description": null,
-    "lineNumber": 30,
-    "undocument": true,
+    "description": " Reference to a Wall instance",
+    "lineNumber": 60,
+    "properties": [
+      {
+        "nullable": null,
+        "types": [
+          "Wall"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "room",
+        "description": "Reference to a Wall instance"
+      }
+    ],
     "type": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "Wall"
+      ],
+      "spread": false,
+      "description": null
     }
   },
   {
@@ -12497,13 +12576,27 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#next",
     "access": "public",
-    "description": null,
-    "lineNumber": 31,
-    "undocument": true,
+    "description": "Reference to the next halfedge instance connected to this",
+    "lineNumber": 67,
+    "properties": [
+      {
+        "nullable": null,
+        "types": [
+          "HalfEdge"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "next",
+        "description": "Reference to the next halfedge instance connected to this"
+      }
+    ],
     "type": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "HalfEdge"
+      ],
+      "spread": false,
+      "description": null
     }
   },
   {
@@ -12514,13 +12607,27 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#prev",
     "access": "public",
-    "description": null,
-    "lineNumber": 32,
-    "undocument": true,
+    "description": "Reference to the previous halfedge instance connected to this",
+    "lineNumber": 74,
+    "properties": [
+      {
+        "nullable": null,
+        "types": [
+          "HalfEdge"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "prev",
+        "description": "Reference to the previous halfedge instance connected to this"
+      }
+    ],
     "type": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "HalfEdge"
+      ],
+      "spread": false,
+      "description": null
     }
   },
   {
@@ -12531,13 +12638,27 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#offset",
     "access": "public",
-    "description": null,
-    "lineNumber": 33,
-    "undocument": true,
+    "description": "The offset to maintain for the front and back walls from the midline of a wall",
+    "lineNumber": 81,
+    "properties": [
+      {
+        "nullable": null,
+        "types": [
+          "Number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "offset",
+        "description": "The offset to maintain for the front and back walls from the midline of a wall"
+      }
+    ],
     "type": {
+      "nullable": null,
       "types": [
-        "number"
-      ]
+        "Number"
+      ],
+      "spread": false,
+      "description": null
     }
   },
   {
@@ -12548,13 +12669,27 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#height",
     "access": "public",
-    "description": null,
-    "lineNumber": 34,
-    "undocument": true,
+    "description": " The height of a wall",
+    "lineNumber": 88,
+    "properties": [
+      {
+        "nullable": null,
+        "types": [
+          "Number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "height",
+        "description": "The height of a wall"
+      }
+    ],
     "type": {
+      "nullable": null,
       "types": [
-        "number"
-      ]
+        "Number"
+      ],
+      "spread": false,
+      "description": null
     }
   },
   {
@@ -12565,13 +12700,30 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#plane",
     "access": "public",
-    "description": null,
-    "lineNumber": 35,
-    "undocument": true,
+    "description": "The plane mesh that will be used for checking intersections of wall items",
+    "see": [
+      "https://threejs.org/docs/#api/en/objects/Mesh"
+    ],
+    "lineNumber": 96,
+    "properties": [
+      {
+        "nullable": null,
+        "types": [
+          "Mesh"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "plane",
+        "description": "The plane mesh that will be used for checking intersections of wall items"
+      }
+    ],
     "type": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "Mesh"
+      ],
+      "spread": false,
+      "description": null
     }
   },
   {
@@ -12582,13 +12734,30 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#interiorTransform",
     "access": "public",
-    "description": null,
-    "lineNumber": 36,
-    "undocument": true,
+    "description": "The interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall",
+    "see": [
+      "https://threejs.org/docs/#api/en/math/Matrix4"
+    ],
+    "lineNumber": 104,
+    "properties": [
+      {
+        "nullable": null,
+        "types": [
+          "Matrix4"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "interiorTransform",
+        "description": "The interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall"
+      }
+    ],
     "type": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "Matrix4"
+      ],
+      "spread": false,
+      "description": null
     }
   },
   {
@@ -12599,13 +12768,30 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#invInteriorTransform",
     "access": "public",
-    "description": null,
-    "lineNumber": 37,
-    "undocument": true,
+    "description": "The inverse of the interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall",
+    "see": [
+      "https://threejs.org/docs/#api/en/math/Matrix4"
+    ],
+    "lineNumber": 112,
+    "properties": [
+      {
+        "nullable": null,
+        "types": [
+          "Matrix4"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "invInteriorTransform",
+        "description": "The inverse of the interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall"
+      }
+    ],
     "type": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "Matrix4"
+      ],
+      "spread": false,
+      "description": null
     }
   },
   {
@@ -12616,13 +12802,30 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#exteriorTransform",
     "access": "public",
-    "description": null,
-    "lineNumber": 38,
-    "undocument": true,
+    "description": "The exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall",
+    "see": [
+      "https://threejs.org/docs/#api/en/math/Matrix4"
+    ],
+    "lineNumber": 120,
+    "properties": [
+      {
+        "nullable": null,
+        "types": [
+          "Matrix4"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "exteriorTransform",
+        "description": "The exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall"
+      }
+    ],
     "type": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "Matrix4"
+      ],
+      "spread": false,
+      "description": null
     }
   },
   {
@@ -12633,13 +12836,30 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#invExteriorTransform",
     "access": "public",
-    "description": null,
-    "lineNumber": 39,
-    "undocument": true,
+    "description": "The inverse of the exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall",
+    "see": [
+      "https://threejs.org/docs/#api/en/math/Matrix4"
+    ],
+    "lineNumber": 128,
+    "properties": [
+      {
+        "nullable": null,
+        "types": [
+          "Matrix4"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "invExteriorTransform",
+        "description": "The inverse of the exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall"
+      }
+    ],
     "type": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "Matrix4"
+      ],
+      "spread": false,
+      "description": null
     }
   },
   {
@@ -12650,9 +12870,14 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#redrawCallbacks",
     "access": "public",
-    "description": null,
-    "lineNumber": 40,
-    "undocument": true,
+    "description": "This is an array of callbacks to be call when redraw happens",
+    "lineNumber": 134,
+    "unknown": [
+      {
+        "tagName": "@depreceated",
+        "tagValue": ""
+      }
+    ],
     "type": {
       "types": [
         "*"
@@ -12667,13 +12892,27 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#front",
     "access": "public",
-    "description": null,
-    "lineNumber": 42,
-    "undocument": true,
+    "description": "Is this is the front edge or the back edge",
+    "lineNumber": 141,
+    "properties": [
+      {
+        "nullable": null,
+        "types": [
+          "boolean"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "front",
+        "description": "Is this is the front edge or the back edge"
+      }
+    ],
     "type": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "boolean"
+      ],
+      "spread": false,
+      "description": null
     }
   },
   {
@@ -12686,14 +12925,17 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#getTexture",
     "access": "public",
-    "description": "",
-    "lineNumber": 61,
-    "params": [],
+    "description": "Two separate textures are used for the walls. Based on which side of the wall this {HalfEdge} refers the texture is returned",
+    "lineNumber": 161,
     "return": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
-    }
+        "Object"
+      ],
+      "spread": false,
+      "description": "front/back Two separate textures are used for the walls. Based on which side of the wall this {@link HalfEdge} refers the texture is returned"
+    },
+    "params": []
   },
   {
     "__docId__": 721,
@@ -12705,26 +12947,46 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#setTexture",
     "access": "public",
-    "description": "",
-    "lineNumber": 76,
+    "description": "Set a Texture to the wall. Based on the edge side as front or back the texture is applied appropriately to the wall",
+    "lineNumber": 180,
     "params": [
       {
+        "nullable": null,
+        "types": [
+          "String"
+        ],
+        "spread": false,
+        "optional": false,
         "name": "textureUrl",
-        "types": [
-          "*"
-        ]
+        "description": "The path to the texture image"
       },
       {
+        "nullable": null,
+        "types": [
+          "boolean"
+        ],
+        "spread": false,
+        "optional": false,
         "name": "textureStretch",
-        "types": [
-          "*"
-        ]
+        "description": "Can the texture stretch? If not it will be repeated"
       },
       {
-        "name": "textureScale",
+        "nullable": null,
         "types": [
-          "*"
-        ]
+          "Number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "textureScale",
+        "description": "The scale value using which the number of repetitions of the texture image is calculated"
+      }
+    ],
+    "emits": [
+      {
+        "types": [
+          "EVENT_REDRAW"
+        ],
+        "description": ""
       }
     ],
     "return": null
@@ -12739,9 +13001,16 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#dispatchRedrawEvent",
     "access": "public",
-    "description": null,
-    "lineNumber": 92,
-    "undocument": true,
+    "description": "Emit the redraw event",
+    "lineNumber": 200,
+    "emits": [
+      {
+        "types": [
+          "EVENT_REDRAW"
+        ],
+        "description": ""
+      }
+    ],
     "params": [],
     "return": null
   },
@@ -12755,21 +13024,30 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#transformCorner",
     "access": "public",
-    "description": null,
-    "lineNumber": 97,
-    "undocument": true,
+    "description": "Transform the {@link Corner} instance to a Vector3 instance using the x and y position returned as x and z",
+    "see": [
+      "https://threejs.org/docs/#api/en/math/Vector3"
+    ],
+    "lineNumber": 211,
     "params": [
       {
-        "name": "corner",
+        "nullable": null,
         "types": [
-          "*"
-        ]
+          "Corner"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "corner",
+        "description": ""
       }
     ],
     "return": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "Vector3"
+      ],
+      "spread": false,
+      "description": ""
     }
   },
   {
@@ -12782,8 +13060,8 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#generatePlane",
     "access": "public",
-    "description": "this feels hacky, but need wall items",
-    "lineNumber": 106,
+    "description": "This generates the invisible planes in the scene that are used for interesection testing for the wall items",
+    "lineNumber": 220,
     "params": [],
     "return": null
   },
@@ -12797,33 +13075,52 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#computeTransforms",
     "access": "public",
-    "description": null,
-    "lineNumber": 145,
-    "undocument": true,
+    "description": "Calculate the transformation matrix for the edge (front/back) baesd on the parameters. ",
+    "see": [
+      "https://threejs.org/docs/#api/en/math/Matrix4",
+      "https://threejs.org/docs/#api/en/math/Vector2"
+    ],
+    "lineNumber": 268,
     "params": [
       {
+        "nullable": null,
+        "types": [
+          "Matrix4"
+        ],
+        "spread": false,
+        "optional": false,
         "name": "transform",
-        "types": [
-          "*"
-        ]
+        "description": "The matrix reference in which the transformation is stored"
       },
       {
+        "nullable": null,
+        "types": [
+          "Matrix4"
+        ],
+        "spread": false,
+        "optional": false,
         "name": "invTransform",
-        "types": [
-          "*"
-        ]
+        "description": "The inverse of the transform that is stored in the invTransform"
       },
       {
+        "nullable": null,
+        "types": [
+          "Vector2"
+        ],
+        "spread": false,
+        "optional": false,
         "name": "start",
-        "types": [
-          "*"
-        ]
+        "description": "The starting point location"
       },
       {
-        "name": "end",
+        "nullable": null,
         "types": [
-          "*"
-        ]
+          "Vector2"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "end",
+        "description": "The ending point location"
       }
     ],
     "return": null
@@ -12839,18 +13136,18 @@
     "longname": "scripts/model/half_edge.js~HalfEdge#distanceTo",
     "access": "public",
     "description": "Gets the distance from specified point.",
-    "lineNumber": 166,
+    "lineNumber": 289,
     "unknown": [
       {
         "tagName": "@returns",
-        "tagValue": "The distance."
+        "tagValue": "{Number} The distance."
       }
     ],
     "params": [
       {
         "nullable": null,
         "types": [
-          "*"
+          "Number"
         ],
         "spread": false,
         "optional": false,
@@ -12860,7 +13157,7 @@
       {
         "nullable": null,
         "types": [
-          "*"
+          "Number"
         ],
         "spread": false,
         "optional": false,
@@ -12871,7 +13168,7 @@
     "return": {
       "nullable": null,
       "types": [
-        "*"
+        "Number"
       ],
       "spread": false,
       "description": "The distance."
@@ -12887,15 +13184,17 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#getStart",
     "access": "public",
-    "description": null,
-    "lineNumber": 172,
-    "undocument": true,
-    "params": [],
+    "description": "Get the starting corner of the wall this instance represents",
+    "lineNumber": 299,
     "return": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
-    }
+        "Corner"
+      ],
+      "spread": false,
+      "description": "The starting corner"
+    },
+    "params": []
   },
   {
     "__docId__": 732,
@@ -12907,15 +13206,17 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#getEnd",
     "access": "public",
-    "description": null,
-    "lineNumber": 184,
-    "undocument": true,
-    "params": [],
+    "description": "Get the ending corner of the wall this instance represents",
+    "lineNumber": 315,
     "return": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
-    }
+        "Corner"
+      ],
+      "spread": false,
+      "description": "The ending corner"
+    },
+    "params": []
   },
   {
     "__docId__": 733,
@@ -12927,15 +13228,17 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#getOppositeEdge",
     "access": "public",
-    "description": null,
-    "lineNumber": 196,
-    "undocument": true,
-    "params": [],
+    "description": "If this is the front edge then return the back edge. \nFor example in a wall there are two halfedges, i.e one for front and one back. Based on which side this halfedge lies return the opposite {@link HalfEdge}",
+    "lineNumber": 332,
     "return": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
-    }
+        "HalfEdge"
+      ],
+      "spread": false,
+      "description": "The other HalfEdge"
+    },
+    "params": []
   },
   {
     "__docId__": 734,
@@ -12947,15 +13250,20 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#interiorEnd",
     "access": "public",
-    "description": null,
-    "lineNumber": 209,
-    "undocument": true,
-    "params": [],
+    "description": "Return the 2D interior location that is at the end. ",
+    "see": [
+      "https://threejs.org/docs/#api/en/math/Vector2"
+    ],
+    "lineNumber": 350,
     "return": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
-    }
+        "Vector2"
+      ],
+      "spread": false,
+      "description": "Return an object with attributes x, y"
+    },
+    "params": []
   },
   {
     "__docId__": 735,
@@ -12967,15 +13275,20 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#interiorStart",
     "access": "public",
-    "description": null,
-    "lineNumber": 216,
-    "undocument": true,
-    "params": [],
+    "description": "Return the 2D interior location that is at the start. ",
+    "see": [
+      "https://threejs.org/docs/#api/en/math/Vector2"
+    ],
+    "lineNumber": 362,
     "return": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
-    }
+        "Vector2"
+      ],
+      "spread": false,
+      "description": "Return an object with attributes x, y"
+    },
+    "params": []
   },
   {
     "__docId__": 736,
@@ -12987,15 +13300,20 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#interiorCenter",
     "access": "public",
-    "description": null,
-    "lineNumber": 223,
-    "undocument": true,
-    "params": [],
+    "description": "Return the 2D interior location that is at the center/middle. ",
+    "see": [
+      "https://threejs.org/docs/#api/en/math/Vector2"
+    ],
+    "lineNumber": 374,
     "return": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
-    }
+        "Vector2"
+      ],
+      "spread": false,
+      "description": "Return an object with attributes x, y"
+    },
+    "params": []
   },
   {
     "__docId__": 737,
@@ -13007,15 +13325,17 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#interiorDistance",
     "access": "public",
-    "description": null,
-    "lineNumber": 228,
-    "undocument": true,
-    "params": [],
+    "description": "Return the interior distance of the interior wall ",
+    "lineNumber": 383,
     "return": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
-    }
+        "Number"
+      ],
+      "spread": false,
+      "description": "The distance"
+    },
+    "params": []
   },
   {
     "__docId__": 738,
@@ -13027,15 +13347,20 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#exteriorEnd",
     "access": "public",
-    "description": null,
-    "lineNumber": 235,
-    "undocument": true,
-    "params": [],
+    "description": "Return the 2D exterior location that is at the end. ",
+    "see": [
+      "https://threejs.org/docs/#api/en/math/Vector2"
+    ],
+    "lineNumber": 395,
     "return": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
-    }
+        "Vector2"
+      ],
+      "spread": false,
+      "description": "Return an object with attributes x, y"
+    },
+    "params": []
   },
   {
     "__docId__": 739,
@@ -13047,15 +13372,20 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#exteriorStart",
     "access": "public",
-    "description": null,
-    "lineNumber": 241,
-    "undocument": true,
-    "params": [],
+    "description": "Return the 2D exterior location that is at the start. ",
+    "see": [
+      "https://threejs.org/docs/#api/en/math/Vector2"
+    ],
+    "lineNumber": 406,
     "return": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
-    }
+        "Vector2"
+      ],
+      "spread": false,
+      "description": "Return an object with attributes x, y"
+    },
+    "params": []
   },
   {
     "__docId__": 740,
@@ -13067,15 +13397,20 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#exteriorCenter",
     "access": "public",
-    "description": null,
-    "lineNumber": 247,
-    "undocument": true,
-    "params": [],
+    "description": "Return the 2D exterior location that is at the center/middle. ",
+    "see": [
+      "https://threejs.org/docs/#api/en/math/Vector2"
+    ],
+    "lineNumber": 417,
     "return": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
-    }
+        "Vector2"
+      ],
+      "spread": false,
+      "description": "Return an object with attributes x, y"
+    },
+    "params": []
   },
   {
     "__docId__": 741,
@@ -13087,15 +13422,17 @@
     "static": false,
     "longname": "scripts/model/half_edge.js~HalfEdge#exteriorDistance",
     "access": "public",
-    "description": null,
-    "lineNumber": 252,
-    "undocument": true,
-    "params": [],
+    "description": "Return the exterior distance of the exterior wall ",
+    "lineNumber": 426,
     "return": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
-    }
+        "Number"
+      ],
+      "spread": false,
+      "description": "The distance"
+    },
+    "params": []
   },
   {
     "__docId__": 742,
@@ -13108,17 +13445,17 @@
     "longname": "scripts/model/half_edge.js~HalfEdge#corners",
     "access": "public",
     "description": "Get the corners of the half edge.",
-    "lineNumber": 262,
+    "lineNumber": 436,
     "unknown": [
       {
         "tagName": "@returns",
-        "tagValue": "An array of x,y pairs."
+        "tagValue": "{Corner[]} An array of x,y pairs."
       }
     ],
     "return": {
       "nullable": null,
       "types": [
-        "*"
+        "Corner[]"
       ],
       "spread": false,
       "description": "An array of x,y pairs."
@@ -13136,25 +13473,36 @@
     "longname": "scripts/model/half_edge.js~HalfEdge#halfAngleVector",
     "access": "public",
     "description": "Gets CCW angle from v1 to v2",
-    "lineNumber": 270,
+    "lineNumber": 447,
     "params": [
       {
-        "name": "v1",
+        "nullable": null,
         "types": [
-          "*"
-        ]
+          "Vector2"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "v1",
+        "description": "The point a"
       },
       {
-        "name": "v2",
+        "nullable": null,
         "types": [
-          "*"
-        ]
+          "Vector2"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "v1",
+        "description": "The point b"
       }
     ],
     "return": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "Object"
+      ],
+      "spread": false,
+      "description": "contains keys x and y with number representing the halfAngles"
     }
   },
   {
@@ -23148,7 +23496,7 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\n  \"name\": \"blueprint3d-js\",\n  \"version\": \"0.1.0\",\n  \"description\": \"This is the core framework of Blueprint-js for creating floorplans in 2d and 3d\",\n  \"main\": \"build/js/bp3djs.min.js\",\n  \"scripts\": {\n    \"build\": \"rollup -c\",\n    \"dev\": \"rollup -c -w\",\n    \"reload\": \"livereload 'build/'\",\n    \"test\": \"echo \\\"Error: no test specified\\\" && exit 1\",\n    \"watch\": \"npm-run-all --parallel reload dev\",\n    \"docs\": \"esdoc\"\n  },\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"git+ssh://git@github.com/aalavandhaann/blueprint-js.git\"\n  },\n  \"author\": \"#0K Srinivasan <ashok.srinivasan2002@gmail.com> (@aalavandhaann)\",\n  \"license\": \"ISC\",\n  \"bugs\": {\n    \"url\": \"https://github.com/aalavandhaann/blueprint-js/issues\"\n  },\n  \"devDependencies\": {\n    \"babel-plugin-external-helpers\": \"^6.22.0\",\n    \"babel-preset-latest\": \"^6.24.1\",\n    \"cssnano\": \"^3.10.0\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"eslint\": \"^3.19.0\",\n    \"eslint-plugin-import\": \"^2.17.3\",\n    \"event-stream\": \">4.0.0\",\n    \"livereload\": \"^0.7.0\",\n    \"npm-run-all\": \"^4.0.2\",\n    \"rollup\": \"^1.6.0\",\n    \"rollup-plugin-babel\": \"^2.7.1\",\n    \"rollup-plugin-commonjs\": \"^9.3.4\",\n    \"rollup-plugin-eslint\": \"^3.0.0\",\n    \"rollup-plugin-node-resolve\": \"^3.0.0\",\n    \"rollup-plugin-postcss\": \"^0.5.3\",\n    \"rollup-plugin-replace\": \"^1.1.1\",\n    \"rollup-plugin-serve\": \"^0.3.0\",\n    \"rollup-plugin-uglify\": \"^2.0.1\",\n    \"rollup-plugin-uglify-es\": \"0.0.1\",\n    \"rollup-watch\": \"^4.0.0\"\n  },\n  \"dependencies\": {\n    \"@calvinscofield/three-objloader\": \"^1.0.4\",\n    \"braces\": \"^2.3.2\",\n    \"es6-enum\": \"^1.1.0\",\n    \"jquery\": \"^3.4.1\",\n    \"line-intersect\": \"^2.2.1\",\n    \"three\": \"^0.98.0\",\n    \"three-gltf-exporter\": \"0.0.1\",\n    \"three-gltf-loader\": \"^1.105.0\",\n    \"three-reflector\": \"^1.0.2\",\n    \"three-reflector2\": \"0.0.5\"\n  }\n}\n",
+    "content": "{\n  \"name\": \"blueprint3d-js\",\n  \"version\": \"0.1.0\",\n  \"description\": \"This is the core framework of Blueprint-js for creating floorplans in 2d and 3d\",\n  \"main\": \"build/js/bp3djs.min.js\",\n  \"scripts\": {\n    \"build\": \"rollup -c\",\n    \"dev\": \"rollup -c -w\",\n    \"reload\": \"livereload 'build/'\",\n    \"test\": \"echo \\\"Error: no test specified\\\" && exit 1\",\n    \"watch\": \"npm-run-all --parallel reload dev\",\n    \"docs\": \"esdoc\"\n  },\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"git+ssh://git@github.com/aalavandhaann/blueprint-js.git\"\n  },\n  \"author\": \"#0K Srinivasan <ashok.srinivasan2002@gmail.com> (@aalavandhaann)\",\n  \"license\": \"ISC\",\n  \"bugs\": {\n    \"url\": \"https://github.com/aalavandhaann/blueprint-js/issues\"\n  },\n  \"devDependencies\": {\n    \"babel-plugin-external-helpers\": \"^6.22.0\",\n    \"babel-preset-latest\": \"^6.24.1\",\n    \"cssnano\": \"^3.10.0\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"eslint\": \"^3.19.0\",\n    \"eslint-plugin-import\": \"^2.17.3\",\n    \"event-stream\": \">4.0.0\",\n    \"livereload\": \"^0.7.0\",\n    \"npm-run-all\": \"^4.0.2\",\n    \"rollup\": \"^1.6.0\",\n    \"rollup-plugin-babel\": \"^2.7.1\",\n    \"rollup-plugin-commonjs\": \"^9.3.4\",\n    \"rollup-plugin-eslint\": \"^3.0.0\",\n    \"rollup-plugin-node-resolve\": \"^3.0.0\",\n    \"rollup-plugin-postcss\": \"^0.5.3\",\n    \"rollup-plugin-replace\": \"^1.1.1\",\n    \"rollup-plugin-serve\": \"^0.3.0\",\n    \"rollup-plugin-uglify\": \"^2.0.1\",\n    \"rollup-plugin-uglify-es\": \"0.0.1\",\n    \"rollup-watch\": \"^4.0.0\"\n  },\n  \"dependencies\": {\n    \"@calvinscofield/three-objloader\": \"^1.0.4\",\n    \"braces\": \"^2.3.2\",\n    \"es6-enum\": \"^1.1.0\",\n    \"jquery\": \"^3.4.1\",\n    \"line-intersect\": \"^2.2.1\",\n    \"nodeclipse\": \"^0.17.2\",\n    \"three\": \"^0.98.0\",\n    \"three-gltf-exporter\": \"0.0.1\",\n    \"three-gltf-loader\": \"^1.105.0\",\n    \"three-reflector\": \"^1.0.2\",\n    \"three-reflector2\": \"0.0.5\"\n  }\n}\n",
     "longname": "/home/ashok/eclipse-workspace/blueprint-js/package.json",
     "name": "package.json",
     "static": true,

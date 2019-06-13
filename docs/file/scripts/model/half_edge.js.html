@@ -173,33 +173,132 @@ export class HalfEdge extends EventDispatcher
 {
 	/**
 	 * Constructs a half edge.
-	 * @param room The associated room. Instance of Room
-	 * @param wall The corresponding wall. Instance of Wall
-	 * @param front True if front side. Boolean value
+	 * @param {Room} room The associated room. Instance of Room
+	 * @param {Wall} wall The corresponding wall. Instance of Wall
+	 * @param {boolean} front True if front side. Boolean value
 	 */
 	constructor(room, wall, front)
 	{
 		super();
 
+		/**  The minimum point in space calculated from the bounds
+		 * @property {Vector3} min  The minimum point in space calculated from the bounds
+		 * @type {Vector3}
+		 * @see https://threejs.org/docs/#api/en/math/Vector3
+		**/
 		this.min = null;
+		
+		/**
+		 * The maximum point in space calculated from the bounds
+		 * @property {Vector3} max	 The maximum point in space calculated from the bounds
+		 * @type {Vector3}
+		 * @see https://threejs.org/docs/#api/en/math/Vector3
+		**/
 		this.max = null;
+
+		/**
+		 * The center of this half edge
+		 * @property {Vector3} center The center of this half edge
+		 * @type {Vector3}
+		 * @see https://threejs.org/docs/#api/en/math/Vector3
+		**/
 		this.center = null;
 
+		/**
+		 * Reference to a Room instance
+		 * @property {Room} room Reference to a Room instance
+		 * @type {Room}
+		**/
 		this.room = room;
+		
+		/** 
+		 *  Reference to a Wall instance
+		 * @property {Wall} room Reference to a Wall instance
+		 * @type {Wall}
+		**/
 		this.wall = wall;
+		
+		/**
+		 * Reference to the next halfedge instance connected to this
+		 * @property {HalfEdge} next Reference to the next halfedge instance connected to this
+		 * @type {HalfEdge}
+		**/
 		this.next = null;
+		
+		/**
+		 * Reference to the previous halfedge instance connected to this
+		 * @property {HalfEdge} prev Reference to the previous halfedge instance connected to this
+		 * @type {HalfEdge}
+		**/
 		this.prev = null;
+		
+		/** 
+		 * The offset to maintain for the front and back walls from the midline of a wall
+		 * @property {Number} offset The offset to maintain for the front and back walls from the midline of a wall
+		 * @type {Number}
+		**/
 		this.offset = 0.0;
+
+		/**
+		 *  The height of a wall
+		 * @property {Number} height The height of a wall
+		 * @type {Number}
+		**/
 		this.height = 0.0;
+		
+		/**
+		 * The plane mesh that will be used for checking intersections of wall items
+		 * @property {Mesh} plane The plane mesh that will be used for checking intersections of wall items
+		 * @type {Mesh}
+		 * @see https://threejs.org/docs/#api/en/objects/Mesh
+		 */
 		this.plane = null;
+		
+		/**
+		 * The interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall
+		 * @property {Matrix4} interiorTransform The interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall
+		 * @type {Matrix4} 
+		 * @see https://threejs.org/docs/#api/en/math/Matrix4
+		 */
 		this.interiorTransform = new Matrix4();
+		
+		/**
+		 * The inverse of the interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall
+		 * @property {Matrix4} invInteriorTransform The inverse of the interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall
+		 * @type {Matrix4}
+		 * @see https://threejs.org/docs/#api/en/math/Matrix4
+		 */
 		this.invInteriorTransform = new Matrix4();
+		
+		/**
+		 * The exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall
+		 * @property {Matrix4} exteriorTransform The exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall
+		 * @type {Matrix4} 
+		 * @see https://threejs.org/docs/#api/en/math/Matrix4
+		 */
 		this.exteriorTransform = new Matrix4();
+		
+		/**
+		 * The inverse of the exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall
+		 * @property {Matrix4} invExteriorTransform The inverse of the exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall
+		 * @type {Matrix4}
+		 * @see https://threejs.org/docs/#api/en/math/Matrix4
+		 */
 		this.invExteriorTransform = new Matrix4();
+		
+		/**
+		 * This is an array of callbacks to be call when redraw happens
+		 * @depreceated 
+		 */
 		this.redrawCallbacks = null;
-
+		
+		/**
+		 * Is this is the front edge or the back edge
+		 * @property {boolean} front Is this is the front edge or the back edge
+		 * @type {boolean}
+		 */
 		this.front = front || false;
-
+		
 		this.offset = wall.thickness / 2.0;
 		this.height = wall.height;
 
@@ -215,7 +314,8 @@ export class HalfEdge extends EventDispatcher
 	}
 
 	/**
-	 *
+	 * Two separate textures are used for the walls. Based on which side of the wall this {HalfEdge} refers the texture is returned
+	 * @return {Object} front/back Two separate textures are used for the walls. Based on which side of the wall this {@link HalfEdge} refers the texture is returned
 	 */
 	getTexture()
 	{
@@ -230,7 +330,11 @@ export class HalfEdge extends EventDispatcher
 	}
 
 	/**
-	 *
+	 * Set a Texture to the wall. Based on the edge side as front or back the texture is applied appropriately to the wall
+	 * @param {String} textureUrl The path to the texture image
+	 * @param {boolean} textureStretch Can the texture stretch? If not it will be repeated
+	 * @param {Number} textureScale The scale value using which the number of repetitions of the texture image is calculated
+	 * @emits {EVENT_REDRAW}
 	 */
 	setTexture(textureUrl, textureStretch, textureScale)
 	{
@@ -247,12 +351,22 @@ export class HalfEdge extends EventDispatcher
 		//this.redrawCallbacks.fire();
 		this.dispatchEvent({type:EVENT_REDRAW, item: this});
 	}
-
+	
+	/**
+	 * Emit the redraw event
+	 * @emits {EVENT_REDRAW}
+	 */
 	dispatchRedrawEvent()
 	{
 		this.dispatchEvent({type:EVENT_REDRAW, item: this});
 	}
-
+	
+	/**
+	 * Transform the {@link Corner} instance to a Vector3 instance using the x and y position returned as x and z
+	 * @param {Corner} corner
+	 * @return {Vector3}
+	 * @see https://threejs.org/docs/#api/en/math/Vector3
+	 */
 	transformCorner(corner)
 	{
 		return new Vector3(corner.x, 0, corner.y);
@@ -260,7 +374,7 @@ export class HalfEdge extends EventDispatcher
 
 
 	/**
-	 * this feels hacky, but need wall items
+	 * This generates the invisible planes in the scene that are used for interesection testing for the wall items
 	 */
 	generatePlane()
 	{
@@ -300,7 +414,16 @@ export class HalfEdge extends EventDispatcher
 		this.max = b3.max.clone();
 		this.center = this.max.clone().sub(this.min).multiplyScalar(0.5).add(this.min);
 	}
-
+	
+	/**
+	 * Calculate the transformation matrix for the edge (front/back) baesd on the parameters. 
+	 * @param {Matrix4} transform The matrix reference in which the transformation is stored
+	 * @param {Matrix4} invTransform The inverse of the transform that is stored in the invTransform
+	 * @param {Vector2} start The starting point location
+	 * @param {Vector2} end The ending point location
+	 * @see https://threejs.org/docs/#api/en/math/Matrix4
+	 * @see https://threejs.org/docs/#api/en/math/Vector2
+	 */
 	computeTransforms(transform, invTransform, start, end)
 	{
 		var v1 = start;
@@ -318,16 +441,20 @@ export class HalfEdge extends EventDispatcher
 	}
 
 	/** Gets the distance from specified point.
-	 * @param x X coordinate of the point.
-	 * @param y Y coordinate of the point.
-	 * @returns The distance.
+	 * @param {Number} x X coordinate of the point.
+	 * @param {Number} y Y coordinate of the point.
+	 * @returns {Number} The distance.
 	 */
 	distanceTo(x, y)
 	{
 		// x, y, x1, y1, x2, y2
 		return Utils.pointDistanceFromLine(new Vector2(x, y), this.interiorStart(), this.interiorEnd());
 	}
-
+	
+	/**
+	 * Get the starting corner of the wall this instance represents
+	 * @return {Corner} The starting corner
+	 */
 	getStart()
 	{
 		if (this.front)
@@ -339,7 +466,11 @@ export class HalfEdge extends EventDispatcher
 			return this.wall.getEnd();
 		}
 	}
-
+	
+	/**
+	 * Get the ending corner of the wall this instance represents
+	 * @return {Corner} The ending corner
+	 */
 	getEnd()
 	{
 		if (this.front)
@@ -351,7 +482,12 @@ export class HalfEdge extends EventDispatcher
 			return this.wall.getStart();
 		}
 	}
-
+	
+	/**
+	 * If this is the front edge then return the back edge. 
+	 * For example in a wall there are two halfedges, i.e one for front and one back. Based on which side this halfedge lies return the opposite {@link HalfEdge}
+	 * @return {HalfEdge} The other HalfEdge
+	 */
 	getOppositeEdge()
 	{
 		if (this.front)
@@ -363,51 +499,89 @@ export class HalfEdge extends EventDispatcher
 			return this.wall.frontEdge;
 		}
 	}
-
-	// these return an object with attributes x, y
+	
+	/**
+	 * Return the 2D interior location that is at the end. 
+	 * @return {Vector2} Return an object with attributes x, y
+	 * @see https://threejs.org/docs/#api/en/math/Vector2
+	 */
+	// 
 	interiorEnd()
 	{
 		var vec = this.halfAngleVector(this, this.next);
 		return new Vector2(this.getEnd().x + vec.x, this.getEnd().y + vec.y);
 		// return {x:this.getEnd().x + vec.x, y:this.getEnd().y + vec.y};
 	}
-
+	
+	/**
+	 * Return the 2D interior location that is at the start. 
+	 * @return {Vector2} Return an object with attributes x, y
+	 * @see https://threejs.org/docs/#api/en/math/Vector2
+	 */
 	interiorStart()
 	{
 		var vec = this.halfAngleVector(this.prev, this);
 		return new Vector2(this.getStart().x + vec.x, this.getStart().y + vec.y);
 		// return {x:this.getStart().x + vec.x, y:this.getStart().y + vec.y};
 	}
-
+	
+	/**
+	 * Return the 2D interior location that is at the center/middle. 
+	 * @return {Vector2} Return an object with attributes x, y
+	 * @see https://threejs.org/docs/#api/en/math/Vector2
+	 */
 	interiorCenter()
 	{
 		return new Vector2((this.interiorStart().x + this.interiorEnd().x) / 2.0, (this.interiorStart().y + this.interiorEnd().y) / 2.0);
 	}
-
+	
+	/**
+	 * Return the interior distance of the interior wall 
+	 * @return {Number} The distance
+	 */
 	interiorDistance()
 	{
 		var start = this.interiorStart();
 		var end = this.interiorEnd();
 		return Utils.distance(start, end);
 	}
-
+	
+	/**
+	 * Return the 2D exterior location that is at the end. 
+	 * @return {Vector2} Return an object with attributes x, y
+	 * @see https://threejs.org/docs/#api/en/math/Vector2
+	 */
 	exteriorEnd()
 	{
 		var vec = this.halfAngleVector(this, this.next);
 		return new Vector2(this.getEnd().x - vec.x, this.getEnd().y - vec.y);
 	}
-
+	
+	/**
+	 * Return the 2D exterior location that is at the start. 
+	 * @return {Vector2} Return an object with attributes x, y
+	 * @see https://threejs.org/docs/#api/en/math/Vector2
+	 */
 	exteriorStart()
 	{
 		var vec = this.halfAngleVector(this.prev, this);
 		return new Vector2(this.getStart().x - vec.x, this.getStart().y - vec.y);
 	}
-
+	
+	/**
+	 * Return the 2D exterior location that is at the center/middle. 
+	 * @return {Vector2} Return an object with attributes x, y
+	 * @see https://threejs.org/docs/#api/en/math/Vector2
+	 */
 	exteriorCenter()
 	{
 			return new Vector2((this.exteriorStart().x + this.exteriorEnd().x) / 2.0, (this.exteriorStart().y + this.exteriorEnd().y) / 2.0);
 	}
-
+	
+	/**
+	 * Return the exterior distance of the exterior wall 
+	 * @return {Number} The distance
+	 */
 	exteriorDistance()
 	{
 		var start = this.exteriorStart();
@@ -416,7 +590,7 @@ export class HalfEdge extends EventDispatcher
 	}
 
 	/** Get the corners of the half edge.
-	 * @returns An array of x,y pairs.
+	 * @returns {Corner[]} An array of x,y pairs.
 	 */
 	corners()
 	{
@@ -425,6 +599,9 @@ export class HalfEdge extends EventDispatcher
 
 	/**
 	 * Gets CCW angle from v1 to v2
+	 * @param {Vector2} v1 The point a
+	 * @param {Vector2} v1 The point b
+	 * @return {Object} contains keys x and y with number representing the halfAngles
 	 */
 	halfAngleVector(v1, v2)
 	{

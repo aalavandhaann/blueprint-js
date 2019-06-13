@@ -411,6 +411,10 @@ export class Controller extends EventDispatcher
 	itemIntersection(vec2, item)
 	{
 		var customIntersections = item.customIntersectionPlanes();
+		if(item.freePosition)
+		{
+			return this.freeMouse3D(vec2);
+		}
 		var intersections = null;
 		if (customIntersections && customIntersections.length > 0)
 		{
@@ -446,6 +450,17 @@ export class Controller extends EventDispatcher
 		var vector = new Vector3(normVec2.x, normVec2.y, 0.5);
 		vector.unproject(this.camera);
 		return vector;
+	}
+	
+	freeMouse3D(vec2)
+	{
+		var distance;
+		var pos = new Vector3();
+		var vector = this.mouseToVec3(vec2);
+		vector.sub(this.camera.position).normalize();
+		distance = -this.camera.position.z / vector.z;
+		pos.copy(this.camera.position).add(vector.multiplyScalar(distance));
+		return {point:pos, distance:distance};
 	}
 
 	// filter by normals will only return objects facing the camera

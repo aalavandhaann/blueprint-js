@@ -49197,32 +49197,131 @@ var BP3DJS = (function (exports) {
 
   	/**
     * Constructs a half edge.
-    * @param room The associated room. Instance of Room
-    * @param wall The corresponding wall. Instance of Wall
-    * @param front True if front side. Boolean value
+    * @param {Room} room The associated room. Instance of Room
+    * @param {Wall} wall The corresponding wall. Instance of Wall
+    * @param {boolean} front True if front side. Boolean value
     */
   	function HalfEdge(room, wall, front) {
   		classCallCheck(this, HalfEdge);
 
+  		/**  The minimum point in space calculated from the bounds
+     * @property {Vector3} min  The minimum point in space calculated from the bounds
+     * @type {Vector3}
+     * @see https://threejs.org/docs/#api/en/math/Vector3
+    **/
   		var _this = possibleConstructorReturn(this, (HalfEdge.__proto__ || Object.getPrototypeOf(HalfEdge)).call(this));
 
   		_this.min = null;
+
+  		/**
+     * The maximum point in space calculated from the bounds
+     * @property {Vector3} max	 The maximum point in space calculated from the bounds
+     * @type {Vector3}
+     * @see https://threejs.org/docs/#api/en/math/Vector3
+    **/
   		_this.max = null;
+
+  		/**
+     * The center of this half edge
+     * @property {Vector3} center The center of this half edge
+     * @type {Vector3}
+     * @see https://threejs.org/docs/#api/en/math/Vector3
+    **/
   		_this.center = null;
 
+  		/**
+     * Reference to a Room instance
+     * @property {Room} room Reference to a Room instance
+     * @type {Room}
+    **/
   		_this.room = room;
+
+  		/** 
+     *  Reference to a Wall instance
+     * @property {Wall} room Reference to a Wall instance
+     * @type {Wall}
+    **/
   		_this.wall = wall;
+
+  		/**
+     * Reference to the next halfedge instance connected to this
+     * @property {HalfEdge} next Reference to the next halfedge instance connected to this
+     * @type {HalfEdge}
+    **/
   		_this.next = null;
+
+  		/**
+     * Reference to the previous halfedge instance connected to this
+     * @property {HalfEdge} prev Reference to the previous halfedge instance connected to this
+     * @type {HalfEdge}
+    **/
   		_this.prev = null;
+
+  		/** 
+     * The offset to maintain for the front and back walls from the midline of a wall
+     * @property {Number} offset The offset to maintain for the front and back walls from the midline of a wall
+     * @type {Number}
+    **/
   		_this.offset = 0.0;
+
+  		/**
+     *  The height of a wall
+     * @property {Number} height The height of a wall
+     * @type {Number}
+    **/
   		_this.height = 0.0;
+
+  		/**
+     * The plane mesh that will be used for checking intersections of wall items
+     * @property {Mesh} plane The plane mesh that will be used for checking intersections of wall items
+     * @type {Mesh}
+     * @see https://threejs.org/docs/#api/en/objects/Mesh
+     */
   		_this.plane = null;
+
+  		/**
+     * The interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall
+     * @property {Matrix4} interiorTransform The interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall
+     * @type {Matrix4} 
+     * @see https://threejs.org/docs/#api/en/math/Matrix4
+     */
   		_this.interiorTransform = new Matrix4();
+
+  		/**
+     * The inverse of the interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall
+     * @property {Matrix4} invInteriorTransform The inverse of the interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall
+     * @type {Matrix4}
+     * @see https://threejs.org/docs/#api/en/math/Matrix4
+     */
   		_this.invInteriorTransform = new Matrix4();
+
+  		/**
+     * The exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall
+     * @property {Matrix4} exteriorTransform The exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall
+     * @type {Matrix4} 
+     * @see https://threejs.org/docs/#api/en/math/Matrix4
+     */
   		_this.exteriorTransform = new Matrix4();
+
+  		/**
+     * The inverse of the exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall
+     * @property {Matrix4} invExteriorTransform The inverse of the exterior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall
+     * @type {Matrix4}
+     * @see https://threejs.org/docs/#api/en/math/Matrix4
+     */
   		_this.invExteriorTransform = new Matrix4();
+
+  		/**
+     * This is an array of callbacks to be call when redraw happens
+     * @depreceated 
+     */
   		_this.redrawCallbacks = null;
 
+  		/**
+     * Is this is the front edge or the back edge
+     * @property {boolean} front Is this is the front edge or the back edge
+     * @type {boolean}
+     */
   		_this.front = front || false;
 
   		_this.offset = wall.thickness / 2.0;
@@ -49238,7 +49337,8 @@ var BP3DJS = (function (exports) {
   	}
 
   	/**
-    *
+    * Two separate textures are used for the walls. Based on which side of the wall this {HalfEdge} refers the texture is returned
+    * @return {Object} front/back Two separate textures are used for the walls. Based on which side of the wall this {@link HalfEdge} refers the texture is returned
     */
 
 
@@ -49253,7 +49353,11 @@ var BP3DJS = (function (exports) {
   		}
 
   		/**
-     *
+     * Set a Texture to the wall. Based on the edge side as front or back the texture is applied appropriately to the wall
+     * @param {String} textureUrl The path to the texture image
+     * @param {boolean} textureStretch Can the texture stretch? If not it will be repeated
+     * @param {Number} textureScale The scale value using which the number of repetitions of the texture image is calculated
+     * @emits {EVENT_REDRAW}
      */
 
   	}, {
@@ -49269,11 +49373,25 @@ var BP3DJS = (function (exports) {
   			//this.redrawCallbacks.fire();
   			this.dispatchEvent({ type: EVENT_REDRAW, item: this });
   		}
+
+  		/**
+     * Emit the redraw event
+     * @emits {EVENT_REDRAW}
+     */
+
   	}, {
   		key: 'dispatchRedrawEvent',
   		value: function dispatchRedrawEvent() {
   			this.dispatchEvent({ type: EVENT_REDRAW, item: this });
   		}
+
+  		/**
+     * Transform the {@link Corner} instance to a Vector3 instance using the x and y position returned as x and z
+     * @param {Corner} corner
+     * @return {Vector3}
+     * @see https://threejs.org/docs/#api/en/math/Vector3
+     */
+
   	}, {
   		key: 'transformCorner',
   		value: function transformCorner(corner) {
@@ -49281,7 +49399,7 @@ var BP3DJS = (function (exports) {
   		}
 
   		/**
-     * this feels hacky, but need wall items
+     * This generates the invisible planes in the scene that are used for interesection testing for the wall items
      */
 
   	}, {
@@ -49322,6 +49440,17 @@ var BP3DJS = (function (exports) {
   			this.max = b3.max.clone();
   			this.center = this.max.clone().sub(this.min).multiplyScalar(0.5).add(this.min);
   		}
+
+  		/**
+     * Calculate the transformation matrix for the edge (front/back) baesd on the parameters. 
+     * @param {Matrix4} transform The matrix reference in which the transformation is stored
+     * @param {Matrix4} invTransform The inverse of the transform that is stored in the invTransform
+     * @param {Vector2} start The starting point location
+     * @param {Vector2} end The ending point location
+     * @see https://threejs.org/docs/#api/en/math/Matrix4
+     * @see https://threejs.org/docs/#api/en/math/Vector2
+     */
+
   	}, {
   		key: 'computeTransforms',
   		value: function computeTransforms(transform, invTransform, start, end) {
@@ -49340,9 +49469,9 @@ var BP3DJS = (function (exports) {
   		}
 
   		/** Gets the distance from specified point.
-     * @param x X coordinate of the point.
-     * @param y Y coordinate of the point.
-     * @returns The distance.
+     * @param {Number} x X coordinate of the point.
+     * @param {Number} y Y coordinate of the point.
+     * @returns {Number} The distance.
      */
 
   	}, {
@@ -49351,6 +49480,12 @@ var BP3DJS = (function (exports) {
   			// x, y, x1, y1, x2, y2
   			return Utils.pointDistanceFromLine(new Vector2(x, y), this.interiorStart(), this.interiorEnd());
   		}
+
+  		/**
+     * Get the starting corner of the wall this instance represents
+     * @return {Corner} The starting corner
+     */
+
   	}, {
   		key: 'getStart',
   		value: function getStart() {
@@ -49360,6 +49495,12 @@ var BP3DJS = (function (exports) {
   				return this.wall.getEnd();
   			}
   		}
+
+  		/**
+     * Get the ending corner of the wall this instance represents
+     * @return {Corner} The ending corner
+     */
+
   	}, {
   		key: 'getEnd',
   		value: function getEnd() {
@@ -49369,6 +49510,13 @@ var BP3DJS = (function (exports) {
   				return this.wall.getStart();
   			}
   		}
+
+  		/**
+     * If this is the front edge then return the back edge. 
+     * For example in a wall there are two halfedges, i.e one for front and one back. Based on which side this halfedge lies return the opposite {@link HalfEdge}
+     * @return {HalfEdge} The other HalfEdge
+     */
+
   	}, {
   		key: 'getOppositeEdge',
   		value: function getOppositeEdge() {
@@ -49379,7 +49527,12 @@ var BP3DJS = (function (exports) {
   			}
   		}
 
-  		// these return an object with attributes x, y
+  		/**
+     * Return the 2D interior location that is at the end. 
+     * @return {Vector2} Return an object with attributes x, y
+     * @see https://threejs.org/docs/#api/en/math/Vector2
+     */
+  		// 
 
   	}, {
   		key: 'interiorEnd',
@@ -49388,6 +49541,13 @@ var BP3DJS = (function (exports) {
   			return new Vector2(this.getEnd().x + vec.x, this.getEnd().y + vec.y);
   			// return {x:this.getEnd().x + vec.x, y:this.getEnd().y + vec.y};
   		}
+
+  		/**
+     * Return the 2D interior location that is at the start. 
+     * @return {Vector2} Return an object with attributes x, y
+     * @see https://threejs.org/docs/#api/en/math/Vector2
+     */
+
   	}, {
   		key: 'interiorStart',
   		value: function interiorStart() {
@@ -49395,11 +49555,24 @@ var BP3DJS = (function (exports) {
   			return new Vector2(this.getStart().x + vec.x, this.getStart().y + vec.y);
   			// return {x:this.getStart().x + vec.x, y:this.getStart().y + vec.y};
   		}
+
+  		/**
+     * Return the 2D interior location that is at the center/middle. 
+     * @return {Vector2} Return an object with attributes x, y
+     * @see https://threejs.org/docs/#api/en/math/Vector2
+     */
+
   	}, {
   		key: 'interiorCenter',
   		value: function interiorCenter() {
   			return new Vector2((this.interiorStart().x + this.interiorEnd().x) / 2.0, (this.interiorStart().y + this.interiorEnd().y) / 2.0);
   		}
+
+  		/**
+     * Return the interior distance of the interior wall 
+     * @return {Number} The distance
+     */
+
   	}, {
   		key: 'interiorDistance',
   		value: function interiorDistance() {
@@ -49407,23 +49580,50 @@ var BP3DJS = (function (exports) {
   			var end = this.interiorEnd();
   			return Utils.distance(start, end);
   		}
+
+  		/**
+     * Return the 2D exterior location that is at the end. 
+     * @return {Vector2} Return an object with attributes x, y
+     * @see https://threejs.org/docs/#api/en/math/Vector2
+     */
+
   	}, {
   		key: 'exteriorEnd',
   		value: function exteriorEnd() {
   			var vec = this.halfAngleVector(this, this.next);
   			return new Vector2(this.getEnd().x - vec.x, this.getEnd().y - vec.y);
   		}
+
+  		/**
+     * Return the 2D exterior location that is at the start. 
+     * @return {Vector2} Return an object with attributes x, y
+     * @see https://threejs.org/docs/#api/en/math/Vector2
+     */
+
   	}, {
   		key: 'exteriorStart',
   		value: function exteriorStart() {
   			var vec = this.halfAngleVector(this.prev, this);
   			return new Vector2(this.getStart().x - vec.x, this.getStart().y - vec.y);
   		}
+
+  		/**
+     * Return the 2D exterior location that is at the center/middle. 
+     * @return {Vector2} Return an object with attributes x, y
+     * @see https://threejs.org/docs/#api/en/math/Vector2
+     */
+
   	}, {
   		key: 'exteriorCenter',
   		value: function exteriorCenter() {
   			return new Vector2((this.exteriorStart().x + this.exteriorEnd().x) / 2.0, (this.exteriorStart().y + this.exteriorEnd().y) / 2.0);
   		}
+
+  		/**
+     * Return the exterior distance of the exterior wall 
+     * @return {Number} The distance
+     */
+
   	}, {
   		key: 'exteriorDistance',
   		value: function exteriorDistance() {
@@ -49433,7 +49633,7 @@ var BP3DJS = (function (exports) {
   		}
 
   		/** Get the corners of the half edge.
-     * @returns An array of x,y pairs.
+     * @returns {Corner[]} An array of x,y pairs.
      */
 
   	}, {
@@ -49444,6 +49644,9 @@ var BP3DJS = (function (exports) {
 
   		/**
      * Gets CCW angle from v1 to v2
+     * @param {Vector2} v1 The point a
+     * @param {Vector2} v1 The point b
+     * @return {Object} contains keys x and y with number representing the halfAngles
      */
 
   	}, {
@@ -49680,7 +49883,7 @@ var BP3DJS = (function (exports) {
 
   		/**
      *	@param {Number} tolerance - The tolerance value within which it will snap to adjacent corners
-     *  @return {Object} snapped
+     *  @return {Object} snapped Contains keys x and y with true/false values
      *  @description The object with x and y that are boolean values to indicate if the snap happens in x and y
      */
 
@@ -49836,7 +50039,7 @@ var BP3DJS = (function (exports) {
     	* Returns the distance between this corner and a point in 2d space
     	* @param {Vector2} point
     	* @see https://threejs.org/docs/#api/en/math/Vector2
-    	* @return {Number} distance
+    	* @return {Number} distance The distance
     **/
 
   	}, {
@@ -50691,7 +50894,7 @@ var BP3DJS = (function (exports) {
 
 
   		/**
-    	*	@return {HalfEdge[]} edges
+    	*	@return {HalfEdge[]} edges The array of {@link HalfEdge} 
     **/
   		value: function wallEdges() {
   			var edges = [];
@@ -50780,9 +50983,10 @@ var BP3DJS = (function (exports) {
   		// other walls. If two walls are intersecting then the intersection point
   		// has to create a new wall.
   		/**
-    	* @param {Corner} start
-    	* @param {Corner} end
-    	* @return {boolean} intersects
+     *  Checks existing walls for any intersections they would make. If there are intersections then introduce new corners and new walls as required at places
+     *  @param {Corner} start
+     *  @param {Corner} end
+     *  @return {boolean} intersects 
     **/
 
   	}, {
@@ -51470,7 +51674,7 @@ var BP3DJS = (function (exports) {
   		}
 
   		/**
-    	*	@return {CarbonSheet} _carbonSheet
+    	*	@return {CarbonSheet} _carbonSheet reference to the instance of {@link CarbonSheet}
     **/
   		,
   		get: function get() {
@@ -102927,6 +103131,7 @@ var BP3DJS = (function (exports) {
   		_this.bhelper = null;
 
   		_this.scene = _this.model.scene;
+  		_this._freePosition = true;
 
   		if (!isgltf) {
   			_this.geometry = geometry;
@@ -103487,6 +103692,11 @@ var BP3DJS = (function (exports) {
   				scale_x: this.scale.x, scale_y: this.scale.y, scale_z: this.scale.z, fixed: this.fixed,
   				material_colors: matattribs };
   		}
+  	}, {
+  		key: 'freePosition',
+  		get: function get() {
+  			return this._freePosition;
+  		}
   	}]);
   	return Item;
   }(Mesh);
@@ -103500,7 +103710,11 @@ var BP3DJS = (function (exports) {
   	function FloorItem(model, metadata, geometry, material, position, rotation, scale) {
   		var isgltf = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : false;
   		classCallCheck(this, FloorItem);
-  		return possibleConstructorReturn(this, (FloorItem.__proto__ || Object.getPrototypeOf(FloorItem)).call(this, model, metadata, geometry, material, position, rotation, scale, isgltf));
+
+  		var _this = possibleConstructorReturn(this, (FloorItem.__proto__ || Object.getPrototypeOf(FloorItem)).call(this, model, metadata, geometry, material, position, rotation, scale, isgltf));
+
+  		_this._freePosition = false;
+  		return _this;
   	}
 
   	/** */
@@ -103622,6 +103836,7 @@ var BP3DJS = (function (exports) {
   		/** */
   		_this.backVisible = false;
   		_this.allowRotate = false;
+  		_this._freePosition = false;
   		return _this;
   	}
 
@@ -106481,7 +106696,7 @@ var BP3DJS = (function (exports) {
   var threeGltfExporter = _GLTFExporter;
 
   /**
-   * A Model connects a Floorplan and a Scene.
+   * A Model is an abstract concept the has the data structuring a floorplan. It connects a {@link Floorplan} and a {@link Scene}
    */
   var Model = function (_EventDispatcher) {
   	inherits(Model, _EventDispatcher);
@@ -118609,6 +118824,9 @@ var BP3DJS = (function (exports) {
   		key: 'itemIntersection',
   		value: function itemIntersection(vec2, item) {
   			var customIntersections = item.customIntersectionPlanes();
+  			if (item.freePosition) {
+  				return this.freeMouse3D(vec2);
+  			}
   			var intersections = null;
   			if (customIntersections && customIntersections.length > 0) {
   				intersections = this.getIntersections(vec2, customIntersections, true);
@@ -118642,6 +118860,17 @@ var BP3DJS = (function (exports) {
   			var vector = new Vector3(normVec2.x, normVec2.y, 0.5);
   			vector.unproject(this.camera);
   			return vector;
+  		}
+  	}, {
+  		key: 'freeMouse3D',
+  		value: function freeMouse3D(vec2) {
+  			var distance;
+  			var pos = new Vector3();
+  			var vector = this.mouseToVec3(vec2);
+  			vector.sub(this.camera.position).normalize();
+  			distance = -this.camera.position.z / vector.z;
+  			pos.copy(this.camera.position).add(vector.multiplyScalar(distance));
+  			return { point: pos, distance: distance };
   		}
 
   		// filter by normals will only return objects facing the camera
@@ -169602,8 +169831,8 @@ var BP3DJS = (function (exports) {
 
   	if (!options.widget) {
   		/**
-    * @property {Floorplanner} floorplanner
-    * @type {Floorplanner}
+    * @property {Floorplanner2D} floorplanner
+    * @type {Floorplanner2D}
     **/
   		this.floorplanner = new Floorplanner2D(options.floorplannerElement, this.model.floorplan);
   	} else {

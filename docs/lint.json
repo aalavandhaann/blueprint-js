@@ -213,23 +213,23 @@
     "filePath": "scripts/model/floorplan.js",
     "lines": [
       {
-        "lineNumber": 597,
+        "lineNumber": 598,
         "line": "\t/**"
       },
       {
-        "lineNumber": 598,
+        "lineNumber": 599,
         "line": "\t\t* @param {Object} event"
       },
       {
-        "lineNumber": 599,
+        "lineNumber": 600,
         "line": "\t\t* @listens {EVENT_ROOM_NAME_CHANGED} When a room name is changed and updates to metaroomdata"
       },
       {
-        "lineNumber": 600,
+        "lineNumber": 601,
         "line": "\t**/"
       },
       {
-        "lineNumber": 601,
+        "lineNumber": 602,
         "line": "\troomNameChanged(e)"
       }
     ],
@@ -238,6 +238,48 @@
     ],
     "docParams": [
       "event"
+    ]
+  },
+  {
+    "name": "HalfEdge#halfAngleVector",
+    "filePath": "scripts/model/half_edge.js",
+    "lines": [
+      {
+        "lineNumber": 440,
+        "line": "\t/**"
+      },
+      {
+        "lineNumber": 441,
+        "line": "\t * Gets CCW angle from v1 to v2"
+      },
+      {
+        "lineNumber": 442,
+        "line": "\t * @param {Vector2} v1 The point a"
+      },
+      {
+        "lineNumber": 443,
+        "line": "\t * @param {Vector2} v1 The point b"
+      },
+      {
+        "lineNumber": 444,
+        "line": "\t * @return {Object} contains keys x and y with number representing the halfAngles"
+      },
+      {
+        "lineNumber": 445,
+        "line": "\t */"
+      },
+      {
+        "lineNumber": 446,
+        "line": "\thalfAngleVector(v1, v2)"
+      }
+    ],
+    "codeParams": [
+      "v1",
+      "v2"
+    ],
+    "docParams": [
+      "v1",
+      "v1"
     ]
   },
   {
