@@ -96,8 +96,8 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-logContext">logContext</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#exporters">exporters</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-OBJExporter">OBJExporter</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#floorplanner">floorplanner</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/carbonsheet.js~CarbonSheet.html">CarbonSheet</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/floorplanner.js~Floorplanner.html">Floorplanner</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html">FloorplannerView</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html">Floorplanner2D</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html">FloorplannerView2D</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-snapTolerance">snapTolerance</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-cornerColor">cornerColor</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-cornerColorHover">cornerColorHover</a></span></span></li>
@@ -128,7 +128,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/items/wall_item.js~WallItem.html">WallItem</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-item_types">item_types</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#model">model</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/corner.js~Corner.html">Corner</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/floorplan.js~Floorplans.html">Floorplans</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/floorplan.js~Floorplan.html">Floorplan</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html">HalfEdge</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/model.js~Model.html">Model</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/room.js~Room.html">Room</a></span></span></li>
@@ -143,7 +143,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/edge.js~Edge.html">Edge</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/first-person-controls.js~FirstPersonControls.html">FirstPersonControls</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/floor.js~Floor.html">Floor</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/floorPlan.js~Floorplan.html">Floorplan</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/floorPlan.js~Floorplan3D.html">Floorplan3D</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/hud.js~HUD.html">HUD</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/lights.js~Lights.html">Lights</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/main.js~Main.html">Main</a></span></span></li>
@@ -173,37 +173,82 @@ export class Corner extends EventDispatcher
 {
 
 	/** Constructs a corner.
-	 * @param floorplan The associated floorplan.
-	 * @param x X coordinate.
-	 * @param y Y coordinate.
-	 * @param id An optional unique id. If not set, created internally.
+	 * @param {Floorplan} floorplan The associated model floorplan.
+	 * @param {Number} x X coordinate.
+	 * @param {Number} y Y coordinate.
+	 * @param {String} id An optional unique id. If not set, created internally.
 	 */
 	constructor(floorplan, x, y, id)
 	{
 		super();
+		/** @property {Array} wallStarts Array of walls that are start walls
+			* @type {Array}
+		**/
 		this.wallStarts = [];
+		/** @property {Array} wallEnds Array of walls that are end walls
+			* @type {Array}
+		**/
 		this.wallEnds = [];
+		/**
+			* @deprecated Not in use. The EventDispatcher from threejs is used for emit and listen events
+		**/
 		this.moved_callbacks = null;
+		/**
+			* @deprecated Not in use. The EventDispatcher from threejs is used for emit and listen events
+		**/
 		this.deleted_callbacks = null;
+		/**
+			* @deprecated Not in use. The EventDispatcher from threejs is used for emit and listen events
+		**/
 		this.action_callbacks = null;
+		/**
+			* @property {Floorplan} floorplan Reference to the model floorplan
+			* @type {Floorplan}
+		**/
 		this.floorplan = floorplan;
+		/**
+			* @property {Number} x The position in x dimension
+			* @type {Number}
+		**/
 		this.x = x;
+		/**
+			* @property {Number} y The position in y dimension
+			* @type {Number}
+		**/
 		this.y = y;
+		/**
+			* @property {Number} _elevation The elevation at this corner
+			* @type {Number}
+		**/
 		this._elevation = Configuration.getNumericValue(configWallHeight);
+		/**
+			* @property {String} id The id of this corner. Autogenerated the first time
+			* @type {String}
+		**/
 		this.id = id || Utils.guide();
+		/**
+			* @property {Array} attachedRooms Array of rooms that have walls using this corner
+			* @type {Array}
+		**/
 		this.attachedRooms = [];
 	}
 
+	/** @type {Number} elevation The elevation value at this corner*/
 	set elevation(value)
 	{
 		this._elevation = Dimensioning.cmFromMeasureRaw(Number(value));
 	}
 
+	/** @type {Number} elevation The elevation value at this corner*/
 	get elevation()
 	{
 		return this._elevation;
 	}
 
+	/**
+   * @param {Room} room - The room that should be attached to this corner
+	 * @return {void}
+   */
 	attachRoom(room)
 	{
 		if(room)
@@ -212,11 +257,17 @@ export class Corner extends EventDispatcher
 		}
 	}
 
+	/**
+   * @return {Room[]} Array of rooms attached to this corner
+   */
 	getAttachedRooms()
 	{
 		return this.attachedRooms;
 	}
 
+	/**
+   * @return {void} Clear all the rooms attached to this corner
+   */
 	clearAttachedRooms()
 	{
 		this.attachedRooms = [];
@@ -271,7 +322,9 @@ export class Corner extends EventDispatcher
 	}
 
 	/**
-	 *
+	 *	@param {Number} tolerance - The tolerance value within which it will snap to adjacent corners
+	 *  @return {Object} snapped
+	 *  @description The object with x and y that are boolean values to indicate if the snap happens in x and y
 	 */
 	snapToAxis(tolerance)
 	{
@@ -295,22 +348,36 @@ export class Corner extends EventDispatcher
 	}
 
 	/** Moves corner relatively to new position.
-	 * @param dx The delta x.
-	 * @param dy The delta y.
+	 * @param {Number} dx The delta x.
+	 * @param {Number} dy The delta y.
 	 */
 	relativeMove(dx, dy)
 	{
 		this.move(this.x + dx, this.y + dy);
 	}
 
-	/** Remove callback. Fires the delete callbacks. */
+	/**
+		* Dispatches an event when removed from the floorplan({@link Floorplan}) instance. The event object contains reference to this {@link Corner} instance as item.
+		* @example
+		* let corner = new Corner(floorplan, 0, 0);
+		* function cornerRemoved(e) { console.log(&apos;I WAS REMOVED FROM LOCATION &apos;, e.item.x, e.item.y) };
+		* corner.remove();
+		* @emits {EVENT_DELETED}
+	**/
 	remove()
 	{
 		this.dispatchEvent({type:EVENT_DELETED, item:this});
 		//      this.deleted_callbacks.fire(this);
 	}
 
-	/** Removes all walls. */
+	/**
+		* Removes all the connected corners and itself. This in essence removes all the walls({@link Wall}) this corner is connected to.
+		* @example
+		* let corner1 = new Corner(floorplan, 0, 0);
+		* let corner2 = new Corner(floorplan, 10, 0);
+		* function cornerRemoved(e) { console.log(&apos;I WAS REMOVED FROM LOCATION &apos;, e.item.x, e.item.y) } //Will log twice for two corners;
+		* corner.removeAll();
+	**/
 	removeAll()
 	{
 		var i = 0;
@@ -326,8 +393,8 @@ export class Corner extends EventDispatcher
 	}
 
 	/** Moves corner to new position.
-	 * @param newX The new x position.
-	 * @param newY The new y position.
+	 * @param {Number} newX The new x position.
+	 * @param {Number} newY The new y position.
 	 */
 	move(newX, newY)
 	{
@@ -347,6 +414,12 @@ export class Corner extends EventDispatcher
 		});
 	}
 
+	/**
+		* When a corner is moved from its location it will impact the connected rooms ({@link Room}) shape, thus their areas. This will update the rooms
+		* @example
+		* let corner = new Corner(floorplan, 0, 0);
+		* corner.move(10, 0);
+	**/
 	updateAttachedRooms()
 	{
 		this.attachedRooms.forEach((room)=&gt;{
@@ -354,8 +427,8 @@ export class Corner extends EventDispatcher
 		});
 	}
 
-	/** Gets the adjacent corners.
-	 * @returns Array of corners.
+	/** Gets the adjacent corners that are connected to this corner by walls ({@link Wall}).
+	 * @returns {Corner[]} Array of corners.
 	 */
 	adjacentCorners()
 	{
@@ -373,8 +446,8 @@ export class Corner extends EventDispatcher
 	}
 
 	/** Checks if a wall is connected.
-	 * @param wall A wall.
-	 * @returns True in case of connection.
+	 * @param {Wall} wall A wall.
+	 * @returns {boolean} in case of connection.
 	 */
 	isWallConnected(wall)
 	{
@@ -397,8 +470,11 @@ export class Corner extends EventDispatcher
 	}
 
 	/**
-	 *
-	 */
+		* Returns the distance between this corner and a point in 2d space
+		* @param {Vector2} point
+		* @see https://threejs.org/docs/#api/en/math/Vector2
+		* @return {Number} distance
+	**/
 	distanceFrom(point)
 	{
 		var distance = Utils.distance(point, new Vector2(this.x, this.y));
@@ -407,8 +483,8 @@ export class Corner extends EventDispatcher
 	}
 
 	/** Gets the distance from a wall.
-	 * @param wall A wall.
-	 * @returns The distance.
+	 * @param {Wall} wall A wall.
+	 * @returns {Number} distance The distance.
 	 */
 	distanceFromWall(wall)
 	{
@@ -416,8 +492,8 @@ export class Corner extends EventDispatcher
 	}
 
 	/** Gets the distance from a corner.
-	 * @param corner A corner.
-	 * @returns The distance.
+	 * @param {Corner} corner A corner.
+	 * @returns {Number} The distance.
 	 */
 	distanceFromCorner(corner)
 	{
@@ -425,7 +501,7 @@ export class Corner extends EventDispatcher
 	}
 
 	/** Detaches a wall.
-	 * @param wall A wall.
+	 * @param {Wall} wall A wall.
 	 */
 	detachWall(wall)
 	{
@@ -439,7 +515,7 @@ export class Corner extends EventDispatcher
 	}
 
 	/** Attaches a start wall.
-	 * @param wall A wall.
+	 * @param {Wall} wall A wall.
 	 */
 	attachStart(wall)
 	{
@@ -447,7 +523,7 @@ export class Corner extends EventDispatcher
 	}
 
 	/** Attaches an end wall.
-	 * @param wall A wall.
+	 * @param {Wall} wall A wall.
 	 */
 	attachEnd(wall)
 	{
@@ -455,8 +531,8 @@ export class Corner extends EventDispatcher
 	}
 
 	/** Get wall to corner.
-	 * @param corner A corner.
-	 * @return The associated wall or null.
+	 * @param {Corner} corner A corner.
+	 * @return {Wall} The associated wall or null.
 	 */
 	wallTo(corner)
 	{
@@ -471,8 +547,8 @@ export class Corner extends EventDispatcher
 	}
 
 	/** Get wall from corner.
-	 * @param corner A corner.
-	 * @return The associated wall or null.
+	 * @param {Corner}  corner A corner.
+	 * @return {Wall} The associated wall or null.
 	 */
 	wallFrom(corner)
 	{
@@ -487,16 +563,16 @@ export class Corner extends EventDispatcher
 	}
 
 	/** Get wall to or from corner.
-	 * @param corner A corner.
-	 * @return The associated wall or null.
+	 * @param {Corner} corner A corner.
+	 * @return {Wall} The associated wall or null.
 	 */
 	wallToOrFrom(corner)
 	{
 		return this.wallTo(corner) || this.wallFrom(corner);
 	}
 
-	/**
-	 *
+	/** Get wall from corner.
+	 * @param {Corner}  corner A corner.
 	 */
 	combineWithCorner(corner)
 	{

@@ -15,45 +15,92 @@ export const defaultFloorPlanTolerance = 10.0;
  * A Floorplan represents a number of Walls, Corners and Rooms. This is an
  * abstract that keeps the 2d and 3d in sync
  */
-export class Floorplans extends EventDispatcher
+export class Floorplan extends EventDispatcher
 {
 	/** Constructs a floorplan. */
 	constructor()
 	{
 		super();
-		// List of elements of Wall instance
+		/**
+			* List of elements of Wall instance
+			* @property {Wall[]} walls Array of walls
+			* @type {Wall[]}
+		**/
 		this.walls = [];
-		// List of elements of Corner instance
+		/**
+			* List of elements of Corner instance
+			* @property {Corner[]} corners array of corners
+			* @type {Corner[]}
+		**/
 		this.corners = [];
-		// List of elements of Room instance
+
+		/**
+		* List of elements of Room instance
+		* @property {Room[]} walls Array of walls
+		* @type {Room[]}
+		**/
 		this.rooms = [];
+
+		/**
+			* An {@link Object} that stores the metadata of rooms like name
+			* @property {Object} metaroomsdata  stores the metadata of rooms like name
+			* @type {Object}
+		**/
 		this.metaroomsdata = {};
 		// List with reference to callback on a new wall insert event
+		/**
+			@deprecated
+		**/
 		this.new_wall_callbacks = [];
 		// List with reference to callbacks on a new corner insert event
+		/**
+			@deprecated
+		**/
 		this.new_corner_callbacks = [];
 		// List with reference to callbacks on redraw event
+		/**
+			@deprecated
+		**/
 		this.redraw_callbacks = [];
 		// List with reference to callbacks for updated_rooms event
+		/**
+			@deprecated
+		**/
 		this.updated_rooms = [];
 		// List with reference to callbacks for roomLoaded event
+		/**
+			@deprecated
+		**/
 		this.roomLoadedCallbacks = [];
-		this.floorTextures = {};
 
+		this.floorTextures = {};
+		/**
+			* The {@link CarbonSheet} that handles the background image to show in the 2D view
+			* @property {CarbonSheet} _carbonSheet  The carbonsheet instance
+			* @type {Object}
+		**/
 		this._carbonSheet = null;
 	}
 
+	/**
+		*	@param {CarbonSheet} val
+	**/
 	set carbonSheet(val)
 	{
 		this._carbonSheet = val;
 	}
 
+	/**
+		*	@return {CarbonSheet} _carbonSheet
+	**/
 	get carbonSheet()
 	{
 		return this._carbonSheet;
 	}
 
-	// hack
+	/**
+		*	@return {HalfEdge[]} edges
+	**/
 	wallEdges()
 	{
 		var edges = [];
@@ -70,6 +117,10 @@ export class Floorplans extends EventDispatcher
 		return edges;
 	}
 
+	/**
+		* Returns the roof planes in the floorplan for intersection testing
+		*	@return {Mesh[]} planes @see <https://threejs.org/docs/#api/en/objects/Mesh>
+	**/
 	roofPlanes()
 	{
 		var planes = [];
@@ -79,7 +130,10 @@ export class Floorplans extends EventDispatcher
 		return planes;
 	}
 
-	// hack
+	/**
+		*	Returns all the planes for intersection for the walls
+		* @return {Mesh[]} planes @see <https://threejs.org/docs/#api/en/objects/Mesh>
+	**/
 	wallEdgePlanes()
 	{
 		var planes = [];
@@ -96,6 +150,10 @@ export class Floorplans extends EventDispatcher
 		return planes;
 	}
 
+	/**
+		*	Returns all the planes for intersection of the floors in all room
+		* @return {Mesh[]} planes @see <https://threejs.org/docs/#api/en/objects/Mesh>
+	**/
 	floorPlanes()
 	{
 		return Utils.map(this.rooms, (room) => {
@@ -128,6 +186,11 @@ export class Floorplans extends EventDispatcher
 	// This is to ensure that there are no floating walls going across
 	// other walls. If two walls are intersecting then the intersection point
 	// has to create a new wall.
+	/**
+		* @param {Corner} start
+		* @param {Corner} end
+		* @return {boolean} intersects
+	**/
 
 	newWallsForIntersections(start, end)
 	{
@@ -181,11 +244,9 @@ export class Floorplans extends EventDispatcher
 	/**
 	 * Creates a new wall.
 	 *
-	 * @param start
-	 *            The start corner.
-	 * @param end
-	 *            he end corner.
-	 * @returns The new wall.
+	 * @param {Corner} start The start corner.
+	 * @param {Corner} end The end corner.
+	 * @returns {Wall} The new wall.
 	 */
 	newWall(start, end)
 	{
@@ -203,14 +264,10 @@ export class Floorplans extends EventDispatcher
 	/**
 	 * Creates a new corner.
 	 *
-	 * @param x
-	 *            The x coordinate.
-	 * @param y
-	 *            The y coordinate.
-	 * @param id
-	 *            An optional id. If unspecified, the id will be created
-	 *            internally.
-	 * @returns The new corner.
+	 * @param {Number} x The x coordinate.
+	 * @param {Number} y The y coordinate.
+	 * @param {String} id An optional id. If unspecified, the id will be created internally.
+	 * @returns {Corner} The new corner.
 	 */
 	newCorner(x, y, id)
 	{
@@ -239,8 +296,7 @@ export class Floorplans extends EventDispatcher
 	/**
 	 * Removes a wall.
 	 *
-	 * @param wall
-	 *            The wall to be removed.
+	 * @param {Wall} wall The wall to be removed.
 	 */
 	removeWall(wall)
 	{
@@ -251,32 +307,42 @@ export class Floorplans extends EventDispatcher
 	/**
 	 * Removes a corner.
 	 *
-	 * @param corner
-	 *            The corner to be removed.
+	 * @param {Corner} corner The corner to be removed.
 	 */
 	removeCorner(corner)
 	{
 		Utils.removeValue(this.corners, corner);
 	}
 
-	/** Gets the walls. */
+	/** Gets the walls.
+		* @return {Wall[]}
+	 **/
 	getWalls()
 	{
 		return this.walls;
 	}
 
-	/** Gets the corners. */
+	/** Gets the corners.
+		* @return {Corner[]}
+	**/
 	getCorners()
 	{
 		return this.corners;
 	}
 
-	/** Gets the rooms. */
+	/** Gets the rooms.
+		* @return {Room[]}
+	**/
 	getRooms()
 	{
 		return this.rooms;
 	}
 
+	/** Gets the room overlapping the location x, y.
+		* @param {Number} mx
+		* @param {Number} my
+		* @return {Room}
+	**/
 	overlappedRoom(mx, my)
 	{
 			for (var i=0;i<this.rooms.length;i++)
@@ -292,6 +358,12 @@ export class Floorplans extends EventDispatcher
 			return null;
 	}
 
+	/** Gets the Corner overlapping the location x, y at a tolerance.
+		* @param {Number} x
+		* @param {Number} y
+		* @param {Number} tolerance
+		* @return {Corner}
+	**/
 	overlappedCorner(x, y, tolerance)
 	{
 		tolerance = tolerance || defaultFloorPlanTolerance;
@@ -305,6 +377,12 @@ export class Floorplans extends EventDispatcher
 		return null;
 	}
 
+	/** Gets the Wall overlapping the location x, y at a tolerance.
+		* @param {Number} x
+		* @param {Number} y
+		* @param {Number} tolerance
+		* @return {Wall}
+	**/
 	overlappedWall(x, y, tolerance)
 	{
 		tolerance = tolerance || defaultFloorPlanTolerance;
@@ -318,6 +396,9 @@ export class Floorplans extends EventDispatcher
 		return null;
 	}
 
+	/** The metadata object with information about the rooms.
+		* @return {Object} metaroomdata an object with room corner ids as key and names as values
+	**/
 	getMetaRoomData()
 	{
 		  var metaRoomData = {};
@@ -335,7 +416,10 @@ export class Floorplans extends EventDispatcher
 			return metaRoomData;
 	}
 
-	// import and export -- cleanup
+	// Save the floorplan as a json object file
+	/**
+		*	@return {void}
+	**/
 	saveFloorplan()
 	{
 		var floorplans = {corners: {}, walls: [], rooms: {}, wallTextures: [], floorTextures: {}, newFloorTextures: {}, carbonSheet:{}};
@@ -394,6 +478,12 @@ export class Floorplans extends EventDispatcher
 		return floorplans;
 	}
 
+	//Load the floorplan from a previously saved json object file
+	/**
+		*	@param {JSON} floorplan
+		*	@return {void}
+		*	@emits {EVENT_LOADED}
+	**/
 	loadFloorplan(floorplan)
 	{
 		this.reset();
@@ -451,6 +541,9 @@ export class Floorplans extends EventDispatcher
 // this.roomLoadedCallbacks.fire();
 	}
 
+	/**
+		* @deprecated
+	**/
 	getFloorTexture(uuid)
 	{
 		if (uuid in this.floorTextures)
@@ -460,12 +553,18 @@ export class Floorplans extends EventDispatcher
 		return null;
 	}
 
+	/**
+		* @deprecated
+	**/
 	setFloorTexture(uuid, url, scale)
 	{
 		this.floorTextures[uuid] = {url: url,scale: scale};
 	}
 
 	/** clear out obsolete floor textures */
+	/**
+		* @deprecated
+	**/
 	updateFloorTextures()
 	{
 		var uuids = Utils.map(this.rooms, function (room){return room.getUuid();});
@@ -478,7 +577,10 @@ export class Floorplans extends EventDispatcher
 		}
 	}
 
-	/** */
+	/**
+		* Resets the floorplan data to empty
+		* @return {void}
+	**/
 	reset()
 	{
 		var tmpCorners = this.corners.slice(0);
@@ -493,6 +595,10 @@ export class Floorplans extends EventDispatcher
 		this.walls = [];
 	}
 
+	/**
+		* @param {Object} event
+		* @listens {EVENT_ROOM_NAME_CHANGED} When a room name is changed and updates to metaroomdata
+	**/
 	roomNameChanged(e)
 	{
 			if(this.metaroomsdata)
@@ -502,7 +608,7 @@ export class Floorplans extends EventDispatcher
 	}
 
 	/**
-	 * Update rooms
+	 *	Update the floorplan with new rooms, remove old rooms etc.
 	 */
 	update()
 	{
@@ -556,17 +662,30 @@ export class Floorplans extends EventDispatcher
 
 	/**
 	 * Returns the center of the floorplan in the y plane
+	 * @return {Vector2} center
+	 *	@see https://threejs.org/docs/#api/en/math/Vector2
 	 */
 	getCenter()
 	{
 		return this.getDimensions(true);
 	}
 
+	/**
+	 * Returns the bounding volume of the full floorplan
+	 * @return {Vector3} size
+	 *	@see https://threejs.org/docs/#api/en/math/Vector3
+	 */
 	getSize()
 	{
 		return this.getDimensions(false);
 	}
 
+	/**
+	 * Returns the bounding size or the center location of the full floorplan
+	 *	@param {boolean} center If true return the center else the size
+	 * @return {Vector3} size
+	 *	@see https://threejs.org/docs/#api/en/math/Vector3
+	 */
 	getDimensions(center)
 	{
 		center = center || false; // otherwise, get size
@@ -602,6 +721,9 @@ export class Floorplans extends EventDispatcher
 		return ret;
 	}
 
+	/**
+	 * An internal cleanup method
+	 */
 	assignOrphanEdges()
 	{
 		// kinda hacky
@@ -621,12 +743,14 @@ export class Floorplans extends EventDispatcher
 		});
 	}
 
-	/*
+	/**
 	 * Find the "rooms" in our planar straight-line graph. Rooms are set of the
 	 * smallest (by area) possible cycles in this graph. @param corners The
 	 * corners of the floorplan. @returns The rooms, each room as an array of
 	 * corners.
-	 */
+	 *	@param {Corners[]} corners
+	 * @return {Corners[][]} loops
+	 **/
 	findRooms(corners)
 	{
 
@@ -668,6 +792,9 @@ export class Floorplans extends EventDispatcher
 			return results;
 		}
 
+		/**
+		 * An internal method to find rooms based on corners and their connectivities
+		 */
 		function _findTightestCycle(firstCorner, secondCorner)
 		{
 			var stack = [];

@@ -96,8 +96,8 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-logContext">logContext</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#exporters">exporters</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-OBJExporter">OBJExporter</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#floorplanner">floorplanner</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/carbonsheet.js~CarbonSheet.html">CarbonSheet</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/floorplanner.js~Floorplanner.html">Floorplanner</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html">FloorplannerView</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html">Floorplanner2D</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html">FloorplannerView2D</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-snapTolerance">snapTolerance</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-cornerColor">cornerColor</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-cornerColorHover">cornerColorHover</a></span></span></li>
@@ -128,7 +128,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/items/wall_item.js~WallItem.html">WallItem</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-item_types">item_types</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#model">model</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/corner.js~Corner.html">Corner</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/floorplan.js~Floorplans.html">Floorplans</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/floorplan.js~Floorplan.html">Floorplan</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html">HalfEdge</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/model.js~Model.html">Model</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/room.js~Room.html">Room</a></span></span></li>
@@ -143,7 +143,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/edge.js~Edge.html">Edge</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/first-person-controls.js~FirstPersonControls.html">FirstPersonControls</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/floor.js~Floor.html">Floor</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/floorPlan.js~Floorplan.html">Floorplan</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/floorPlan.js~Floorplan3D.html">Floorplan3D</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/hud.js~HUD.html">HUD</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/lights.js~Lights.html">Lights</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/main.js~Main.html">Main</a></span></span></li>
@@ -215,13 +215,13 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/blueprint.js~BlueprintJS.html#instance-constructor-constructor">constructor</a></span></span><span class="code" data-ice="signature">(options: <span>*</span>)</span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/blueprint.js~BlueprintJS.html#instance-constructor-constructor">constructor</a></span></span><span class="code" data-ice="signature">(-: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>)</span>
         </p>
       </div>
       <div>
         
         
-        <div data-ice="description"><p>Creates an instance.</p>
+        <div data-ice="description"><p>Creates an instance of BlueprintJS.</p>
 </div>
       </div>
     </td>
@@ -251,7 +251,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/blueprint.js~BlueprintJS.html#instance-member-floorplanner">floorplanner</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/blueprint.js~BlueprintJS.html#instance-member-floorplanner">floorplanner</a></span></span><span class="code" data-ice="signature">: <span>Floorplanner</span></span>
         </p>
       </div>
       <div>
@@ -279,7 +279,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/blueprint.js~BlueprintJS.html#instance-member-model">model</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/blueprint.js~BlueprintJS.html#instance-member-model">model</a></span></span><span class="code" data-ice="signature">: <span><a href="class/scripts/model/model.js~Model.html">Model</a></span></span>
         </p>
       </div>
       <div>
@@ -307,7 +307,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/blueprint.js~BlueprintJS.html#instance-member-options">options</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/blueprint.js~BlueprintJS.html#instance-member-options">options</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></span>
         </p>
       </div>
       <div>
@@ -335,7 +335,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/scripts/blueprint.js~BlueprintJS.html#instance-member-three">three</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/scripts/blueprint.js~BlueprintJS.html#instance-member-three">three</a></span></span><span class="code" data-ice="signature">: <span><a href="class/scripts/three/main.js~Main.html">Main</a></span></span>
         </p>
       </div>
       <div>
@@ -368,7 +368,7 @@
     
     
     
-    <span class="code" data-ice="name">constructor</span><span class="code" data-ice="signature">(options: <span>*</span>)</span>
+    <span class="code" data-ice="name">constructor</span><span class="code" data-ice="signature">(-: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>)</span>
     <span class="right-info">
       
       
@@ -379,7 +379,7 @@
   
   
   
-  <div data-ice="description"><p>Creates an instance.</p>
+  <div data-ice="description"><p>Creates an instance of BlueprintJS. This is the entry point for the application</p>
 </div>
 
   
@@ -393,45 +393,45 @@
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" class="code" data-depth="0">options</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="name" class="code" data-depth="0">-</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"><p>{Object} - The initialization options.</p>
+      <td data-ice="description"><p>options The initialization options.</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
       <td data-ice="name" class="code" data-depth="1">options.floorplannerElement</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"><p>{string} - Id of the html element to use as canvas. Needs to exist in the html</p>
+      <td data-ice="description"><p>Id of the html element to use as canvas. Needs to exist in the html</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
       <td data-ice="name" class="code" data-depth="1">options.threeElement</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"><p>{string} - Id of the html element to use as canvas. Needs to exist in the html and should be #idofhtmlelement</p>
+      <td data-ice="description"><p>Id of the html element to use as canvas. Needs to exist in the html and should be #idofhtmlelement</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
       <td data-ice="name" class="code" data-depth="1">options.threeCanvasElement</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"><p>{string} - Id of the html element to use as threejs-canvas. This is created automatically</p>
+      <td data-ice="description"><p>Id of the html element to use as threejs-canvas. This is created automatically</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
       <td data-ice="name" class="code" data-depth="1">options.textureDir</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"><p>{string} - path to texture directory. No effect</p>
+      <td data-ice="description"><p>path to texture directory. No effect</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
       <td data-ice="name" class="code" data-depth="1">options.widget</td>
-      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"><p>{bool} - If widget mode then disable the controller from interactions</p>
+      <td data-ice="description"><p>If widget mode then disable the controller from interactions</p>
 </td>
     </tr>
 </tbody>
@@ -474,11 +474,11 @@
     
     
     
-    <span class="code" data-ice="name">floorplanner</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">floorplanner</span><span class="code" data-ice="signature">: <span>Floorplanner</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/blueprint.js.html#lineNumber107">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/blueprint.js.html#lineNumber114">source</a></span></span>
     </span>
   </h3>
 
@@ -497,9 +497,9 @@
     </thead>
     <tbody>
     
-    <tr data-ice="property" data-depth="1">
-      <td data-ice="name" class="code" data-depth="1">blueprint3d.floorplanner</td>
-      <td data-ice="type" class="code"><span><a href="class/scripts/floorplanner/floorplanner.js~Floorplanner.html">Floorplanner</a></span></td>
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">floorplanner</td>
+      <td data-ice="type" class="code"><span>Floorplanner</span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"></td>
     </tr>
@@ -533,11 +533,11 @@
     
     
     
-    <span class="code" data-ice="name">model</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">model</span><span class="code" data-ice="signature">: <span><a href="class/scripts/model/model.js~Model.html">Model</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/blueprint.js.html#lineNumber96">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/blueprint.js.html#lineNumber101">source</a></span></span>
     </span>
   </h3>
 
@@ -556,8 +556,8 @@
     </thead>
     <tbody>
     
-    <tr data-ice="property" data-depth="1">
-      <td data-ice="name" class="code" data-depth="1">blueprint3d.model</td>
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">model</td>
       <td data-ice="type" class="code"><span><a href="class/scripts/model/model.js~Model.html">Model</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"></td>
@@ -592,11 +592,11 @@
     
     
     
-    <span class="code" data-ice="name">options</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">options</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/blueprint.js.html#lineNumber92">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/blueprint.js.html#lineNumber96">source</a></span></span>
     </span>
   </h3>
 
@@ -607,7 +607,23 @@
 
   
 
-  <div data-ice="properties">
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Properties:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">options</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
 </div>
 
   
@@ -635,11 +651,11 @@
     
     
     
-    <span class="code" data-ice="name">three</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">three</span><span class="code" data-ice="signature">: <span><a href="class/scripts/three/main.js~Main.html">Main</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/scripts/blueprint.js.html#lineNumber100">source</a></span></span>
+      <span data-ice="source"><span><a href="file/scripts/blueprint.js.html#lineNumber106">source</a></span></span>
     </span>
   </h3>
 
@@ -658,8 +674,8 @@
     </thead>
     <tbody>
     
-    <tr data-ice="property" data-depth="1">
-      <td data-ice="name" class="code" data-depth="1">blueprint3d.three</td>
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">three</td>
       <td data-ice="type" class="code"><span><a href="class/scripts/three/main.js~Main.html">Main</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"></td>

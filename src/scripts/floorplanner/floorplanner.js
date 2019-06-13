@@ -6,7 +6,7 @@ import {EVENT_MODE_RESET, EVENT_LOADED} from '../core/events.js';
 import {EVENT_CORNER_2D_HOVER, EVENT_WALL_2D_HOVER, EVENT_ROOM_2D_HOVER} from '../core/events.js';
 import {EVENT_CORNER_2D_DOUBLE_CLICKED, EVENT_ROOM_2D_DOUBLE_CLICKED, EVENT_WALL_2D_DOUBLE_CLICKED} from '../core/events.js';
 import {EVENT_NOTHING_CLICKED} from '../core/events.js';
-import {FloorplannerView, floorplannerModes} from './floorplanner_view.js';
+import {FloorplannerView2D, floorplannerModes} from './floorplanner_view.js';
 
 /** how much will we move a corner to make a wall axis aligned (cm) */
 export const snapTolerance = 25;
@@ -14,7 +14,7 @@ export const snapTolerance = 25;
  * The Floorplanner implements an interactive tool for creation of floorplans in
  * 2D.
  */
-export class Floorplanner extends EventDispatcher
+export class Floorplanner2D extends EventDispatcher
 {
 	/** */
 	constructor(canvas, floorplan)
@@ -63,7 +63,7 @@ export class Floorplanner extends EventDispatcher
 		this.canvas = canvas;
 		this.floorplan = floorplan;
 		this.canvasElement = $('#' + canvas);
-		this.view = new FloorplannerView(this.floorplan, this, canvas);
+		this.view = new FloorplannerView2D(this.floorplan, this, canvas);
 
 //		var cmPerFoot = cmPerFoot;
 //		var pixelsPerFoot = pixelsPerFoot;

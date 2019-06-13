@@ -37,7 +37,7 @@ export const cornerColorHover = '#008cba';
 /**
  * The View to be used by a Floorplanner to render in/interact with.
  */
-export class FloorplannerView
+export class FloorplannerView2D
 {
 	constructor(floorplan, viewmodel, canvas)
 	{

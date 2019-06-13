@@ -1,6 +1,6 @@
 import {EVENT_LOADED, EVENT_LOADING, EVENT_GLTF_READY} from '../core/events.js';
 import {EventDispatcher, Vector3, Mesh} from 'three';
-import {Floorplans} from './floorplan.js';
+import {Floorplan} from './floorplan.js';
 import {Scene} from './scene.js';
 
 import {OBJExporter} from '../exporters/OBJExporter.js';
@@ -18,7 +18,7 @@ export class Model extends EventDispatcher
 	constructor(textureDir)
 	{
 		super();
-		this.floorplan = new Floorplans();
+		this.floorplan = new Floorplan();
 		this.scene = new Scene(this, textureDir);
 		this.roomLoadingCallbacks = null;
 		this.roomLoadedCallbacks = null;

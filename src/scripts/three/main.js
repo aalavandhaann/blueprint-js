@@ -15,7 +15,7 @@ import {OrbitControls} from './orbitcontrols.js';
 // import {Controls} from './controls.js';
 import {Controller} from './controller.js';
 import {HUD} from './hud.js';
-import {Floorplan} from './floorPlan.js';
+import {Floorplan3D} from './floorPlan.js';
 import {Lights} from './lights.js';
 import {Skybox} from './skybox.js';
 
@@ -25,9 +25,9 @@ export class Main extends EventDispatcher
 	{
 		super();
 		var options = {resize: true,pushHref: false,spin: true,spinSpeed: .00002,clickPan: true,canMoveFixedItems: false};
-		for (var opt in options) 
+		for (var opt in options)
 		{
-			if (options.hasOwnProperty(opt) && opts.hasOwnProperty(opt)) 
+			if (options.hasOwnProperty(opt) && opts.hasOwnProperty(opt))
 			{
 				options[opt] = opts[opt];
 			}
@@ -38,7 +38,7 @@ export class Main extends EventDispatcher
 		this.scene = model.scene;
 		this.element = $(element);
 		this.canvasElement = canvasElement;
-		this.options = options;		
+		this.options = options;
 
 		this.domElement = null;
 		this.orthocamera = null;
@@ -46,15 +46,15 @@ export class Main extends EventDispatcher
 		this.camera = null;
 		this.savedcameraposition = null;
 		this.fpscamera = null;
-		
+
 		this.cameraNear = 10;
 		this.cameraFar = 10000;
-		
-		this.controls = null;		
+
+		this.controls = null;
 		this.fpscontrols = null;
 		this.fpsclock = new Clock(true);
 		this.firstpersonmode = false;
-		
+
 		this.renderer = null;
 		this.controller = null;
 
@@ -69,8 +69,8 @@ export class Main extends EventDispatcher
 		this.heightMargin = null;
 		this.widthMargin = null;
 		this.elementHeight = null;
-		this.elementWidth = null;	
-		
+		this.elementWidth = null;
+
 
 		this.itemSelectedCallbacks = $.Callbacks(); // item
 		this.itemUnselectedCallbacks = $.Callbacks();
@@ -78,31 +78,31 @@ export class Main extends EventDispatcher
 		this.wallClicked = $.Callbacks(); // wall
 		this.floorClicked = $.Callbacks(); // floor
 		this.nothingClicked = $.Callbacks();
-		
+
 		this.floorplan = null;
-		
+
 		var scope = this;
 		this.updatedevent = ()=>{scope.centerCamera();};
 		this.gltfreadyevent = (o)=>{scope.gltfReady(o);};
-		
+
 		this.clippingPlaneActive = new Plane(new Vector3(0, 0, 1), 0.0);
 		this.clippingPlaneActive2 = new Plane(new Vector3(0, 0, -1), 0.0);
 		this.globalClippingPlane = [this.clippingPlaneActive, this.clippingPlaneActive2];
 		this.clippingEmpty = Object.freeze([]);
 		this.clippingEnabled = false;
-		
+
 //		console.log('THIS ON MOBILE DEVICE ::: ', isMobile, isTablet);
-		
+
 		this.init();
 	}
-	
+
 	getARenderer()
 	{
 // scope.renderer = new WebGLRenderer({antialias: true, preserveDrawingBuffer:
 // true, alpha:true}); // preserveDrawingBuffer:true - required to support
 // .toDataURL()
 		var renderer = new WebGLRenderer({antialias: true, alpha:true});
-		
+
 // scope.renderer.autoClear = false;
 		renderer.shadowMap.enabled = true;
 		renderer.shadowMapSoft = true;
@@ -112,33 +112,33 @@ export class Main extends EventDispatcher
 		renderer.localClippingEnabled = false;
 //		renderer.setPixelRatio(window.devicePixelRatio);
 // renderer.sortObjects = false;
-		
+
 		return renderer;
 	}
-	
+
 	init()
 	{
-		var scope = this;		
+		var scope = this;
 		ImageUtils.crossOrigin = '';
-		
+
 		var orthoScale = 100;
 		var orthoWidth = window.innerWidth;
 		var orthoHeight = window.innerHeight;
 
 		scope.domElement = scope.element.get(0);
-		
-		scope.fpscamera = new PerspectiveCamera(60, 1, 1, 10000 );		
+
+		scope.fpscamera = new PerspectiveCamera(60, 1, 1, 10000 );
 		scope.perspectivecamera = new PerspectiveCamera(45, 10, scope.cameraNear, scope.cameraFar);
 		scope.orthocamera = new OrthographicCamera(orthoWidth / -orthoScale, orthoWidth /orthoScale, orthoHeight /orthoScale, orthoHeight / -orthoScale, scope.cameraNear, scope.cameraFar);
-		
+
 		scope.camera = scope.perspectivecamera;
 // scope.camera = scope.orthocamera;
 
-		scope.renderer = scope.getARenderer(); 		
+		scope.renderer = scope.getARenderer();
 		scope.domElement.appendChild(scope.renderer.domElement);
-		
+
 		scope.skybox = new Skybox(scope.scene, scope.renderer);
-		
+
 		scope.controls = new OrbitControls(scope.camera, scope.domElement);
 		scope.controls.autoRotate = this.options['spin'];
 		scope.controls.enableDamping = true;
@@ -147,19 +147,19 @@ export class Main extends EventDispatcher
 		scope.controls.maxDistance = 3000;
 		scope.controls.minZoom = 0.9;
 		scope.controls.screenSpacePanning = true;
-		
+
 		scope.fpscontrols = new PointerLockControls(scope.fpscamera);
 		scope.fpscontrols.characterHeight = 160;
-		
+
 		this.scene.add(scope.fpscontrols.getObject());
 		this.fpscontrols.getObject().position.set(0, 200, 0);
-		
+
 		this.fpscontrols.addEventListener('unlock', function(){
 			scope.switchFPSMode(false);
 			scope.dispatchEvent({type:EVENT_FPS_EXIT});
 		});
-		
-		
+
+
 		scope.hud = new HUD(scope, scope.scene);
 		scope.controller = new Controller(scope, scope.model, scope.camera, scope.element, scope.controls, scope.hud);
 
@@ -167,7 +167,7 @@ export class Main extends EventDispatcher
 		scope.updateWindowSize();
 
 		if (scope.options.resize)
-		{        
+		{
 			$(window).resize(() => {scope.updateWindowSize();});
 		}
 		// setup camera nicely
@@ -175,19 +175,19 @@ export class Main extends EventDispatcher
 
 		scope.model.floorplan.addEventListener(EVENT_UPDATED, this.updatedevent);
 		scope.model.addEventListener(EVENT_GLTF_READY, this.gltfreadyevent);
-		
+
 		scope.lights = new Lights(scope.scene, scope.model.floorplan);
-		scope.floorplan = new Floorplan(scope.scene, scope.model.floorplan, scope.controls);
-		
-		function animate() 
-		{			
+		scope.floorplan = new Floorplan3D(scope.scene, scope.model.floorplan, scope.controls);
+
+		function animate()
+		{
 //			requestAnimationFrame(animate);
 			scope.renderer.setAnimationLoop(function(){scope.render();});
 			scope.render();
 		}
 		scope.switchFPSMode(false);
 		animate();
-		
+
 		scope.element.mouseenter(function () {scope.mouseOver = true;}).mouseleave(function () {scope.mouseOver = false;}).click(function () {scope.hasClicked = true;});
 	}
 	exportForBlender()
@@ -196,46 +196,46 @@ export class Main extends EventDispatcher
 		this.controller.showGroundPlane(false);
 		this.model.exportForBlender();
 	}
-	
+
 	gltfReady(o)
 	{
 		this.dispatchEvent({type:EVENT_GLTF_READY, item: this, gltf: o.gltf});
 		this.skybox.setEnabled(true);
 		this.controller.showGroundPlane(true);
 	}
-	
+
 	itemIsSelected(item)
 	{
 		this.dispatchEvent({type:EVENT_ITEM_SELECTED, item:item});
 	}
-	
+
 	itemIsUnselected()
 	{
 		this.dispatchEvent({type:EVENT_ITEM_UNSELECTED});
 	}
-	
+
 	wallIsClicked(wall)
 	{
 		this.dispatchEvent({type:EVENT_WALL_CLICKED, item:wall, wall:wall});
 	}
-	
+
 	floorIsClicked(item)
 	{
 		this.dispatchEvent({type:EVENT_FLOOR_CLICKED, item:item});
 	}
-	
+
 	nothingIsClicked()
 	{
 		this.dispatchEvent({type:EVENT_NOTHING_CLICKED});
 	}
 
-	spin() 
+	spin()
 	{
 		var scope = this;
 		scope.controls.autoRotate = scope.options.spin && !scope.mouseOver && !scope.hasClicked;
 	}
 
-	dataUrl() 
+	dataUrl()
 	{
 		var dataUrl = this.renderer.domElement.toDataURL('image/png');
 		return dataUrl;
@@ -252,86 +252,86 @@ export class Main extends EventDispatcher
 		return this.options;
 	}
 
-	getModel() 
+	getModel()
 	{
 		return this.model;
 	}
 
-	getScene() 
+	getScene()
 	{
 		return this.scene;
 	}
 
-	getController() 
+	getController()
 	{
 		return this.controller;
 	}
 
-	getCamera() 
+	getCamera()
 	{
 		return this.camera;
 	}
 
-	
+
 	/*
 	 * This method name conflicts with a variable so changing it to a different
 	 * name needsUpdate() { this.needsUpdate = true; }
 	 */
-	
-	ensureNeedsUpdate() 
+
+	ensureNeedsUpdate()
 	{
 		this.needsUpdate = true;
 	}
 
-	rotatePressed() 
+	rotatePressed()
 	{
 		this.controller.rotatePressed();
 	}
 
-	rotateReleased() 
+	rotateReleased()
 	{
 		this.controller.rotateReleased();
 	}
 
-	setCursorStyle(cursorStyle) 
+	setCursorStyle(cursorStyle)
 	{
 		this.domElement.style.cursor = cursorStyle;
 	}
 
-	updateWindowSize() 
+	updateWindowSize()
 	{
 		var scope = this;
-		
+
 		scope.heightMargin = scope.element.offset().top;
 		scope.widthMargin = scope.element.offset().left;
 		scope.elementWidth = scope.element.innerWidth();
-		
-		if (scope.options.resize) 
+
+		if (scope.options.resize)
 		{
 			scope.elementHeight = window.innerHeight - scope.heightMargin;
-		} 
-		else 
+		}
+		else
 		{
 			scope.elementHeight = scope.element.innerHeight();
-		}		
-		
+		}
+
 		scope.orthocamera.left = -window.innerWidth / 1.0;
 		scope.orthocamera.right = window.innerWidth / 1.0;
 		scope.orthocamera.top = window.innerHeight / 1.0;
 		scope.orthocamera.bottom = -window.innerHeight / 1.0;
 		scope.orthocamera.updateProjectionMatrix();
-		
+
 		scope.perspectivecamera.aspect = scope.elementWidth / scope.elementHeight;
-		scope.perspectivecamera.updateProjectionMatrix();		
-		
+		scope.perspectivecamera.updateProjectionMatrix();
+
 		scope.fpscamera.aspect = scope.elementWidth / scope.elementHeight;
 		scope.fpscamera.updateProjectionMatrix();
-		
-		scope.renderer.setSize(scope.elementWidth, scope.elementHeight);		
+
+		scope.renderer.setSize(scope.elementWidth, scope.elementHeight);
 		scope.needsUpdate = true;
 	}
 
-	centerCamera() 
+	centerCamera()
 	{
 		var scope = this;
 		var yOffset = 150.0;
@@ -347,7 +347,7 @@ export class Main extends EventDispatcher
 
 	// projects the object's center point into x,y screen coords
 	// x,y are relative to top left corner of viewer
-	projectVector(vec3, ignoreMargin) 
+	projectVector(vec3, ignoreMargin)
 	{
 		var scope = this;
 		ignoreMargin = ignoreMargin || false;
@@ -360,7 +360,7 @@ export class Main extends EventDispatcher
 		var vec2 = new Vector2();
 		vec2.x = (vector.x * widthHalf) + widthHalf;
 		vec2.y = - (vector.y * heightHalf) + heightHalf;
-		if (!ignoreMargin) 
+		if (!ignoreMargin)
 		{
 			vec2.x += scope.widthMargin;
 			vec2.y += scope.heightMargin;
@@ -374,31 +374,31 @@ export class Main extends EventDispatcher
 		obj.children.forEach( this.sceneGraph );
 		console.groupEnd();
 	}
-	
+
 	switchWireframe(flag)
 	{
 		this.model.switchWireframe(flag);
 		this.floorplan.switchWireframe(flag);
 		this.render(true);
 	}
-	
+
 	pauseTheRendering(flag)
 	{
 		this.pauseRender = flag;
 	}
-	
+
 	switchView(viewpoint)
 	{
 		var center = this.model.floorplan.getCenter();
 		var size = this.model.floorplan.getSize();
 		var distance = this.controls.object.position.distanceTo(this.controls.target);
 		this.controls.target.copy(center);
-		
+
 		switch(viewpoint)
 		{
 		case VIEW_TOP:
 			center.y = 1000;
-			this.dispatchEvent({type:EVENT_CAMERA_VIEW_CHANGE, view: VIEW_TOP});			
+			this.dispatchEvent({type:EVENT_CAMERA_VIEW_CHANGE, view: VIEW_TOP});
 			break;
 		case VIEW_FRONT:
 			center.z = center.z - (size.z*0.5) - distance;
@@ -425,13 +425,13 @@ export class Main extends EventDispatcher
 		this.controls.update();
 		this.render(true);
 	}
-	
+
 	lockView(locked)
 	{
 		this.controls.enableRotate = locked;
 		this.render(true);
 	}
-	
+
 	// Send in a value between -1 to 1
 	changeClippingPlanes(clipRatio, clipRatio2)
 	{
@@ -440,7 +440,7 @@ export class Main extends EventDispatcher
 		size.z = size.z * 0.5;
 		this.clippingPlaneActive.constant = (this.model.floorplan.getSize().z * clipRatio);
 		this.clippingPlaneActive2.constant = (this.model.floorplan.getSize().z * clipRatio2);
-		
+
 		if(!this.clippingEnabled)
 		{
 			this.clippingEnabled = true;
@@ -451,7 +451,7 @@ export class Main extends EventDispatcher
 		this.controls.update();
 		this.render(true);
 	}
-	
+
 	resetClipping()
 	{
 		this.clippingEnabled = false;
@@ -460,7 +460,7 @@ export class Main extends EventDispatcher
 		this.controls.update();
 		this.render(true);
 	}
-	
+
 	switchOrthographicMode(flag)
 	{
 		if(flag)
@@ -474,16 +474,16 @@ export class Main extends EventDispatcher
 			this.render(true);
 			return;
 		}
-		
+
 		this.camera = this.perspectivecamera;
 		this.camera.position.copy(this.orthocamera.position.clone());
-		this.controls.object = this.camera;		
+		this.controls.object = this.camera;
 		this.controller.changeCamera(this.camera);
 		this.controls.needsUpdate = true;
 		this.controls.update();
 		this.render(true);
 	}
-	
+
 	switchFPSMode(flag)
 	{
 		this.firstpersonmode = flag;
@@ -491,47 +491,47 @@ export class Main extends EventDispatcher
 		this.controls.enabled = !flag;
 		this.controller.enabled = !flag;
 		this.controls.dispatchEvent({type:EVENT_CAMERA_ACTIVE_STATUS});
-		
+
 		if(flag)
 		{
 			this.skybox.toggleEnvironment(true);
-			this.fpscontrols.lock();			
+			this.fpscontrols.lock();
 		}
 		else
 		{
 			this.skybox.toggleEnvironment(false);
 			this.fpscontrols.unlock();
 		}
-		
+
 		this.model.switchWireframe(false);
 		this.floorplan.switchWireframe(false);
 		this.render(true);
 	}
-	
-	shouldRender() 
+
+	shouldRender()
 	{
 		var scope = this;
 		// Do we need to draw a new frame
-		if (scope.controls.needsUpdate || scope.controller.needsUpdate || scope.needsUpdate || scope.model.scene.needsUpdate) 
+		if (scope.controls.needsUpdate || scope.controller.needsUpdate || scope.needsUpdate || scope.model.scene.needsUpdate)
 		{
 			scope.controls.needsUpdate = false;
 			scope.controller.needsUpdate = false;
 			scope.needsUpdate = false;
 			scope.model.scene.needsUpdate = false;
 			return true;
-		} 
-		else 
+		}
+		else
 		{
 			return false;
 		}
 	}
-	
+
 	rendervr()
 	{
-		
+
 	}
 
-	render(forced) 
+	render(forced)
 	{
 		var scope = this;
 		forced = (forced)? forced : false;
@@ -539,20 +539,20 @@ export class Main extends EventDispatcher
 		{
 			return;
 		}
-		
-		scope.spin();		
+
+		scope.spin();
 		if(scope.firstpersonmode)
 		{
 			scope.fpscontrols.update(scope.fpsclock.getDelta());
-			scope.renderer.render(scope.scene.getScene(), scope.fpscamera);			
-			
+			scope.renderer.render(scope.scene.getScene(), scope.fpscamera);
+
 		}
 		else
 		{
 			if(this.shouldRender() || forced)
 			{
 				scope.renderer.render(scope.scene.getScene(), scope.camera);
-			}			
+			}
 		}
 		scope.lastRender = Date.now();
 	}

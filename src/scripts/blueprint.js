@@ -23,15 +23,15 @@ export {VIEW_TOP, VIEW_FRONT, VIEW_RIGHT, VIEW_LEFT, VIEW_ISOMETRY} from './core
 //Classes from model module
 export {HalfEdge} from './model/half_edge.js';
 export {cornerTolerance, Corner} from './model/corner.js';
-export {defaultFloorPlanTolerance, Floorplans} from './model/floorplan.js';
+export {defaultFloorPlanTolerance, Floorplan} from './model/floorplan.js';
 export {Model} from './model/model.js';
 export {defaultRoomTexture, Room} from './model/room.js';
 export {Scene} from './model/scene.js';
 export {defaultWallTexture, Wall} from './model/wall.js';
 
 //Classes from floorplanner module
-export {floorplannerModes, gridSpacing, gridWidth, gridColor, roomColor, wallWidth, wallWidthHover, edgeColor, edgeColorHover, edgeWidth, deleteColor, cornerRadius, cornerRadiusHover, cornerColor, cornerColorHover, FloorplannerView} from './floorplanner/floorplanner_view.js';
-export {snapTolerance, Floorplanner} from './floorplanner/floorplanner.js';
+export {floorplannerModes, gridSpacing, gridWidth, gridColor, roomColor, wallWidth, wallWidthHover, edgeColor, edgeColorHover, edgeWidth, deleteColor, cornerRadius, cornerRadiusHover, cornerColor, cornerColorHover, FloorplannerView2D} from './floorplanner/floorplanner_view.js';
+export {snapTolerance, Floorplanner2D} from './floorplanner/floorplanner.js';
 export {CarbonSheet} from './floorplanner/carbonsheet.js';
 
 //Classes from items module
@@ -54,7 +54,7 @@ export {PointerLockControls} from './three/pointerlockcontrols.js';
 export {STATE, Controls} from './three/controls.js';
 export {Edge} from './three/edge.js';
 export {Floor} from './three/floor.js';
-export {Floorplan} from './three/floorPlan.js';
+export {Floorplan3D} from './three/floorPlan.js';
 export {HUD} from './three/hud.js';
 export {Lights} from './three/lights.js';
 export {Main} from './three/main.js';
@@ -66,7 +66,7 @@ export {OBJExporter} from './exporters/OBJExporter.js';
 
 import {Model} from './model/model.js';
 import {Main} from './three/main.js';
-import {Floorplanner} from './floorplanner/floorplanner.js';
+import {Floorplanner2D} from './floorplanner/floorplanner.js';
 import {Configuration, configDimUnit} from './core/configuration.js';
 import {dimMeter} from './core/dimensioning.js';
 //
@@ -74,14 +74,14 @@ import {dimMeter} from './core/dimensioning.js';
 export class BlueprintJS
 {
 	/**
-	 * Creates an instance.
+	 * Creates an instance of BlueprintJS. This is the entry point for the application
 	 *
-	 * @param options {Object} - The initialization options.
-	 * @param options.floorplannerElement {string} - Id of the html element to use as canvas. Needs to exist in the html
-	 * @param options.threeElement {string} - Id of the html element to use as canvas. Needs to exist in the html and should be #idofhtmlelement
-	 * @param options.threeCanvasElement {string} - Id of the html element to use as threejs-canvas. This is created automatically
-	 * @param options.textureDir {string} - path to texture directory. No effect
-	 * @param options.widget {bool} - If widget mode then disable the controller from interactions
+	 * @param {Object} - options The initialization options.
+	 * @param {string} options.floorplannerElement - Id of the html element to use as canvas. Needs to exist in the html
+	 * @param {string} options.threeElement - Id of the html element to use as canvas. Needs to exist in the html and should be #idofhtmlelement
+	 * @param {string} options.threeCanvasElement - Id of the html element to use as threejs-canvas. This is created automatically
+	 * @param {string} options.textureDir - path to texture directory. No effect
+	 * @param {boolean} options.widget - If widget mode then disable the controller from interactions
 	 * @example
 	 * let blueprint3d = new BP3DJS.BlueprintJS(opts);
 	 */
@@ -89,22 +89,29 @@ export class BlueprintJS
 	{
 		Configuration.setValue(configDimUnit, dimMeter);
 
+		/**
+			* @property {Object} options
+			* @type {Object}
+		**/
 		this.options = options;
 		/**
-			* @property {Model} blueprint3d.model
+			* @property {Model} model
+			* @type {Model}
 		**/
 		this.model = new Model(options.textureDir);
 		/**
-		* @property {Main} blueprint3d.three
+		* @property {Main} three
+		* @type {Main}
 		**/
 		this.three = new Main(this.model, options.threeElement, options.threeCanvasElement, {});
 
 		if (!options.widget)
 		{
-			/**			
-			* @property {Floorplanner} blueprint3d.floorplanner
+			/**
+			* @property {Floorplanner} floorplanner
+			* @type {Floorplanner}
 			**/
-			this.floorplanner = new Floorplanner(options.floorplannerElement, this.model.floorplan);
+			this.floorplanner = new Floorplanner2D(options.floorplannerElement, this.model.floorplan);
 		}
 		else
 		{

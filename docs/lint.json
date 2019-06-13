@@ -209,6 +209,38 @@
     ]
   },
   {
+    "name": "Floorplan#roomNameChanged",
+    "filePath": "scripts/model/floorplan.js",
+    "lines": [
+      {
+        "lineNumber": 597,
+        "line": "\t/**"
+      },
+      {
+        "lineNumber": 598,
+        "line": "\t\t* @param {Object} event"
+      },
+      {
+        "lineNumber": 599,
+        "line": "\t\t* @listens {EVENT_ROOM_NAME_CHANGED} When a room name is changed and updates to metaroomdata"
+      },
+      {
+        "lineNumber": 600,
+        "line": "\t**/"
+      },
+      {
+        "lineNumber": 601,
+        "line": "\troomNameChanged(e)"
+      }
+    ],
+    "codeParams": [
+      "e"
+    ],
+    "docParams": [
+      "event"
+    ]
+  },
+  {
     "name": "Scene#removeItem",
     "filePath": "scripts/model/scene.js",
     "lines": [

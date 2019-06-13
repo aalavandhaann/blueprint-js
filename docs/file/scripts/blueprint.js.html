@@ -96,8 +96,8 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-logContext">logContext</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#exporters">exporters</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-OBJExporter">OBJExporter</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#floorplanner">floorplanner</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/carbonsheet.js~CarbonSheet.html">CarbonSheet</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/floorplanner.js~Floorplanner.html">Floorplanner</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html">FloorplannerView</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html">Floorplanner2D</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html">FloorplannerView2D</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-snapTolerance">snapTolerance</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-cornerColor">cornerColor</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-cornerColorHover">cornerColorHover</a></span></span></li>
@@ -128,7 +128,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/items/wall_item.js~WallItem.html">WallItem</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-item_types">item_types</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#model">model</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/corner.js~Corner.html">Corner</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/floorplan.js~Floorplans.html">Floorplans</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/floorplan.js~Floorplan.html">Floorplan</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html">HalfEdge</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/model.js~Model.html">Model</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/room.js~Room.html">Room</a></span></span></li>
@@ -143,7 +143,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/edge.js~Edge.html">Edge</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/first-person-controls.js~FirstPersonControls.html">FirstPersonControls</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/floor.js~Floor.html">Floor</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/floorPlan.js~Floorplan.html">Floorplan</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/floorPlan.js~Floorplan3D.html">Floorplan3D</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/hud.js~HUD.html">HUD</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/lights.js~Lights.html">Lights</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/main.js~Main.html">Main</a></span></span></li>
@@ -182,15 +182,15 @@ export {VIEW_TOP, VIEW_FRONT, VIEW_RIGHT, VIEW_LEFT, VIEW_ISOMETRY} from &apos;.
 //Classes from model module
 export {HalfEdge} from &apos;./model/half_edge.js&apos;;
 export {cornerTolerance, Corner} from &apos;./model/corner.js&apos;;
-export {defaultFloorPlanTolerance, Floorplans} from &apos;./model/floorplan.js&apos;;
+export {defaultFloorPlanTolerance, Floorplan} from &apos;./model/floorplan.js&apos;;
 export {Model} from &apos;./model/model.js&apos;;
 export {defaultRoomTexture, Room} from &apos;./model/room.js&apos;;
 export {Scene} from &apos;./model/scene.js&apos;;
 export {defaultWallTexture, Wall} from &apos;./model/wall.js&apos;;
 
 //Classes from floorplanner module
-export {floorplannerModes, gridSpacing, gridWidth, gridColor, roomColor, wallWidth, wallWidthHover, edgeColor, edgeColorHover, edgeWidth, deleteColor, cornerRadius, cornerRadiusHover, cornerColor, cornerColorHover, FloorplannerView} from &apos;./floorplanner/floorplanner_view.js&apos;;
-export {snapTolerance, Floorplanner} from &apos;./floorplanner/floorplanner.js&apos;;
+export {floorplannerModes, gridSpacing, gridWidth, gridColor, roomColor, wallWidth, wallWidthHover, edgeColor, edgeColorHover, edgeWidth, deleteColor, cornerRadius, cornerRadiusHover, cornerColor, cornerColorHover, FloorplannerView2D} from &apos;./floorplanner/floorplanner_view.js&apos;;
+export {snapTolerance, Floorplanner2D} from &apos;./floorplanner/floorplanner.js&apos;;
 export {CarbonSheet} from &apos;./floorplanner/carbonsheet.js&apos;;
 
 //Classes from items module
@@ -213,7 +213,7 @@ export {PointerLockControls} from &apos;./three/pointerlockcontrols.js&apos;;
 export {STATE, Controls} from &apos;./three/controls.js&apos;;
 export {Edge} from &apos;./three/edge.js&apos;;
 export {Floor} from &apos;./three/floor.js&apos;;
-export {Floorplan} from &apos;./three/floorPlan.js&apos;;
+export {Floorplan3D} from &apos;./three/floorPlan.js&apos;;
 export {HUD} from &apos;./three/hud.js&apos;;
 export {Lights} from &apos;./three/lights.js&apos;;
 export {Main} from &apos;./three/main.js&apos;;
@@ -225,7 +225,7 @@ export {OBJExporter} from &apos;./exporters/OBJExporter.js&apos;;
 
 import {Model} from &apos;./model/model.js&apos;;
 import {Main} from &apos;./three/main.js&apos;;
-import {Floorplanner} from &apos;./floorplanner/floorplanner.js&apos;;
+import {Floorplanner2D} from &apos;./floorplanner/floorplanner.js&apos;;
 import {Configuration, configDimUnit} from &apos;./core/configuration.js&apos;;
 import {dimMeter} from &apos;./core/dimensioning.js&apos;;
 //
@@ -233,14 +233,14 @@ import {dimMeter} from &apos;./core/dimensioning.js&apos;;
 export class BlueprintJS
 {
 	/**
-	 * Creates an instance.
+	 * Creates an instance of BlueprintJS. This is the entry point for the application
 	 *
-	 * @param options {Object} - The initialization options.
-	 * @param options.floorplannerElement {string} - Id of the html element to use as canvas. Needs to exist in the html
-	 * @param options.threeElement {string} - Id of the html element to use as canvas. Needs to exist in the html and should be #idofhtmlelement
-	 * @param options.threeCanvasElement {string} - Id of the html element to use as threejs-canvas. This is created automatically
-	 * @param options.textureDir {string} - path to texture directory. No effect
-	 * @param options.widget {bool} - If widget mode then disable the controller from interactions
+	 * @param {Object} - options The initialization options.
+	 * @param {string} options.floorplannerElement - Id of the html element to use as canvas. Needs to exist in the html
+	 * @param {string} options.threeElement - Id of the html element to use as canvas. Needs to exist in the html and should be #idofhtmlelement
+	 * @param {string} options.threeCanvasElement - Id of the html element to use as threejs-canvas. This is created automatically
+	 * @param {string} options.textureDir - path to texture directory. No effect
+	 * @param {boolean} options.widget - If widget mode then disable the controller from interactions
 	 * @example
 	 * let blueprint3d = new BP3DJS.BlueprintJS(opts);
 	 */
@@ -248,22 +248,29 @@ export class BlueprintJS
 	{
 		Configuration.setValue(configDimUnit, dimMeter);
 
+		/**
+			* @property {Object} options
+			* @type {Object}
+		**/
 		this.options = options;
 		/**
-			* @property {Model} blueprint3d.model
+			* @property {Model} model
+			* @type {Model}
 		**/
 		this.model = new Model(options.textureDir);
 		/**
-		* @property {Main} blueprint3d.three
+		* @property {Main} three
+		* @type {Main}
 		**/
 		this.three = new Main(this.model, options.threeElement, options.threeCanvasElement, {});
 
 		if (!options.widget)
 		{
-			/**			
-			* @property {Floorplanner} blueprint3d.floorplanner
+			/**
+			* @property {Floorplanner} floorplanner
+			* @type {Floorplanner}
 			**/
-			this.floorplanner = new Floorplanner(options.floorplannerElement, this.model.floorplan);
+			this.floorplanner = new Floorplanner2D(options.floorplannerElement, this.model.floorplan);
 		}
 		else
 		{

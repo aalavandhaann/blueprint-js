@@ -4,7 +4,7 @@ import {Floor} from './floor.js';
 import {Edge} from './edge.js';
 
 
-export class Floorplan extends EventDispatcher
+export class Floorplan3D extends EventDispatcher
 {
 	constructor(scene, floorPlan, controls)
 	{
@@ -19,7 +19,7 @@ export class Floorplan extends EventDispatcher
 		this.updatedroomsevent = () => {scope.redraw();};
 		this.floorplan.addEventListener(EVENT_UPDATED, this.updatedroomsevent);
 	}
-	
+
 	switchWireframe(flag)
 	{
 		this.floors.forEach((floor)=>{
@@ -29,7 +29,7 @@ export class Floorplan extends EventDispatcher
 			edge.switchWireframe(flag);
 		});
 	}
-	
+
 	redraw()
 	{
 		var scope = this;
@@ -50,8 +50,8 @@ export class Floorplan extends EventDispatcher
 			this.floors.push(threeFloor);
 			threeFloor.addToScene();
 		});
-		
-		var eindex = 0;		
+
+		var eindex = 0;
 		// draw edges
 		this.floorplan.wallEdges().forEach((edge) => {
 			var threeEdge = new Edge(scope.scene, edge, scope.controls);
@@ -60,7 +60,7 @@ export class Floorplan extends EventDispatcher
 			eindex+=1;
 		});
 	}
-	
+
 	showRoof(flag)
 	{
 		// draw floors

@@ -1,14 +1,13 @@
 {
-  "coverage": "26.5%",
+  "coverage": "31.03%",
   "expectCount": 1060,
-  "actualCount": 281,
+  "actualCount": 329,
   "files": {
     "scripts/blueprint.js": {
       "expectCount": 6,
-      "actualCount": 4,
+      "actualCount": 5,
       "undocumentLines": [
-        74,
-        92
+        74
       ]
     },
     "scripts/core/configuration.js": {
@@ -411,68 +410,21 @@
     },
     "scripts/model/corner.js": {
       "expectCount": 45,
-      "actualCount": 26,
+      "actualCount": 43,
       "undocumentLines": [
-        25,
-        26,
-        27,
-        28,
-        29,
-        30,
-        31,
-        32,
-        33,
-        34,
-        35,
-        38,
-        43,
-        48,
-        56,
-        61,
-        90,
-        191,
-        363
+        141,
+        439
       ]
     },
     "scripts/model/floorplan.js": {
       "expectCount": 49,
-      "actualCount": 14,
+      "actualCount": 44,
       "undocumentLines": [
-        25,
-        27,
-        29,
-        30,
-        32,
-        34,
-        36,
-        38,
-        40,
-        41,
-        43,
-        46,
-        51,
-        57,
-        73,
-        83,
-        99,
-        106,
-        111,
-        116,
-        121,
-        132,
-        280,
-        295,
-        308,
-        321,
-        339,
-        397,
-        454,
-        463,
-        496,
-        565,
-        570,
-        605,
-        630
+        76,
+        164,
+        169,
+        174,
+        179
       ]
     },
     "scripts/model/half_edge.js": {

@@ -294,27 +294,27 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
-    "blueprint3d-js/scripts/three/floorplan.js~floorplan",
-    "class/scripts/three/floorPlan.js~Floorplan.html",
-    "<span>Floorplan</span> <span class=\"search-result-import-path\">blueprint3d-js/scripts/three/floorPlan.js</span>",
+    "blueprint3d-js/scripts/three/floorplan.js~floorplan3d",
+    "class/scripts/three/floorPlan.js~Floorplan3D.html",
+    "<span>Floorplan3D</span> <span class=\"search-result-import-path\">blueprint3d-js/scripts/three/floorPlan.js</span>",
     "class"
   ],
   [
-    "blueprint3d-js/scripts/floorplanner/floorplanner.js~floorplanner",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html",
-    "<span>Floorplanner</span> <span class=\"search-result-import-path\">blueprint3d-js/scripts/floorplanner/floorplanner.js</span>",
+    "blueprint3d-js/scripts/model/floorplan.js~floorplan",
+    "class/scripts/model/floorplan.js~Floorplan.html",
+    "<span>Floorplan</span> <span class=\"search-result-import-path\">blueprint3d-js/scripts/model/floorplan.js</span>",
     "class"
   ],
   [
-    "blueprint3d-js/scripts/floorplanner/floorplanner_view.js~floorplannerview",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html",
-    "<span>FloorplannerView</span> <span class=\"search-result-import-path\">blueprint3d-js/scripts/floorplanner/floorplanner_view.js</span>",
+    "blueprint3d-js/scripts/floorplanner/floorplanner.js~floorplanner2d",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html",
+    "<span>Floorplanner2D</span> <span class=\"search-result-import-path\">blueprint3d-js/scripts/floorplanner/floorplanner.js</span>",
     "class"
   ],
   [
-    "blueprint3d-js/scripts/model/floorplan.js~floorplans",
-    "class/scripts/model/floorplan.js~Floorplans.html",
-    "<span>Floorplans</span> <span class=\"search-result-import-path\">blueprint3d-js/scripts/model/floorplan.js</span>",
+    "blueprint3d-js/scripts/floorplanner/floorplanner_view.js~floorplannerview2d",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html",
+    "<span>FloorplannerView2D</span> <span class=\"search-result-import-path\">blueprint3d-js/scripts/floorplanner/floorplanner_view.js</span>",
     "class"
   ],
   [
@@ -1674,267 +1674,267 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#activecorner",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-activeCorner",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#activeCorner",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#activecorner",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-activeCorner",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#activeCorner",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#activeroom",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-activeRoom",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#activeRoom",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#activeroom",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-activeRoom",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#activeRoom",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#activewall",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-activeWall",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#activeWall",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#activewall",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-activeWall",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#activeWall",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#canvas",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-canvas",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#canvas",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#canvas",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-canvas",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#canvas",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#canvaselement",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-canvasElement",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#canvasElement",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#canvaselement",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-canvasElement",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#canvasElement",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#carbonsheet",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-get-carbonSheet",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#carbonSheet",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#carbonsheet",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-get-carbonSheet",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#carbonSheet",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#cmperpixel",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-cmPerPixel",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#cmPerPixel",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#cmperpixel",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-cmPerPixel",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#cmPerPixel",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#constructor",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-constructor-constructor",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#constructor",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#constructor",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-constructor-constructor",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#constructor",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#convertx",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-method-convertX",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#convertX",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#convertx",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-method-convertX",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#convertX",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#converty",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-method-convertY",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#convertY",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#converty",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-method-convertY",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#convertY",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#doubleclick",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-method-doubleclick",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#doubleclick",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#doubleclick",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-method-doubleclick",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#doubleclick",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#escapekey",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-method-escapeKey",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#escapeKey",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#escapekey",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-method-escapeKey",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#escapeKey",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#floorplan",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-floorplan",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#floorplan",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#floorplan",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-floorplan",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#floorplan",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#gridsnapmode",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-gridsnapmode",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#gridsnapmode",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#gridsnapmode",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-gridsnapmode",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#gridsnapmode",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#keydown",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-method-keyDown",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#keyDown",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#keydown",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-method-keyDown",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#keyDown",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#keyup",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-method-keyUp",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#keyUp",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#keyup",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-method-keyUp",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#keyUp",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#lastnode",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-lastNode",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#lastNode",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#lastnode",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-lastNode",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#lastNode",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#lastx",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-lastX",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#lastX",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#lastx",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-lastX",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#lastX",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#lasty",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-lastY",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#lastY",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#lasty",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-lastY",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#lastY",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#mode",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-mode",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#mode",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#mode",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-mode",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#mode",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#moderesetcallbacks",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-modeResetCallbacks",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#modeResetCallbacks",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#moderesetcallbacks",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-modeResetCallbacks",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#modeResetCallbacks",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#mousedown",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-mouseDown",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#mouseDown",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#mousedown",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-mouseDown",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#mouseDown",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#mousemoved",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-mouseMoved",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#mouseMoved",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#mousemoved",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-mouseMoved",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#mouseMoved",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#mousex",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-mouseX",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#mouseX",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#mousex",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-mouseX",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#mouseX",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#mousey",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-mouseY",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#mouseY",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#mousey",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-mouseY",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#mouseY",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#mousedown",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-method-mousedown",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#mousedown",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#mousedown",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-method-mousedown",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#mousedown",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#mouseleave",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-method-mouseleave",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#mouseleave",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#mouseleave",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-method-mouseleave",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#mouseleave",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#mousemove",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-method-mousemove",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#mousemove",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#mousemove",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-method-mousemove",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#mousemove",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#mouseup",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-method-mouseup",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#mouseup",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#mouseup",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-method-mouseup",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#mouseup",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#originx",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-originX",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#originX",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#originx",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-originX",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#originX",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#originy",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-originY",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#originY",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#originy",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-originY",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#originY",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#pixelspercm",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-pixelsPerCm",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#pixelsPerCm",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#pixelspercm",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-pixelsPerCm",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#pixelsPerCm",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#rawmousex",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-rawMouseX",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#rawMouseX",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#rawmousex",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-rawMouseX",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#rawMouseX",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#rawmousey",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-rawMouseY",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#rawMouseY",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#rawmousey",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-rawMouseY",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#rawMouseY",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#reset",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-method-reset",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#reset",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#reset",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-method-reset",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#reset",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#resetorigin",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-method-resetOrigin",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#resetOrigin",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#resetorigin",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-method-resetOrigin",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#resetOrigin",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#resizeview",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-method-resizeView",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#resizeView",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#resizeview",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-method-resizeView",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#resizeView",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#setmode",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-method-setMode",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#setMode",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#setmode",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-method-setMode",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#setMode",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#shiftkey",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-shiftkey",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#shiftkey",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#shiftkey",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-shiftkey",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#shiftkey",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#targetx",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-targetX",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#targetX",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#targetx",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-targetX",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#targetX",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#targety",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-targetY",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#targetY",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#targety",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-targetY",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#targetY",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#updatetarget",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-method-updateTarget",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#updateTarget",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#updatetarget",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-method-updateTarget",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#updateTarget",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#view",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-view",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#view",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#view",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-view",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#view",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner.js~floorplanner#wallwidth",
-    "class/scripts/floorplanner/floorplanner.js~Floorplanner.html#instance-member-wallWidth",
-    "scripts/floorplanner/floorplanner.js~Floorplanner#wallWidth",
+    "scripts/floorplanner/floorplanner.js~floorplanner2d#wallwidth",
+    "class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html#instance-member-wallWidth",
+    "scripts/floorplanner/floorplanner.js~Floorplanner2D#wallWidth",
     "member"
   ],
   [
@@ -1944,159 +1944,159 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#_carbonsheet",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-member-_carbonsheet",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#_carbonsheet",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#_carbonsheet",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-member-_carbonsheet",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#_carbonsheet",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#calculategridoffset",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-method-calculateGridOffset",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#calculateGridOffset",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#calculategridoffset",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-method-calculateGridOffset",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#calculateGridOffset",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#canvas",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-member-canvas",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#canvas",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#canvas",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-member-canvas",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#canvas",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#canvaselement",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-member-canvasElement",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#canvasElement",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#canvaselement",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-member-canvasElement",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#canvasElement",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#carbonsheet",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-get-carbonSheet",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#carbonSheet",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#carbonsheet",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-get-carbonSheet",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#carbonSheet",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#constructor",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-constructor-constructor",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#constructor",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#constructor",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-constructor-constructor",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#constructor",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#context",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-member-context",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#context",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#context",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-member-context",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#context",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#draw",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-method-draw",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#draw",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#draw",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-method-draw",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#draw",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#drawcircle",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-method-drawCircle",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#drawCircle",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#drawcircle",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-method-drawCircle",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#drawCircle",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#drawcorner",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-method-drawCorner",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#drawCorner",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#drawcorner",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-method-drawCorner",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#drawCorner",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#drawedge",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-method-drawEdge",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#drawEdge",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#drawedge",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-method-drawEdge",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#drawEdge",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#drawedgelabel",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-method-drawEdgeLabel",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#drawEdgeLabel",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#drawedgelabel",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-method-drawEdgeLabel",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#drawEdgeLabel",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#drawedgelabelexterior",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-method-drawEdgeLabelExterior",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#drawEdgeLabelExterior",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#drawedgelabelexterior",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-method-drawEdgeLabelExterior",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#drawEdgeLabelExterior",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#drawgrid",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-method-drawGrid",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#drawGrid",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#drawgrid",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-method-drawGrid",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#drawGrid",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#drawline",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-method-drawLine",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#drawLine",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#drawline",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-method-drawLine",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#drawLine",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#draworigincrosshair",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-method-drawOriginCrossHair",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#drawOriginCrossHair",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#draworigincrosshair",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-method-drawOriginCrossHair",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#drawOriginCrossHair",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#drawpolygon",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-method-drawPolygon",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#drawPolygon",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#drawpolygon",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-method-drawPolygon",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#drawPolygon",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#drawroom",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-method-drawRoom",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#drawRoom",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#drawroom",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-method-drawRoom",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#drawRoom",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#drawtarget",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-method-drawTarget",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#drawTarget",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#drawtarget",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-method-drawTarget",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#drawTarget",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#drawtextlabel",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-method-drawTextLabel",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#drawTextLabel",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#drawtextlabel",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-method-drawTextLabel",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#drawTextLabel",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#drawwall",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-method-drawWall",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#drawWall",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#drawwall",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-method-drawWall",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#drawWall",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#drawwalllabels",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-method-drawWallLabels",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#drawWallLabels",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#drawwalllabels",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-method-drawWallLabels",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#drawWallLabels",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#drawwalllabelsmiddle",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-method-drawWallLabelsMiddle",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#drawWallLabelsMiddle",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#drawwalllabelsmiddle",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-method-drawWallLabelsMiddle",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#drawWallLabelsMiddle",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#floorplan",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-member-floorplan",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#floorplan",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#floorplan",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-member-floorplan",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#floorplan",
     "member"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#handlewindowresize",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-method-handleWindowResize",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#handleWindowResize",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#handlewindowresize",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-method-handleWindowResize",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#handleWindowResize",
     "method"
   ],
   [
-    "scripts/floorplanner/floorplanner_view.js~floorplannerview#viewmodel",
-    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html#instance-member-viewmodel",
-    "scripts/floorplanner/floorplanner_view.js~FloorplannerView#viewmodel",
+    "scripts/floorplanner/floorplanner_view.js~floorplannerview2d#viewmodel",
+    "class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html#instance-member-viewmodel",
+    "scripts/floorplanner/floorplanner_view.js~FloorplannerView2D#viewmodel",
     "member"
   ],
   [
@@ -3186,285 +3186,285 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#_carbonsheet",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-member-_carbonSheet",
-    "scripts/model/floorplan.js~Floorplans#_carbonSheet",
+    "scripts/model/floorplan.js~floorplan#_carbonsheet",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-member-_carbonSheet",
+    "scripts/model/floorplan.js~Floorplan#_carbonSheet",
     "member"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#assignorphanedges",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-assignOrphanEdges",
-    "scripts/model/floorplan.js~Floorplans#assignOrphanEdges",
+    "scripts/model/floorplan.js~floorplan#assignorphanedges",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-assignOrphanEdges",
+    "scripts/model/floorplan.js~Floorplan#assignOrphanEdges",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#carbonsheet",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-set-carbonSheet",
-    "scripts/model/floorplan.js~Floorplans#carbonSheet",
+    "scripts/model/floorplan.js~floorplan#carbonsheet",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-set-carbonSheet",
+    "scripts/model/floorplan.js~Floorplan#carbonSheet",
     "member"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#carbonsheet",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-get-carbonSheet",
-    "scripts/model/floorplan.js~Floorplans#carbonSheet",
+    "scripts/model/floorplan.js~floorplan#carbonsheet",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-get-carbonSheet",
+    "scripts/model/floorplan.js~Floorplan#carbonSheet",
     "member"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#constructor",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-constructor-constructor",
-    "scripts/model/floorplan.js~Floorplans#constructor",
+    "scripts/model/floorplan.js~floorplan#constructor",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-constructor-constructor",
+    "scripts/model/floorplan.js~Floorplan#constructor",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#corners",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-member-corners",
-    "scripts/model/floorplan.js~Floorplans#corners",
+    "scripts/model/floorplan.js~floorplan#corners",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-member-corners",
+    "scripts/model/floorplan.js~Floorplan#corners",
     "member"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#findrooms",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-findRooms",
-    "scripts/model/floorplan.js~Floorplans#findRooms",
+    "scripts/model/floorplan.js~floorplan#findrooms",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-findRooms",
+    "scripts/model/floorplan.js~Floorplan#findRooms",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#fireonnewcorner",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-fireOnNewCorner",
-    "scripts/model/floorplan.js~Floorplans#fireOnNewCorner",
+    "scripts/model/floorplan.js~floorplan#fireonnewcorner",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-fireOnNewCorner",
+    "scripts/model/floorplan.js~Floorplan#fireOnNewCorner",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#fireonnewwall",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-fireOnNewWall",
-    "scripts/model/floorplan.js~Floorplans#fireOnNewWall",
+    "scripts/model/floorplan.js~floorplan#fireonnewwall",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-fireOnNewWall",
+    "scripts/model/floorplan.js~Floorplan#fireOnNewWall",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#fireonredraw",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-fireOnRedraw",
-    "scripts/model/floorplan.js~Floorplans#fireOnRedraw",
+    "scripts/model/floorplan.js~floorplan#fireonredraw",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-fireOnRedraw",
+    "scripts/model/floorplan.js~Floorplan#fireOnRedraw",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#fireonupdatedrooms",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-fireOnUpdatedRooms",
-    "scripts/model/floorplan.js~Floorplans#fireOnUpdatedRooms",
+    "scripts/model/floorplan.js~floorplan#fireonupdatedrooms",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-fireOnUpdatedRooms",
+    "scripts/model/floorplan.js~Floorplan#fireOnUpdatedRooms",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#floorplanes",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-floorPlanes",
-    "scripts/model/floorplan.js~Floorplans#floorPlanes",
+    "scripts/model/floorplan.js~floorplan#floorplanes",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-floorPlanes",
+    "scripts/model/floorplan.js~Floorplan#floorPlanes",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#floortextures",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-member-floorTextures",
-    "scripts/model/floorplan.js~Floorplans#floorTextures",
+    "scripts/model/floorplan.js~floorplan#floortextures",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-member-floorTextures",
+    "scripts/model/floorplan.js~Floorplan#floorTextures",
     "member"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#getcenter",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-getCenter",
-    "scripts/model/floorplan.js~Floorplans#getCenter",
+    "scripts/model/floorplan.js~floorplan#getcenter",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-getCenter",
+    "scripts/model/floorplan.js~Floorplan#getCenter",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#getcorners",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-getCorners",
-    "scripts/model/floorplan.js~Floorplans#getCorners",
+    "scripts/model/floorplan.js~floorplan#getcorners",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-getCorners",
+    "scripts/model/floorplan.js~Floorplan#getCorners",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#getdimensions",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-getDimensions",
-    "scripts/model/floorplan.js~Floorplans#getDimensions",
+    "scripts/model/floorplan.js~floorplan#getdimensions",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-getDimensions",
+    "scripts/model/floorplan.js~Floorplan#getDimensions",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#getfloortexture",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-getFloorTexture",
-    "scripts/model/floorplan.js~Floorplans#getFloorTexture",
+    "scripts/model/floorplan.js~floorplan#getfloortexture",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-getFloorTexture",
+    "scripts/model/floorplan.js~Floorplan#getFloorTexture",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#getmetaroomdata",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-getMetaRoomData",
-    "scripts/model/floorplan.js~Floorplans#getMetaRoomData",
+    "scripts/model/floorplan.js~floorplan#getmetaroomdata",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-getMetaRoomData",
+    "scripts/model/floorplan.js~Floorplan#getMetaRoomData",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#getrooms",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-getRooms",
-    "scripts/model/floorplan.js~Floorplans#getRooms",
+    "scripts/model/floorplan.js~floorplan#getrooms",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-getRooms",
+    "scripts/model/floorplan.js~Floorplan#getRooms",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#getsize",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-getSize",
-    "scripts/model/floorplan.js~Floorplans#getSize",
+    "scripts/model/floorplan.js~floorplan#getsize",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-getSize",
+    "scripts/model/floorplan.js~Floorplan#getSize",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#getwalls",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-getWalls",
-    "scripts/model/floorplan.js~Floorplans#getWalls",
+    "scripts/model/floorplan.js~floorplan#getwalls",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-getWalls",
+    "scripts/model/floorplan.js~Floorplan#getWalls",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#loadfloorplan",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-loadFloorplan",
-    "scripts/model/floorplan.js~Floorplans#loadFloorplan",
+    "scripts/model/floorplan.js~floorplan#loadfloorplan",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-loadFloorplan",
+    "scripts/model/floorplan.js~Floorplan#loadFloorplan",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#metaroomsdata",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-member-metaroomsdata",
-    "scripts/model/floorplan.js~Floorplans#metaroomsdata",
+    "scripts/model/floorplan.js~floorplan#metaroomsdata",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-member-metaroomsdata",
+    "scripts/model/floorplan.js~Floorplan#metaroomsdata",
     "member"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#newcorner",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-newCorner",
-    "scripts/model/floorplan.js~Floorplans#newCorner",
+    "scripts/model/floorplan.js~floorplan#newcorner",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-newCorner",
+    "scripts/model/floorplan.js~Floorplan#newCorner",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#newwall",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-newWall",
-    "scripts/model/floorplan.js~Floorplans#newWall",
+    "scripts/model/floorplan.js~floorplan#newwall",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-newWall",
+    "scripts/model/floorplan.js~Floorplan#newWall",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#newwallsforintersections",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-newWallsForIntersections",
-    "scripts/model/floorplan.js~Floorplans#newWallsForIntersections",
+    "scripts/model/floorplan.js~floorplan#newwallsforintersections",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-newWallsForIntersections",
+    "scripts/model/floorplan.js~Floorplan#newWallsForIntersections",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#new_corner_callbacks",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-member-new_corner_callbacks",
-    "scripts/model/floorplan.js~Floorplans#new_corner_callbacks",
+    "scripts/model/floorplan.js~floorplan#new_corner_callbacks",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-member-new_corner_callbacks",
+    "scripts/model/floorplan.js~Floorplan#new_corner_callbacks",
     "member"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#new_wall_callbacks",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-member-new_wall_callbacks",
-    "scripts/model/floorplan.js~Floorplans#new_wall_callbacks",
+    "scripts/model/floorplan.js~floorplan#new_wall_callbacks",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-member-new_wall_callbacks",
+    "scripts/model/floorplan.js~Floorplan#new_wall_callbacks",
     "member"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#overlappedcorner",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-overlappedCorner",
-    "scripts/model/floorplan.js~Floorplans#overlappedCorner",
+    "scripts/model/floorplan.js~floorplan#overlappedcorner",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-overlappedCorner",
+    "scripts/model/floorplan.js~Floorplan#overlappedCorner",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#overlappedroom",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-overlappedRoom",
-    "scripts/model/floorplan.js~Floorplans#overlappedRoom",
+    "scripts/model/floorplan.js~floorplan#overlappedroom",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-overlappedRoom",
+    "scripts/model/floorplan.js~Floorplan#overlappedRoom",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#overlappedwall",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-overlappedWall",
-    "scripts/model/floorplan.js~Floorplans#overlappedWall",
+    "scripts/model/floorplan.js~floorplan#overlappedwall",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-overlappedWall",
+    "scripts/model/floorplan.js~Floorplan#overlappedWall",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#redraw_callbacks",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-member-redraw_callbacks",
-    "scripts/model/floorplan.js~Floorplans#redraw_callbacks",
+    "scripts/model/floorplan.js~floorplan#redraw_callbacks",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-member-redraw_callbacks",
+    "scripts/model/floorplan.js~Floorplan#redraw_callbacks",
     "member"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#removecorner",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-removeCorner",
-    "scripts/model/floorplan.js~Floorplans#removeCorner",
+    "scripts/model/floorplan.js~floorplan#removecorner",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-removeCorner",
+    "scripts/model/floorplan.js~Floorplan#removeCorner",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#removewall",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-removeWall",
-    "scripts/model/floorplan.js~Floorplans#removeWall",
+    "scripts/model/floorplan.js~floorplan#removewall",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-removeWall",
+    "scripts/model/floorplan.js~Floorplan#removeWall",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#reset",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-reset",
-    "scripts/model/floorplan.js~Floorplans#reset",
+    "scripts/model/floorplan.js~floorplan#reset",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-reset",
+    "scripts/model/floorplan.js~Floorplan#reset",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#roofplanes",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-roofPlanes",
-    "scripts/model/floorplan.js~Floorplans#roofPlanes",
+    "scripts/model/floorplan.js~floorplan#roofplanes",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-roofPlanes",
+    "scripts/model/floorplan.js~Floorplan#roofPlanes",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#roomloadedcallbacks",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-member-roomLoadedCallbacks",
-    "scripts/model/floorplan.js~Floorplans#roomLoadedCallbacks",
+    "scripts/model/floorplan.js~floorplan#roomloadedcallbacks",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-member-roomLoadedCallbacks",
+    "scripts/model/floorplan.js~Floorplan#roomLoadedCallbacks",
     "member"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#roomnamechanged",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-roomNameChanged",
-    "scripts/model/floorplan.js~Floorplans#roomNameChanged",
+    "scripts/model/floorplan.js~floorplan#roomnamechanged",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-roomNameChanged",
+    "scripts/model/floorplan.js~Floorplan#roomNameChanged",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#rooms",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-member-rooms",
-    "scripts/model/floorplan.js~Floorplans#rooms",
+    "scripts/model/floorplan.js~floorplan#rooms",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-member-rooms",
+    "scripts/model/floorplan.js~Floorplan#rooms",
     "member"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#savefloorplan",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-saveFloorplan",
-    "scripts/model/floorplan.js~Floorplans#saveFloorplan",
+    "scripts/model/floorplan.js~floorplan#savefloorplan",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-saveFloorplan",
+    "scripts/model/floorplan.js~Floorplan#saveFloorplan",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#setfloortexture",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-setFloorTexture",
-    "scripts/model/floorplan.js~Floorplans#setFloorTexture",
+    "scripts/model/floorplan.js~floorplan#setfloortexture",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-setFloorTexture",
+    "scripts/model/floorplan.js~Floorplan#setFloorTexture",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#update",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-update",
-    "scripts/model/floorplan.js~Floorplans#update",
+    "scripts/model/floorplan.js~floorplan#update",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-update",
+    "scripts/model/floorplan.js~Floorplan#update",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#updatefloortextures",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-updateFloorTextures",
-    "scripts/model/floorplan.js~Floorplans#updateFloorTextures",
+    "scripts/model/floorplan.js~floorplan#updatefloortextures",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-updateFloorTextures",
+    "scripts/model/floorplan.js~Floorplan#updateFloorTextures",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#updated_rooms",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-member-updated_rooms",
-    "scripts/model/floorplan.js~Floorplans#updated_rooms",
+    "scripts/model/floorplan.js~floorplan#updated_rooms",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-member-updated_rooms",
+    "scripts/model/floorplan.js~Floorplan#updated_rooms",
     "member"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#walledgeplanes",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-wallEdgePlanes",
-    "scripts/model/floorplan.js~Floorplans#wallEdgePlanes",
+    "scripts/model/floorplan.js~floorplan#walledgeplanes",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-wallEdgePlanes",
+    "scripts/model/floorplan.js~Floorplan#wallEdgePlanes",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#walledges",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-method-wallEdges",
-    "scripts/model/floorplan.js~Floorplans#wallEdges",
+    "scripts/model/floorplan.js~floorplan#walledges",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-method-wallEdges",
+    "scripts/model/floorplan.js~Floorplan#wallEdges",
     "method"
   ],
   [
-    "scripts/model/floorplan.js~floorplans#walls",
-    "class/scripts/model/floorplan.js~Floorplans.html#instance-member-walls",
-    "scripts/model/floorplan.js~Floorplans#walls",
+    "scripts/model/floorplan.js~floorplan#walls",
+    "class/scripts/model/floorplan.js~Floorplan.html#instance-member-walls",
+    "scripts/model/floorplan.js~Floorplan#walls",
     "member"
   ],
   [
@@ -5718,63 +5718,63 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "scripts/three/floorplan.js~floorplan#constructor",
-    "class/scripts/three/floorPlan.js~Floorplan.html#instance-constructor-constructor",
-    "scripts/three/floorPlan.js~Floorplan#constructor",
+    "scripts/three/floorplan.js~floorplan3d#constructor",
+    "class/scripts/three/floorPlan.js~Floorplan3D.html#instance-constructor-constructor",
+    "scripts/three/floorPlan.js~Floorplan3D#constructor",
     "method"
   ],
   [
-    "scripts/three/floorplan.js~floorplan#controls",
-    "class/scripts/three/floorPlan.js~Floorplan.html#instance-member-controls",
-    "scripts/three/floorPlan.js~Floorplan#controls",
+    "scripts/three/floorplan.js~floorplan3d#controls",
+    "class/scripts/three/floorPlan.js~Floorplan3D.html#instance-member-controls",
+    "scripts/three/floorPlan.js~Floorplan3D#controls",
     "member"
   ],
   [
-    "scripts/three/floorplan.js~floorplan#edges",
-    "class/scripts/three/floorPlan.js~Floorplan.html#instance-member-edges",
-    "scripts/three/floorPlan.js~Floorplan#edges",
+    "scripts/three/floorplan.js~floorplan3d#edges",
+    "class/scripts/three/floorPlan.js~Floorplan3D.html#instance-member-edges",
+    "scripts/three/floorPlan.js~Floorplan3D#edges",
     "member"
   ],
   [
-    "scripts/three/floorplan.js~floorplan#floorplan",
-    "class/scripts/three/floorPlan.js~Floorplan.html#instance-member-floorplan",
-    "scripts/three/floorPlan.js~Floorplan#floorplan",
+    "scripts/three/floorplan.js~floorplan3d#floorplan",
+    "class/scripts/three/floorPlan.js~Floorplan3D.html#instance-member-floorplan",
+    "scripts/three/floorPlan.js~Floorplan3D#floorplan",
     "member"
   ],
   [
-    "scripts/three/floorplan.js~floorplan#floors",
-    "class/scripts/three/floorPlan.js~Floorplan.html#instance-member-floors",
-    "scripts/three/floorPlan.js~Floorplan#floors",
+    "scripts/three/floorplan.js~floorplan3d#floors",
+    "class/scripts/three/floorPlan.js~Floorplan3D.html#instance-member-floors",
+    "scripts/three/floorPlan.js~Floorplan3D#floors",
     "member"
   ],
   [
-    "scripts/three/floorplan.js~floorplan#redraw",
-    "class/scripts/three/floorPlan.js~Floorplan.html#instance-method-redraw",
-    "scripts/three/floorPlan.js~Floorplan#redraw",
+    "scripts/three/floorplan.js~floorplan3d#redraw",
+    "class/scripts/three/floorPlan.js~Floorplan3D.html#instance-method-redraw",
+    "scripts/three/floorPlan.js~Floorplan3D#redraw",
     "method"
   ],
   [
-    "scripts/three/floorplan.js~floorplan#scene",
-    "class/scripts/three/floorPlan.js~Floorplan.html#instance-member-scene",
-    "scripts/three/floorPlan.js~Floorplan#scene",
+    "scripts/three/floorplan.js~floorplan3d#scene",
+    "class/scripts/three/floorPlan.js~Floorplan3D.html#instance-member-scene",
+    "scripts/three/floorPlan.js~Floorplan3D#scene",
     "member"
   ],
   [
-    "scripts/three/floorplan.js~floorplan#showroof",
-    "class/scripts/three/floorPlan.js~Floorplan.html#instance-method-showRoof",
-    "scripts/three/floorPlan.js~Floorplan#showRoof",
+    "scripts/three/floorplan.js~floorplan3d#showroof",
+    "class/scripts/three/floorPlan.js~Floorplan3D.html#instance-method-showRoof",
+    "scripts/three/floorPlan.js~Floorplan3D#showRoof",
     "method"
   ],
   [
-    "scripts/three/floorplan.js~floorplan#switchwireframe",
-    "class/scripts/three/floorPlan.js~Floorplan.html#instance-method-switchWireframe",
-    "scripts/three/floorPlan.js~Floorplan#switchWireframe",
+    "scripts/three/floorplan.js~floorplan3d#switchwireframe",
+    "class/scripts/three/floorPlan.js~Floorplan3D.html#instance-method-switchWireframe",
+    "scripts/three/floorPlan.js~Floorplan3D#switchWireframe",
     "method"
   ],
   [
-    "scripts/three/floorplan.js~floorplan#updatedroomsevent",
-    "class/scripts/three/floorPlan.js~Floorplan.html#instance-member-updatedroomsevent",
-    "scripts/three/floorPlan.js~Floorplan#updatedroomsevent",
+    "scripts/three/floorplan.js~floorplan3d#updatedroomsevent",
+    "class/scripts/three/floorPlan.js~Floorplan3D.html#instance-member-updatedroomsevent",
+    "scripts/three/floorPlan.js~Floorplan3D#updatedroomsevent",
     "member"
   ],
   [

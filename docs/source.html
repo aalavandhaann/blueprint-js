@@ -96,8 +96,8 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-logContext">logContext</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#exporters">exporters</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-OBJExporter">OBJExporter</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#floorplanner">floorplanner</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/carbonsheet.js~CarbonSheet.html">CarbonSheet</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/floorplanner.js~Floorplanner.html">Floorplanner</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html">FloorplannerView</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html">Floorplanner2D</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html">FloorplannerView2D</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-snapTolerance">snapTolerance</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-cornerColor">cornerColor</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-cornerColorHover">cornerColorHover</a></span></span></li>
@@ -128,7 +128,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/items/wall_item.js~WallItem.html">WallItem</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-item_types">item_types</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#model">model</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/corner.js~Corner.html">Corner</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/floorplan.js~Floorplans.html">Floorplans</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/floorplan.js~Floorplan.html">Floorplan</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/half_edge.js~HalfEdge.html">HalfEdge</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/model.js~Model.html">Model</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/model/room.js~Room.html">Room</a></span></span></li>
@@ -143,7 +143,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/edge.js~Edge.html">Edge</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/first-person-controls.js~FirstPersonControls.html">FirstPersonControls</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/floor.js~Floor.html">Floor</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/floorPlan.js~Floorplan.html">Floorplan</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/floorPlan.js~Floorplan3D.html">Floorplan3D</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/hud.js~HUD.html">HUD</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/lights.js~Lights.html">Lights</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/scripts/three/main.js~Main.html">Main</a></span></span></li>
@@ -156,7 +156,7 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><h1>Source <img data-ice="coverageBadge" src="./badge.svg"><span data-ice="totalCoverageCount" class="total-coverage-count">281/1060</span></h1>
+<div class="content" data-ice="content"><h1>Source <img data-ice="coverageBadge" src="./badge.svg"><span data-ice="totalCoverageCount" class="total-coverage-count">329/1060</span></h1>
 
 <table class="files-summary" data-ice="files" data-use-coverage="true">
   <thead>
@@ -172,12 +172,12 @@
   <tbody>
     
   <tr data-ice="file">
-      <td data-ice="filePath"><span><a href="file/scripts/blueprint.js.html#errorLines=74,92">scripts/blueprint.js</a></span></td>
+      <td data-ice="filePath"><span><a href="file/scripts/blueprint.js.html#errorLines=74">scripts/blueprint.js</a></span></td>
       <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/blueprint.js~BlueprintJS.html">BlueprintJS</a></span></td>
-      <td class="coverage"><span data-ice="coverage">66 %</span><span data-ice="coverageCount" class="coverage-count">4/6</span></td>
-      <td style="display: none;" data-ice="size">5373 byte</td>
-      <td style="display: none;" data-ice="lines">114</td>
-      <td style="display: none;" data-ice="updated">2019-06-04 23:17:18 (UTC)</td>
+      <td class="coverage"><span data-ice="coverage">83 %</span><span data-ice="coverageCount" class="coverage-count">5/6</span></td>
+      <td style="display: none;" data-ice="size">5531 byte</td>
+      <td style="display: none;" data-ice="lines">121</td>
+      <td style="display: none;" data-ice="updated">2019-06-04 23:40:57 (UTC)</td>
     </tr>
 <tr data-ice="file">
       <td data-ice="filePath"><span><a href="file/scripts/core/configuration.js.html#errorLines=12,17,23">scripts/core/configuration.js</a></span></td>
@@ -366,16 +366,16 @@
     </tr>
 <tr data-ice="file">
       <td data-ice="filePath"><span><a href="file/scripts/floorplanner/floorplanner.js.html#errorLines=128,138,63,64,65,66,70,71,74,75,92,97">scripts/floorplanner/floorplanner.js</a></span></td>
-      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/floorplanner/floorplanner.js~Floorplanner.html">Floorplanner</a></span>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/floorplanner/floorplanner.js~Floorplanner2D.html">Floorplanner2D</a></span>
 <span><a href="variable/index.html#static-variable-snapTolerance">snapTolerance</a></span></td>
       <td class="coverage"><span data-ice="coverage">73 %</span><span data-ice="coverageCount" class="coverage-count">34/46</span></td>
-      <td style="display: none;" data-ice="size">10590 byte</td>
+      <td style="display: none;" data-ice="size">10596 byte</td>
       <td style="display: none;" data-ice="lines">424</td>
-      <td style="display: none;" data-ice="updated">2019-06-04 21:32:13 (UTC)</td>
+      <td style="display: none;" data-ice="updated">2019-06-04 23:41:15 (UTC)</td>
     </tr>
 <tr data-ice="file">
       <td data-ice="filePath"><span><a href="file/scripts/floorplanner/floorplanner_view.js.html#errorLines=111,13,14,15,179,19,217,22,23,24,25,26,27,28,30,33,34,35,36,42,44,45,46,47,48,51,63">scripts/floorplanner/floorplanner_view.js</a></span></td>
-      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/floorplanner/floorplanner_view.js~FloorplannerView.html">FloorplannerView</a></span>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/floorplanner/floorplanner_view.js~FloorplannerView2D.html">FloorplannerView2D</a></span>
 <span><a href="variable/index.html#static-variable-cornerColor">cornerColor</a></span>
 <span><a href="variable/index.html#static-variable-cornerColorHover">cornerColorHover</a></span>
 <span><a href="variable/index.html#static-variable-cornerRadius">cornerRadius</a></span>
@@ -394,9 +394,9 @@
 <span><a href="variable/index.html#static-variable-wallWidth">wallWidth</a></span>
 <span><a href="variable/index.html#static-variable-wallWidthHover">wallWidthHover</a></span></td>
       <td class="coverage"><span data-ice="coverage">38 %</span><span data-ice="coverageCount" class="coverage-count">17/44</span></td>
-      <td style="display: none;" data-ice="size">10492 byte</td>
+      <td style="display: none;" data-ice="size">10494 byte</td>
       <td style="display: none;" data-ice="lines">365</td>
-      <td style="display: none;" data-ice="updated">2019-06-04 21:32:13 (UTC)</td>
+      <td style="display: none;" data-ice="updated">2019-06-04 23:40:47 (UTC)</td>
     </tr>
 <tr data-ice="file">
       <td data-ice="filePath"><span><a href="file/scripts/items/factory.js.html#errorLines=10">scripts/items/factory.js</a></span></td>
@@ -480,22 +480,22 @@
       <td style="display: none;" data-ice="updated">2019-06-01 23:10:23 (UTC)</td>
     </tr>
 <tr data-ice="file">
-      <td data-ice="filePath"><span><a href="file/scripts/model/corner.js.html#errorLines=191,25,26,27,28,29,30,31,32,33,34,35,363,38,43,48,56,61,90">scripts/model/corner.js</a></span></td>
+      <td data-ice="filePath"><span><a href="file/scripts/model/corner.js.html#errorLines=141,439">scripts/model/corner.js</a></span></td>
       <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/model/corner.js~Corner.html">Corner</a></span>
 <span><a href="variable/index.html#static-variable-cornerTolerance">cornerTolerance</a></span></td>
-      <td class="coverage"><span data-ice="coverage">57 %</span><span data-ice="coverageCount" class="coverage-count">26/45</span></td>
-      <td style="display: none;" data-ice="size">8769 byte</td>
-      <td style="display: none;" data-ice="lines">439</td>
-      <td style="display: none;" data-ice="updated">2019-06-04 21:32:13 (UTC)</td>
+      <td class="coverage"><span data-ice="coverage">95 %</span><span data-ice="coverageCount" class="coverage-count">43/45</span></td>
+      <td style="display: none;" data-ice="size">11954 byte</td>
+      <td style="display: none;" data-ice="lines">515</td>
+      <td style="display: none;" data-ice="updated">2019-06-05 00:39:46 (UTC)</td>
     </tr>
 <tr data-ice="file">
-      <td data-ice="filePath"><span><a href="file/scripts/model/floorplan.js.html#errorLines=106,111,116,121,132,25,27,280,29,295,30,308,32,321,339,34,36,38,397,40,41,43,454,46,463,496,51,565,57,570,605,630,73,83,99">scripts/model/floorplan.js</a></span></td>
-      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/model/floorplan.js~Floorplans.html">Floorplans</a></span>
+      <td data-ice="filePath"><span><a href="file/scripts/model/floorplan.js.html#errorLines=164,169,174,179,76">scripts/model/floorplan.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/model/floorplan.js~Floorplan.html">Floorplan</a></span>
 <span><a href="variable/index.html#static-variable-defaultFloorPlanTolerance">defaultFloorPlanTolerance</a></span></td>
-      <td class="coverage"><span data-ice="coverage">28 %</span><span data-ice="coverageCount" class="coverage-count">14/49</span></td>
-      <td style="display: none;" data-ice="size">17743 byte</td>
-      <td style="display: none;" data-ice="lines">748</td>
-      <td style="display: none;" data-ice="updated">2019-06-04 22:36:21 (UTC)</td>
+      <td class="coverage"><span data-ice="coverage">89 %</span><span data-ice="coverageCount" class="coverage-count">44/49</span></td>
+      <td style="display: none;" data-ice="size">20954 byte</td>
+      <td style="display: none;" data-ice="lines">875</td>
+      <td style="display: none;" data-ice="updated">2019-06-05 02:26:35 (UTC)</td>
     </tr>
 <tr data-ice="file">
       <td data-ice="filePath"><span><a href="file/scripts/model/half_edge.js.html#errorLines=145,172,184,196,209,216,223,228,235,241,247,25,252,26,27,29,30,31,32,33,34,35,36,37,38,39,40,42,92,97">scripts/model/half_edge.js</a></span></td>
@@ -509,9 +509,9 @@
       <td data-ice="filePath"><span><a href="file/scripts/model/model.js.html#errorLines=101,21,22,23,24,25,26,30,35,49,55,86">scripts/model/model.js</a></span></td>
       <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/model/model.js~Model.html">Model</a></span></td>
       <td class="coverage"><span data-ice="coverage">14 %</span><span data-ice="coverageCount" class="coverage-count">2/14</span></td>
-      <td style="display: none;" data-ice="size">3250 byte</td>
+      <td style="display: none;" data-ice="size">3248 byte</td>
       <td style="display: none;" data-ice="lines">113</td>
-      <td style="display: none;" data-ice="updated">2019-06-02 14:35:39 (UTC)</td>
+      <td style="display: none;" data-ice="updated">2019-06-04 23:36:22 (UTC)</td>
     </tr>
 <tr data-ice="file">
       <td data-ice="filePath"><span><a href="file/scripts/model/room.js.html#errorLines=123,148,171,183,193,20,21,212,22,23,24,244,25,254,27,28,29,30,31,32,33,34,45,48,53,59,64,74,81,86,93">scripts/model/room.js</a></span></td>
@@ -583,11 +583,11 @@
     </tr>
 <tr data-ice="file">
       <td data-ice="filePath"><span><a href="file/scripts/three/floorPlan.js.html#errorLines=12,13,14,15,16,19,23,33,64,7,9">scripts/three/floorPlan.js</a></span></td>
-      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/three/floorPlan.js~Floorplan.html">Floorplan</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/three/floorPlan.js~Floorplan3D.html">Floorplan3D</a></span></td>
       <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/11</span></td>
-      <td style="display: none;" data-ice="size">1501 byte</td>
-      <td style="display: none;" data-ice="lines">70</td>
-      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+      <td style="display: none;" data-ice="size">1497 byte</td>
+      <td style="display: none;" data-ice="lines">71</td>
+      <td style="display: none;" data-ice="updated">2019-06-04 23:35:37 (UTC)</td>
     </tr>
 <tr data-ice="file">
       <td data-ice="filePath"><span><a href="file/scripts/three/hud.js.html#errorLines=104,115,12,120,130,137,143,149,15,159,167,23,25,26,28,29,30,32,33,35,38,39,44,52,57,63,7,73,87,9,92,98">scripts/three/hud.js</a></span></td>
@@ -609,9 +609,9 @@
       <td data-ice="filePath"><span><a href="file/scripts/three/main.js.html#errorLines=119,193,200,207,212,217,22,222,227,232,238,24,244,250,255,260,265,270,281,286,291,296,301,334,350,36,37,371,378,38,385,39,390,40,429,43,436,44,45,455,46,464,47,48,487,50,51,511,529,53,534,54,55,56,58,59,61,62,64,65,67,69,70,71,72,75,76,78,79,80,82,85,86,88,89,90,91,92,99">scripts/three/main.js</a></span></td>
       <td data-ice="identifier" class="identifiers"><span><a href="class/scripts/three/main.js~Main.html">Main</a></span></td>
       <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/79</span></td>
-      <td style="display: none;" data-ice="size">14437 byte</td>
+      <td style="display: none;" data-ice="size">14274 byte</td>
       <td style="display: none;" data-ice="lines">559</td>
-      <td style="display: none;" data-ice="updated">2019-03-02 01:21:50 (UTC)</td>
+      <td style="display: none;" data-ice="updated">2019-06-04 23:36:33 (UTC)</td>
     </tr>
 <tr data-ice="file">
       <td data-ice="filePath"><span><a href="file/scripts/three/orbitcontrols.js.html">scripts/three/orbitcontrols.js</a></span></td>
