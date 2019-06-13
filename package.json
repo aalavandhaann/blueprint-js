@@ -8,7 +8,8 @@
     "dev": "rollup -c -w",
     "reload": "livereload 'build/'",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "npm-run-all --parallel reload dev"
+    "watch": "npm-run-all --parallel reload dev",
+    "docs": "esdoc"
   },
   "repository": {
     "type": "git",
