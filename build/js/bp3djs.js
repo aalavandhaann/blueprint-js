@@ -104409,7 +104409,10 @@ var BP3DJS = (function (exports) {
   	}, {
   		key: 'addItem',
   		value: function addItem(itemType, fileName, metadata, position, rotation, scale, fixed, newItemDefinitions) {
-  			itemType = itemType || 1;
+  			if (itemType == undefined) {
+  				itemType = 1;
+  			}
+
   			var scope = this;
 
   			function addToMaterials(materials, newmaterial) {
