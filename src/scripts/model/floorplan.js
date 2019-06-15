@@ -451,17 +451,17 @@ export class Floorplan extends EventDispatcher
 			floorplans.corners[corner.id] = {'x': corner.x,'y': corner.y, 'elevation': Dimensioning.cmToMeasureRaw(corner.elevation)};
 		});
 
-		this.rooms.forEach((room)=>{
-			var metaroom = {};
-			var cornerids = [];
-			room.corners.forEach((corner)=>{
-					cornerids.push(corner.id);
-			});
-			var ids = cornerids.join(',');
-			metaroom['name'] = room.name;
-			floorplans.rooms[ids] = metaroom;
-		});
-		// floorplans.rooms = this.getMetaRoomData();
+//		this.rooms.forEach((room)=>{
+//			var metaroom = {};
+//			var cornerids = [];
+//			room.corners.forEach((corner)=>{
+//					cornerids.push(corner.id);
+//			});
+//			var ids = cornerids.join(',');
+//			metaroom['name'] = room.name;
+//			floorplans.rooms[ids] = metaroom;
+//		});
+		floorplans.rooms = this.metaroomsdata;
 
 		if(this.carbonSheet)
 		{
@@ -521,7 +521,6 @@ export class Floorplan extends EventDispatcher
 			this.floorTextures = floorplan.newFloorTextures;
 		}
 		this.metaroomsdata = floorplan.rooms;
-
 		this.update();
 
 		if('carbonSheet' in floorplan)

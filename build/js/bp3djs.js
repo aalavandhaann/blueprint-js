@@ -51322,6 +51322,7 @@ var BP3DJS = (function (exports) {
   				this.floorTextures = floorplan.newFloorTextures;
   			}
   			this.metaroomsdata = floorplan.rooms;
+  			console.log('ROOMS LOAD:: ', this.metaroomsdata);
 
   			this.update();
 
