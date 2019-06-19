@@ -153,6 +153,10 @@ var BP3DJS = (function (exports) {
 
   var EVENT_ROOM_NAME_CHANGED = 'CHANGED_ROOM_NAME_EVENT';
 
+  var EVENT_CORNER_ATTRIBUTES_CHANGED = 'CORNER_ATTRIBUTES_CHANGED_EVENT';
+  var EVENT_WALL_ATTRIBUTES_CHANGED = 'WALL_ATTRIBUTES_CHANGED_EVENT';
+  var EVENT_ROOM_ATTRIBUTES_CHANGED = 'ROOM_ATTRIBUTES_CHANGED_EVENT';
+
   var EVENT_CORNER_2D_CLICKED = 'CORNER_CLICKED_2D_EVENT';
   var EVENT_WALL_2D_CLICKED = 'WALL_CLICKED_2D_EVENT';
   var EVENT_ROOM_2D_CLICKED = 'ROOM_CLICKED_2D_EVENT';
@@ -48974,7 +48978,9 @@ var BP3DJS = (function (exports) {
   /** The initial wall thickness in cm. */
   var configWallThickness = 'wallThickness';
 
-  var config = { dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 10 };
+  var configSytemUI = 'systemUI';
+
+  var config = { dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 10, systemUI: false };
 
   /** Global configuration to customize the whole system.  */
   var Configuration = function () {
@@ -49021,6 +49027,7 @@ var BP3DJS = (function (exports) {
   		key: 'getNumericValue',
   		value: function getNumericValue(key) {
   			switch (key) {
+  				case configSytemUI:
   				case configWallHeight:
   				case configWallThickness:
   					//			return Number(this.data[key]);
@@ -50239,7 +50246,9 @@ var BP3DJS = (function (exports) {
   	}, {
   		key: 'elevation',
   		set: function set(value) {
+  			var oldvalue = this._elevation;
   			this._elevation = Dimensioning.cmFromMeasureRaw(Number(value));
+  			this.dispatchEvent({ type: EVENT_CORNER_ATTRIBUTES_CHANGED, item: this, info: { from: oldvalue, to: this._elevation } });
   		}
 
   		/** @type {Number} elevation The elevation value at this corner*/
@@ -50373,7 +50382,7 @@ var BP3DJS = (function (exports) {
   	}, {
   		key: 'fireMoved',
   		value: function fireMoved() {
-  			this.dispatchEvent({ type: EVENT_MOVED, position: null });
+  			this.dispatchEvent({ type: EVENT_MOVED, item: this, position: null });
   		}
   	}, {
   		key: 'fireRedraw',
@@ -50693,6 +50702,7 @@ var BP3DJS = (function (exports) {
   		value: function updateArea() {
   			var _this2 = this;
 
+  			var oldarea = this.area;
   			var points = [];
   			this.area = 0;
   			this.areaCenter = new Vector2();
@@ -50719,6 +50729,7 @@ var BP3DJS = (function (exports) {
   			}
   			this.area = this.area;
   			this.area = Math.abs(this.area) * 0.5;
+  			this.dispatchEvent({ type: EVENT_ROOM_ATTRIBUTES_CHANGED, item: this, info: { from: oldarea, to: this.area } });
   		}
   	}, {
   		key: 'hasAllCornersById',
@@ -50797,7 +50808,7 @@ var BP3DJS = (function (exports) {
   		set: function set(value) {
   			var oldname = this._name;
   			this._name = value;
-  			this.dispatchEvent({ type: EVENT_ROOM_NAME_CHANGED, item: this, oldname: oldname, newname: this._name });
+  			this.dispatchEvent({ type: EVENT_ROOM_ATTRIBUTES_CHANGED, item: this, info: { from: oldname, to: this._name } });
   		},
   		get: function get() {
   			return this._name;
@@ -51257,17 +51268,17 @@ var BP3DJS = (function (exports) {
   				floorplans.corners[corner.id] = { 'x': corner.x, 'y': corner.y, 'elevation': Dimensioning.cmToMeasureRaw(corner.elevation) };
   			});
 
-  			this.rooms.forEach(function (room) {
-  				var metaroom = {};
-  				var cornerids = [];
-  				room.corners.forEach(function (corner) {
-  					cornerids.push(corner.id);
-  				});
-  				var ids = cornerids.join(',');
-  				metaroom['name'] = room.name;
-  				floorplans.rooms[ids] = metaroom;
-  			});
-  			// floorplans.rooms = this.getMetaRoomData();
+  			//		this.rooms.forEach((room)=>{
+  			//			var metaroom = {};
+  			//			var cornerids = [];
+  			//			room.corners.forEach((corner)=>{
+  			//					cornerids.push(corner.id);
+  			//			});
+  			//			var ids = cornerids.join(',');
+  			//			metaroom['name'] = room.name;
+  			//			floorplans.rooms[ids] = metaroom;
+  			//		});
+  			floorplans.rooms = this.metaroomsdata;
 
   			if (this.carbonSheet) {
   				floorplans.carbonSheet['url'] = this.carbonSheet.url;
@@ -51322,8 +51333,6 @@ var BP3DJS = (function (exports) {
   				this.floorTextures = floorplan.newFloorTextures;
   			}
   			this.metaroomsdata = floorplan.rooms;
-  			console.log('ROOMS LOAD:: ', this.metaroomsdata);
-
   			this.update();
 
   			if ('carbonSheet' in floorplan) {
@@ -118006,9 +118015,9 @@ var BP3DJS = (function (exports) {
   /** how much will we move a corner to make a wall axis aligned (cm) */
   var snapTolerance = 25;
   /**
-   * The Floorplanner implements an interactive tool for creation of floorplans in
-   * 2D.
-   */
+  * The Floorplanner implements an interactive tool for creation of floorplans in
+  * 2D.
+  */
   var Floorplanner2D = function (_EventDispatcher) {
   	inherits(Floorplanner2D, _EventDispatcher);
 
@@ -118109,7 +118118,6 @@ var BP3DJS = (function (exports) {
   		value: function doubleclick() {
   			var userinput, cid;
   			function getAValidInput(message, current) {
-  				console.log('GET A VALID INPUT');
   				var uinput = window.prompt(message, current);
   				if (uinput != null) {
   					return uinput;
@@ -118117,35 +118125,32 @@ var BP3DJS = (function (exports) {
   				return current;
   			}
   			if (this.activeCorner) {
+  				this.floorplan.dispatchEvent({ type: EVENT_CORNER_2D_DOUBLE_CLICKED, item: this.activeCorner });
+  				if (!Configuration.getNumericValue('systemUI')) {
+  					return;
+  				}
   				cid = this.activeCorner.id;
   				var units = Configuration.getStringValue(configDimUnit);
   				this.activeCorner.elevation = getAValidInput('Elevation at this point (in ' + units + ',\n' + cid + '): ', Dimensioning.cmToMeasureRaw(this.activeCorner.elevation)); //Number(userinput);
   				var x = getAValidInput('Location: X (' + Dimensioning.cmToMeasureRaw(this.activeCorner.x) + '): ', Dimensioning.cmToMeasureRaw(this.activeCorner.x)); //Number(userinput);
   				var y = getAValidInput('Location: Y (' + Dimensioning.cmToMeasureRaw(this.activeCorner.y) + '): ', Dimensioning.cmToMeasureRaw(this.activeCorner.y)); //Number(userinput);
   				this.activeCorner.move(Dimensioning.cmFromMeasureRaw(x), Dimensioning.cmFromMeasureRaw(y));
-  				this.floorplan.dispatchEvent({ type: EVENT_CORNER_2D_DOUBLE_CLICKED, item: this.activeCorner });
-  			}
-  			// var userinput, cid;
-  			// var units = Configuration.getStringValue(configDimUnit);
-  			// if(this.activeCorner)
-  			// {
-  			//   this.floorplan.dispatchEvent({type:EVENT_CORNER_2D_DOUBLE_CLICKED, item: this.activeCorner});
-  			// 	cid = this.activeCorner.id;
-  			// 	userinput = window.prompt(`Elevation at this point (in ${units},\n${cid}): `, Dimensioning.cmToMeasureRaw(this.activeCorner.elevation));
-  			// 	if(userinput != null)
-  			// 	{
-  			// 		this.activeCorner.elevation = Number(userinput);
-  			// 	}
-  			else if (this.activeWall) {
-  					this.floorplan.dispatchEvent({ type: EVENT_WALL_2D_DOUBLE_CLICKED, item: this.activeWall });
-  				} else if (this.activeRoom) {
-  					this.floorplan.dispatchEvent({ type: EVENT_ROOM_2D_DOUBLE_CLICKED, item: this.activeRoom });
-  					userinput = window.prompt('Enter a name for this Room: ', this.activeRoom.name);
-  					if (userinput != null) {
-  						this.activeRoom.name = userinput;
-  					}
-  					this.view.draw();
+  			} else if (this.activeWall) {
+  				this.floorplan.dispatchEvent({ type: EVENT_WALL_2D_DOUBLE_CLICKED, item: this.activeWall });
+  				if (!Configuration.getNumericValue('systemUI')) {
+  					return;
   				}
+  			} else if (this.activeRoom) {
+  				this.floorplan.dispatchEvent({ type: EVENT_ROOM_2D_DOUBLE_CLICKED, item: this.activeRoom });
+  				if (!Configuration.getNumericValue('systemUI')) {
+  					return;
+  				}
+  				userinput = window.prompt('Enter a name for this Room: ', this.activeRoom.name);
+  				if (userinput != null) {
+  					this.activeRoom.name = userinput;
+  				}
+  				this.view.draw();
+  			}
   		}
   	}, {
   		key: 'keyUp',
@@ -169861,6 +169866,7 @@ var BP3DJS = (function (exports) {
   exports.EVENT_CORNER_2D_CLICKED = EVENT_CORNER_2D_CLICKED;
   exports.EVENT_CORNER_2D_DOUBLE_CLICKED = EVENT_CORNER_2D_DOUBLE_CLICKED;
   exports.EVENT_CORNER_2D_HOVER = EVENT_CORNER_2D_HOVER;
+  exports.EVENT_CORNER_ATTRIBUTES_CHANGED = EVENT_CORNER_ATTRIBUTES_CHANGED;
   exports.EVENT_DELETED = EVENT_DELETED;
   exports.EVENT_FLOOR_CLICKED = EVENT_FLOOR_CLICKED;
   exports.EVENT_FPS_EXIT = EVENT_FPS_EXIT;
@@ -169880,6 +169886,7 @@ var BP3DJS = (function (exports) {
   exports.EVENT_ROOM_2D_CLICKED = EVENT_ROOM_2D_CLICKED;
   exports.EVENT_ROOM_2D_DOUBLE_CLICKED = EVENT_ROOM_2D_DOUBLE_CLICKED;
   exports.EVENT_ROOM_2D_HOVER = EVENT_ROOM_2D_HOVER;
+  exports.EVENT_ROOM_ATTRIBUTES_CHANGED = EVENT_ROOM_ATTRIBUTES_CHANGED;
   exports.EVENT_ROOM_CLICKED = EVENT_ROOM_CLICKED;
   exports.EVENT_ROOM_NAME_CHANGED = EVENT_ROOM_NAME_CHANGED;
   exports.EVENT_SAVED = EVENT_SAVED;
@@ -169887,6 +169894,7 @@ var BP3DJS = (function (exports) {
   exports.EVENT_WALL_2D_CLICKED = EVENT_WALL_2D_CLICKED;
   exports.EVENT_WALL_2D_DOUBLE_CLICKED = EVENT_WALL_2D_DOUBLE_CLICKED;
   exports.EVENT_WALL_2D_HOVER = EVENT_WALL_2D_HOVER;
+  exports.EVENT_WALL_ATTRIBUTES_CHANGED = EVENT_WALL_ATTRIBUTES_CHANGED;
   exports.EVENT_WALL_CLICKED = EVENT_WALL_CLICKED;
   exports.Edge = Edge;
   exports.Factory = Factory;
@@ -169928,6 +169936,7 @@ var BP3DJS = (function (exports) {
   exports.cmPerFoot = cmPerFoot;
   exports.cmPerPixel = cmPerPixel;
   exports.configDimUnit = configDimUnit;
+  exports.configSytemUI = configSytemUI;
   exports.configWallHeight = configWallHeight;
   exports.configWallThickness = configWallThickness;
   exports.cornerColor = cornerColor;

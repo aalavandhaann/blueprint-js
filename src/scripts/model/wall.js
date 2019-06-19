@@ -121,7 +121,7 @@ export class Wall extends EventDispatcher
 
 	fireMoved()
 	{
-		this.dispatchEvent({type: EVENT_MOVED, position: null});
+		this.dispatchEvent({type: EVENT_MOVED, item: this, position: null});
 	}
 
 	fireRedraw()
@@ -232,7 +232,7 @@ export class Wall extends EventDispatcher
 		}
 	}
 
-  getClosestCorner(point)
+	getClosestCorner(point)
 	{
 			var startVector = new Vector2(this.start.x, this.start.y);
 			var endVector = new Vector2(this.end.x, this.end.y);
