@@ -17,12 +17,17 @@ export const gridColor = '#f1f1f1';
 // room config
 // export const roomColor = '#f9f9f9';
 export const roomColor = '#fedaff66';
+export const roomColorHover = '#008cba66';
+export const roomColorSelected = '#00ba8c66';
 
 // wall config
 export const wallWidth = 5;
 export const wallWidthHover = 7;
+export const wallWidthSelected = 9;
 export const wallColor = '#dddddd';
 export const wallColorHover = '#008cba';
+export const wallColorSelected = '#00ba8c';
+
 export const edgeColor = '#888888';
 export const edgeColorHover = '#008cba';
 export const edgeWidth = 1;
@@ -30,10 +35,12 @@ export const edgeWidth = 1;
 export const deleteColor = '#ff0000';
 
 // corner config
-export const cornerRadius = 0;
-export const cornerRadiusHover = 7;
+export const cornerRadius = 3;
+export const cornerRadiusHover = 6;
+export const cornerRadiusSelected = 9;
 export const cornerColor = '#cccccc';
 export const cornerColorHover = '#008cba';
+export const cornerColorSelected = '#00ba8c';
 /**
  * The View to be used by a Floorplanner to render in/interact with.
  */
@@ -125,22 +132,30 @@ export class FloorplannerView2D
 	/** */
 	drawWall(wall)
 	{
+		var selected = (wall === this.viewmodel.selectedWall);
 		var hover = (wall === this.viewmodel.activeWall);
 		var color = wallColor;
+		
 		if (hover && this.viewmodel.mode == floorplannerModes.DELETE)
 		{
 			color = deleteColor;
-		}
+		}				
 		else if (hover)
 		{
 			color = wallColorHover;
 		}
-		this.drawLine(this.viewmodel.convertX(wall.getStartX()),this.viewmodel.convertY(wall.getStartY()),this.viewmodel.convertX(wall.getEndX()),this.viewmodel.convertY(wall.getEndY()),hover ? wallWidthHover : wallWidth,color);
-		if (!hover && wall.frontEdge)
+		
+		else if(selected)
+		{
+			color = wallColorSelected;
+		}		
+		
+		this.drawLine(this.viewmodel.convertX(wall.getStartX()),this.viewmodel.convertY(wall.getStartY()),this.viewmodel.convertX(wall.getEndX()),this.viewmodel.convertY(wall.getEndY()),hover ? wallWidthHover : selected ? wallWidthSelected : wallWidth,color);
+		if (!hover && !selected && wall.frontEdge)
 		{
 			this.drawEdge(wall.frontEdge, hover);
 		}
-		if (!hover && wall.backEdge)
+		if (!hover && !selected && wall.backEdge)
 		{
 			this.drawEdge(wall.backEdge, hover);
 		}
@@ -248,7 +263,18 @@ export class FloorplannerView2D
 	drawRoom(room)
 	{
 		var scope = this;
-		this.drawPolygon(Utils.map(room.corners, (corner) => {return scope.viewmodel.convertX(corner.x);}),Utils.map(room.corners, (corner) =>  {return scope.viewmodel.convertY(corner.y);}), true,roomColor);
+		var selected = (room === this.viewmodel.selectedRoom);
+		var hover = (room === this.viewmodel.activeRoom);
+		var color = roomColor;
+		if (hover)
+		{
+			color = roomColorHover;
+		}
+		else if (selected)
+		{
+			color = roomColorSelected;
+		}
+		this.drawPolygon(Utils.map(room.corners, (corner) => {return scope.viewmodel.convertX(corner.x);}),Utils.map(room.corners, (corner) =>  {return scope.viewmodel.convertY(corner.y);}), true, color);
 		this.drawTextLabel(Dimensioning.cmToMeasure(room.area, 2)+String.fromCharCode(178), this.viewmodel.convertX(room.areaCenter.x), this.viewmodel.convertY(room.areaCenter.y), '#0000FF', '#00FF0000', 'bold');
 		this.drawTextLabel(room.name, this.viewmodel.convertX(room.areaCenter.x), this.viewmodel.convertY(room.areaCenter.y+30), '#363636', '#00FF0000', 'bold italic');
 	}
@@ -259,6 +285,7 @@ export class FloorplannerView2D
 		var cornerX = this.viewmodel.convertX(corner.x);
 		var cornerY = this.viewmodel.convertY(corner.y);
 		var hover = (corner === this.viewmodel.activeCorner);
+		var selected = (corner === this.viewmodel.selectedCorner);
 		var color = cornerColor;
 		if (hover && this.viewmodel.mode == floorplannerModes.DELETE)
 		{
@@ -268,7 +295,11 @@ export class FloorplannerView2D
 		{
 			color = cornerColorHover;
 		}
-		this.drawCircle(cornerX, cornerY, hover ? cornerRadiusHover : cornerRadius,color);
+		else if (selected)
+		{
+			color = cornerColorSelected;
+		}
+		this.drawCircle(cornerX, cornerY, hover ? cornerRadiusHover : selected ? cornerRadiusSelected : cornerRadius, color);
 		// let cx = Dimensioning.roundOff(corner.x, 10);
 		// let cy = Dimensioning.roundOff(corner.y, 10);
 		// var cornerLabel = `(${cx}, ${cy})`;

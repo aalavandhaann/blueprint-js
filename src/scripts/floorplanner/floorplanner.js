@@ -96,6 +96,21 @@ export class Floorplanner2D extends EventDispatcher
 		document.addEventListener('keydown', function(event){scope.keyDown(event)});
 		floorplan.addEventListener(EVENT_LOADED, function(){scope.reset();});
 	}
+	
+	get selectedCorner()
+	{
+		return this._clickedCorner;
+	}
+	
+	get selectedWall()
+	{
+		return this._clickedWall;
+	}
+	
+	get selectedRoom()
+	{
+		return this._clickedRoom;
+	}
 
 	get carbonSheet()
 	{
@@ -243,29 +258,36 @@ export class Floorplanner2D extends EventDispatcher
 		
 		this.mouseX = (event.clientX - this.canvasElement.offset().left)  * this.cmPerPixel + this.originX * this.cmPerPixel;
 		this.mouseY = (event.clientY - this.canvasElement.offset().top) * this.cmPerPixel + this.originY * this.cmPerPixel;
-		this._clickedCorner = this.floorplan.overlappedCorner(this.mouseX, this.mouseY);
-		this._clickedWall = this.floorplan.overlappedWall(this.mouseX, this.mouseY);
-		this._clickedRoom = this.floorplan.overlappedRoom(this.mouseX, this.mouseY);
+		var mDownCorner = this.floorplan.overlappedCorner(this.mouseX, this.mouseY);
+		var mDownWall = this.floorplan.overlappedWall(this.mouseX, this.mouseY);
+		var mDownRoom = this.floorplan.overlappedRoom(this.mouseX, this.mouseY);
 
-		if(this._clickedCorner == null && this._clickedWall == null && this._clickedRoom == null)
+		if(mDownCorner == null && mDownWall == null && mDownRoom == null)
 		{
+			this._clickedCorner = null;
+			this._clickedWall = null;
+			this._clickedRoom = null;
 			this.floorplan.dispatchEvent({type:EVENT_NOTHING_CLICKED});
 		}
 		
-		else if(this._clickedCorner != null)
+		else if(mDownCorner != null)
 		{
+			this._clickedCorner = mDownCorner;
 			this.floorplan.dispatchEvent({type:EVENT_CORNER_2D_CLICKED, item: this._clickedCorner});
 		}
 		
-		else if(this._clickedWall != null)
+		else if(mDownWall != null)
 		{
+			this._clickedWall = mDownWall;
 			this.floorplan.dispatchEvent({type:EVENT_WALL_2D_CLICKED, item: this._clickedWall});
 		}
 		
-		else if(this._clickedRoom != null)
+		else if(mDownRoom != null)
 		{
+			this._clickedRoom = mDownRoom;
 			this.floorplan.dispatchEvent({type:EVENT_ROOM_2D_CLICKED, item: this._clickedRoom});
 		}
+		this.view.draw();
 	}
 
 	/** */
@@ -323,9 +345,15 @@ export class Floorplanner2D extends EventDispatcher
 			}
 
 			this.activeRoom = hoverRoom;
+			
 			if(this.activeCorner == null && this.activeWall == null && this.activeRoom !=null)
 			{
-				this.floorplan.dispatchEvent({type:EVENT_ROOM_2D_HOVER, item: hoverRoom});
+				this.floorplan.dispatchEvent({type:EVENT_ROOM_2D_HOVER, item: hoverRoom});				
+			}
+			
+			if(this.activeRoom == null)
+			{
+				draw = true;
 			}
 
 			if (draw)
@@ -415,6 +443,7 @@ export class Floorplanner2D extends EventDispatcher
 				this.activeWall.updateAttachedRooms();
 			}
 		}
+		this.view.draw();
 	}
 
 	/** */

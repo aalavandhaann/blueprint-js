@@ -7,7 +7,7 @@ This is a javascript floorplanner tool based on the existing typescript based pr
 
 ## DOCS ##
 Yes, the initiative has begun for the documentation. Of late I have been getting inquiries on using this framework. It is time to have the documentation rolling
-[docs](https://aalavandhaann.github.io/blueprint-js/docs)
+[docs](https://aalavandhaann.github.io/blueprint-js/docs). Look at [wiki](https://github.com/aalavandhaann/blueprint-js/wiki) for some basic integration tips and information. 
 
 ## DEMO VR ##
 The ability to export the floorplan as GLTF gives the scope of having easy VR with A-Frame. Export the layout to use it directly with A-Frame or process it further using Blender and then use it with A-Frame.
@@ -40,16 +40,18 @@ To get started, clone the repository and ensure you npm >= 3 and rollup installe
     npm install
     rollup -c
 
-The latter command generates `build/js/bp3djs.min.js` from `src`.
+The latter command generates `build/js/bp3djs.js` from `src`. 
 
-The easiest way to run locally is to run a local server from the `build` directory. There are plenty of options. One uses Python's built in webserver:
+```
+NODE_ENV=production rollup -c
+```
 
-    cd build
+The above command will generate `build/js/bp3djs.min.js` a minified and uglified version of the js. The easiest way to run locally is by
 
-    # Python 3.x
-    python -m http.server
-
-Then, visit `http://localhost:8000` in your browser.
+```
+     rollup -c -w
+```
+Then, visit `http://localhost:10001` in your browser.
 
 ## Contribute!
 

@@ -117703,12 +117703,17 @@ var BP3DJS = (function (exports) {
   // room config
   // export const roomColor = '#f9f9f9';
   var roomColor = '#fedaff66';
+  var roomColorHover = '#008cba66';
+  var roomColorSelected = '#00ba8c66';
 
   // wall config
   var wallWidth = 5;
   var wallWidthHover = 7;
+  var wallWidthSelected = 9;
   var wallColor = '#dddddd';
   var wallColorHover = '#008cba';
+  var wallColorSelected = '#00ba8c';
+
   var edgeColor = '#888888';
   var edgeColorHover = '#008cba';
   var edgeWidth = 1;
@@ -117716,10 +117721,12 @@ var BP3DJS = (function (exports) {
   var deleteColor = '#ff0000';
 
   // corner config
-  var cornerRadius = 0;
-  var cornerRadiusHover = 7;
+  var cornerRadius = 3;
+  var cornerRadiusHover = 6;
+  var cornerRadiusSelected = 9;
   var cornerColor = '#cccccc';
   var cornerColorHover = '#008cba';
+  var cornerColorSelected = '#00ba8c';
   /**
    * The View to be used by a Floorplanner to render in/interact with.
    */
@@ -117821,18 +117828,23 @@ var BP3DJS = (function (exports) {
   	}, {
   		key: 'drawWall',
   		value: function drawWall(wall) {
+  			var selected = wall === this.viewmodel.selectedWall;
   			var hover = wall === this.viewmodel.activeWall;
   			var color = wallColor;
+
   			if (hover && this.viewmodel.mode == floorplannerModes.DELETE) {
   				color = deleteColor;
   			} else if (hover) {
   				color = wallColorHover;
+  			} else if (selected) {
+  				color = wallColorSelected;
   			}
-  			this.drawLine(this.viewmodel.convertX(wall.getStartX()), this.viewmodel.convertY(wall.getStartY()), this.viewmodel.convertX(wall.getEndX()), this.viewmodel.convertY(wall.getEndY()), hover ? wallWidthHover : wallWidth, color);
-  			if (!hover && wall.frontEdge) {
+
+  			this.drawLine(this.viewmodel.convertX(wall.getStartX()), this.viewmodel.convertY(wall.getStartY()), this.viewmodel.convertX(wall.getEndX()), this.viewmodel.convertY(wall.getEndY()), hover ? wallWidthHover : selected ? wallWidthSelected : wallWidth, color);
+  			if (!hover && !selected && wall.frontEdge) {
   				this.drawEdge(wall.frontEdge, hover);
   			}
-  			if (!hover && wall.backEdge) {
+  			if (!hover && !selected && wall.backEdge) {
   				this.drawEdge(wall.backEdge, hover);
   			}
   		}
@@ -117943,11 +117955,19 @@ var BP3DJS = (function (exports) {
   		key: 'drawRoom',
   		value: function drawRoom(room) {
   			var scope = this;
+  			var selected = room === this.viewmodel.selectedRoom;
+  			var hover = room === this.viewmodel.activeRoom;
+  			var color = roomColor;
+  			if (hover) {
+  				color = roomColorHover;
+  			} else if (selected) {
+  				color = roomColorSelected;
+  			}
   			this.drawPolygon(Utils.map(room.corners, function (corner) {
   				return scope.viewmodel.convertX(corner.x);
   			}), Utils.map(room.corners, function (corner) {
   				return scope.viewmodel.convertY(corner.y);
-  			}), true, roomColor);
+  			}), true, color);
   			this.drawTextLabel(Dimensioning.cmToMeasure(room.area, 2) + String.fromCharCode(178), this.viewmodel.convertX(room.areaCenter.x), this.viewmodel.convertY(room.areaCenter.y), '#0000FF', '#00FF0000', 'bold');
   			this.drawTextLabel(room.name, this.viewmodel.convertX(room.areaCenter.x), this.viewmodel.convertY(room.areaCenter.y + 30), '#363636', '#00FF0000', 'bold italic');
   		}
@@ -117960,13 +117980,16 @@ var BP3DJS = (function (exports) {
   			var cornerX = this.viewmodel.convertX(corner.x);
   			var cornerY = this.viewmodel.convertY(corner.y);
   			var hover = corner === this.viewmodel.activeCorner;
+  			var selected = corner === this.viewmodel.selectedCorner;
   			var color = cornerColor;
   			if (hover && this.viewmodel.mode == floorplannerModes.DELETE) {
   				color = deleteColor;
   			} else if (hover) {
   				color = cornerColorHover;
+  			} else if (selected) {
+  				color = cornerColorSelected;
   			}
-  			this.drawCircle(cornerX, cornerY, hover ? cornerRadiusHover : cornerRadius, color);
+  			this.drawCircle(cornerX, cornerY, hover ? cornerRadiusHover : selected ? cornerRadiusSelected : cornerRadius, color);
   			// let cx = Dimensioning.roundOff(corner.x, 10);
   			// let cy = Dimensioning.roundOff(corner.y, 10);
   			// var cornerLabel = `(${cx}, ${cy})`;
@@ -118295,19 +118318,26 @@ var BP3DJS = (function (exports) {
 
   			this.mouseX = (event.clientX - this.canvasElement.offset().left) * this.cmPerPixel + this.originX * this.cmPerPixel;
   			this.mouseY = (event.clientY - this.canvasElement.offset().top) * this.cmPerPixel + this.originY * this.cmPerPixel;
-  			this._clickedCorner = this.floorplan.overlappedCorner(this.mouseX, this.mouseY);
-  			this._clickedWall = this.floorplan.overlappedWall(this.mouseX, this.mouseY);
-  			this._clickedRoom = this.floorplan.overlappedRoom(this.mouseX, this.mouseY);
+  			var mDownCorner = this.floorplan.overlappedCorner(this.mouseX, this.mouseY);
+  			var mDownWall = this.floorplan.overlappedWall(this.mouseX, this.mouseY);
+  			var mDownRoom = this.floorplan.overlappedRoom(this.mouseX, this.mouseY);
 
-  			if (this._clickedCorner == null && this._clickedWall == null && this._clickedRoom == null) {
+  			if (mDownCorner == null && mDownWall == null && mDownRoom == null) {
+  				this._clickedCorner = null;
+  				this._clickedWall = null;
+  				this._clickedRoom = null;
   				this.floorplan.dispatchEvent({ type: EVENT_NOTHING_CLICKED });
-  			} else if (this._clickedCorner != null) {
+  			} else if (mDownCorner != null) {
+  				this._clickedCorner = mDownCorner;
   				this.floorplan.dispatchEvent({ type: EVENT_CORNER_2D_CLICKED, item: this._clickedCorner });
-  			} else if (this._clickedWall != null) {
+  			} else if (mDownWall != null) {
+  				this._clickedWall = mDownWall;
   				this.floorplan.dispatchEvent({ type: EVENT_WALL_2D_CLICKED, item: this._clickedWall });
-  			} else if (this._clickedRoom != null) {
+  			} else if (mDownRoom != null) {
+  				this._clickedRoom = mDownRoom;
   				this.floorplan.dispatchEvent({ type: EVENT_ROOM_2D_CLICKED, item: this._clickedRoom });
   			}
+  			this.view.draw();
   		}
 
   		/** */
@@ -118358,8 +118388,13 @@ var BP3DJS = (function (exports) {
   				}
 
   				this.activeRoom = hoverRoom;
+
   				if (this.activeCorner == null && this.activeWall == null && this.activeRoom != null) {
   					this.floorplan.dispatchEvent({ type: EVENT_ROOM_2D_HOVER, item: hoverRoom });
+  				}
+
+  				if (this.activeRoom == null) {
+  					draw = true;
   				}
 
   				if (draw) {
@@ -118433,6 +118468,7 @@ var BP3DJS = (function (exports) {
   					this.activeWall.updateAttachedRooms();
   				}
   			}
+  			this.view.draw();
   		}
 
   		/** */
@@ -118502,6 +118538,21 @@ var BP3DJS = (function (exports) {
   		key: 'convertY',
   		value: function convertY(y) {
   			return (y - this.originY * this.cmPerPixel) * this.pixelsPerCm;
+  		}
+  	}, {
+  		key: 'selectedCorner',
+  		get: function get() {
+  			return this._clickedCorner;
+  		}
+  	}, {
+  		key: 'selectedWall',
+  		get: function get() {
+  			return this._clickedWall;
+  		}
+  	}, {
+  		key: 'selectedRoom',
+  		get: function get() {
+  			return this._clickedRoom;
   		}
   	}, {
   		key: 'carbonSheet',
@@ -170022,8 +170073,10 @@ var BP3DJS = (function (exports) {
   exports.configWallThickness = configWallThickness;
   exports.cornerColor = cornerColor;
   exports.cornerColorHover = cornerColorHover;
+  exports.cornerColorSelected = cornerColorSelected;
   exports.cornerRadius = cornerRadius;
   exports.cornerRadiusHover = cornerRadiusHover;
+  exports.cornerRadiusSelected = cornerRadiusSelected;
   exports.cornerTolerance = cornerTolerance;
   exports.decimals = decimals;
   exports.defaultFloorPlanTolerance = defaultFloorPlanTolerance;
@@ -170050,10 +170103,16 @@ var BP3DJS = (function (exports) {
   exports.pixelsPerCm = pixelsPerCm;
   exports.pixelsPerFoot = pixelsPerFoot;
   exports.roomColor = roomColor;
+  exports.roomColorHover = roomColorHover;
+  exports.roomColorSelected = roomColorSelected;
   exports.snapTolerance = snapTolerance;
   exports.states = states;
+  exports.wallColor = wallColor;
+  exports.wallColorHover = wallColorHover;
+  exports.wallColorSelected = wallColorSelected;
   exports.wallWidth = wallWidth;
   exports.wallWidthHover = wallWidthHover;
+  exports.wallWidthSelected = wallWidthSelected;
 
   return exports;
 

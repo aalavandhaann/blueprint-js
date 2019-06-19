@@ -32,7 +32,14 @@ export {Scene} from './model/scene.js';
 export {defaultWallTexture, Wall} from './model/wall.js';
 
 //Classes from floorplanner module
-export {floorplannerModes, gridSpacing, gridWidth, gridColor, roomColor, wallWidth, wallWidthHover, edgeColor, edgeColorHover, edgeWidth, deleteColor, cornerRadius, cornerRadiusHover, cornerColor, cornerColorHover, FloorplannerView2D} from './floorplanner/floorplanner_view.js';
+export {floorplannerModes, gridSpacing, gridWidth, gridColor, deleteColor} from './floorplanner/floorplanner_view.js';
+export {roomColor, roomColorHover, roomColorSelected} from './floorplanner/floorplanner_view.js';
+export {wallWidth, wallWidthHover, wallWidthSelected, wallColor, wallColorHover, wallColorSelected}  from './floorplanner/floorplanner_view.js';
+export {edgeColor, edgeColorHover, edgeWidth} from './floorplanner/floorplanner_view.js';
+export {cornerRadius, cornerRadiusHover, cornerRadiusSelected, cornerColor, cornerColorHover, cornerColorSelected} from './floorplanner/floorplanner_view.js';
+export {FloorplannerView2D} from './floorplanner/floorplanner_view.js';
+
+
 export {snapTolerance, Floorplanner2D} from './floorplanner/floorplanner.js';
 export {CarbonSheet} from './floorplanner/carbonsheet.js';
 
