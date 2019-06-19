@@ -251,7 +251,7 @@ export class Wall extends EventDispatcher
 	{
 		if(this.start != null)
 		{
-				this.start.updateAttachedRooms();
+			this.start.updateAttachedRooms();
 		}
 		if(this.end)
 		{

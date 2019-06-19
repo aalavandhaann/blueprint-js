@@ -9,7 +9,7 @@ export const configWallHeight = 'wallHeight';
 /** The initial wall thickness in cm. */
 export const configWallThickness = 'wallThickness';
 
-export const configSytemUI = 'systemUI';
+export const configSystemUI = 'systemUI';
 
 export var config = {dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 10, systemUI: false};
 
@@ -53,7 +53,7 @@ export class Configuration
 	{
 		switch (key) 
 		{
-		case configSytemUI:
+		case configSystemUI:
 		case configWallHeight:
 		case configWallThickness:
 //			return Number(this.data[key]);

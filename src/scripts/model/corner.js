@@ -51,12 +51,12 @@ export class Corner extends EventDispatcher
 			* @property {Number} x The position in x dimension
 			* @type {Number}
 		**/
-		this.x = x;
+		this._x = x;
 		/**
 			* @property {Number} y The position in y dimension
 			* @type {Number}
 		**/
-		this.y = y;
+		this._y = y;
 		/**
 			* @property {Number} _elevation The elevation at this corner
 			* @type {Number}
@@ -72,14 +72,65 @@ export class Corner extends EventDispatcher
 			* @type {Array}
 		**/
 		this.attachedRooms = [];
+		
+		/**
+		* @property {Boolean} _hasChanged A flag to indicate if something has changed about this corner
+		* @type {Boolean}
+		**/
+		this._hasChanged = false;
+	}
+	
+	get x()
+	{
+		return this._x;
+	}
+	
+	set x(value)
+	{
+		var oldvalue = this._x;
+		if( value - this._x < 1e-6)
+		{
+			this._hasChanged = true;
+		}
+		this._x = value;
+		if(this._hasChanged)
+		{
+			this.dispatchEvent({type:EVENT_CORNER_ATTRIBUTES_CHANGED, item:this, info:{from: oldvalue, to: this._x}});
+		}
+	}
+	
+	get y()
+	{
+		return this._y;
+	}
+	
+	set y(value)
+	{
+		var oldvalue = this._y;
+		if( value - this._y < 1e-6)
+		{
+			this._hasChanged = true;
+		}
+		this._y = value;
+		if(this._hasChanged)
+		{
+			this.dispatchEvent({type:EVENT_CORNER_ATTRIBUTES_CHANGED, item:this, info:{from: oldvalue, to: this._y}});
+		}
 	}
 
 	/** @type {Number} elevation The elevation value at this corner*/
 	set elevation(value)
 	{
 		var oldvalue = this._elevation;
+		if( value - this._elevation < 1e-6)
+		{
+			this._hasChanged = true;
+		}
 		this._elevation = Dimensioning.cmFromMeasureRaw(Number(value));
-		this.dispatchEvent({type:EVENT_CORNER_ATTRIBUTES_CHANGED, item:this, info:{from: oldvalue, to: this._elevation}});
+		if(this._hasChanged)
+		{
+			this.dispatchEvent({type:EVENT_CORNER_ATTRIBUTES_CHANGED, item:this, info:{from: oldvalue, to: this._elevation}});
+		}
 	}
 
 	/** @type {Number} elevation The elevation value at this corner*/
@@ -265,9 +316,14 @@ export class Corner extends EventDispatcher
 	**/
 	updateAttachedRooms()
 	{
+		if(!this._hasChanged)
+		{
+			return;
+		}
 		this.attachedRooms.forEach((room)=>{
 				room.updateArea();
 		});
+		this._hasChanged = false;
 	}
 
 	/** Gets the adjacent corners that are connected to this corner by walls ({@link Wall}).

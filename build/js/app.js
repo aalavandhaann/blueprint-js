@@ -415,7 +415,7 @@ var WallProperties = function()
 
 function addBlueprintListeners(blueprint3d)
 {
-	var three = blueprint3d.three;
+	var three = blueprint3d.three;	 
 
 	function wallClicked(wall)
 	{
@@ -450,6 +450,32 @@ function addBlueprintListeners(blueprint3d)
 	three.addEventListener(BP3DJS.EVENT_WALL_CLICKED, (o)=>{wallClicked(o.item);});
     three.addEventListener(BP3DJS.EVENT_FLOOR_CLICKED, (o)=>{floorClicked(o.item);});
     three.addEventListener(BP3DJS.EVENT_FPS_EXIT, ()=>{$('#showDesign').trigger('click')});
+    
+    function echoEvents(o)
+    {	
+    	console.log(o.type, o.item);
+    }	
+    
+    var model_floorplan = blueprint3d.model.floorplan;
+    model_floorplan.addEventListener(BP3DJS.EVENT_CORNER_2D_DOUBLE_CLICKED, echoEvents);
+    model_floorplan.addEventListener(BP3DJS.EVENT_WALL_2D_DOUBLE_CLICKED, echoEvents);
+    model_floorplan.addEventListener(BP3DJS.EVENT_ROOM_2D_DOUBLE_CLICKED, echoEvents);
+    
+    model_floorplan.addEventListener(BP3DJS.EVENT_CORNER_2D_CLICKED, echoEvents);
+    model_floorplan.addEventListener(BP3DJS.EVENT_WALL_2D_CLICKED, echoEvents);
+    model_floorplan.addEventListener(BP3DJS.EVENT_ROOM_2D_CLICKED, echoEvents);
+    
+    model_floorplan.addEventListener(BP3DJS.EVENT_CORNER_2D_HOVER, echoEvents);
+    model_floorplan.addEventListener(BP3DJS.EVENT_WALL_2D_HOVER, echoEvents);
+    model_floorplan.addEventListener(BP3DJS.EVENT_ROOM_2D_HOVER, echoEvents);
+    
+    model_floorplan.addEventListener(BP3DJS.EVENT_CORNER_ATTRIBUTES_CHANGED, echoEvents);
+    model_floorplan.addEventListener(BP3DJS.EVENT_WALL_ATTRIBUTES_CHANGED, echoEvents);
+    model_floorplan.addEventListener(BP3DJS.EVENT_ROOM_ATTRIBUTES_CHANGED, echoEvents);
+    
+    BP3DJS.Configuration.setValue(BP3DJS.configSystemUI, false);
+    
+    
 // three.skybox.toggleEnvironment(this.checked);
 // currentTarget.setTexture(textureUrl, textureStretch, textureScale);
 // three.skybox.setEnvironmentMap(textureUrl);

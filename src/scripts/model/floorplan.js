@@ -1,4 +1,5 @@
 import {EVENT_UPDATED, EVENT_LOADED, EVENT_NEW, EVENT_DELETED, EVENT_ROOM_NAME_CHANGED} from '../core/events.js';
+import {EVENT_CORNER_ATTRIBUTES_CHANGED, EVENT_WALL_ATTRIBUTES_CHANGED, EVENT_ROOM_ATTRIBUTES_CHANGED} from '../core/events.js';
 import {EventDispatcher, Vector2, Vector3} from 'three';
 import {Utils} from '../core/utils.js';
 import {Dimensioning} from '../core/dimensioning.js';
@@ -251,10 +252,15 @@ export class Floorplan extends EventDispatcher
 	 */
 	newWall(start, end)
 	{
-		var wall = new Wall(start, end);
-    this.walls.push(wall);
 		var scope = this;
+		var wall = new Wall(start, end);
+		
+		this.walls.push(wall);
 		wall.addEventListener(EVENT_DELETED, function(o){scope.removeWall(o.item);});
+		wall.addEventListener(EVENT_WALL_ATTRIBUTES_CHANGED, function(o){
+			scope.dispatchEvent(o);
+		});
+		
 		this.dispatchEvent({type: EVENT_NEW, item: this, newItem: wall});
 		this.update();
 		return wall;
@@ -272,7 +278,9 @@ export class Floorplan extends EventDispatcher
 	 */
 	newCorner(x, y, id)
 	{
+		var scope = this;
 		var corner = new Corner(this, x, y, id);
+		
 		for (var i=0;i<this.corners.length;i++)
 		{
 				var existingCorner = this.corners[i];
@@ -281,10 +289,13 @@ export class Floorplan extends EventDispatcher
           return existingCorner;
 				}
 		}
-
-		var scope = this;
+		
 		this.corners.push(corner);
 		corner.addEventListener(EVENT_DELETED, function(o){scope.removeCorner(o.item);});
+		corner.addEventListener(EVENT_CORNER_ATTRIBUTES_CHANGED, function(o){
+			scope.dispatchEvent(o);
+			});
+		
 		this.dispatchEvent({type: EVENT_NEW, item: this, newItem: corner});
 
 		// This code has been added by #0K. There should be an update whenever a
@@ -632,7 +643,12 @@ export class Floorplan extends EventDispatcher
 			var room = new Room(scope, corners);
 			room.updateArea();
 			scope.rooms.push(room);
+			
 			room.addEventListener(EVENT_ROOM_NAME_CHANGED, (e)=>{scope.roomNameChanged(e);});
+			room.addEventListener(EVENT_ROOM_ATTRIBUTES_CHANGED, function(o){
+			scope.dispatchEvent(o);
+			});
+			
 			if(scope.metaroomsdata)
 			{
 				// var allids = Object.keys(scope.metaroomsdata);

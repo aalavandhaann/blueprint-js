@@ -4,6 +4,7 @@ import {cmPerPixel, pixelsPerCm, Dimensioning} from '../core/dimensioning.js';
 import {configDimUnit, Configuration} from '../core/configuration.js';
 import {EVENT_MODE_RESET, EVENT_LOADED} from '../core/events.js';
 import {EVENT_CORNER_2D_HOVER, EVENT_WALL_2D_HOVER, EVENT_ROOM_2D_HOVER} from '../core/events.js';
+import {EVENT_CORNER_2D_CLICKED, EVENT_ROOM_2D_CLICKED, EVENT_WALL_2D_CLICKED} from '../core/events.js';
 import {EVENT_CORNER_2D_DOUBLE_CLICKED, EVENT_ROOM_2D_DOUBLE_CLICKED, EVENT_WALL_2D_DOUBLE_CLICKED} from '../core/events.js';
 import {EVENT_NOTHING_CLICKED} from '../core/events.js';
 import {FloorplannerView2D, floorplannerModes} from './floorplanner_view.js';
@@ -28,6 +29,13 @@ export class Floorplanner2D extends EventDispatcher
 		this.activeCorner = null;
 		/** */
 		this.activeRoom = null;
+		
+		/** */
+		this._clickedWall = null;
+		/** */
+		this._clickedCorner = null;
+		/** */
+		this._clickedRoom = null;
 		/** */
 		this.originX = 0;
 		/** */
@@ -42,7 +50,7 @@ export class Floorplanner2D extends EventDispatcher
 		this.wallWidth = 0;
 		/** */
 		this.modeResetCallbacks = null;
-
+		
 		/** */
 		this.mouseDown = false;
 		/** */
@@ -232,10 +240,31 @@ export class Floorplanner2D extends EventDispatcher
 				//				this.setMode(floorplannerModes.MOVE);
 			}
 		}
+		
+		this.mouseX = (event.clientX - this.canvasElement.offset().left)  * this.cmPerPixel + this.originX * this.cmPerPixel;
+		this.mouseY = (event.clientY - this.canvasElement.offset().top) * this.cmPerPixel + this.originY * this.cmPerPixel;
+		this._clickedCorner = this.floorplan.overlappedCorner(this.mouseX, this.mouseY);
+		this._clickedWall = this.floorplan.overlappedWall(this.mouseX, this.mouseY);
+		this._clickedRoom = this.floorplan.overlappedRoom(this.mouseX, this.mouseY);
 
-		if(this.activeCorner == null && this.activeWall == null && this.activeRoom == null)
+		if(this._clickedCorner == null && this._clickedWall == null && this._clickedRoom == null)
 		{
 			this.floorplan.dispatchEvent({type:EVENT_NOTHING_CLICKED});
+		}
+		
+		else if(this._clickedCorner != null)
+		{
+			this.floorplan.dispatchEvent({type:EVENT_CORNER_2D_CLICKED, item: this._clickedCorner});
+		}
+		
+		else if(this._clickedWall != null)
+		{
+			this.floorplan.dispatchEvent({type:EVENT_WALL_2D_CLICKED, item: this._clickedWall});
+		}
+		
+		else if(this._clickedRoom != null)
+		{
+			this.floorplan.dispatchEvent({type:EVENT_ROOM_2D_CLICKED, item: this._clickedRoom});
 		}
 	}
 
@@ -269,14 +298,16 @@ export class Floorplanner2D extends EventDispatcher
 			var hoverCorner = this.floorplan.overlappedCorner(this.mouseX, this.mouseY);
 			var hoverWall = this.floorplan.overlappedWall(this.mouseX, this.mouseY);
 			var hoverRoom = this.floorplan.overlappedRoom(this.mouseX, this.mouseY);
-			var draw = false;
+			var draw = false;			
+			
+			// corner takes precendence
 			if (hoverCorner != this.activeCorner)
 			{
 				this.activeCorner = hoverCorner;
 				this.floorplan.dispatchEvent({type:EVENT_CORNER_2D_HOVER, item: hoverCorner});
 				draw = true;
 			}
-			// corner takes precendence
+			
 			if (this.activeCorner == null)
 			{
 				if (hoverWall != this.activeWall)
@@ -296,7 +327,6 @@ export class Floorplanner2D extends EventDispatcher
 			{
 				this.floorplan.dispatchEvent({type:EVENT_ROOM_2D_HOVER, item: hoverRoom});
 			}
-
 
 			if (draw)
 			{
@@ -362,12 +392,12 @@ export class Floorplanner2D extends EventDispatcher
 			// further create a newWall based on the newly inserted corners
 			// (one in the above line and the other in the previous mouse action
 			// of start drawing a new wall)
-					if (this.lastNode != null)
-					{
-						this.floorplan.newWall(this.lastNode, corner);
-						this.floorplan.newWallsForIntersections(this.lastNode, corner);
-						this.view.draw();
-					}
+			if (this.lastNode != null)
+			{
+				this.floorplan.newWall(this.lastNode, corner);
+				this.floorplan.newWallsForIntersections(this.lastNode, corner);
+				this.view.draw();
+			}
 			if (corner.mergeWithIntersected() && this.lastNode != null)
 			{
 				this.setMode(floorplannerModes.MOVE);

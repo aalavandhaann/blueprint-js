@@ -163,7 +163,7 @@ var BP3DJS = (function (exports) {
 
   var EVENT_CORNER_2D_DOUBLE_CLICKED = 'CORNER_DOUBLE_CLICKED_2D_EVENT';
   var EVENT_WALL_2D_DOUBLE_CLICKED = 'WALL_DOUBLE_CLICKED_2D_EVENT';
-  var EVENT_ROOM_2D_DOUBLE_CLICKED = 'WALL_DOUBLE_CLICKED_2D_EVENT';
+  var EVENT_ROOM_2D_DOUBLE_CLICKED = 'ROOM_DOUBLE_CLICKED_2D_EVENT';
 
   var EVENT_CORNER_2D_HOVER = 'CORNER_HOVER_2D_EVENT';
   var EVENT_WALL_2D_HOVER = 'WALL_HOVER_2D_EVENT';
@@ -48978,7 +48978,7 @@ var BP3DJS = (function (exports) {
   /** The initial wall thickness in cm. */
   var configWallThickness = 'wallThickness';
 
-  var configSytemUI = 'systemUI';
+  var configSystemUI = 'systemUI';
 
   var config = { dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 10, systemUI: false };
 
@@ -49027,7 +49027,7 @@ var BP3DJS = (function (exports) {
   		key: 'getNumericValue',
   		value: function getNumericValue(key) {
   			switch (key) {
-  				case configSytemUI:
+  				case configSystemUI:
   				case configWallHeight:
   				case configWallThickness:
   					//			return Number(this.data[key]);
@@ -49769,12 +49769,12 @@ var BP3DJS = (function (exports) {
     	* @property {Number} x The position in x dimension
     	* @type {Number}
     **/
-  		_this.x = x;
+  		_this._x = x;
   		/**
     	* @property {Number} y The position in y dimension
     	* @type {Number}
     **/
-  		_this.y = y;
+  		_this._y = y;
   		/**
     	* @property {Number} _elevation The elevation at this corner
     	* @type {Number}
@@ -49790,11 +49790,14 @@ var BP3DJS = (function (exports) {
     	* @type {Array}
     **/
   		_this.attachedRooms = [];
+
+  		/**
+    * @property {Boolean} _hasChanged A flag to indicate if something has changed about this corner
+    * @type {Boolean}
+    **/
+  		_this._hasChanged = false;
   		return _this;
   	}
-
-  	/** @type {Number} elevation The elevation value at this corner*/
-
 
   	createClass(Corner, [{
   		key: 'attachRoom',
@@ -49997,9 +50000,13 @@ var BP3DJS = (function (exports) {
   	}, {
   		key: 'updateAttachedRooms',
   		value: function updateAttachedRooms() {
+  			if (!this._hasChanged) {
+  				return;
+  			}
   			this.attachedRooms.forEach(function (room) {
   				room.updateArea();
   			});
+  			this._hasChanged = false;
   		}
 
   		/** Gets the adjacent corners that are connected to this corner by walls ({@link Wall}).
@@ -50244,11 +50251,49 @@ var BP3DJS = (function (exports) {
   			}
   		}
   	}, {
+  		key: 'x',
+  		get: function get() {
+  			return this._x;
+  		},
+  		set: function set(value) {
+  			var oldvalue = this._x;
+  			if (value - this._x < 1e-6) {
+  				this._hasChanged = true;
+  			}
+  			this._x = value;
+  			if (this._hasChanged) {
+  				this.dispatchEvent({ type: EVENT_CORNER_ATTRIBUTES_CHANGED, item: this, info: { from: oldvalue, to: this._x } });
+  			}
+  		}
+  	}, {
+  		key: 'y',
+  		get: function get() {
+  			return this._y;
+  		},
+  		set: function set(value) {
+  			var oldvalue = this._y;
+  			if (value - this._y < 1e-6) {
+  				this._hasChanged = true;
+  			}
+  			this._y = value;
+  			if (this._hasChanged) {
+  				this.dispatchEvent({ type: EVENT_CORNER_ATTRIBUTES_CHANGED, item: this, info: { from: oldvalue, to: this._y } });
+  			}
+  		}
+
+  		/** @type {Number} elevation The elevation value at this corner*/
+
+  	}, {
   		key: 'elevation',
   		set: function set(value) {
   			var oldvalue = this._elevation;
+  			if (value - this._elevation < 1e-6) {
+  				this._hasChanged = true;
+  			}
   			this._elevation = Dimensioning.cmFromMeasureRaw(Number(value));
-  			this.dispatchEvent({ type: EVENT_CORNER_ATTRIBUTES_CHANGED, item: this, info: { from: oldvalue, to: this._elevation } });
+  			if (this._hasChanged) {
+  				this.dispatchEvent({ type: EVENT_CORNER_ATTRIBUTES_CHANGED, item: this, info: { from: oldvalue, to: this._elevation } });
+  			}
   		}
 
   		/** @type {Number} elevation The elevation value at this corner*/
@@ -51053,12 +51098,17 @@ var BP3DJS = (function (exports) {
   	}, {
   		key: 'newWall',
   		value: function newWall(start, end) {
-  			var wall = new Wall(start, end);
-  			this.walls.push(wall);
   			var scope = this;
+  			var wall = new Wall(start, end);
+
+  			this.walls.push(wall);
   			wall.addEventListener(EVENT_DELETED, function (o) {
   				scope.removeWall(o.item);
   			});
+  			wall.addEventListener(EVENT_WALL_ATTRIBUTES_CHANGED, function (o) {
+  				scope.dispatchEvent(o);
+  			});
+
   			this.dispatchEvent({ type: EVENT_NEW, item: this, newItem: wall });
   			this.update();
   			return wall;
@@ -51076,7 +51126,9 @@ var BP3DJS = (function (exports) {
   	}, {
   		key: 'newCorner',
   		value: function newCorner(x, y, id) {
+  			var scope = this;
   			var corner = new Corner(this, x, y, id);
+
   			for (var i = 0; i < this.corners.length; i++) {
   				var existingCorner = this.corners[i];
   				if (existingCorner.distanceFromCorner(corner) < 50) {
@@ -51084,11 +51136,14 @@ var BP3DJS = (function (exports) {
   				}
   			}
 
-  			var scope = this;
   			this.corners.push(corner);
   			corner.addEventListener(EVENT_DELETED, function (o) {
   				scope.removeCorner(o.item);
   			});
+  			corner.addEventListener(EVENT_CORNER_ATTRIBUTES_CHANGED, function (o) {
+  				scope.dispatchEvent(o);
+  			});
+
   			this.dispatchEvent({ type: EVENT_NEW, item: this, newItem: corner });
 
   			// This code has been added by #0K. There should be an update whenever a
@@ -51451,9 +51506,14 @@ var BP3DJS = (function (exports) {
   				var room = new Room(scope, corners);
   				room.updateArea();
   				scope.rooms.push(room);
+
   				room.addEventListener(EVENT_ROOM_NAME_CHANGED, function (e) {
   					scope.roomNameChanged(e);
   				});
+  				room.addEventListener(EVENT_ROOM_ATTRIBUTES_CHANGED, function (o) {
+  					scope.dispatchEvent(o);
+  				});
+
   				if (scope.metaroomsdata) {
   					// var allids = Object.keys(scope.metaroomsdata);
   					if (scope.metaroomsdata[room.roomByCornersId]) {
@@ -118035,6 +118095,13 @@ var BP3DJS = (function (exports) {
   		_this.activeCorner = null;
   		/** */
   		_this.activeRoom = null;
+
+  		/** */
+  		_this._clickedWall = null;
+  		/** */
+  		_this._clickedCorner = null;
+  		/** */
+  		_this._clickedRoom = null;
   		/** */
   		_this.originX = 0;
   		/** */
@@ -118226,8 +118293,20 @@ var BP3DJS = (function (exports) {
   				}
   			}
 
-  			if (this.activeCorner == null && this.activeWall == null && this.activeRoom == null) {
+  			this.mouseX = (event.clientX - this.canvasElement.offset().left) * this.cmPerPixel + this.originX * this.cmPerPixel;
+  			this.mouseY = (event.clientY - this.canvasElement.offset().top) * this.cmPerPixel + this.originY * this.cmPerPixel;
+  			this._clickedCorner = this.floorplan.overlappedCorner(this.mouseX, this.mouseY);
+  			this._clickedWall = this.floorplan.overlappedWall(this.mouseX, this.mouseY);
+  			this._clickedRoom = this.floorplan.overlappedRoom(this.mouseX, this.mouseY);
+
+  			if (this._clickedCorner == null && this._clickedWall == null && this._clickedRoom == null) {
   				this.floorplan.dispatchEvent({ type: EVENT_NOTHING_CLICKED });
+  			} else if (this._clickedCorner != null) {
+  				this.floorplan.dispatchEvent({ type: EVENT_CORNER_2D_CLICKED, item: this._clickedCorner });
+  			} else if (this._clickedWall != null) {
+  				this.floorplan.dispatchEvent({ type: EVENT_WALL_2D_CLICKED, item: this._clickedWall });
+  			} else if (this._clickedRoom != null) {
+  				this.floorplan.dispatchEvent({ type: EVENT_ROOM_2D_CLICKED, item: this._clickedRoom });
   			}
   		}
 
@@ -118260,12 +118339,14 @@ var BP3DJS = (function (exports) {
   				var hoverWall = this.floorplan.overlappedWall(this.mouseX, this.mouseY);
   				var hoverRoom = this.floorplan.overlappedRoom(this.mouseX, this.mouseY);
   				var draw = false;
+
+  				// corner takes precendence
   				if (hoverCorner != this.activeCorner) {
   					this.activeCorner = hoverCorner;
   					this.floorplan.dispatchEvent({ type: EVENT_CORNER_2D_HOVER, item: hoverCorner });
   					draw = true;
   				}
-  				// corner takes precendence
+
   				if (this.activeCorner == null) {
   					if (hoverWall != this.activeWall) {
   						this.activeWall = hoverWall;
@@ -169936,7 +170017,7 @@ var BP3DJS = (function (exports) {
   exports.cmPerFoot = cmPerFoot;
   exports.cmPerPixel = cmPerPixel;
   exports.configDimUnit = configDimUnit;
-  exports.configSytemUI = configSytemUI;
+  exports.configSystemUI = configSystemUI;
   exports.configWallHeight = configWallHeight;
   exports.configWallThickness = configWallThickness;
   exports.cornerColor = cornerColor;
