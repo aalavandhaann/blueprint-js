@@ -104226,105 +104226,106 @@ var BP3DJS = (function (exports) {
    * A Floor Item is an entity to be placed related to a floor.
    */
   var RoofItem = function (_Item) {
-  		inherits(RoofItem, _Item);
+  	inherits(RoofItem, _Item);
 
-  		function RoofItem(model, metadata, geometry, material, position, rotation, scale) {
-  				var isgltf = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : false;
-  				classCallCheck(this, RoofItem);
+  	function RoofItem(model, metadata, geometry, material, position, rotation, scale) {
+  		var isgltf = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : false;
+  		classCallCheck(this, RoofItem);
 
-  				var _this = possibleConstructorReturn(this, (RoofItem.__proto__ || Object.getPrototypeOf(RoofItem)).call(this, model, metadata, geometry, material, position, rotation, scale, isgltf));
+  		var _this = possibleConstructorReturn(this, (RoofItem.__proto__ || Object.getPrototypeOf(RoofItem)).call(this, model, metadata, geometry, material, position, rotation, scale, isgltf));
 
-  				_this.allowRotate = false;
-  				_this.boundToFloor = false;
-  				if (_this.geometry) {
-  						_this.geometry.applyMatrix(new Matrix4().makeTranslation(-0.5 * (_this.geometry.boundingBox.max.x + _this.geometry.boundingBox.min.x), -0.5 * (_this.geometry.boundingBox.max.y - _this.geometry.boundingBox.min.y), -0.5 * (_this.geometry.boundingBox.max.z + _this.geometry.boundingBox.min.z)));
-  						_this.geometry.computeBoundingBox();
+  		_this.allowRotate = false;
+  		_this.boundToFloor = false;
+  		_this._freePosition = false;
+  		if (_this.geometry) {
+  			_this.geometry.applyMatrix(new Matrix4().makeTranslation(-0.5 * (_this.geometry.boundingBox.max.x + _this.geometry.boundingBox.min.x), -0.5 * (_this.geometry.boundingBox.max.y - _this.geometry.boundingBox.min.y), -0.5 * (_this.geometry.boundingBox.max.z + _this.geometry.boundingBox.min.z)));
+  			_this.geometry.computeBoundingBox();
+  		}
+  		_this.halfSize = _this.objectHalfSize();
+  		_this.canvasPlaneWH.position.set(0, _this.getHeight() * -0.5, _this.getDepth() * 0.5);
+  		_this.canvasPlaneWD.position.set(0, -_this.getHeight(), 0);
+
+  		var co = _this.closestCeilingPoint();
+  		_this.moveToPosition(co);
+  		return _this;
+  	}
+
+  	/** Returns an array of planes to use other than the ground plane
+    * for passing intersection to clickPressed and clickDragged */
+
+
+  	createClass(RoofItem, [{
+  		key: 'customIntersectionPlanes',
+  		value: function customIntersectionPlanes() {
+  			return this.model.floorplan.roofPlanes();
+  		}
+  	}, {
+  		key: 'roofContainsPoint',
+  		value: function roofContainsPoint(roof, forpoint) {
+  			var g = roof.geometry;
+  			var result = { distance: Number.MAX_VALUE, contains: false, point: null, closestPoint: null };
+  			var closestPoint = null;
+  			for (var i = 0; i < g.faces.length; i++) {
+  				var f = g.faces[i];
+  				var plane = new Plane();
+  				var triangle = new Triangle(g.vertices[f.a], g.vertices[f.b], g.vertices[f.c]);
+  				var ipoint = new Vector3();
+  				var cpoint = new Vector3();
+  				var contains = false;
+  				var distance = 0.0;
+  				closestPoint = triangle.closestPointToPoint(forpoint, cpoint);
+  				triangle.getPlane(plane);
+  				plane.projectPoint(forpoint, ipoint);
+  				contains = triangle.containsPoint(ipoint);
+  				distance = plane.distanceToPoint(forpoint);
+  				if (distance < result.distance && contains) {
+  					result.distance = distance;
+  					result.contains = contains;
+  					result.point = ipoint;
+  					result.closestPoint = closestPoint.clone();
   				}
-  				_this.halfSize = _this.objectHalfSize();
-  				_this.canvasPlaneWH.position.set(0, _this.getHeight() * -0.5, _this.getDepth() * 0.5);
-  				_this.canvasPlaneWD.position.set(0, -_this.getHeight(), 0);
+  			}
+  			//No good result so return the closest point of the last triangle in this roof mesh
+  			if (result.point == null) {
+  				result.closestPoint = closestPoint.clone();
+  			}
 
-  				var co = _this.closestCeilingPoint();
-  				_this.moveToPosition(co);
-  				return _this;
+  			return result;
+  		}
+  	}, {
+  		key: 'closestCeilingPoint',
+  		value: function closestCeilingPoint() {
+  			var roofs = this.model.floorplan.roofPlanes();
+  			var roof = null;
+  			var globalResult = { distance: Number.MAX_VALUE, point: null };
+  			var result = null;
+  			for (var i = 0; i < roofs.length; i++) {
+  				roof = roofs[i];
+  				result = this.roofContainsPoint(roof, this.position);
+  				if (result.point != null && result.distance < globalResult.distance && result.contains) {
+  					globalResult.distance = result.distance;
+  					globalResult.point = result.point.clone();
+  				}
+  			}
+  			//No good results so assign the closestPoint of the last roof in the above iteration
+  			if (globalResult.point == null) {
+  				return result.closestPoint.clone();
+  			}
+  			return globalResult.point.clone();
   		}
 
-  		/** Returns an array of planes to use other than the ground plane
-     * for passing intersection to clickPressed and clickDragged */
+  		/** */
 
-
-  		createClass(RoofItem, [{
-  				key: 'customIntersectionPlanes',
-  				value: function customIntersectionPlanes() {
-  						return this.model.floorplan.roofPlanes();
-  				}
-  		}, {
-  				key: 'roofContainsPoint',
-  				value: function roofContainsPoint(roof, forpoint) {
-  						var g = roof.geometry;
-  						var result = { distance: Number.MAX_VALUE, contains: false, point: null, closestPoint: null };
-  						var closestPoint = null;
-  						for (var i = 0; i < g.faces.length; i++) {
-  								var f = g.faces[i];
-  								var plane = new Plane();
-  								var triangle = new Triangle(g.vertices[f.a], g.vertices[f.b], g.vertices[f.c]);
-  								var ipoint = new Vector3();
-  								var cpoint = new Vector3();
-  								var contains = false;
-  								var distance = 0.0;
-  								closestPoint = triangle.closestPointToPoint(forpoint, cpoint);
-  								triangle.getPlane(plane);
-  								plane.projectPoint(forpoint, ipoint);
-  								contains = triangle.containsPoint(ipoint);
-  								distance = plane.distanceToPoint(forpoint);
-  								if (distance < result.distance && contains) {
-  										result.distance = distance;
-  										result.contains = contains;
-  										result.point = ipoint;
-  										result.closestPoint = closestPoint.clone();
-  								}
-  						}
-  						//No good result so return the closest point of the last triangle in this roof mesh
-  						if (result.point == null) {
-  								result.closestPoint = closestPoint.clone();
-  						}
-
-  						return result;
-  				}
-  		}, {
-  				key: 'closestCeilingPoint',
-  				value: function closestCeilingPoint() {
-  						var roofs = this.model.floorplan.roofPlanes();
-  						var roof = null;
-  						var globalResult = { distance: Number.MAX_VALUE, point: null };
-  						var result = null;
-  						for (var i = 0; i < roofs.length; i++) {
-  								roof = roofs[i];
-  								result = this.roofContainsPoint(roof, this.position);
-  								if (result.point != null && result.distance < globalResult.distance && result.contains) {
-  										globalResult.distance = result.distance;
-  										globalResult.point = result.point.clone();
-  								}
-  						}
-  						//No good results so assign the closestPoint of the last roof in the above iteration
-  						if (globalResult.point == null) {
-  								return result.closestPoint.clone();
-  						}
-  						return globalResult.point.clone();
-  				}
-
-  				/** */
-
-  		}, {
-  				key: 'placeInRoom',
-  				value: function placeInRoom() {
-  						if (!this.position_set) {
-  								var co = this.closestCeilingPoint();
-  								this.moveToPosition(co);
-  						}
-  				}
-  		}]);
-  		return RoofItem;
+  	}, {
+  		key: 'placeInRoom',
+  		value: function placeInRoom() {
+  			if (!this.position_set) {
+  				var co = this.closestCeilingPoint();
+  				this.moveToPosition(co);
+  			}
+  		}
+  	}]);
+  	return RoofItem;
   }(Item);
 
   var item_types = { 1: FloorItem, 2: WallItem, 3: InWallItem, 7: InWallFloorItem, 8: OnFloorItem, 9: WallFloorItem, 0: Item, 4: RoofItem };

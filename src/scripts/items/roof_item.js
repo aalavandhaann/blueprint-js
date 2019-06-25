@@ -10,10 +10,11 @@ export class RoofItem extends Item
 		super(model, metadata, geometry, material, position, rotation, scale, isgltf);
 		this.allowRotate = false;
 		this.boundToFloor = false;
+		this._freePosition = false;
 		if(this.geometry)
 		{
-				this.geometry.applyMatrix(new Matrix4().makeTranslation(-0.5 * (this.geometry.boundingBox.max.x + this.geometry.boundingBox.min.x), -0.5 * (this.geometry.boundingBox.max.y - this.geometry.boundingBox.min.y),-0.5 * (this.geometry.boundingBox.max.z + this.geometry.boundingBox.min.z)));
-				this.geometry.computeBoundingBox();
+			this.geometry.applyMatrix(new Matrix4().makeTranslation(-0.5 * (this.geometry.boundingBox.max.x + this.geometry.boundingBox.min.x), -0.5 * (this.geometry.boundingBox.max.y - this.geometry.boundingBox.min.y),-0.5 * (this.geometry.boundingBox.max.z + this.geometry.boundingBox.min.z)));
+			this.geometry.computeBoundingBox();
 		}
 		this.halfSize = this.objectHalfSize();
 		this.canvasPlaneWH.position.set(0, this.getHeight() * -0.5, this.getDepth()*0.5);
@@ -51,16 +52,16 @@ export class RoofItem extends Item
 					distance = plane.distanceToPoint(forpoint);
 					if(distance < result.distance && contains)
 					{
-							result.distance = distance;
-							result.contains = contains;
-							result.point = ipoint;
-							result.closestPoint = closestPoint.clone();
+						result.distance = distance;
+						result.contains = contains;
+						result.point = ipoint;
+						result.closestPoint = closestPoint.clone();
 					}
 			}
 			//No good result so return the closest point of the last triangle in this roof mesh
 			if(result.point == null)
 			{
-					result.closestPoint = closestPoint.clone();
+				result.closestPoint = closestPoint.clone();
 			}
 
 			return result;

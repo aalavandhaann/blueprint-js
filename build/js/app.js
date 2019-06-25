@@ -822,7 +822,7 @@ $(document).ready(function()
 	        format: itemFormat,
 
 	      }
-
+	      console.log('ITEM TYPE ::: ', itemType);
 	      if([2,3,7,9].indexOf(metadata.itemType) != -1 && aWall.currentWall)
     	  {
 	    	  var placeAt = aWall.currentWall.center.clone();
