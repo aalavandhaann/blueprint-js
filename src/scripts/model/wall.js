@@ -139,6 +139,24 @@ export class Wall extends EventDispatcher
 			//this.backEdge.redrawCallbacks.fire();
 		}
 	}
+	
+	get startElevation()
+	{
+		if(this.start && this.start != null)
+		{
+			return this.start.elevation;
+		}
+		return 0.0;
+	}
+	
+	get endElevation()
+	{
+		if(this.end && this.end != null)
+		{
+			return this.end.elevation;
+		}
+		return 0.0;
+	}
 
 	getStart()
 	{
@@ -234,17 +252,19 @@ export class Wall extends EventDispatcher
 
 	getClosestCorner(point)
 	{
-			var startVector = new Vector2(this.start.x, this.start.y);
-			var endVector = new Vector2(this.end.x, this.end.y);
-      if(point.distanceTo(startVector) < 10)
-			{
-				return this.start;
-			}
-			else if(point.distanceTo(endVector) < 10)
-			{
-				return this.end;
-			}
-			return null;
+		var startVector = new Vector2(this.start.x, this.start.y);
+		var endVector = new Vector2(this.end.x, this.end.y);
+		var startDistance = point.distanceTo(startVector);
+		var endDistance = point.distanceTo(endVector);
+		if(startDistance <= (this.thickness*2))
+		{
+			return this.start;
+		}
+		else if(endDistance <= (this.thickness*2))
+		{
+			return this.end;
+		}
+		return null;
 	}
 
 	updateAttachedRooms()

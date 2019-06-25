@@ -1,7 +1,7 @@
 import {EVENT_ACTION, EVENT_DELETED, EVENT_MOVED, EVENT_CORNER_ATTRIBUTES_CHANGED} from '../core/events.js';
 import {EventDispatcher, Vector2} from 'three';
 import {Utils} from '../core/utils.js';
-import {Dimensioning} from '../core/dimensioning.js';
+//import {Dimensioning} from '../core/dimensioning.js';
 import {Configuration, configWallHeight} from '../core/configuration.js';
 
 /** */
@@ -88,7 +88,7 @@ export class Corner extends EventDispatcher
 	set x(value)
 	{
 		var oldvalue = this._x;
-		if( value - this._x < 1e-6)
+		if( Math.abs(value - this._x) > 1e-6)
 		{
 			this._hasChanged = true;
 		}
@@ -107,7 +107,7 @@ export class Corner extends EventDispatcher
 	set y(value)
 	{
 		var oldvalue = this._y;
-		if( value - this._y < 1e-6)
+		if( Math.abs(value - this._y) > 1e-6)
 		{
 			this._hasChanged = true;
 		}
@@ -126,7 +126,7 @@ export class Corner extends EventDispatcher
 		{
 			this._hasChanged = true;
 		}
-		this._elevation = Dimensioning.cmFromMeasureRaw(Number(value));
+		this._elevation = Number(value);//Dimensioning.cmFromMeasureRaw(Number(value));
 		if(this._hasChanged)
 		{
 			this.dispatchEvent({type:EVENT_CORNER_ATTRIBUTES_CHANGED, item:this, info:{from: oldvalue, to: this._elevation}});

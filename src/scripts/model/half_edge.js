@@ -228,8 +228,8 @@ export class HalfEdge extends EventDispatcher
 		// v3.y = this.wall.height;
 		// v4.y = this.wall.height;
 
-		v3.y = this.wall.getStart().elevation;
-		v4.y = this.wall.getEnd().elevation;
+		v3.y = this.wall.startElevation;
+		v4.y = this.wall.endElevation;
 
 		geometry.vertices = [v1, v2, v3, v4];
 		geometry.faces.push(new Face3(0, 1, 2));
@@ -238,7 +238,7 @@ export class HalfEdge extends EventDispatcher
 		geometry.computeBoundingBox();
 
 
-		this.plane = new Mesh(geometry, new MeshBasicMaterial({visible:false}));
+		this.plane = new Mesh(geometry, new MeshBasicMaterial({visible:true}));
 		//The below line was originally setting the plane visibility to false
 		//Now its setting visibility to true. This is necessary to be detected
 		//with the raycaster objects to click walls and floors.

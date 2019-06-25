@@ -49421,8 +49421,8 @@ var BP3DJS = (function (exports) {
   			// v3.y = this.wall.height;
   			// v4.y = this.wall.height;
 
-  			v3.y = this.wall.getStart().elevation;
-  			v4.y = this.wall.getEnd().elevation;
+  			v3.y = this.wall.startElevation;
+  			v4.y = this.wall.endElevation;
 
   			geometry.vertices = [v1, v2, v3, v4];
   			geometry.faces.push(new Face3(0, 1, 2));
@@ -49430,7 +49430,7 @@ var BP3DJS = (function (exports) {
   			geometry.computeFaceNormals();
   			geometry.computeBoundingBox();
 
-  			this.plane = new Mesh(geometry, new MeshBasicMaterial({ visible: false }));
+  			this.plane = new Mesh(geometry, new MeshBasicMaterial({ visible: true }));
   			//The below line was originally setting the plane visibility to false
   			//Now its setting visibility to true. This is necessary to be detected
   			//with the raycaster objects to click walls and floors.
@@ -50257,7 +50257,7 @@ var BP3DJS = (function (exports) {
   		},
   		set: function set(value) {
   			var oldvalue = this._x;
-  			if (value - this._x < 1e-6) {
+  			if (Math.abs(value - this._x) > 1e-6) {
   				this._hasChanged = true;
   			}
   			this._x = value;
@@ -50272,7 +50272,7 @@ var BP3DJS = (function (exports) {
   		},
   		set: function set(value) {
   			var oldvalue = this._y;
-  			if (value - this._y < 1e-6) {
+  			if (Math.abs(value - this._y) > 1e-6) {
   				this._hasChanged = true;
   			}
   			this._y = value;
@@ -50290,7 +50290,7 @@ var BP3DJS = (function (exports) {
   			if (value - this._elevation < 1e-6) {
   				this._hasChanged = true;
   			}
-  			this._elevation = Dimensioning.cmFromMeasureRaw(Number(value));
+  			this._elevation = Number(value); //Dimensioning.cmFromMeasureRaw(Number(value));
   			if (this._hasChanged) {
   				this.dispatchEvent({ type: EVENT_CORNER_ATTRIBUTES_CHANGED, item: this, info: { from: oldvalue, to: this._elevation } });
   			}
@@ -50537,9 +50537,11 @@ var BP3DJS = (function (exports) {
   		value: function getClosestCorner(point) {
   			var startVector = new Vector2(this.start.x, this.start.y);
   			var endVector = new Vector2(this.end.x, this.end.y);
-  			if (point.distanceTo(startVector) < 10) {
+  			var startDistance = point.distanceTo(startVector);
+  			var endDistance = point.distanceTo(endVector);
+  			if (startDistance <= this.thickness * 2) {
   				return this.start;
-  			} else if (point.distanceTo(endVector) < 10) {
+  			} else if (endDistance <= this.thickness * 2) {
   				return this.end;
   			}
   			return null;
@@ -50553,6 +50555,22 @@ var BP3DJS = (function (exports) {
   			if (this.end) {
   				this.end.updateAttachedRooms();
   			}
+  		}
+  	}, {
+  		key: 'startElevation',
+  		get: function get() {
+  			if (this.start && this.start != null) {
+  				return this.start.elevation;
+  			}
+  			return 0.0;
+  		}
+  	}, {
+  		key: 'endElevation',
+  		get: function get() {
+  			if (this.end && this.end != null) {
+  				return this.end.elevation;
+  			}
+  			return 0.0;
   		}
   	}]);
   	return Wall;
@@ -50596,10 +50614,11 @@ var BP3DJS = (function (exports) {
   		_this.generateRoofPlane();
 
   		var cornerids = [];
-  		_this.corners.forEach(function (corner) {
-  			corner.attachRoom(_this);
-  			cornerids.push(corner.id);
-  		});
+  		for (var i = 0; i < _this.corners.length; i++) {
+  			var c = _this.corners[i];
+  			c.attachRoom(_this);
+  			cornerids.push(c.id);
+  		}
   		_this._roomByCornersId = cornerids.join(',');
   		return _this;
   	}
@@ -51142,6 +51161,7 @@ var BP3DJS = (function (exports) {
   			});
   			corner.addEventListener(EVENT_CORNER_ATTRIBUTES_CHANGED, function (o) {
   				scope.dispatchEvent(o);
+  				scope.update();
   			});
 
   			this.dispatchEvent({ type: EVENT_NEW, item: this, newItem: corner });
@@ -51320,7 +51340,7 @@ var BP3DJS = (function (exports) {
   			});
 
   			cornerIds.forEach(function (corner) {
-  				floorplans.corners[corner.id] = { 'x': corner.x, 'y': corner.y, 'elevation': Dimensioning.cmToMeasureRaw(corner.elevation) };
+  				floorplans.corners[corner.id] = { 'x': Dimensioning.cmToMeasureRaw(corner.x), 'y': Dimensioning.cmToMeasureRaw(corner.y), 'elevation': Dimensioning.cmToMeasureRaw(corner.elevation) };
   			});
 
   			//		this.rooms.forEach((room)=>{
@@ -51368,9 +51388,9 @@ var BP3DJS = (function (exports) {
   			}
   			for (var id in floorplan.corners) {
   				var corner = floorplan.corners[id];
-  				corners[id] = this.newCorner(corner.x, corner.y, id);
+  				corners[id] = this.newCorner(Dimensioning.cmFromMeasureRaw(corner.x), Dimensioning.cmFromMeasureRaw(corner.y), id);
   				if (corner.elevation) {
-  					corners[id].elevation = corner.elevation;
+  					corners[id].elevation = Dimensioning.cmFromMeasureRaw(corner.elevation);
   				}
   			}
   			var scope = this;
@@ -51511,32 +51531,25 @@ var BP3DJS = (function (exports) {
   					scope.roomNameChanged(e);
   				});
   				room.addEventListener(EVENT_ROOM_ATTRIBUTES_CHANGED, function (o) {
+  					var room = o.item;
   					scope.dispatchEvent(o);
+  					if (scope.metaroomsdata[room.roomByCornersId]) {
+  						scope.metaroomsdata[room.roomByCornersId]['name'] = room.name;
+  					} else {
+  						scope.metaroomsdata[room.roomByCornersId] = {};
+  						scope.metaroomsdata[room.roomByCornersId]['name'] = room.name;
+  					}
   				});
 
   				if (scope.metaroomsdata) {
-  					// var allids = Object.keys(scope.metaroomsdata);
   					if (scope.metaroomsdata[room.roomByCornersId]) {
-  						room.name = scope.metaroomsdata[room.roomByCornersId];
+  						room.name = scope.metaroomsdata[room.roomByCornersId]['name'];
   					}
-  					// for (var i=0;i<allids.length;i++)
-  					// {
-  					// 		var keyName = allids[i];
-  					// 		var ids = keyName.split(',');
-  					// 		var isThisRoom = room.hasAllCornersById(ids);
-  					// 		if(isThisRoom)
-  					// 		{
-  					// 				room.name = scope.metaroomsdata[keyName]['name'];
-  					// 		}
-  					// }
   				}
-  			});
-
-  			// this.metaroomsdata = this.getMetaRoomData();
-  			this.assignOrphanEdges();
+  			});this.assignOrphanEdges();
   			this.updateFloorTextures();
   			this.dispatchEvent({ type: EVENT_UPDATED, item: this });
-  			// this.updated_rooms.fire();
+  			//		console.log('TOTAL WALLS ::: ', this.walls.length);
   		}
 
   		/**
@@ -104104,9 +104117,12 @@ var BP3DJS = (function (exports) {
   			} else {
   				if (vec3.y < this.sizeY / 2.0 + tolerance) {
   					vec3.y = this.sizeY / 2.0 + tolerance;
-  				} else if (vec3.y > edge.height - this.sizeY / 2.0 - tolerance) {
-  					vec3.y = edge.height - this.sizeY / 2.0 - tolerance;
   				}
+  				//Commenting the below condition where it will restrict the movement of the item to an uniform height
+  				//			else if (vec3.y > edge.height - this.sizeY / 2.0 - tolerance)
+  				//			{
+  				//				vec3.y = edge.height - this.sizeY / 2.0 - tolerance;
+  				//			}
   			}
   			vec3.z = this.getWallOffset();
   			vec3.applyMatrix4(edge.invInteriorTransform);
@@ -118200,6 +118216,13 @@ var BP3DJS = (function (exports) {
   		floorplan.addEventListener(EVENT_LOADED, function () {
   			scope.reset();
   		});
+
+  		function updateView() {
+  			scope.view.draw();
+  		}
+  		floorplan.addEventListener(EVENT_CORNER_ATTRIBUTES_CHANGED, updateView);
+  		floorplan.addEventListener(EVENT_WALL_ATTRIBUTES_CHANGED, updateView);
+  		floorplan.addEventListener(EVENT_ROOM_ATTRIBUTES_CHANGED, updateView);
   		return _this;
   	}
 
@@ -121273,6 +121296,10 @@ var BP3DJS = (function (exports) {
   		_this.planes = [];
   		_this.phantomPlanes = [];
   		_this.basePlanes = []; // always visible
+
+  		//Debug wall intersection planes. Edge.plane is the plane used for intersection
+  		//		this.phantomPlanes.push(this.edge.plane);//Enable this line to see the wall planes
+
   		_this.texture = new TextureLoader();
 
   		_this.lightMap = new TextureLoader().load('rooms/textures/walllightmap.png');
@@ -121295,6 +121322,7 @@ var BP3DJS = (function (exports) {
 
   		_this.visibilityfactor = true;
   		_this.init();
+
   		return _this;
   	}
 
@@ -121335,6 +121363,9 @@ var BP3DJS = (function (exports) {
   			scope.basePlanes.forEach(function (plane) {
   				scope.scene.remove(plane);
   			});
+  			scope.phantomPlanes.forEach(function (plane) {
+  				scope.scene.remove(plane);
+  			});
   			scope.planes = [];
   			scope.basePlanes = [];
   		}
@@ -121346,6 +121377,9 @@ var BP3DJS = (function (exports) {
   				scope.scene.add(plane);
   			});
   			this.basePlanes.forEach(function (plane) {
+  				scope.scene.add(plane);
+  			});
+  			this.phantomPlanes.forEach(function (plane) {
   				scope.scene.add(plane);
   			});
   			this.updateVisibility();
@@ -121448,7 +121482,6 @@ var BP3DJS = (function (exports) {
   			var extEndCorner = this.wall.getClosestCorner(this.edge.exteriorEnd());
 
   			if (extStartCorner == null || extEndCorner == null) {
-  				//Maybe this is an orphan wall. Let the garbage collector clean this up later
   				return;
   			}
 
@@ -121489,6 +121522,8 @@ var BP3DJS = (function (exports) {
   			// sides
   			this.planes.push(this.buildSideFillter(this.edge.interiorStart(), this.edge.exteriorStart(), extStartCorner.elevation, this.sideColor));
   			this.planes.push(this.buildSideFillter(this.edge.interiorEnd(), this.edge.exteriorEnd(), extEndCorner.elevation, this.sideColor));
+  			//		this.planes.push(this.buildSideFillter(this.edge.interiorStart(), this.edge.exteriorStart(), this.wall.startElevation, this.sideColor));
+  			//		this.planes.push(this.buildSideFillter(this.edge.interiorEnd(), this.edge.exteriorEnd(), extEndCorner.endElevation, this.sideColor));
   		}
 
   		// start, end have x and y attributes (i.e. corners)
@@ -121502,6 +121537,9 @@ var BP3DJS = (function (exports) {
   			var v4 = v1.clone();
   			v3.y = this.wall.getClosestCorner(end).elevation;
   			v4.y = this.wall.getClosestCorner(start).elevation;
+  			//		v3.y = this.wall.endElevation;
+  			//		v4.y = this.wall.startElevation;
+
   			var points = [v1.clone(), v2.clone(), v3.clone(), v4.clone()];
 
   			points.forEach(function (p) {
@@ -121579,6 +121617,12 @@ var BP3DJS = (function (exports) {
   			var b = this.toVec3(edge.exteriorEnd(), this.wall.getClosestCorner(edge.exteriorEnd()).elevation);
   			var c = this.toVec3(edge.interiorEnd(), this.wall.getClosestCorner(edge.interiorEnd()).elevation);
   			var d = this.toVec3(edge.interiorStart(), this.wall.getClosestCorner(edge.interiorStart()).elevation);
+
+  			//		var a = this.toVec3(edge.exteriorStart(), this.wall.startElevation);
+  			//		var b = this.toVec3(edge.exteriorEnd(), this.wall.endElevation);
+  			//		var c = this.toVec3(edge.interiorEnd(), this.wall.endElevation);
+  			//		var d = this.toVec3(edge.interiorStart(), this.wall.startElevation);
+
   			var fillerMaterial = new MeshBasicMaterial({ color: color, side: side });
 
   			var geometry = new Geometry();

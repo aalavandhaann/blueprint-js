@@ -38,10 +38,12 @@ export class Room extends EventDispatcher
 		this.generateRoofPlane();
 
 		var cornerids = [];
-		this.corners.forEach((corner)=>{
-			corner.attachRoom(this);
-			cornerids.push(corner.id);
-		});
+		for(var i=0;i<this.corners.length;i++)
+		{
+			var c = this.corners[i];
+			c.attachRoom(this);
+			cornerids.push(c.id);
+		}
 		this._roomByCornersId = cornerids.join(',');
 	}
 
@@ -229,13 +231,13 @@ export class Room extends EventDispatcher
 		this.areaCenter.multiplyScalar(1.0 / points.length);
 		for (var i=0;i<points.length;i++)
 		{
-				var inext = (i+1 ) % points.length;
-				var a = points[i];
-				var b = points[inext];
-				var ax_by = (a.x * b.y);
-				var ay_bx = (a.y * b.x);
-				var delta = ax_by - ay_bx;
-				this.area += delta;
+			var inext = (i+1 ) % points.length;
+			var a = points[i];
+			var b = points[inext];
+			var ax_by = (a.x * b.y);
+			var ay_bx = (a.y * b.x);
+			var delta = ax_by - ay_bx;
+			this.area += delta;
 
 		}
 		this.area = this.area;

@@ -234,10 +234,11 @@ export class WallItem extends Item
 			{
 				vec3.y = this.sizeY / 2.0 + tolerance;
 			}
-			else if (vec3.y > edge.height - this.sizeY / 2.0 - tolerance)
-			{
-				vec3.y = edge.height - this.sizeY / 2.0 - tolerance;
-			}
+			//Commenting the below condition where it will restrict the movement of the item to an uniform height
+//			else if (vec3.y > edge.height - this.sizeY / 2.0 - tolerance)
+//			{
+//				vec3.y = edge.height - this.sizeY / 2.0 - tolerance;
+//			}
 		}
 		vec3.z = this.getWallOffset();
 		vec3.applyMatrix4(edge.invInteriorTransform);

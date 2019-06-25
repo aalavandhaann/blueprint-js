@@ -286,7 +286,7 @@ export class Floorplan extends EventDispatcher
 				var existingCorner = this.corners[i];
 				if(existingCorner.distanceFromCorner(corner) < 50)
 				{
-          return existingCorner;
+					return existingCorner;
 				}
 		}
 		
@@ -294,6 +294,7 @@ export class Floorplan extends EventDispatcher
 		corner.addEventListener(EVENT_DELETED, function(o){scope.removeCorner(o.item);});
 		corner.addEventListener(EVENT_CORNER_ATTRIBUTES_CHANGED, function(o){
 			scope.dispatchEvent(o);
+			scope.update();
 			});
 		
 		this.dispatchEvent({type: EVENT_NEW, item: this, newItem: corner});
@@ -459,7 +460,7 @@ export class Floorplan extends EventDispatcher
 		});
 
 		cornerIds.forEach((corner)=>{
-			floorplans.corners[corner.id] = {'x': corner.x,'y': corner.y, 'elevation': Dimensioning.cmToMeasureRaw(corner.elevation)};
+			floorplans.corners[corner.id] = {'x': Dimensioning.cmToMeasureRaw(corner.x),'y': Dimensioning.cmToMeasureRaw(corner.y), 'elevation': Dimensioning.cmToMeasureRaw(corner.elevation)};
 		});
 
 //		this.rooms.forEach((room)=>{
@@ -508,10 +509,10 @@ export class Floorplan extends EventDispatcher
 		for (var id in floorplan.corners)
 		{
 			var corner = floorplan.corners[id];
-			corners[id] = this.newCorner(corner.x, corner.y, id);
+			corners[id] = this.newCorner(Dimensioning.cmFromMeasureRaw(corner.x), Dimensioning.cmFromMeasureRaw(corner.y), id);
 			if(corner.elevation)
 			{
-					corners[id].elevation = corner.elevation;
+				corners[id].elevation = Dimensioning.cmFromMeasureRaw(corner.elevation);
 			}
 		}
 		var scope = this;
@@ -646,34 +647,30 @@ export class Floorplan extends EventDispatcher
 			
 			room.addEventListener(EVENT_ROOM_NAME_CHANGED, (e)=>{scope.roomNameChanged(e);});
 			room.addEventListener(EVENT_ROOM_ATTRIBUTES_CHANGED, function(o){
-			scope.dispatchEvent(o);
+				var room = o.item;
+				scope.dispatchEvent(o);				
+				if(scope.metaroomsdata[room.roomByCornersId])
+				{
+					scope.metaroomsdata[room.roomByCornersId]['name'] = room.name;
+				}
+				else
+				{
+					scope.metaroomsdata[room.roomByCornersId] = {};
+					scope.metaroomsdata[room.roomByCornersId]['name'] = room.name;
+				}
 			});
 			
 			if(scope.metaroomsdata)
-			{
-				// var allids = Object.keys(scope.metaroomsdata);
+			{				
 				if(scope.metaroomsdata[room.roomByCornersId])
 				{
-					room.name = scope.metaroomsdata[room.roomByCornersId];
+					room.name = scope.metaroomsdata[room.roomByCornersId]['name'];
 				}
-				// for (var i=0;i<allids.length;i++)
-				// {
-				// 		var keyName = allids[i];
-				// 		var ids = keyName.split(',');
-				// 		var isThisRoom = room.hasAllCornersById(ids);
-				// 		if(isThisRoom)
-				// 		{
-				// 				room.name = scope.metaroomsdata[keyName]['name'];
-				// 		}
-				// }
 			}
-		});
-
-		// this.metaroomsdata = this.getMetaRoomData();
-		this.assignOrphanEdges();
+		});				this.assignOrphanEdges();
 		this.updateFloorTextures();
 		this.dispatchEvent({type: EVENT_UPDATED, item: this});
-// this.updated_rooms.fire();
+//		console.log('TOTAL WALLS ::: ', this.walls.length);
 	}
 
 	/**

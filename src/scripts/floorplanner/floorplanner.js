@@ -3,6 +3,7 @@ import {EventDispatcher} from 'three';
 import {cmPerPixel, pixelsPerCm, Dimensioning} from '../core/dimensioning.js';
 import {configDimUnit, Configuration} from '../core/configuration.js';
 import {EVENT_MODE_RESET, EVENT_LOADED} from '../core/events.js';
+import {EVENT_CORNER_ATTRIBUTES_CHANGED, EVENT_WALL_ATTRIBUTES_CHANGED, EVENT_ROOM_ATTRIBUTES_CHANGED} from '../core/events.js';
 import {EVENT_CORNER_2D_HOVER, EVENT_WALL_2D_HOVER, EVENT_ROOM_2D_HOVER} from '../core/events.js';
 import {EVENT_CORNER_2D_CLICKED, EVENT_ROOM_2D_CLICKED, EVENT_WALL_2D_CLICKED} from '../core/events.js';
 import {EVENT_CORNER_2D_DOUBLE_CLICKED, EVENT_ROOM_2D_DOUBLE_CLICKED, EVENT_WALL_2D_DOUBLE_CLICKED} from '../core/events.js';
@@ -10,7 +11,7 @@ import {EVENT_NOTHING_CLICKED} from '../core/events.js';
 import {FloorplannerView2D, floorplannerModes} from './floorplanner_view.js';
 
 /** how much will we move a corner to make a wall axis aligned (cm) */
-		export const snapTolerance = 25;
+export const snapTolerance = 25;
 /**
 * The Floorplanner implements an interactive tool for creation of floorplans in
 * 2D.
@@ -95,6 +96,14 @@ export class Floorplanner2D extends EventDispatcher
 		document.addEventListener('keyup', function(event){scope.keyUp(event)});
 		document.addEventListener('keydown', function(event){scope.keyDown(event)});
 		floorplan.addEventListener(EVENT_LOADED, function(){scope.reset();});
+		
+		function updateView()
+		{
+			scope.view.draw();
+		}
+		floorplan.addEventListener(EVENT_CORNER_ATTRIBUTES_CHANGED, updateView);
+		floorplan.addEventListener(EVENT_WALL_ATTRIBUTES_CHANGED, updateView);
+		floorplan.addEventListener(EVENT_ROOM_ATTRIBUTES_CHANGED, updateView);
 	}
 	
 	get selectedCorner()
