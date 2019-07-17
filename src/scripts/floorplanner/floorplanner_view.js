@@ -205,7 +205,8 @@ export class FloorplannerView2D
 			// dont draw labels on walls this short
 			return;
 		}
-		this.drawTextLabel(`m:${Dimensioning.cmToMeasure(length)}` ,this.viewmodel.convertX(pos.x),this.viewmodel.convertY(pos.y));
+		var label = (!wallInformation.labels)?'':wallInformation.midlinelabel;
+		this.drawTextLabel(`${label}${Dimensioning.cmToMeasure(length)}` ,this.viewmodel.convertX(pos.x),this.viewmodel.convertY(pos.y));
 	}
 
 	/** */
@@ -220,7 +221,8 @@ export class FloorplannerView2D
 		}
 		if(wallInformation.exterior)
 		{
-			this.drawTextLabel(`e:${Dimensioning.cmToMeasure(length)}` ,this.viewmodel.convertX(pos.x),this.viewmodel.convertY(pos.y+40));
+			var label = (!wallInformation.labels)?'':wallInformation.exteriorlabel;
+			this.drawTextLabel(`${label}${Dimensioning.cmToMeasure(length)}` ,this.viewmodel.convertX(pos.x),this.viewmodel.convertY(pos.y+40));
 		}
 	}
 
@@ -236,7 +238,8 @@ export class FloorplannerView2D
 		}
 		if(wallInformation.interior)
 		{
-			this.drawTextLabel(`i:${Dimensioning.cmToMeasure(length)}` ,this.viewmodel.convertX(pos.x),this.viewmodel.convertY(pos.y-40));
+			var label = (!wallInformation.labels)?'':wallInformation.interiorlabel;
+			this.drawTextLabel(`${label}${Dimensioning.cmToMeasure(length)}` ,this.viewmodel.convertX(pos.x),this.viewmodel.convertY(pos.y-40));
 		}
 		
 	}

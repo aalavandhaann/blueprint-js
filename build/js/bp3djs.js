@@ -48982,7 +48982,7 @@ var BP3DJS = (function (exports) {
 
   var config = { dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 10, systemUI: false };
 
-  var wallInformation = { exterior: true, interior: true, midline: true };
+  var wallInformation = { exterior: true, interior: true, midline: true, labels: true, exteriorlabel: 'e:', interiorlabel: 'i:', midlinelabel: 'm:' };
 
   /** Global configuration to customize the whole system.  */
   var Configuration = function () {
@@ -117903,7 +117903,8 @@ var BP3DJS = (function (exports) {
   				// dont draw labels on walls this short
   				return;
   			}
-  			this.drawTextLabel('m:' + Dimensioning.cmToMeasure(length), this.viewmodel.convertX(pos.x), this.viewmodel.convertY(pos.y));
+  			var label = !wallInformation.labels ? '' : wallInformation.midlinelabel;
+  			this.drawTextLabel('' + label + Dimensioning.cmToMeasure(length), this.viewmodel.convertX(pos.x), this.viewmodel.convertY(pos.y));
   		}
 
   		/** */
@@ -117918,7 +117919,8 @@ var BP3DJS = (function (exports) {
   				return;
   			}
   			if (wallInformation.exterior) {
-  				this.drawTextLabel('e:' + Dimensioning.cmToMeasure(length), this.viewmodel.convertX(pos.x), this.viewmodel.convertY(pos.y + 40));
+  				var label = !wallInformation.labels ? '' : wallInformation.exteriorlabel;
+  				this.drawTextLabel('' + label + Dimensioning.cmToMeasure(length), this.viewmodel.convertX(pos.x), this.viewmodel.convertY(pos.y + 40));
   			}
   		}
 
@@ -117934,7 +117936,8 @@ var BP3DJS = (function (exports) {
   				return;
   			}
   			if (wallInformation.interior) {
-  				this.drawTextLabel('i:' + Dimensioning.cmToMeasure(length), this.viewmodel.convertX(pos.x), this.viewmodel.convertY(pos.y - 40));
+  				var label = !wallInformation.labels ? '' : wallInformation.interiorlabel;
+  				this.drawTextLabel('' + label + Dimensioning.cmToMeasure(length), this.viewmodel.convertX(pos.x), this.viewmodel.convertY(pos.y - 40));
   			}
   		}
   	}, {

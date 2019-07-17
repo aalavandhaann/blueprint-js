@@ -13,7 +13,7 @@ export const configSystemUI = 'systemUI';
 
 export var config = {dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 10, systemUI: false};
 
-export var wallInformation = {exterior: true, interior: true, midline: true};
+export var wallInformation = {exterior: true, interior: true, midline: true, labels: true, exteriorlabel:'e:', interiorlabel:'i:', midlinelabel:'m:'};
 
 /** Global configuration to customize the whole system.  */
 export class Configuration 

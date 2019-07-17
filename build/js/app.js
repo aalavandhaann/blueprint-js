@@ -708,6 +708,10 @@ function datGUI(three, floorplanner)
 	f.add(BP3DJS.wallInformation, 'exterior').name('Exterior');
 	f.add(BP3DJS.wallInformation, 'interior').name('Interior');
 	f.add(BP3DJS.wallInformation, 'midline').name('Midline');
+	f.add(BP3DJS.wallInformation, 'labels').name('Labels');
+	f.add(BP3DJS.wallInformation, 'exteriorlabel').name('Label for Exterior');
+	f.add(BP3DJS.wallInformation, 'interiorlabel').name('Label for Interior');
+	f.add(BP3DJS.wallInformation, 'midlinelabel').name('Label for Midline');
 
 	cameraPropFolder = getCameraRangePropertiesFolder(gui, aCameraRange);
 	wallPropFolder = getWallAndFloorPropertiesFolder(gui, aWall);
