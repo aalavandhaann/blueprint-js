@@ -48982,6 +48982,8 @@ var BP3DJS = (function (exports) {
 
   var config = { dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 10, systemUI: false };
 
+  var wallInformation = { exterior: true, interior: true, midline: true };
+
   /** Global configuration to customize the whole system.  */
   var Configuration = function () {
   	function Configuration() {
@@ -117892,6 +117894,9 @@ var BP3DJS = (function (exports) {
   	}, {
   		key: 'drawWallLabelsMiddle',
   		value: function drawWallLabelsMiddle(wall) {
+  			if (!wallInformation.midline) {
+  				return;
+  			}
   			var pos = wall.wallCenter();
   			var length = wall.wallLength();
   			if (length < 60) {
@@ -117912,7 +117917,9 @@ var BP3DJS = (function (exports) {
   				// dont draw labels on walls this short
   				return;
   			}
-  			this.drawTextLabel('e:' + Dimensioning.cmToMeasure(length), this.viewmodel.convertX(pos.x), this.viewmodel.convertY(pos.y + 40));
+  			if (wallInformation.exterior) {
+  				this.drawTextLabel('e:' + Dimensioning.cmToMeasure(length), this.viewmodel.convertX(pos.x), this.viewmodel.convertY(pos.y + 40));
+  			}
   		}
 
   		/** */
@@ -117926,7 +117933,9 @@ var BP3DJS = (function (exports) {
   				// dont draw labels on walls this short
   				return;
   			}
-  			this.drawTextLabel('i:' + Dimensioning.cmToMeasure(length), this.viewmodel.convertX(pos.x), this.viewmodel.convertY(pos.y - 40));
+  			if (wallInformation.interior) {
+  				this.drawTextLabel('i:' + Dimensioning.cmToMeasure(length), this.viewmodel.convertX(pos.x), this.viewmodel.convertY(pos.y - 40));
+  			}
   		}
   	}, {
   		key: 'drawTextLabel',
@@ -170155,6 +170164,7 @@ var BP3DJS = (function (exports) {
   exports.wallColor = wallColor;
   exports.wallColorHover = wallColorHover;
   exports.wallColorSelected = wallColorSelected;
+  exports.wallInformation = wallInformation;
   exports.wallWidth = wallWidth;
   exports.wallWidthHover = wallWidthHover;
   exports.wallWidthSelected = wallWidthSelected;

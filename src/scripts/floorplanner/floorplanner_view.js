@@ -4,6 +4,7 @@ import {Utils} from '../core/utils.js';
 import {EVENT_UPDATED} from '../core/events.js';
 
 import {Dimensioning} from '../core/dimensioning.js';
+import {wallInformation} from '../core/configuration.js';
 import {CarbonSheet} from './carbonsheet.js';
 
 /** */
@@ -193,14 +194,18 @@ export class FloorplannerView2D
 
 	drawWallLabelsMiddle(wall)
 	{
-			var pos = wall.wallCenter();
-			var length = wall.wallLength();
-			if (length < 60)
-			{
-				// dont draw labels on walls this short
-				return;
-			}
-			this.drawTextLabel(`m:${Dimensioning.cmToMeasure(length)}` ,this.viewmodel.convertX(pos.x),this.viewmodel.convertY(pos.y));
+		if(! wallInformation.midline)
+		{
+			return;
+		}
+		var pos = wall.wallCenter();
+		var length = wall.wallLength();
+		if (length < 60)
+		{
+			// dont draw labels on walls this short
+			return;
+		}
+		this.drawTextLabel(`m:${Dimensioning.cmToMeasure(length)}` ,this.viewmodel.convertX(pos.x),this.viewmodel.convertY(pos.y));
 	}
 
 	/** */
@@ -213,7 +218,10 @@ export class FloorplannerView2D
 			// dont draw labels on walls this short
 			return;
 		}
-		this.drawTextLabel(`e:${Dimensioning.cmToMeasure(length)}` ,this.viewmodel.convertX(pos.x),this.viewmodel.convertY(pos.y+40));
+		if(wallInformation.exterior)
+		{
+			this.drawTextLabel(`e:${Dimensioning.cmToMeasure(length)}` ,this.viewmodel.convertX(pos.x),this.viewmodel.convertY(pos.y+40));
+		}
 	}
 
 	/** */
@@ -226,7 +234,11 @@ export class FloorplannerView2D
 			// dont draw labels on walls this short
 			return;
 		}
-		this.drawTextLabel(`i:${Dimensioning.cmToMeasure(length)}` ,this.viewmodel.convertX(pos.x),this.viewmodel.convertY(pos.y-40));
+		if(wallInformation.interior)
+		{
+			this.drawTextLabel(`i:${Dimensioning.cmToMeasure(length)}` ,this.viewmodel.convertX(pos.x),this.viewmodel.convertY(pos.y-40));
+		}
+		
 	}
 
 	drawTextLabel(label, x, y, textcolor='#000000', strokecolor='#ffffff', style='normal')

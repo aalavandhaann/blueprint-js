@@ -13,6 +13,8 @@ export const configSystemUI = 'systemUI';
 
 export var config = {dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 10, systemUI: false};
 
+export var wallInformation = {exterior: true, interior: true, midline: true};
+
 /** Global configuration to customize the whole system.  */
 export class Configuration 
 {

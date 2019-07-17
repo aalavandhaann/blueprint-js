@@ -698,15 +698,23 @@ function datGUI(three, floorplanner)
 	aCameraRange = new CameraProperties();
 	aWall = new WallProperties();
 	anItem = new ItemProperties(gui);
-
+	
 	aCameraRange.three = three;
 
-	globalPropFolder = getGlobalPropertiesFolder(gui, aGlobal);
+	globalPropFolder = getGlobalPropertiesFolder(gui, aGlobal);	
 	carbonPropsFolder = getCarbonSheetPropertiesFolder(gui, floorplanner.carbonSheet, aGlobal);
+	
+	var f = gui.addFolder('Wall Measurements');
+	f.add(BP3DJS.wallInformation, 'exterior').name('Exterior');
+	f.add(BP3DJS.wallInformation, 'interior').name('Interior');
+	f.add(BP3DJS.wallInformation, 'midline').name('Midline');
 
 	cameraPropFolder = getCameraRangePropertiesFolder(gui, aCameraRange);
 	wallPropFolder = getWallAndFloorPropertiesFolder(gui, aWall);
 	itemPropFolder = getItemPropertiesFolder(gui, anItem);
+	
+	
+	
 }
 
 
