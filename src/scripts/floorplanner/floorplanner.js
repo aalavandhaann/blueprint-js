@@ -279,6 +279,7 @@ export class Floorplanner2D extends EventDispatcher
 			this._clickedWallControl = this.floorplan.overlappedControlPoint(this._clickedWall, this.mouseX, this.mouseY);
 			if(this._clickedWallControl != null)
 			{
+				this.view.draw();
 				return;
 			}
 		}

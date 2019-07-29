@@ -386,7 +386,7 @@ export class Floorplan extends EventDispatcher
 	**/
 	overlappedControlPoint(wall, x, y, tolerance)
 	{
-		tolerance = tolerance || defaultFloorPlanTolerance;
+		tolerance = tolerance || defaultFloorPlanTolerance*5;
 		if (wall.a.distanceTo(new Vector2(x, y)) < tolerance && wall.wallType == WallTypes.CURVED)
 		{
 			return wall.a;
