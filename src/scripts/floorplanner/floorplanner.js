@@ -34,6 +34,8 @@ export class Floorplanner2D extends EventDispatcher
 		/** */
 		this._clickedWall = null;
 		/** */
+		this._clickedWallControl = null;
+		/** */
 		this._clickedCorner = null;
 		/** */
 		this._clickedRoom = null;
@@ -78,8 +80,9 @@ export class Floorplanner2D extends EventDispatcher
 		//		var pixelsPerFoot = pixelsPerFoot;
 		this.cmPerPixel = cmPerPixel;
 		this.pixelsPerCm = pixelsPerCm;
-
-		this.wallWidth = 10.0 * this.pixelsPerCm;
+		
+		this.wallWidth = Dimensioning.cmToPixel(Configuration.getNumericValue('wallThickness'));
+//		this.wallWidth = 10.0 * this.pixelsPerCm;
 		this.gridsnapmode = false;
 		this.shiftkey = false;
 		// Initialization:
@@ -265,12 +268,27 @@ export class Floorplanner2D extends EventDispatcher
 			}
 		}
 		
-		this.mouseX = (event.clientX - this.canvasElement.offset().left)  * this.cmPerPixel + this.originX * this.cmPerPixel;
-		this.mouseY = (event.clientY - this.canvasElement.offset().top) * this.cmPerPixel + this.originY * this.cmPerPixel;
+		this.mouseX = Dimensioning.pixelToCm((event.clientX - this.canvasElement.offset().left)) + Dimensioning.pixelToCm(this.originX);
+		this.mouseY = Dimensioning.pixelToCm((event.clientY - this.canvasElement.offset().top)) + Dimensioning.pixelToCm(this.originY);
+		
+//		this.mouseX = (event.clientX - this.canvasElement.offset().left)  * this.cmPerPixel + this.originX * this.cmPerPixel;
+//		this.mouseY = (event.clientY - this.canvasElement.offset().top) * this.cmPerPixel + this.originY * this.cmPerPixel;
+		
+		if(this._clickedWall)
+		{
+			this._clickedWallControl = this.floorplan.overlappedControlPoint(this._clickedWall, this.mouseX, this.mouseY);
+			if(this._clickedWallControl != null)
+			{
+				return;
+			}
+		}
+		
+		
 		var mDownCorner = this.floorplan.overlappedCorner(this.mouseX, this.mouseY);
 		var mDownWall = this.floorplan.overlappedWall(this.mouseX, this.mouseY);
 		var mDownRoom = this.floorplan.overlappedRoom(this.mouseX, this.mouseY);
-
+		this._clickedWallControl = null;
+		
 		if(mDownCorner == null && mDownWall == null && mDownRoom == null)
 		{
 			this._clickedCorner = null;
@@ -281,18 +299,27 @@ export class Floorplanner2D extends EventDispatcher
 		
 		else if(mDownCorner != null)
 		{
+			this._clickedCorner = undefined;
+			this._clickedWall = undefined;
+			this._clickedRoom = undefined;
 			this._clickedCorner = mDownCorner;
 			this.floorplan.dispatchEvent({type:EVENT_CORNER_2D_CLICKED, item: this._clickedCorner});
 		}
 		
 		else if(mDownWall != null)
 		{
+			this._clickedCorner = undefined;
+			this._clickedWall = undefined;
+			this._clickedRoom = undefined;
 			this._clickedWall = mDownWall;
 			this.floorplan.dispatchEvent({type:EVENT_WALL_2D_CLICKED, item: this._clickedWall});
 		}
 		
 		else if(mDownRoom != null)
 		{
+			this._clickedCorner = undefined;
+			this._clickedWall = undefined;
+			this._clickedRoom = undefined;
 			this._clickedRoom = mDownRoom;
 			this.floorplan.dispatchEvent({type:EVENT_ROOM_2D_CLICKED, item: this._clickedRoom});
 		}
@@ -313,8 +340,12 @@ export class Floorplanner2D extends EventDispatcher
 		this.rawMouseX = event.clientX;
 		this.rawMouseY = event.clientY;
 
-		this.mouseX = (event.clientX - this.canvasElement.offset().left)  * this.cmPerPixel + this.originX * this.cmPerPixel;
-		this.mouseY = (event.clientY - this.canvasElement.offset().top) * this.cmPerPixel + this.originY * this.cmPerPixel;
+		
+		this.mouseX = Dimensioning.pixelToCm(event.clientX - this.canvasElement.offset().left) + Dimensioning.pixelToCm(this.originX);
+		this.mouseY = Dimensioning.pixelToCm(event.clientY - this.canvasElement.offset().top) + Dimensioning.pixelToCm(this.originY);
+		
+//		this.mouseX = (event.clientX - this.canvasElement.offset().left)  * this.cmPerPixel + this.originX * this.cmPerPixel;
+//		this.mouseY = (event.clientY - this.canvasElement.offset().top) * this.cmPerPixel + this.originY * this.cmPerPixel;
 
 
 		// update target (snapped position of actual mouse)
@@ -372,7 +403,7 @@ export class Floorplanner2D extends EventDispatcher
 		}
 
 		// panning
-		if (this.mouseDown && !this.activeCorner && !this.activeWall)
+		if (this.mouseDown && !this.activeCorner && !this.activeWall && this._clickedWallControl == null)
 		{
 			this.originX += (this.lastX - this.rawMouseX);
 			this.originY += (this.lastY - this.rawMouseY);
@@ -384,6 +415,14 @@ export class Floorplanner2D extends EventDispatcher
 		// dragging
 		if (this.mode == floorplannerModes.MOVE && this.mouseDown)
 		{
+			if(this._clickedWallControl != null)
+			{
+				this._clickedWallControl.x = this.mouseX;
+				this._clickedWallControl.y = this.mouseY;
+				this._clickedWall.updateControlVectors();
+				this.view.draw();
+				return;
+			}
 			if (this.activeCorner)
 			{
 				if(this.gridsnapmode)
@@ -403,7 +442,8 @@ export class Floorplanner2D extends EventDispatcher
 			}
 			else if (this.activeWall)
 			{
-				this.activeWall.relativeMove((this.rawMouseX - this.lastX) * this.cmPerPixel, (this.rawMouseY - this.lastY) * this.cmPerPixel);
+				this.activeWall.relativeMove(Dimensioning.pixelToCm(this.rawMouseX - this.lastX), Dimensioning.pixelToCm(this.rawMouseY - this.lastY));
+//				this.activeWall.relativeMove((this.rawMouseX - this.lastX) * this.cmPerPixel, (this.rawMouseY - this.lastY) * this.cmPerPixel);
 				if(this.gridsnapmode)
 				{
 					this.activeWall.snapToAxis(snapTolerance);
@@ -494,19 +534,25 @@ export class Floorplanner2D extends EventDispatcher
 		var centerX = this.canvasElement.innerWidth() / 2.0;
 		var centerY = this.canvasElement.innerHeight() / 2.0;
 		var centerFloorplan = this.floorplan.getCenter();
-		this.originX = centerFloorplan.x * this.pixelsPerCm - centerX;
-		this.originY = centerFloorplan.z * this.pixelsPerCm - centerY;
+		
+		this.originX = Dimensioning.cmToPixel(centerFloorplan.x) - centerX;
+		this.originY = Dimensioning.cmToPixel(centerFloorplan.z) - centerY;
+		
+//		this.originX = centerFloorplan.x * this.pixelsPerCm - centerX;
+//		this.originY = centerFloorplan.z * this.pixelsPerCm - centerY;
 	}
 
 	/** Convert from THREEjs coords to canvas coords. */
 	convertX(x)
 	{
-		return (x - (this.originX * this.cmPerPixel)) * this.pixelsPerCm;
+		return Dimensioning.cmToPixel(x - Dimensioning.pixelToCm(this.originX));
+//		return (x - (this.originX * this.cmPerPixel)) * this.pixelsPerCm;
 	}
 
 	/** Convert from THREEjs coords to canvas coords. */
 	convertY(y)
 	{
-		return (y - (this.originY * this.cmPerPixel)) * this.pixelsPerCm;
+		return Dimensioning.cmToPixel(y - Dimensioning.pixelToCm(this.originY));
+//		return (y - (this.originY * this.cmPerPixel)) * this.pixelsPerCm;
 	}
 }

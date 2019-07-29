@@ -1,4 +1,5 @@
 import {EventDispatcher, Vector2} from 'three';
+import {WallTypes} from '../core/constants.js';
 import {EVENT_ACTION,EVENT_MOVED,EVENT_DELETED} from '../core/events.js';
 import {Configuration,configWallThickness,configWallHeight} from '../core/configuration.js';
 import {Utils} from '../core/utils.js';
@@ -25,6 +26,19 @@ export class Wall extends EventDispatcher
 		this.start = start;
 		this.end = end;
 		this.name = 'wall';
+		this._walltype = WallTypes.STRAIGHT;
+		
+		var o = new Vector2(0, 0);
+		var abvector = end.location.clone().sub(start.location).multiplyScalar(0.5);
+		
+		var ab135plus = abvector.clone().rotateAround(o, Math.PI*0.75);
+		var ab45plus = abvector.clone().rotateAround(o, Math.PI*0.25);
+		
+		this._a = start.location.clone().add(ab45plus);
+		this._b = end.location.clone().add(ab135plus);
+		
+		this._a_vector = this._a.clone().sub(start.location);
+		this._b_vector = this._b.clone().sub(start.location);
 
 		this.id = this.getUuid();
 
@@ -67,6 +81,46 @@ export class Wall extends EventDispatcher
 		/** Actions to be applied explicitly. */
 		this.action_callbacks = null;
 	}
+	
+	get a()
+	{
+		return this._a;
+	}
+	
+	set a(location)
+	{
+		this._a.x = location.x;
+		this._a.y = location.y;
+		this._a_vector = this._a.clone().sub(this.start.location);
+	}
+	
+	get b()
+	{
+		return this._b;
+	}
+	
+	set b(location)
+	{
+		this._b.x = location.x;
+		this._b.y = location.y;
+		this._b_vector = this._b.clone().sub(this.start.location);
+	}
+	
+	get aVector()
+	{
+		return this._a_vector.clone();
+	}
+	
+	get bVector()
+	{
+		return this._b_vector.clone();
+	}
+	
+	updateControlVectors()
+	{
+		this._a_vector = this._a.clone().sub(this.start.location);
+		this._b_vector = this._b.clone().sub(this.start.location);
+	}
 
 	getUuid()
 	{
@@ -79,7 +133,7 @@ export class Wall extends EventDispatcher
 		this.backEdge = null;
 		this.orphan = false;
 	}
-
+	
 	snapToAxis(tolerance)
 	{
 		// order here is important, but unfortunately arbitrary
@@ -117,6 +171,8 @@ export class Wall extends EventDispatcher
 	{
 		this.start.relativeMove(dx, dy);
 		this.end.relativeMove(dx, dy);
+		this.a = this.start.location.clone().add(this._a_vector);
+		this.b = this.start.location.clone().add(this._b_vector);
 	}
 
 	fireMoved()
@@ -137,6 +193,19 @@ export class Wall extends EventDispatcher
 //			this.backEdge.dispatchEvent({type: EVENT_REDRAW});
 			this.backEdge.dispatchRedrawEvent();
 			//this.backEdge.redrawCallbacks.fire();
+		}
+	}
+		
+	get wallType()
+	{
+		return this._walltype;
+	}
+	
+	set wallType(value)
+	{
+		if(value == WallTypes.STRAIGHT || value == WallTypes.CURVED)
+		{
+			this._walltype = value;
 		}
 	}
 	

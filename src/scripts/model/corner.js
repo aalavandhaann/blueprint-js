@@ -57,6 +57,14 @@ export class Corner extends EventDispatcher
 			* @type {Number}
 		**/
 		this._y = y;
+		
+		/**
+		* @property {Vector2} co The position as Vector2
+		* @type {Vector2}
+		* @see https://threejs.org/docs/#api/en/math/Vector2
+		**/
+		this._co = new Vector2(this._x, this._y);
+	
 		/**
 			* @property {Number} _elevation The elevation at this corner
 			* @type {Number}
@@ -78,6 +86,19 @@ export class Corner extends EventDispatcher
 		* @type {Boolean}
 		**/
 		this._hasChanged = false;
+	}
+	
+	get location()
+	{
+		return this._co;
+	}
+	
+	set location(xy)
+	{
+		this._co.x = xy.x
+		this._co.y = xy.y;
+		this.x = xy.x;
+		this.y = xy.y;
 	}
 	
 	get x()
@@ -294,6 +315,9 @@ export class Corner extends EventDispatcher
 	{
 		this.x = newX;
 		this.y = newY;
+		this._co.x = this.x;
+		this._co.y = this.y;
+		
 		this.mergeWithIntersected();
 
 		this.dispatchEvent({type:EVENT_MOVED, item: this, position: new Vector2(this.x, this.y)});
@@ -477,8 +501,9 @@ export class Corner extends EventDispatcher
 	{
 		var i = 0;
 		// update position to other corner's
-		this.x = corner.x;
-		this.y = corner.y;
+//		this.x = corner.x;
+//		this.y = corner.y;
+		this.move(corner.x, corner.y)
 		// absorb the other corner's wallStarts and wallEnds
 		for (i = corner.wallStarts.length - 1; i >= 0; i--)
 		{
@@ -516,8 +541,9 @@ export class Corner extends EventDispatcher
 			{
 				// update position to be on wall
 				var intersection = Utils.closestPointOnLine(new Vector2(this.x, this.y), wall.getStart(), wall.getEnd());
-				this.x = intersection.x;
-				this.y = intersection.y;
+//				this.x = intersection.x;
+//				this.y = intersection.y;
+				this.move(intersection.x, intersection.y)
 				// merge this corner into wall by breaking wall into two parts
 				this.floorplan.newWall(this, wall.getEnd());
 				wall.setEnd(this);

@@ -11,9 +11,11 @@ export const configWallThickness = 'wallThickness';
 
 export const configSystemUI = 'systemUI';
 
-export var config = {dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 10, systemUI: false};
+export const scale = 'scale';
 
-export var wallInformation = {exterior: true, interior: true, midline: true, labels: true, exteriorlabel:'e:', interiorlabel:'i:', midlinelabel:'m:'};
+export var config = {dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 10, systemUI: false, scale: 1};
+
+export var wallInformation = {exterior: false, interior: false, midline: true, labels: true, exteriorlabel:'e:', interiorlabel:'i:', midlinelabel:'m:'};
 
 /** Global configuration to customize the whole system.  */
 export class Configuration 
@@ -58,6 +60,7 @@ export class Configuration
 		case configSystemUI:
 		case configWallHeight:
 		case configWallThickness:
+		case scale:
 //			return Number(this.data[key]);
 			return Number(Configuration.getData()[key]);
 		default:

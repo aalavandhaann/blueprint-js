@@ -3,6 +3,8 @@ import {EVENT_CORNER_ATTRIBUTES_CHANGED, EVENT_WALL_ATTRIBUTES_CHANGED, EVENT_RO
 import {EventDispatcher, Vector2, Vector3} from 'three';
 import {Utils} from '../core/utils.js';
 import {Dimensioning} from '../core/dimensioning.js';
+import {WallTypes} from '../core/constants.js';
+import {Version} from '../core/version.js';
 
 import {HalfEdge} from './half_edge.js';
 import {Corner} from './corner.js';
@@ -217,6 +219,11 @@ export class Floorplan extends EventDispatcher
 				var nCorner = this.newCorner(iPoint.x, iPoint.y);
 				newCorners.push(nCorner);
 				intersections = true;
+				//Curved walls cannot be intersected. So make them Straight walls again
+				if(twall.wallType == WallTypes.CURVED)
+				{
+					twall.wallType = WallTypes.STRAIGHT;
+				}
 			}
 		}
 		for( i=0;i<this.corners.length;i++)
@@ -370,6 +377,28 @@ export class Floorplan extends EventDispatcher
 
 			return null;
 	}
+	
+	/** Gets the Control of a Curved Wall overlapping the location x, y at a tolerance.
+	* @param {Number} x
+	* @param {Number} y
+	* @param {Number} tolerance
+	* @return {Corner}
+	**/
+	overlappedControlPoint(wall, x, y, tolerance)
+	{
+		tolerance = tolerance || defaultFloorPlanTolerance;
+		if (wall.a.distanceTo(new Vector2(x, y)) < tolerance && wall.wallType == WallTypes.CURVED)
+		{
+			return wall.a;
+		}
+		
+		else if (wall.b.distanceTo(new Vector2(x, y)) < tolerance && wall.wallType == WallTypes.CURVED)
+		{
+			return wall.b;
+		}
+		
+		return null;
+	}
 
 	/** Gets the Corner overlapping the location x, y at a tolerance.
 		* @param {Number} x
@@ -435,7 +464,7 @@ export class Floorplan extends EventDispatcher
 	**/
 	saveFloorplan()
 	{
-		var floorplans = {corners: {}, walls: [], rooms: {}, wallTextures: [], floorTextures: {}, newFloorTextures: {}, carbonSheet:{}};
+		var floorplans = {version:Version.getTechnicalVersion(), corners: {}, walls: [], rooms: {}, wallTextures: [], floorTextures: {}, newFloorTextures: {}, carbonSheet:{}};
 		var cornerIds = [];
 // writing all the corners based on the corners array
 // is having a bug. This is because some walls have corners
@@ -452,7 +481,10 @@ export class Floorplan extends EventDispatcher
 					'corner1': wall.getStart().id,
 					'corner2': wall.getEnd().id,
 					'frontTexture': wall.frontTexture,
-					'backTexture': wall.backTexture
+					'backTexture': wall.backTexture,
+					'wallType': wall.wallType.description,
+					'a':{x: wall.a.x, y:wall.a.y},
+					'b':{x: wall.b.x, y:wall.b.y},
 				});
 				cornerIds.push(wall.getStart());
 				cornerIds.push(wall.getEnd());
@@ -499,8 +531,7 @@ export class Floorplan extends EventDispatcher
 	**/
 	loadFloorplan(floorplan)
 	{
-		this.reset();
-
+		this.reset();		
 		var corners = {};
 		if (floorplan == null || !('corners' in floorplan) || !('walls' in floorplan))
 		{
@@ -518,6 +549,7 @@ export class Floorplan extends EventDispatcher
 		var scope = this;
 		floorplan.walls.forEach((wall) => {
 			var newWall = scope.newWall(corners[wall.corner1], corners[wall.corner2]);
+			
 			if (wall.frontTexture)
 			{
 				newWall.frontTexture = wall.frontTexture;
@@ -525,6 +557,20 @@ export class Floorplan extends EventDispatcher
 			if (wall.backTexture)
 			{
 				newWall.backTexture = wall.backTexture;
+			}
+			//Adding of a, b, wallType (straight, curved) for walls happened with introduction of 0.0.2a
+			if(Version.isVersionHigherThan(floorplan.version, '0.0.2a'))
+			{
+				newWall.a = wall.a;
+				newWall.b = wall.b;
+				if(wall.wallType == 'CURVED')
+				{
+					newWall.wallType = WallTypes.CURVED;
+				}
+				else
+				{
+					newWall.wallType = WallTypes.STRAIGHT;
+				}
 			}
 		});
 

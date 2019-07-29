@@ -194,8 +194,11 @@ export class Edge extends EventDispatcher
 
 	updatePlanes()
 	{
-		var extStartCorner = this.wall.getClosestCorner(this.edge.exteriorStart());
-		var extEndCorner = this.wall.getClosestCorner(this.edge.exteriorEnd());		
+//		var extStartCorner = this.wall.getClosestCorner(this.edge.exteriorStart());
+//		var extEndCorner = this.wall.getClosestCorner(this.edge.exteriorEnd());		
+		
+		var extStartCorner = this.edge.getStart();
+		var extEndCorner = this.edge.getEnd();
 
 		if(extStartCorner == null || extEndCorner == null)
 		{
@@ -252,10 +255,12 @@ export class Edge extends EventDispatcher
 		var v2 = this.toVec3(end);
 		var v3 = v2.clone();
 		var v4 = v1.clone();
-		v3.y = this.wall.getClosestCorner(end).elevation;
-		v4.y = this.wall.getClosestCorner(start).elevation;
-//		v3.y = this.wall.endElevation;
-//		v4.y = this.wall.startElevation;
+		
+		v3.y = this.edge.getEnd().elevation;
+		v4.y = this.edge.getStart().elevation;
+		
+//		v3.y = this.wall.getClosestCorner(end).elevation;
+//		v4.y = this.wall.getClosestCorner(start).elevation;
 		
 		var points = [v1.clone(), v2.clone(), v3.clone(), v4.clone()];
 
@@ -329,15 +334,16 @@ export class Edge extends EventDispatcher
 
 	buildFillerVaryingHeights(edge, side, color)
 	{
-		var a = this.toVec3(edge.exteriorStart(), this.wall.getClosestCorner(edge.exteriorStart()).elevation);
-		var b = this.toVec3(edge.exteriorEnd(), this.wall.getClosestCorner(edge.exteriorEnd()).elevation);
-		var c = this.toVec3(edge.interiorEnd(), this.wall.getClosestCorner(edge.interiorEnd()).elevation);
-		var d = this.toVec3(edge.interiorStart(), this.wall.getClosestCorner(edge.interiorStart()).elevation);
+		var a = this.toVec3(edge.exteriorStart(), this.edge.getStart().elevation);
+		var b = this.toVec3(edge.exteriorEnd(), this.edge.getEnd().elevation);
+		var c = this.toVec3(edge.interiorEnd(), this.edge.getEnd().elevation);
+		var d = this.toVec3(edge.interiorStart(), this.edge.getStart().elevation);
 		
-//		var a = this.toVec3(edge.exteriorStart(), this.wall.startElevation);
-//		var b = this.toVec3(edge.exteriorEnd(), this.wall.endElevation);
-//		var c = this.toVec3(edge.interiorEnd(), this.wall.endElevation);
-//		var d = this.toVec3(edge.interiorStart(), this.wall.startElevation);
+//		var a = this.toVec3(edge.exteriorStart(), this.wall.getClosestCorner(edge.exteriorStart()).elevation);
+//		var b = this.toVec3(edge.exteriorEnd(), this.wall.getClosestCorner(edge.exteriorEnd()).elevation);
+//		var c = this.toVec3(edge.interiorEnd(), this.wall.getClosestCorner(edge.interiorEnd()).elevation);
+//		var d = this.toVec3(edge.interiorStart(), this.wall.getClosestCorner(edge.interiorStart()).elevation);
+		
 		
 		var fillerMaterial = new MeshBasicMaterial({color: color,side: side});
 

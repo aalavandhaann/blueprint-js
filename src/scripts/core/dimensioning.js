@@ -27,6 +27,16 @@ export const dimensioningOptions = [dimInch, dimFeetAndInch, dimMeter, dimCentiM
 /** Dimensioning functions. */
 export class Dimensioning
 {
+	static cmToPixel(cm)
+	{
+		return cm * pixelsPerCm * Configuration.getNumericValue('scale');
+	}
+	
+	static pixelToCm(pixel)
+	{
+		return pixel * cmPerPixel * (1.0 / Configuration.getNumericValue('scale'));
+	}
+	
 	static roundOff(value, decimals)
 	{
 			return Math.round(decimals * value) / decimals;

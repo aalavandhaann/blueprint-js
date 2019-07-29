@@ -289,6 +289,33 @@ var RoomProperties = function(room, gui)
 	return this.f;
 }
 
+var Wall2DProperties = function(wall2d, gui)
+{
+	var scope = this;
+	this.gui = gui;
+	this.wall2d = wall2d;		
+	this.walltype = 'Straight';
+	function onChangeWallType()
+	{
+		if(scope.walltype == 'Straight')
+		{
+			scope.wall2d.wallType = BP3DJS.WallTypes.STRAIGHT;
+		}
+		else if(scope.walltype == 'Curved')
+		{
+			scope.wall2d.wallType = BP3DJS.WallTypes.CURVED;
+		}		 
+	}
+	this.options = ['Straight', 'Curved'];
+	if(this.wall2d.wallType == BP3DJS.WallTypes.CURVED)
+	{
+		this.walltype = 'Curved';
+	}
+	this.f = gui.addFolder('Current Wall 2D');
+	this.typecontrol = f.add(this, 'walltype', this.options).name("Wall Type").onChange(()=>{onChangeWallType()});
+	return this.f;
+}
+
 var ItemProperties = function(gui)
 {
 	this.name = 'an item';
@@ -531,6 +558,10 @@ function addBlueprintListeners(blueprint3d)
 		{
     		currentFolder = RoomProperties(o.item, gui);//getRoomPropertiesFolder(gui, );
 		}
+    	else if(o.type == BP3DJS.EVENT_WALL_2D_CLICKED)
+		{
+    		currentFolder = Wall2DProperties(o.item, gui);
+		}
     	if(currentFolder)
 		{
     		currentFolder.open();
@@ -605,7 +636,6 @@ function getGlobalPropertiesFolder(gui, global)
 
 function getCarbonSheetPropertiesFolder(gui, carbonsheet, globalproperties)
 {
-	console.log('CARBON SHEET ', carbonsheet, carbonsheet.x);
 	var f = gui.addFolder('Carbon Sheet');
 	var url = f.add(carbonsheet, 'url').name('Url');
 	var width = f.add(carbonsheet, 'width').name('Real Width').max(1000.0).step(0.01);
@@ -717,8 +747,8 @@ function datGUI(three, floorplanner)
 	wallPropFolder = getWallAndFloorPropertiesFolder(gui, aWall);
 	itemPropFolder = getItemPropertiesFolder(gui, anItem);
 	
-	
-	
+	var f = gui.addFolder('View 2D');
+	f.add(BP3DJS.config, 'scale', 0.25, 5, ).step(0.25);
 }
 
 

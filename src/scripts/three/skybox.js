@@ -101,7 +101,6 @@ export class Skybox extends EventDispatcher
 			}
 			this.sky.visible = true;
 		}
-		console.log('NOW UPDATE THE SCENE');
 		this.scene.needsUpdate = true;
 	}
 	
