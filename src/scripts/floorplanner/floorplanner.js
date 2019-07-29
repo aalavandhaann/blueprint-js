@@ -245,11 +245,14 @@ export class Floorplanner2D extends EventDispatcher
 		{
 			this.rawMouseX = event.touches[0].clientX;
 			this.rawMouseY = event.touches[0].clientY;
+			//The below line is very important for touch events to work
+			event = event.touches[0];
 		}
 
 		this.lastX = this.rawMouseX;
 		this.lastY = this.rawMouseY;
-
+		
+				
 		// delete
 		if (this.mode == floorplannerModes.DELETE)
 		{
@@ -269,7 +272,7 @@ export class Floorplanner2D extends EventDispatcher
 		}
 		
 		this.mouseX = Dimensioning.pixelToCm((event.clientX - this.canvasElement.offset().left)) + Dimensioning.pixelToCm(this.originX);
-		this.mouseY = Dimensioning.pixelToCm((event.clientY - this.canvasElement.offset().top)) + Dimensioning.pixelToCm(this.originY);
+		this.mouseY = Dimensioning.pixelToCm((event.clientY - this.canvasElement.offset().top)) + Dimensioning.pixelToCm(this.originY);		
 		
 //		this.mouseX = (event.clientX - this.canvasElement.offset().left)  * this.cmPerPixel + this.originX * this.cmPerPixel;
 //		this.mouseY = (event.clientY - this.canvasElement.offset().top) * this.cmPerPixel + this.originY * this.cmPerPixel;
