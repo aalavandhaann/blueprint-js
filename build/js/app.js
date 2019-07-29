@@ -1,3 +1,4 @@
+var blueprint3d = null;
 var aGlobal = null;
 var anItem = null;
 var aWall = null;
@@ -304,7 +305,8 @@ var Wall2DProperties = function(wall2d, gui)
 		else if(scope.walltype == 'Curved')
 		{
 			scope.wall2d.wallType = BP3DJS.WallTypes.CURVED;
-		}		 
+		}
+		blueprint3d.floorplanner.view.draw();
 	}
 	this.options = ['Straight', 'Curved'];
 	if(this.wall2d.wallType == BP3DJS.WallTypes.CURVED)
@@ -774,7 +776,7 @@ $(document).ready(function()
 			textureDir: "models/textures/",
 			widget: false
 	}
-	var blueprint3d = new BP3DJS.BlueprintJS(opts);
+	blueprint3d = new BP3DJS.BlueprintJS(opts);
 	var viewerFloorplanner = new ViewerFloorplanner(blueprint3d);
 	mainControls(blueprint3d);
 	blueprint3d.model.loadSerialized(myhome);

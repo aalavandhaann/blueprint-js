@@ -90,7 +90,7 @@ export class Floorplanner2D extends EventDispatcher
 		this.setMode(floorplannerModes.MOVE);
 
 		var scope = this;
-		this.canvasElement.bind('touchstart mousedown', (event) => {scope.mousedown(event);});
+		this.canvasElement.bind('touchstart mousedown click', (event) => {scope.mousedown(event);});
 		this.canvasElement.bind('touchmove mousemove', (event) => {scope.mousemove(event);});
 		this.canvasElement.bind('touchend mouseup', (event) => {scope.mouseup(event);});
 		this.canvasElement.bind('mouseleave', (event) => {scope.mouseleave(event);});
