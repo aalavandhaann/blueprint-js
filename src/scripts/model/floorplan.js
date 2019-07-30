@@ -214,6 +214,14 @@ export class Floorplan extends EventDispatcher
 			var bstart = {x:twall.getStartX(), y:twall.getStartY()};
 			var bend = {x:twall.getEndX(), y:twall.getEndY()};
 			var iPoint = Utils.lineLineIntersectPoint(cStart, cEnd, bstart, bend);
+//			if(twall.wallType == WallTypes.CURVED)
+//			{
+//				iPoint = twall.bezier.intersects({p1:bstart, p2:bend});
+//			}
+//			else
+//			{
+//				
+//			}
 			if(iPoint)
 			{
 				var nCorner = this.newCorner(iPoint.x, iPoint.y);

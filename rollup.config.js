@@ -32,6 +32,7 @@ export default {
         'node_modules/three-gltf-exporter/**',
         'node_modules/three-reflector2/**',
         'node_modules/@calvinscofield/three-objloader/**',
+        'node_modules/bezier-js/**',
       ]
     }),
       postcss({extensions: [ '.css' ],plugins: [cssnano()]}),

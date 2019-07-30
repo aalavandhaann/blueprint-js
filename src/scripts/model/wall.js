@@ -1,4 +1,5 @@
 import {EventDispatcher, Vector2} from 'three';
+import Bezier from 'bezier-js';
 import {WallTypes} from '../core/constants.js';
 import {EVENT_ACTION,EVENT_MOVED,EVENT_DELETED} from '../core/events.js';
 import {Configuration,configWallThickness,configWallHeight} from '../core/configuration.js';
@@ -20,25 +21,51 @@ export class Wall extends EventDispatcher
 	 * @param start Start corner.
 	 * @param end End corner.
 	 */
-	constructor(start, end)
+	constructor(start, end, aa, bb)
 	{
 		super();
 		this.start = start;
 		this.end = end;
 		this.name = 'wall';
-		this._walltype = WallTypes.STRAIGHT;
-		
+		if(!aa && !bb)
+		{
+			this._walltype = WallTypes.STRAIGHT;
+		}
+		else
+		{
+			this._walltype = WallTypes.CURVED;
+		}
 		var o = new Vector2(0, 0);
 		var abvector = end.location.clone().sub(start.location).multiplyScalar(0.5);
 		
 		var ab135plus = abvector.clone().rotateAround(o, Math.PI*0.75);
 		var ab45plus = abvector.clone().rotateAround(o, Math.PI*0.25);
 		
-		this._a = start.location.clone().add(ab45plus);
-		this._b = end.location.clone().add(ab135plus);
+		if(aa)
+		{
+			this._a = new Vector2(0, 0);
+			this._a.x = aa.x;
+			this._a.y = aa.y;
+		}
+		else
+		{
+			this._a = start.location.clone().add(ab45plus);
+		}
 		
+		if(bb)
+		{
+			this._b = new Vector2(0, 0);
+			this._b.x = bb.x;
+			this._b.y = bb.y;
+		}
+		else
+		{
+			this._b = end.location.clone().add(ab135plus);
+		}		
 		this._a_vector = this._a.clone().sub(start.location);
 		this._b_vector = this._b.clone().sub(start.location);
+		
+		this._bezier = new Bezier(start.location.x,start.location.y , this._a.x,this._a.y , this._b.x,this._b.y , end.location.x,end.location.y);		
 
 		this.id = this.getUuid();
 
@@ -92,6 +119,8 @@ export class Wall extends EventDispatcher
 		this._a.x = location.x;
 		this._a.y = location.y;
 		this._a_vector = this._a.clone().sub(this.start.location);
+		this._bezier.points[1].x = this._a.x;
+		this._bezier.points[1].y = this._a.y;
 	}
 	
 	get b()
@@ -104,6 +133,8 @@ export class Wall extends EventDispatcher
 		this._b.x = location.x;
 		this._b.y = location.y;
 		this._b_vector = this._b.clone().sub(this.start.location);
+		this._bezier.points[2].x = this._b.x;
+		this._bezier.points[2].y = this._b.y;
 	}
 	
 	get aVector()
@@ -114,6 +145,11 @@ export class Wall extends EventDispatcher
 	get bVector()
 	{
 		return this._b_vector.clone();
+	}
+	
+	get bezier()
+	{
+		return this._bezier;
 	}
 	
 	updateControlVectors()
@@ -171,6 +207,13 @@ export class Wall extends EventDispatcher
 	{
 		this.start.relativeMove(dx, dy);
 		this.end.relativeMove(dx, dy);
+		
+		this._bezier.points[0].x = this.start.location.x;
+		this._bezier.points[0].y = this.start.location.y;
+		
+		this._bezier.points[3].x = this.end.location.x;
+		this._bezier.points[3].y = this.end.location.y;
+		
 		this.a = this.start.location.clone().add(this._a_vector);
 		this.b = this.start.location.clone().add(this._b_vector);
 	}
