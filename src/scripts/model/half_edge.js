@@ -365,7 +365,7 @@ export class HalfEdge extends EventDispatcher
 		}
 		else if (this.wall.wallType == WallTypes.CURVED)
 		{
-			var c = this.wall.bezier.offset(-this.wall.thickness*0.5)[0].get(0.5);
+			var c = this.wall.bezier.get(0.5);
 			return new Vector2(c.x, c.y);
 		}
 		return new Vector2((this.interiorStart().x + this.interiorEnd().x) / 2.0, (this.interiorStart().y + this.interiorEnd().y) / 2.0);
@@ -385,7 +385,7 @@ export class HalfEdge extends EventDispatcher
 		}
 		else if (this.wall.wallType == WallTypes.CURVED)
 		{
-			return this.wall.bezier.offset(-this.wall.thickness*0.5)[0].length();
+			return this.wall.bezier.length();
 		}		
 		return Utils.distance(start, end);
 	}
@@ -451,7 +451,7 @@ export class HalfEdge extends EventDispatcher
 		}
 		else if (this.wall.wallType == WallTypes.CURVED)
 		{
-			var c = this.wall.bezier.offset(this.wall.thickness*0.5)[0].get(0.5);
+			var c = this.wall.bezier.get(0.5);
 			return new Vector2(c.x, c.y);
 		}
 		return new Vector2((this.exteriorStart().x + this.exteriorEnd().x) / 2.0, (this.exteriorStart().y + this.exteriorEnd().y) / 2.0);
@@ -471,7 +471,7 @@ export class HalfEdge extends EventDispatcher
 		}
 		else if (this.wall.wallType == WallTypes.CURVED)
 		{
-			return this.wall.bezier.offset(this.wall.thickness*0.5)[0].length();
+			return this.wall.bezier.length();
 		}		
 		return Utils.distance(start, end);
 	}

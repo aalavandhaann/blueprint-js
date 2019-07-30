@@ -11,7 +11,7 @@ import {EVENT_NOTHING_CLICKED} from '../core/events.js';
 import {FloorplannerView2D, floorplannerModes} from './floorplanner_view.js';
 
 /** how much will we move a corner to make a wall axis aligned (cm) */
-export const snapTolerance = 25;
+export const snapTolerance = 25;//In CMS
 /**
 * The Floorplanner implements an interactive tool for creation of floorplans in
 * 2D.
@@ -415,14 +415,23 @@ export class Floorplanner2D extends EventDispatcher
 			this.lastY = this.rawMouseY;
 			this.view.draw();
 		}
-
+		
+		var mx, my;
 		// dragging
 		if (this.mode == floorplannerModes.MOVE && this.mouseDown)
 		{
 			if(this._clickedWallControl != null)
 			{
-				this._clickedWallControl.x = this.mouseX;
-				this._clickedWallControl.y = this.mouseY;
+				mx = this.mouseX;
+				my = this.mouseY;
+				if(this.gridsnapmode)
+				{
+					mx = Math.floor(this.mouseX / snapTolerance) * snapTolerance;
+					my = Math.floor(this.mouseY / snapTolerance) * snapTolerance;
+				}
+				
+				this._clickedWallControl.x = mx;
+				this._clickedWallControl.y = my;
 				this._clickedWall.updateControlVectors();
 				this.view.draw();
 				return;
@@ -431,8 +440,12 @@ export class Floorplanner2D extends EventDispatcher
 			{
 				if(this.gridsnapmode)
 				{
-					var mx = (Math.abs(this.mouseX - this.activeCorner.x) < snapTolerance) ? this.activeCorner.x : this.mouseX;
-					var my = (Math.abs(this.mouseY - this.activeCorner.y) < snapTolerance) ? this.activeCorner.y : this.mouseY;
+//					var mx = (Math.abs(this.mouseX - this.activeCorner.x) < snapTolerance) ? this.activeCorner.x : this.mouseX;
+//					var my = (Math.abs(this.mouseY - this.activeCorner.y) < snapTolerance) ? this.activeCorner.y : this.mouseY;
+					
+					mx = Math.floor(this.mouseX / snapTolerance) * snapTolerance;
+					my = Math.floor(this.mouseY / snapTolerance) * snapTolerance;
+					
 					this.activeCorner.move(Math.round(mx), Math.round(my));
 				}
 				else
@@ -446,7 +459,20 @@ export class Floorplanner2D extends EventDispatcher
 			}
 			else if (this.activeWall)
 			{
-				this.activeWall.relativeMove(Dimensioning.pixelToCm(this.rawMouseX - this.lastX), Dimensioning.pixelToCm(this.rawMouseY - this.lastY));
+				if(this.gridsnapmode)
+				{
+					var dx = Dimensioning.pixelToCm(this.rawMouseX - this.lastX);
+					var dy = Dimensioning.pixelToCm(this.rawMouseY - this.lastY);
+					mx = Math.floor(dx / snapTolerance) * snapTolerance;
+					my = Math.floor(dy / snapTolerance) * snapTolerance;
+					this.activeWall.relativeMove(mx, my);
+				}
+				else
+				{
+					this.activeWall.relativeMove(Dimensioning.pixelToCm(this.rawMouseX - this.lastX), Dimensioning.pixelToCm(this.rawMouseY - this.lastY));
+				}
+				
+				
 //				this.activeWall.relativeMove((this.rawMouseX - this.lastX) * this.cmPerPixel, (this.rawMouseY - this.lastY) * this.cmPerPixel);
 				if(this.gridsnapmode)
 				{

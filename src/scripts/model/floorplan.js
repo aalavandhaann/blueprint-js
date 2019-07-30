@@ -443,7 +443,8 @@ export class Floorplan extends EventDispatcher
 		tolerance = tolerance || defaultFloorPlanTolerance;
 		for (var i = 0; i < this.walls.length; i++)
 		{
-			if (this.walls[i].distanceFrom(new Vector2(x, y)) < (tolerance+ ((this.walls[i].wallType == WallTypes.CURVED)*tolerance*10)))
+			var newtolerance = tolerance;//(tolerance+ ((this.walls[i].wallType == WallTypes.CURVED)*tolerance*10));
+			if (this.walls[i].distanceFrom(new Vector2(x, y)) < newtolerance)
 			{
 				return this.walls[i];
 			}

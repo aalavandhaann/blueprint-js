@@ -12,7 +12,7 @@ import {CarbonSheet} from './carbonsheet.js';
 export const floorplannerModes = {MOVE: 0,DRAW: 1,DELETE: 2};
 
 // grid parameters
-export const gridSpacing = 20; // pixels
+export const gridSpacing = Dimensioning.cmToPixel(25);//20; // pixels
 export const gridWidth = 1;
 export const gridColor = '#f1f1f1';
 
@@ -129,6 +129,7 @@ export class FloorplannerView2D
 	{
 		var ox = this.viewmodel.convertX(0);
 		var oy = this.viewmodel.convertY(0);
+		
 		//draw origin crosshair
 		this.context.fillStyle = '#0000FF';
 		this.context.fillRect(ox-2, oy-7.5, 4, 15);
@@ -314,19 +315,9 @@ export class FloorplannerView2D
 		{
 //			var p = {x: this.viewmodel.mouseX, y: this.viewmodel.mouseY};
 //			var project = wall.bezier.project(p);
-//			this.drawCurvedLine(
-//					this.viewmodel.convertX(wall.bezier.points[0].x),
-//					this.viewmodel.convertY(wall.bezier.points[0].y),
-//					
-//					this.viewmodel.convertX(wall.bezier.points[1].x),
-//					this.viewmodel.convertY(wall.bezier.points[1].y),
-//					
-//					this.viewmodel.convertX(wall.bezier.points[2].x),
-//					this.viewmodel.convertY(wall.bezier.points[2].y),
-//					
-//					this.viewmodel.convertX(wall.bezier.points[3].x),
-//					this.viewmodel.convertY(wall.bezier.points[3].y),
-//					10,'#ff0000');
+//			this.drawBezierObject(wall.bezier, 10, '#FF0000');
+//			this.drawBezierObject(wall.bezier.offset(wall.thickness*0.5)[0], 3, '#F0F0F0');
+//			this.drawBezierObject(wall.bezier.offset(-wall.thickness*0.5)[0], 3, '#0F0F0F');
 			
 			this.drawCurvedLine(
 					this.viewmodel.convertX(wall.getStartX()),
@@ -410,6 +401,23 @@ export class FloorplannerView2D
 		{
 			this.drawLine(this.viewmodel.convertX(lastNode.x),this.viewmodel.convertY(lastNode.y),this.viewmodel.convertX(x),this.viewmodel.convertY(y),wallWidthHover,wallColorHover);
 		}
+	}
+	
+	drawBezierObject(bezier, width=3, color='#f0f0f0')
+	{
+		this.drawCurvedLine(
+		this.viewmodel.convertX(bezier.points[0].x),
+		this.viewmodel.convertY(bezier.points[0].y),
+		
+		this.viewmodel.convertX(bezier.points[1].x),
+		this.viewmodel.convertY(bezier.points[1].y),
+		
+		this.viewmodel.convertX(bezier.points[2].x),
+		this.viewmodel.convertY(bezier.points[2].y),
+		
+		this.viewmodel.convertX(bezier.points[3].x),
+		this.viewmodel.convertY(bezier.points[3].y),
+		width,color);
 	}
 	
 	drawCurvedLine(startX, startY, aX, aY, bX, bY, endX, endY, width, color)
@@ -547,11 +555,11 @@ export class FloorplannerView2D
 	{
 		if (n >= 0)
 		{
-			return (n + gridSpacing / 2.0) % gridSpacing - gridSpacing / 2.0;
+			return (n + (gridSpacing* Configuration.getNumericValue('scale')) / 2.0) % (gridSpacing* Configuration.getNumericValue('scale')) - (gridSpacing* Configuration.getNumericValue('scale')) / 2.0;
 		}
 		else
 		{
-			return (n - gridSpacing / 2.0) % gridSpacing + gridSpacing / 2.0;
+			return (n - (gridSpacing* Configuration.getNumericValue('scale')) / 2.0) % (gridSpacing* Configuration.getNumericValue('scale')) + (gridSpacing* Configuration.getNumericValue('scale')) / 2.0;
 		}
 	}
 
@@ -564,11 +572,11 @@ export class FloorplannerView2D
 		var height = this.canvasElement.height;
 		for (var x = 0; x <= (width / gridSpacing); x++)
 		{
-			this.drawLine(gridSpacing * x + offsetX, 0, gridSpacing * x + offsetX, height, gridWidth, gridColor);
+			this.drawLine(gridSpacing * Configuration.getNumericValue('scale') * x + offsetX, 0, gridSpacing * Configuration.getNumericValue('scale') * x + offsetX, height, gridWidth, gridColor);
 		}
 		for (var y = 0; y <= (height / gridSpacing); y++)
 		{
-			this.drawLine(0, gridSpacing * y + offsetY, width, gridSpacing * y + offsetY, gridWidth, gridColor);
+			this.drawLine(0, gridSpacing * Configuration.getNumericValue('scale') * y + offsetY, width, gridSpacing * Configuration.getNumericValue('scale') * y + offsetY, gridWidth, gridColor);
 		}
 	}
 }

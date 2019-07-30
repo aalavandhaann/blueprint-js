@@ -108,13 +108,30 @@ export class Wall extends EventDispatcher
 		/** Actions to be applied explicitly. */
 		this.action_callbacks = null;
 		
+//		this.start.addEventListener(EVENT_MOVED, ()=>{
+//			scope.updateControlVectors();
+//		});
+//		this.end.addEventListener(EVENT_MOVED, ()=>{
+//			scope.updateControlVectors();
+//		});
+		this.addCornerMoveListener(this.start);
+		this.addCornerMoveListener(this.end);
+	}
+	
+	addCornerMoveListener(corner, remove=false)
+	{
 		var scope = this;
-		this.start.addEventListener(EVENT_MOVED, ()=>{
+		function moved()
+		{
 			scope.updateControlVectors();
-		});
-		this.end.addEventListener(EVENT_MOVED, ()=>{
-			scope.updateControlVectors();
-		});
+		}
+		
+		if(remove)
+		{
+			corner.removeEventListener(EVENT_MOVED, moved);
+			return;
+		}
+		corner.addEventListener(EVENT_MOVED, moved);
 	}
 	
 	get a()
@@ -127,8 +144,7 @@ export class Wall extends EventDispatcher
 		this._a.x = location.x;
 		this._a.y = location.y;
 		this._a_vector = this._a.clone().sub(this.start.location);
-		this._bezier.points[1].x = this._a.x;
-		this._bezier.points[1].y = this._a.y;
+		this.updateControlVectors();
 	}
 	
 	get b()
@@ -141,8 +157,7 @@ export class Wall extends EventDispatcher
 		this._b.x = location.x;
 		this._b.y = location.y;
 		this._b_vector = this._b.clone().sub(this.start.location);
-		this._bezier.points[2].x = this._b.x;
-		this._bezier.points[2].y = this._b.y;
+		this.updateControlVectors();
 	}
 	
 	get aVector()
@@ -173,7 +188,7 @@ export class Wall extends EventDispatcher
 		
 		this._bezier.points[3].x = this.end.location.x;
 		this._bezier.points[3].y = this.end.location.y;
-		
+		this._bezier.update();
 //		this._a_vector = this._a.clone().sub(this.start.location);
 //		this._b_vector = this._b.clone().sub(this.start.location);
 	}
@@ -319,10 +334,10 @@ export class Wall extends EventDispatcher
 
 	wallLength()
 	{
-		var start = this.getStart();
-		var end = this.getEnd();
 		if(this.wallType == WallTypes.STRAIGHT)
 		{
+			var start = this.getStart();
+			var end = this.getEnd();
 			return Utils.distance(start, end);
 		}
 		else if(this.wallType == WallTypes.CURVED)
@@ -357,16 +372,23 @@ export class Wall extends EventDispatcher
 	setStart(corner)
 	{
 		this.start.detachWall(this);
+		this.addCornerMoveListener(this.start, true);
+		
 		corner.attachStart(this);
 		this.start = corner;
+		this.addCornerMoveListener(this.start);
 		this.fireMoved();
 	}
 
 	setEnd(corner)
 	{
+		
 		this.end.detachWall(this);
+		this.addCornerMoveListener(this.end);
+		
 		corner.attachEnd(this);
 		this.end = corner;
+		this.addCornerMoveListener(this.end, true);
 		this.fireMoved();
 	}
 
