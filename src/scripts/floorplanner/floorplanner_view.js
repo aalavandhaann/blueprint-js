@@ -312,6 +312,22 @@ export class FloorplannerView2D
 		}
 		else
 		{
+//			var p = {x: this.viewmodel.mouseX, y: this.viewmodel.mouseY};
+//			var project = wall.bezier.project(p);
+//			this.drawCurvedLine(
+//					this.viewmodel.convertX(wall.bezier.points[0].x),
+//					this.viewmodel.convertY(wall.bezier.points[0].y),
+//					
+//					this.viewmodel.convertX(wall.bezier.points[1].x),
+//					this.viewmodel.convertY(wall.bezier.points[1].y),
+//					
+//					this.viewmodel.convertX(wall.bezier.points[2].x),
+//					this.viewmodel.convertY(wall.bezier.points[2].y),
+//					
+//					this.viewmodel.convertX(wall.bezier.points[3].x),
+//					this.viewmodel.convertY(wall.bezier.points[3].y),
+//					10,'#ff0000');
+			
 			this.drawCurvedLine(
 					this.viewmodel.convertX(wall.getStartX()),
 					this.viewmodel.convertY(wall.getStartY()),
@@ -325,6 +341,8 @@ export class FloorplannerView2D
 					this.viewmodel.convertX(wall.getEndX()),
 					this.viewmodel.convertY(wall.getEndY()),
 					hover ? wallWidthHover : selected ? wallWidthSelected : wallWidth,color);
+			
+//			this.drawLine(this.viewmodel.convertX(project.x),this.viewmodel.convertY(project.y),this.viewmodel.convertX(p.x),this.viewmodel.convertY(p.y), 1, '#ff0000');
 		}
 		
 		if (!hover && !selected && wall.frontEdge)
@@ -388,7 +406,7 @@ export class FloorplannerView2D
 	drawTarget(x, y, lastNode)
 	{
 		this.drawCircle(this.viewmodel.convertX(x),this.viewmodel.convertY(y),cornerRadiusHover,cornerColorHover);
-		if (this.viewmodel.lastNode)
+		if (lastNode)
 		{
 			this.drawLine(this.viewmodel.convertX(lastNode.x),this.viewmodel.convertY(lastNode.y),this.viewmodel.convertX(x),this.viewmodel.convertY(y),wallWidthHover,wallColorHover);
 		}

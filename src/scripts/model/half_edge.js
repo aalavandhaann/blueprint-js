@@ -1,7 +1,7 @@
 import {EventDispatcher, Vector2, Vector3, Matrix4, Face3, Mesh, Geometry, MeshBasicMaterial, Box3} from 'three';
 import {EVENT_REDRAW} from '../core/events.js';
 import {Utils} from '../core/utils.js';
-
+import {WallTypes} from '../core/constants.js';
 
 /**
  * Half Edges are created by Room.
@@ -288,8 +288,18 @@ export class HalfEdge extends EventDispatcher
 	 */
 	distanceTo(x, y)
 	{
-		// x, y, x1, y1, x2, y2
-		return Utils.pointDistanceFromLine(new Vector2(x, y), this.interiorStart(), this.interiorEnd());
+		if(this.wall.wallType == WallTypes.STRAIGHT)
+		{
+			// x, y, x1, y1, x2, y2
+			return Utils.pointDistanceFromLine(new Vector2(x, y), this.interiorStart(), this.interiorEnd());
+		}
+		else if (this.wall.wallType == WallTypes.CURVED)
+		{
+			var p = this._bezier.project({x:x, y:y});
+			var projected = new Vector2(p.x, p.y);
+			return projected.distanceTo(new Vector2(x, y));
+		}
+		return -1;
 	}
 	
 	/**
@@ -348,6 +358,16 @@ export class HalfEdge extends EventDispatcher
 	 */
 	interiorCenter()
 	{
+		if(this.wall.wallType == WallTypes.STRAIGHT)
+		{
+			// x, y, x1, y1, x2, y2
+			return new Vector2((this.interiorStart().x + this.interiorEnd().x) / 2.0, (this.interiorStart().y + this.interiorEnd().y) / 2.0);
+		}
+		else if (this.wall.wallType == WallTypes.CURVED)
+		{
+			var c = this.wall.bezier.offset(-this.wall.thickness*0.5)[0].get(0.5);
+			return new Vector2(c.x, c.y);
+		}
 		return new Vector2((this.interiorStart().x + this.interiorEnd().x) / 2.0, (this.interiorStart().y + this.interiorEnd().y) / 2.0);
 	}
 	
@@ -359,6 +379,14 @@ export class HalfEdge extends EventDispatcher
 	{
 		var start = this.interiorStart();
 		var end = this.interiorEnd();
+		if(this.wall.wallType == WallTypes.STRAIGHT)
+		{
+			return Utils.distance(start, end);
+		}
+		else if (this.wall.wallType == WallTypes.CURVED)
+		{
+			return this.wall.bezier.offset(-this.wall.thickness*0.5)[0].length();
+		}		
 		return Utils.distance(start, end);
 	}
 	
@@ -416,6 +444,16 @@ export class HalfEdge extends EventDispatcher
 	 */
 	exteriorCenter()
 	{
+		if(this.wall.wallType == WallTypes.STRAIGHT)
+		{
+			// x, y, x1, y1, x2, y2
+			return new Vector2((this.exteriorStart().x + this.exteriorEnd().x) / 2.0, (this.exteriorStart().y + this.exteriorEnd().y) / 2.0);
+		}
+		else if (this.wall.wallType == WallTypes.CURVED)
+		{
+			var c = this.wall.bezier.offset(this.wall.thickness*0.5)[0].get(0.5);
+			return new Vector2(c.x, c.y);
+		}
 		return new Vector2((this.exteriorStart().x + this.exteriorEnd().x) / 2.0, (this.exteriorStart().y + this.exteriorEnd().y) / 2.0);
 	}
 	
@@ -427,6 +465,14 @@ export class HalfEdge extends EventDispatcher
 	{
 		var start = this.exteriorStart();
 		var end = this.exteriorEnd();
+		if(this.wall.wallType == WallTypes.STRAIGHT)
+		{
+			return Utils.distance(start, end);
+		}
+		else if (this.wall.wallType == WallTypes.CURVED)
+		{
+			return this.wall.bezier.offset(this.wall.thickness*0.5)[0].length();
+		}		
 		return Utils.distance(start, end);
 	}
 
@@ -438,38 +484,38 @@ export class HalfEdge extends EventDispatcher
 		return [this.interiorStart(), this.interiorEnd(), this.exteriorEnd(), this.exteriorStart()];
 	}	
 	
-	curvedCorners()
-	{
-		if(this.wall)
-		{
-			var curves = [];
-			var o = new Vector2(0, 0);
-			var s = this.wall.start.location;
-			var e = this.wall.end.location;
-			
-//			var avect = this.wall.a.clone().sub(this.wall.start);
-//			var bvect = this.wall.b.clone().sub(this.wall.start);
-			
-			var sevect = s.clone().sub(e).normalize();
-			var se90plus = sevect.clone().rotateAround(o, 3.14*0.5).multiplyScalar(this.wall.thickness*0.5);
-			var se90minus = sevect.clone().rotateAround(o, -3.14*0.5).multiplyScalar(this.wall.thickness*0.5);
-			
-			var s1 = se90plus.clone().add(s);
-			var e1 = se90plus.clone().add(e);
-			var e2 = se90minus.clone().add(e);
-			var s2 = se90minus.clone().add(s);
-			
-			curves.push([s1]);
-			curves.push([this.wall.a.clone().add(se90plus), this.wall.b.clone().add(se90plus), e1]);
-			curves.push([e2]);
-			curves.push([this.wall.b.clone().add(se90minus), this.wall.a.clone().add(se90minus), s2]);
-//			curves.push([s2]);
-			
-			
-			return curves;			
-		}
-		return [];
-	}
+//	curvedCorners()
+//	{
+//		if(this.wall)
+//		{
+//			var curves = [];
+//			var o = new Vector2(0, 0);
+//			var s = this.wall.start.location;
+//			var e = this.wall.end.location;
+//			
+////			var avect = this.wall.a.clone().sub(this.wall.start);
+////			var bvect = this.wall.b.clone().sub(this.wall.start);
+//			
+//			var sevect = s.clone().sub(e).normalize();
+//			var se90plus = sevect.clone().rotateAround(o, 3.14*0.5).multiplyScalar(this.wall.thickness*0.5);
+//			var se90minus = sevect.clone().rotateAround(o, -3.14*0.5).multiplyScalar(this.wall.thickness*0.5);
+//			
+//			var s1 = se90plus.clone().add(s);
+//			var e1 = se90plus.clone().add(e);
+//			var e2 = se90minus.clone().add(e);
+//			var s2 = se90minus.clone().add(s);
+//			
+//			curves.push([s1]);
+//			curves.push([this.wall.a.clone().add(se90plus), this.wall.b.clone().add(se90plus), e1]);
+//			curves.push([e2]);
+//			curves.push([this.wall.b.clone().add(se90minus), this.wall.a.clone().add(se90minus), s2]);
+////			curves.push([s2]);
+//			
+//			
+//			return curves;			
+//		}
+//		return [];
+//	}
 
 	/**
 	 * Gets CCW angle from v1 to v2

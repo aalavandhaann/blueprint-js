@@ -107,6 +107,14 @@ export class Wall extends EventDispatcher
 
 		/** Actions to be applied explicitly. */
 		this.action_callbacks = null;
+		
+		var scope = this;
+		this.start.addEventListener(EVENT_MOVED, ()=>{
+			scope.updateControlVectors();
+		});
+		this.end.addEventListener(EVENT_MOVED, ()=>{
+			scope.updateControlVectors();
+		});
 	}
 	
 	get a()
@@ -154,8 +162,20 @@ export class Wall extends EventDispatcher
 	
 	updateControlVectors()
 	{
-		this._a_vector = this._a.clone().sub(this.start.location);
-		this._b_vector = this._b.clone().sub(this.start.location);
+		this._bezier.points[0].x = this.start.location.x;
+		this._bezier.points[0].y = this.start.location.y;
+		
+		this._bezier.points[1].x = this.a.x;
+		this._bezier.points[1].y = this.a.y;
+		
+		this._bezier.points[2].x = this.b.x;
+		this._bezier.points[2].y = this.b.y;
+		
+		this._bezier.points[3].x = this.end.location.x;
+		this._bezier.points[3].y = this.end.location.y;
+		
+//		this._a_vector = this._a.clone().sub(this.start.location);
+//		this._b_vector = this._b.clone().sub(this.start.location);
 	}
 
 	getUuid()
@@ -208,14 +228,11 @@ export class Wall extends EventDispatcher
 		this.start.relativeMove(dx, dy);
 		this.end.relativeMove(dx, dy);
 		
-		this._bezier.points[0].x = this.start.location.x;
-		this._bezier.points[0].y = this.start.location.y;
+//		this.a = this.start.location.clone().add(this._a_vector);
+//		this.b = this.start.location.clone().add(this._b_vector);
 		
-		this._bezier.points[3].x = this.end.location.x;
-		this._bezier.points[3].y = this.end.location.y;
+		this.updateControlVectors();
 		
-		this.a = this.start.location.clone().add(this._a_vector);
-		this.b = this.start.location.clone().add(this._b_vector);
 	}
 
 	fireMoved()
@@ -304,12 +321,29 @@ export class Wall extends EventDispatcher
 	{
 		var start = this.getStart();
 		var end = this.getEnd();
-		return Utils.distance(start, end);
+		if(this.wallType == WallTypes.STRAIGHT)
+		{
+			return Utils.distance(start, end);
+		}
+		else if(this.wallType == WallTypes.CURVED)
+		{
+			return this._bezier.length();
+		}
+		return -1;
 	}
 
 	wallCenter()
 	{
-		return new Vector2((this.getStart().x + this.getEnd().x) / 2.0, (this.getStart().y + this.getEnd().y) / 2.0);
+		if(this.wallType == WallTypes.STRAIGHT)
+		{
+			return new Vector2((this.getStart().x + this.getEnd().x) / 2.0, (this.getStart().y + this.getEnd().y) / 2.0);
+		}
+		else if(this.wallType == WallTypes.CURVED)
+		{
+			var p = this._bezier.get(0.5); 
+			return new Vector2(p.x, p.y);
+		}
+		return new Vector2(0,0);
 	}
 
 	remove()
@@ -338,7 +372,17 @@ export class Wall extends EventDispatcher
 
 	distanceFrom(point)
 	{
-		return Utils.pointDistanceFromLine(point, new Vector2(this.getStartX(), this.getStartY()), new Vector2(this.getEndX(), this.getEndY()));
+		if(this.wallType == WallTypes.STRAIGHT)
+		{
+			return Utils.pointDistanceFromLine(point, new Vector2(this.getStartX(), this.getStartY()), new Vector2(this.getEndX(), this.getEndY()));
+		}
+		else if(this.wallType == WallTypes.CURVED)
+		{
+			var p = this._bezier.project(point);
+			var projected = new Vector2(p.x, p.y);
+			return projected.distanceTo(point);
+		}
+		return -1;
 	}
 
 	/** Return the corner opposite of the one provided.

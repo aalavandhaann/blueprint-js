@@ -366,29 +366,29 @@ export class Floorplanner2D extends EventDispatcher
 			var hoverRoom = this.floorplan.overlappedRoom(this.mouseX, this.mouseY);
 			var draw = false;			
 			
+			if (hoverWall != this.activeWall)
+			{
+				this.activeWall = hoverWall;
+				this.floorplan.dispatchEvent({type:EVENT_WALL_2D_HOVER, item: hoverWall});
+				draw = true;
+			}
+			else
+			{
+				this.activeWall = null;
+			}
+			
 			// corner takes precendence
-			if (hoverCorner != this.activeCorner)
+			if (hoverCorner != this.activeCorner && this.activeWall == null)
 			{
 				this.activeCorner = hoverCorner;
 				this.floorplan.dispatchEvent({type:EVENT_CORNER_2D_HOVER, item: hoverCorner});
 				draw = true;
 			}
 			
-			if (this.activeCorner == null)
+			if(this.activeWall == null && this.activeCorner == null)
 			{
-				if (hoverWall != this.activeWall)
-				{
-					this.activeWall = hoverWall;
-					this.floorplan.dispatchEvent({type:EVENT_WALL_2D_HOVER, item: hoverWall});
-					draw = true;
-				}
+				this.activeRoom = hoverRoom;
 			}
-			else
-			{
-				this.activeWall = null;
-			}
-
-			this.activeRoom = hoverRoom;
 			
 			if(this.activeCorner == null && this.activeWall == null && this.activeRoom !=null)
 			{

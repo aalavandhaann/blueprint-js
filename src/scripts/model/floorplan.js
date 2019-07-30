@@ -206,6 +206,7 @@ export class Floorplan extends EventDispatcher
 		// new walls along with this new wall
 		var cStart = new Vector2(start.getX(), start.getY());
 		var cEnd = new Vector2(end.getX(), end.getY());
+		var line = {p1: cStart, p2: cEnd};
 		var newCorners = [];
 
 		for (var i=0;i<this.walls.length;i++)
@@ -213,25 +214,29 @@ export class Floorplan extends EventDispatcher
 			var twall = this.walls[i];
 			var bstart = {x:twall.getStartX(), y:twall.getStartY()};
 			var bend = {x:twall.getEndX(), y:twall.getEndY()};
-			var iPoint = Utils.lineLineIntersectPoint(cStart, cEnd, bstart, bend);
-//			if(twall.wallType == WallTypes.CURVED)
-//			{
-//				iPoint = twall.bezier.intersects({p1:bstart, p2:bend});
-//			}
-//			else
-//			{
-//				
-//			}
+			var iPoint;
+			if(twall.wallType == WallTypes.CURVED)
+			{
+				iPoint = twall.bezier.intersects(line);
+				if(iPoint.length)
+				{
+					iPoint = twall.bezier.get(iPoint[0]);
+				}
+			}
+			else
+			{
+				iPoint = Utils.lineLineIntersectPoint(cStart, cEnd, bstart, bend);
+			}
 			if(iPoint)
 			{
 				var nCorner = this.newCorner(iPoint.x, iPoint.y);
 				newCorners.push(nCorner);
 				intersections = true;
 				//Curved walls cannot be intersected. So make them Straight walls again
-				if(twall.wallType == WallTypes.CURVED)
-				{
-					twall.wallType = WallTypes.STRAIGHT;
-				}
+//				if(twall.wallType == WallTypes.CURVED)
+//				{
+//					twall.wallType = WallTypes.STRAIGHT;
+//				}
 			}
 		}
 		for( i=0;i<this.corners.length;i++)
@@ -265,10 +270,10 @@ export class Floorplan extends EventDispatcher
 	 * @param {Corner} end The end corner.
 	 * @returns {Wall} The new wall.
 	 */
-	newWall(start, end)
+	newWall(start, end, a, b)
 	{
 		var scope = this;
-		var wall = new Wall(start, end);
+		var wall = new Wall(start, end, a, b);
 		
 		this.walls.push(wall);
 		wall.addEventListener(EVENT_DELETED, function(o){scope.removeWall(o.item);});
@@ -438,7 +443,7 @@ export class Floorplan extends EventDispatcher
 		tolerance = tolerance || defaultFloorPlanTolerance;
 		for (var i = 0; i < this.walls.length; i++)
 		{
-			if (this.walls[i].distanceFrom(new Vector2(x, y)) < tolerance)
+			if (this.walls[i].distanceFrom(new Vector2(x, y)) < (tolerance+ ((this.walls[i].wallType == WallTypes.CURVED)*tolerance*10)))
 			{
 				return this.walls[i];
 			}

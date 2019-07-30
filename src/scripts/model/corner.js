@@ -1,6 +1,7 @@
 import {EVENT_ACTION, EVENT_DELETED, EVENT_MOVED, EVENT_CORNER_ATTRIBUTES_CHANGED} from '../core/events.js';
 import {EventDispatcher, Vector2} from 'three';
 import {Utils} from '../core/utils.js';
+import {WallTypes} from '../core/constants.js';
 //import {Dimensioning} from '../core/dimensioning.js';
 import {Configuration, configWallHeight} from '../core/configuration.js';
 
@@ -311,16 +312,20 @@ export class Corner extends EventDispatcher
 	 * @param {Number} newX The new x position.
 	 * @param {Number} newY The new y position.
 	 */
-	move(newX, newY)
+	move(newX, newY, mergeWithIntersections=true)
 	{
 		this.x = newX;
 		this.y = newY;
-		this._co.x = this.x;
-		this._co.y = this.y;
+		this._co.x = newX;
+		this._co.y = newY;
 		
-		this.mergeWithIntersected();
-
-		this.dispatchEvent({type:EVENT_MOVED, item: this, position: new Vector2(this.x, this.y)});
+		if(mergeWithIntersections)
+		{
+			//The below line is crashing after makign the changes for curved walls
+			//While release v1.0.0 is stable even with this line enabled
+			this.mergeWithIntersected();
+		}
+		this.dispatchEvent({type:EVENT_MOVED, item: this, position: new Vector2(newX, newY)});
 		//      this.moved_callbacks.fire(this.x, this.y);
 
 		this.wallStarts.forEach((wall) => {
@@ -411,7 +416,17 @@ export class Corner extends EventDispatcher
 	 */
 	distanceFromWall(wall)
 	{
-		return wall.distanceFrom(new Vector2(this.x, this.y));
+		var cPoint = new Vector2(this.x, this.y);
+		if(wall.wallType == WallTypes.STRAIGHT)
+		{
+			return wall.distanceFrom(cPoint);
+		}
+		else if(wall.wallType == WallTypes.CURVED)
+		{
+			var p = wall.bezier.project(cPoint);
+			var projected = new Vector2(p.x, p.y); 
+			return projected.distanceTo(cPoint);
+		}
 	}
 
 	/** Gets the distance from a corner.
@@ -540,13 +555,35 @@ export class Corner extends EventDispatcher
 			if (this.distanceFromWall(wall) < cornerTolerance && !this.isWallConnected(wall))
 			{
 				// update position to be on wall
-				var intersection = Utils.closestPointOnLine(new Vector2(this.x, this.y), wall.getStart(), wall.getEnd());
-//				this.x = intersection.x;
-//				this.y = intersection.y;
-				this.move(intersection.x, intersection.y)
-				// merge this corner into wall by breaking wall into two parts
-				this.floorplan.newWall(this, wall.getEnd());
-				wall.setEnd(this);
+				var intersection;
+				if(wall.wallType == WallTypes.STRAIGHT)
+				{
+					intersection = Utils.closestPointOnLine(new Vector2(this.x, this.y), wall.getStart(), wall.getEnd());
+				}
+				else if(wall.wallType == WallTypes.CURVED)
+				{
+					intersection = wall.bezier.project(new Vector2(this.x, this.y));
+				}				
+				//The below line is crashing because of recursive. This function mergeWithIntersected is called 
+				//From move(newX, newY) method. Now if we call move(newX, newY) from inside this method
+				//It will lead to recursion. So ensure in the move(newX, newY) method mergeWithIntersected is not called
+				//Hence added a third parameter to move(newX, newY, mergeWithIntersections) that is a boolean value
+				//Send this boolean value as false to avoid recursion crashing of the application
+				this.move(intersection.x, intersection.y, false); //Causes Recursion if third parameter is true
+				
+				if(wall.wallType == WallTypes.STRAIGHT)
+				{
+					// merge this corner into wall by breaking wall into two parts				
+					this.floorplan.newWall(this, wall.getEnd());
+					wall.setEnd(this);
+				}
+				else if(wall.wallType == WallTypes.CURVED)
+				{
+					// merge this corner into wall by breaking wall into two parts				
+					this.floorplan.newWall(this, wall.getEnd());
+					wall.setEnd(this);
+				}
+					
 				this.floorplan.update();
 				return true;
 			}

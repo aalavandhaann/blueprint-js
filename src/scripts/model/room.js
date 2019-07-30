@@ -215,7 +215,7 @@ export class Room extends EventDispatcher
 	{
 		var oldarea = this.area;
 		var points = [];
-		this.area = 0;
+		var area = 0;
 		this.areaCenter = new Vector2();
 
 		this.updateWalls();
@@ -237,11 +237,10 @@ export class Room extends EventDispatcher
 			var ax_by = (a.x * b.y);
 			var ay_bx = (a.y * b.x);
 			var delta = ax_by - ay_bx;
-			this.area += delta;
+			area += delta;
 
 		}
-		this.area = this.area;
-		this.area = Math.abs(this.area) * 0.5;
+		this.area = Math.abs(area) * 0.5;
 		this.dispatchEvent({type:EVENT_ROOM_ATTRIBUTES_CHANGED, item:this, info:{from: oldarea, to: this.area}});
 	}
 
