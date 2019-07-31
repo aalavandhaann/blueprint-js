@@ -518,7 +518,7 @@ export class Corner extends EventDispatcher
 		// update position to other corner's
 //		this.x = corner.x;
 //		this.y = corner.y;
-		this.move(corner.x, corner.y)
+		this.move(corner.x, corner.y, false);
 		// absorb the other corner's wallStarts and wallEnds
 		for (i = corner.wallStarts.length - 1; i >= 0; i--)
 		{
