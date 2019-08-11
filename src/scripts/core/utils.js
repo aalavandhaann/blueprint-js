@@ -107,11 +107,13 @@ export class Utils
 		}
 		var indices = Utils.argsort(angles);
 		var sortedAngles = [];
+		var sortedPoints = [];
 		for (i=0;i<indices.length;i++)
 		{
 			sortedAngles.push(angles[indices[i]]);
+			sortedPoints.push(points[indices[i]]);
 		}
-		return {indices: indices, angles: sortedAngles};
+		return {indices: indices, angles: sortedAngles, points: sortedPoints};
 	}
 	
 	static argsort(numericalValues, direction=1)

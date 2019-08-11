@@ -350,6 +350,8 @@ export class Corner extends EventDispatcher
 			this.mergeWithIntersected();
 		}
 		
+		this.floorplan.update();
+		
 //		this.updateAngles();
 //		this.adjacentCorners().forEach((corner) => {
 //			corner.updateAngles();
@@ -376,6 +378,11 @@ export class Corner extends EventDispatcher
 		var point = new Vector2();
 		for (var i=0;i<neighbors.length;i++)
 		{
+			var wall = this.wallToOrFrom(neighbors[i]);
+			if(wall.wallType == WallTypes.CURVED)
+			{
+				continue;
+			}
 			var neighbourAngle = neighbors[i].location.clone().sub(this.location).angle();
 			neighbourAngle = (neighbourAngle * 180) / Math.PI;
 			var diff = Math.abs(angle - neighbourAngle);
@@ -402,10 +409,11 @@ export class Corner extends EventDispatcher
 		{
 			return;
 		}
+				
 		var start = this.location.clone();
 		var points = [];
 		for (var i=0;i<neighbors.length;i++)
-		{
+		{	
 			points.push(neighbors[i].location);
 		}
 		var indicesAndAngles = Utils.getCyclicOrder(points, start);
@@ -418,6 +426,23 @@ export class Corner extends EventDispatcher
 			var next = (i + 1) % indices.length;
 			var cindex = indices[i];
 			var nindex = indices[next];
+			
+			var cwall = this.wallToOrFrom(neighbors[cindex]);
+			var nwall = this.wallToOrFrom(neighbors[nindex]);
+			if(cwall != null && nwall != null)
+			{
+				if(cwall.wallType == WallTypes.CURVED || nwall.wallType == WallTypes.CURVED)
+				{
+//					No use in showing angle between two curved or two walls with intermixed types of straight and curved
+//					Set everything to zero
+					this._startAngles.push(0);
+					this._endAngles.push(0);
+					this._angles.push(0);
+					this._angleDirections.push(new Vector2(0,0));
+					this._cyclicNeighbors.push(neighbors[indices[i]]);
+					continue;
+				}				
+			}
 			
 			var vectorA = points[cindex].clone().sub(start).normalize();
 			var vectorB = points[nindex].clone().sub(start).normalize();

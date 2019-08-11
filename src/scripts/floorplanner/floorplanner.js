@@ -458,10 +458,10 @@ export class Floorplanner2D extends EventDispatcher
 				{
 					this.activeCorner.move(this.mouseX, this.mouseY);
 				}
-				if(this.shiftkey)
-				{
-					this.activeCorner.snapToAxis(snapTolerance);
-				}
+//				if(this.shiftkey)
+//				{
+//					this.activeCorner.snapToAxis(snapTolerance);
+//				}
 			}
 			else if (this.activeWall)
 			{

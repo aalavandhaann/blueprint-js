@@ -1,5 +1,8 @@
 import {EVENT_CHANGED, EVENT_ROOM_ATTRIBUTES_CHANGED} from '../core/events.js';
 import {EventDispatcher, Vector2, Vector3, Face3, Geometry, Shape, ShapeGeometry, Mesh, MeshBasicMaterial, DoubleSide, Box3} from 'three';
+
+import {WallTypes} from '../core/constants.js';
+
 import {Utils} from '../core/utils.js';
 import {HalfEdge} from './half_edge.js';
 
@@ -23,6 +26,7 @@ export class Room extends EventDispatcher
 		this.center = null;
 		this.area = 0.0;
 		this.areaCenter = null;
+		this._polygonPoints = [];
 
 		this.floorplan = floorplan;
 		this.corners = corners;
@@ -45,6 +49,11 @@ export class Room extends EventDispatcher
 			cornerids.push(c.id);
 		}
 		this._roomByCornersId = cornerids.join(',');
+	}
+	
+	get roomCornerPoints()
+	{
+		return this._polygonPoints;
 	}
 
 	get roomByCornersId()
@@ -215,32 +224,80 @@ export class Room extends EventDispatcher
 	{
 		var oldarea = this.area;
 		var points = [];
+		var N = 0;
 		var area = 0;
 		this.areaCenter = new Vector2();
+		this._polygonPoints = [];
 
 		this.updateWalls();
 		this.updateInteriorCorners();
 		this.generatePlane();
 		this.generateRoofPlane();
+		
+//		this.corners.forEach((corner) => {
+//			var co = new Vector2(corner.x,corner.y);
+//			this.areaCenter.add(co);
+//			points.push(co);
+//		});
+		
+		N = this.corners.length;
+		
+		for(var i=0;i<this.corners.length;i++)
+		{
+			var firstCorner = this.corners[i];
+			var secondCorner = this.corners[(i + 1) % this.corners.length];
+			var wall = firstCorner.wallToOrFrom(secondCorner);
+			this.areaCenter.add(firstCorner.location);
+			
+			if(wall != null)
+			{
+				if(wall.wallType == WallTypes.CURVED)
+				{
+					points.push(firstCorner.location);
+					var LUT = wall.bezier.getLUT(20);
+					for(var j=1;j<LUT.length-1;j++)
+					{ 
+						var p = LUT[j];
+						p = new Vector2(p.x, p.y);
+						points.push(p);
+					}
+				}
+				else
+				{
+					points.push(firstCorner.location);
+				}
+			}
+			else
+			{
+				points.push(firstCorner.location);
+			}
+		}
 
-		this.corners.forEach((corner) => {
-			var co = new Vector2(corner.x,corner.y);
-			this.areaCenter.add(co);
-			points.push(co);
-		});
-		this.areaCenter.multiplyScalar(1.0 / points.length);
-		for (var i=0;i<points.length;i++)
+		this.areaCenter.multiplyScalar(1.0 / N);
+		
+		var indicesAndAngles = Utils.getCyclicOrder(points, this.areaCenter);
+		points = indicesAndAngles['points'];
+		
+		for (i=0;i<points.length;i++)
 		{
 			var inext = (i+1 ) % points.length;
 			var a = points[i];
 			var b = points[inext];
-			var ax_by = (a.x * b.y);
-			var ay_bx = (a.y * b.x);
-			var delta = ax_by - ay_bx;
+			//Another irregular polygon method based on the url below
+			//https://www.mathsisfun.com/geometry/area-irregular-polygons.html
+			var width = a.x - b.x;
+			var height = (a.y + b.y) * 0.5;
+			var delta = Math.abs(width * height);
+//			var ax_by = (a.x * b.y);
+//			var ay_bx = (a.y * b.x);
+//			var delta = ax_by - ay_bx;
 			area += delta;
-
 		}
-		this.area = Math.abs(area) * 0.5;
+		this._polygonPoints = points;
+//		this.area = Math.abs(area) * 0.5;
+//		if we are using the method in url https://www.mathsisfun.com/geometry/area-irregular-polygons.html 
+//		then we dont have to multiply the area by 0.5;
+		this.area = Math.abs(area);
 		this.dispatchEvent({type:EVENT_ROOM_ATTRIBUTES_CHANGED, item:this, info:{from: oldarea, to: this.area}});
 	}
 

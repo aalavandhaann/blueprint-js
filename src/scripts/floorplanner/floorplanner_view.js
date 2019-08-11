@@ -100,7 +100,7 @@ export class FloorplannerView2D
 		this.drawOriginCrossHair();
 
 		// this.context.globalAlpha = 0.3;
-		this.floorplan.getRooms().forEach((room) => {this.drawRoom(room);});
+//		this.floorplan.getRooms().forEach((room) => {this.drawRoom(room);});
 		// this.context.globalAlpha = 1.0;
 
 		this.floorplan.getWalls().forEach((wall) => {this.drawWall(wall);});
@@ -108,6 +108,11 @@ export class FloorplannerView2D
 			this.drawCorner(corner);
 //			this.drawCornerAngles(corner);
 			});
+		
+		// this.context.globalAlpha = 0.3;
+		this.floorplan.getRooms().forEach((room) => {this.drawRoom(room);});
+		// this.context.globalAlpha = 1.0;
+		
 		if (this.viewmodel.mode == floorplannerModes.DRAW)
 		{
 			this.drawTarget(this.viewmodel.targetX, this.viewmodel.targetY, this.viewmodel.lastNode);
@@ -125,24 +130,23 @@ export class FloorplannerView2D
 				var sAngle = (vector.angle()*180) / Math.PI;
 				var result = this.viewmodel.lastNode.closestAngle(sAngle);				
 				var eAngle = result['angle'];
-				
 				var closestVector = result['point'].sub(a);
-				var location = vector.normalize().add(closestVector.normalize()).multiplyScalar(60).add(a);
 				
-				var angle = Math.abs(eAngle - sAngle);
-				angle = (angle > 180) ? 360 - angle : angle;
-				angle = Math.round(angle * 10) / 10;
-				
+				var radius = 60;
+				var location = vector.normalize().add(closestVector.normalize()).multiplyScalar(radius).add(a);
 				var ox = this.viewmodel.convertX(this.viewmodel.lastNode.x);
 				var oy = this.viewmodel.convertY(this.viewmodel.lastNode.y);
+				var angle = Math.abs(eAngle - sAngle);
+				angle = (angle > 180) ? 360 - angle : angle;
+				angle = Math.round(angle * 10) / 10;				
 				
 				sAngle = (sAngle * Math.PI) / 180;
-				eAngle = (eAngle * Math.PI) / 180;
+				eAngle = (eAngle * Math.PI) / 180;				
 				
 				this.context.strokeStyle = '#FF0000';
 				this.context.lineWidth = 4;
 				this.context.beginPath();
-				this.context.arc(ox, oy, 20, Math.min(sAngle, eAngle), Math.max(sAngle, eAngle), false);
+				this.context.arc(ox, oy, radius, Math.min(sAngle, eAngle), Math.max(sAngle, eAngle), false);
 				this.context.stroke();
 				this.drawTextLabel(`${angle}°`, this.viewmodel.convertX(location.x), this.viewmodel.convertY(location.y));
 			}
@@ -170,7 +174,7 @@ export class FloorplannerView2D
 			var lx = this.viewmodel.convertX(location.x);
 			var ly = this.viewmodel.convertY(location.y);
 			var radius = direction.length() * offsetRatio * 0.5;
-			if( angle > 130)
+			if( angle > 130 || angle == 0)
 			{
 				continue;
 			}
@@ -423,15 +427,18 @@ export class FloorplannerView2D
 		
 		if(selected)
 		{			
-			this.drawCornerAngles(wall.start);
-			this.drawCornerAngles(wall.end);
+			if(wall.wallType != WallTypes.CURVED)
+			{
+				this.drawCornerAngles(wall.start);
+				this.drawCornerAngles(wall.end);
+			}
 		}
 	}
 
 	/** */
 	drawRoom(room)
 	{
-		var scope = this;
+//		var scope = this;
 		var selected = (room === this.viewmodel.selectedRoom);
 		var hover = (room === this.viewmodel.activeRoom && room != this.viewmodel.selectedRoom);
 		var color = roomColor;
@@ -443,9 +450,39 @@ export class FloorplannerView2D
 		{
 			color = roomColorSelected;
 		}
-		this.drawPolygon(Utils.map(room.corners, (corner) => {return scope.viewmodel.convertX(corner.x);}),Utils.map(room.corners, (corner) =>  {return scope.viewmodel.convertY(corner.y);}), true, color);
+//		this.drawPolygon(
+//				Utils.map(room.corners, (corner) => 
+//				{
+//					return scope.viewmodel.convertX(corner.x);
+//				}),
+//				Utils.map(room.corners, (corner) =>  
+//				{
+//					return scope.viewmodel.convertY(corner.y);
+//				}), 
+//				true, color);
+		
+		var polygonPoints = [];
+		
+		for (var i=0;i<room.roomCornerPoints.length;i++)
+		{
+			polygonPoints.push([room.roomCornerPoints[i]]);
+		}
+		
+		this.drawPolygonCurved(polygonPoints, true, color);
+		
 		this.drawTextLabel(Dimensioning.cmToMeasure(room.area, 2)+String.fromCharCode(178), this.viewmodel.convertX(room.areaCenter.x), this.viewmodel.convertY(room.areaCenter.y), '#0000FF', '#00FF0000', 'bold');
 		this.drawTextLabel(room.name, this.viewmodel.convertX(room.areaCenter.x), this.viewmodel.convertY(room.areaCenter.y+30), '#363636', '#00FF0000', 'bold italic');
+		
+//		Debuggin Room for correct order of polygon points with room walls
+//		if(selected)
+//		{
+//			for (i=0;i<room.roomCornerPoints.length;i++)
+//			{
+//				var p = room.roomCornerPoints[i];
+//				this.drawCircle(this.viewmodel.convertX(p.x), this.viewmodel.convertY(p.y), 6, '#999999');
+//				this.drawTextLabel(`p:${i+1}`, this.viewmodel.convertX(p.x), this.viewmodel.convertY(p.y), '#363636', '#00FF0000', 'bold italic');
+//			}
+//		}
 	}
 
 	/** */
@@ -538,7 +575,7 @@ export class FloorplannerView2D
 	}
 	
 	/** */
-	drawPolygonCurved(pointsets, fill, fillColor, stroke, strokeColor, strokeWidth)
+	drawPolygonCurved(pointsets, fill=true, fillColor='#FF00FF', stroke=false, strokeColor='#000000', strokeWidth=5)
 	{
 		// fillColor is a hex string, i.e. #ff0000
 		fill = fill || false;
