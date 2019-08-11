@@ -750,7 +750,7 @@ function datGUI(three, floorplanner)
 	itemPropFolder = getItemPropertiesFolder(gui, anItem);
 	
 	var f = gui.addFolder('View 2D');
-	f.add(BP3DJS.config, 'scale', 0.25, 5, ).step(0.25);
+	f.add(BP3DJS.config, 'scale', 0.25, 5, ).step(0.25).onChange(()=>{blueprint3d.floorplanner.view.draw();});
 }
 
 

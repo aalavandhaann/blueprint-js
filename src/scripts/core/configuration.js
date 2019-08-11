@@ -17,6 +17,11 @@ export var config = {dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 10,
 
 export var wallInformation = {exterior: false, interior: false, midline: true, labels: true, exteriorlabel:'e:', interiorlabel:'i:', midlinelabel:'m:'};
 
+
+/** 
+ * The tolerance in cms between corners, otherwise below this tolerance they will snap together as one corner*/
+export const cornerTolerance = 20;
+
 /** Global configuration to customize the whole system.  */
 export class Configuration 
 {

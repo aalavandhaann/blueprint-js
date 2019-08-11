@@ -1,4 +1,5 @@
 import {Vector2} from 'three';
+import {Math as THREEMath} from 'three';
 import {checkIntersection} from 'line-intersect';
 
 export class Utils
@@ -85,6 +86,41 @@ export class Utils
 			tTheta += 2.0 * Math.PI;
 		}
 		return tTheta;
+	}
+	
+	/** shifts angle to be 0 to 2pi */
+	static getCyclicOrder(points, start=undefined)
+	{
+		if(!start)
+		{
+			start = new Vector2(0, 0);
+		}
+		var angles = [];
+		for (var i=0;i<points.length;i++)
+		{
+			var point = points[i];
+			var vect = point.clone().sub(start);
+			var radians = Math.atan2(vect.y, vect.x);
+			var degrees = THREEMath.radToDeg(radians);
+			degrees = (degrees > 0 ) ? degrees : (degrees+360) % 360;
+			angles.push(degrees);
+		}
+		var indices = Utils.argsort(angles);
+		var sortedAngles = [];
+		for (i=0;i<indices.length;i++)
+		{
+			sortedAngles.push(angles[indices[i]]);
+		}
+		return {indices: indices, angles: sortedAngles};
+	}
+	
+	static argsort(numericalValues, direction=1)
+	{
+		var indices = Array.from(new Array(numericalValues.length),(val,index)=>index);
+		return indices
+		  .map((item, index) => [numericalValues[index], item]) // add the clickCount to sort by
+		  .sort(([count1], [count2]) => (count1 - count2)*direction) // sort by the clickCount data
+		  .map(([, item]) => item); // extract the sorted items
 	}
 
 	/** Checks if an array of points is clockwise.

@@ -232,6 +232,12 @@ export class Floorplanner2D extends EventDispatcher
 			this.targetX = this.mouseX;
 			this.targetY = this.mouseY;
 		}
+		
+		if(this.gridsnapmode)
+		{			
+			this.targetX = Math.floor(this.targetX / snapTolerance) * snapTolerance;
+			this.targetY = Math.floor(this.targetY / snapTolerance) * snapTolerance;			
+		}
 
 		this.view.draw();
 	}
@@ -366,7 +372,15 @@ export class Floorplanner2D extends EventDispatcher
 			var hoverRoom = this.floorplan.overlappedRoom(this.mouseX, this.mouseY);
 			var draw = false;			
 			
-			if (hoverWall != this.activeWall)
+			// corner takes precendence
+			if (hoverCorner != this.activeCorner && this.activeWall == null)
+			{
+				this.activeCorner = hoverCorner;
+				this.floorplan.dispatchEvent({type:EVENT_CORNER_2D_HOVER, item: hoverCorner});
+				draw = true;
+			}
+			
+			if (hoverWall != this.activeWall && this.activeCorner == null)
 			{
 				this.activeWall = hoverWall;
 				this.floorplan.dispatchEvent({type:EVENT_WALL_2D_HOVER, item: hoverWall});
@@ -375,14 +389,6 @@ export class Floorplanner2D extends EventDispatcher
 			else
 			{
 				this.activeWall = null;
-			}
-			
-			// corner takes precendence
-			if (hoverCorner != this.activeCorner && this.activeWall == null)
-			{
-				this.activeCorner = hoverCorner;
-				this.floorplan.dispatchEvent({type:EVENT_CORNER_2D_HOVER, item: hoverCorner});
-				draw = true;
 			}
 			
 			if(this.activeWall == null && this.activeCorner == null)

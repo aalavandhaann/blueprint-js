@@ -19,13 +19,13 @@ export {ELogContext, ELogLevel, logContext, isLogging, log} from './core/log.js'
 export {dimInch, dimFeetAndInch, dimMeter, dimCentiMeter, dimMilliMeter, dimensioningOptions, decimals, Dimensioning} from './core/dimensioning.js';
 export {cmPerFoot, pixelsPerFoot, cmPerPixel, pixelsPerCm} from './core/dimensioning.js';
 
-export {configDimUnit, configWallHeight, configWallThickness, configSystemUI, wallInformation, scale, config, Configuration} from './core/configuration.js';
+export {cornerTolerance, configDimUnit, configWallHeight, configWallThickness, configSystemUI, wallInformation, scale, config, Configuration} from './core/configuration.js';
 export {VIEW_TOP, VIEW_FRONT, VIEW_RIGHT, VIEW_LEFT, VIEW_ISOMETRY} from './core/constants.js';
 export {WallTypes} from './core/constants.js';
 
 //Classes from model module
 export {HalfEdge} from './model/half_edge.js';
-export {cornerTolerance, Corner} from './model/corner.js';
+export {Corner} from './model/corner.js';
 export {defaultFloorPlanTolerance, Floorplan} from './model/floorplan.js';
 export {Model} from './model/model.js';
 export {defaultRoomTexture, Room} from './model/room.js';

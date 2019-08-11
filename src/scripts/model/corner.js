@@ -3,10 +3,9 @@ import {EventDispatcher, Vector2} from 'three';
 import {Utils} from '../core/utils.js';
 import {WallTypes} from '../core/constants.js';
 //import {Dimensioning} from '../core/dimensioning.js';
-import {Configuration, configWallHeight} from '../core/configuration.js';
+import {Configuration, configWallHeight, cornerTolerance} from '../core/configuration.js';
 
-/** */
-export const cornerTolerance = 20;
+
 
 /**
  * Corners are used to define Walls.
@@ -82,11 +81,36 @@ export class Corner extends EventDispatcher
 		**/
 		this.attachedRooms = [];
 		
+		this._angles = [];
+		this._angleDirections = [];
+		this._startAngles = [];
+		this._endAngles = [];
+		this._cyclicNeighbors = [];
 		/**
 		* @property {Boolean} _hasChanged A flag to indicate if something has changed about this corner
 		* @type {Boolean}
 		**/
 		this._hasChanged = false;
+	}
+	
+	get startAngles()
+	{
+		return this._startAngles;
+	}
+	
+	get endAngles()
+	{
+		return this._endAngles;
+	}
+	
+	get angles()
+	{
+		return this._angles;
+	}
+	
+	get angleDirections()
+	{
+		return this._angleDirections;
 	}
 	
 	get location()
@@ -325,6 +349,12 @@ export class Corner extends EventDispatcher
 			//While release v1.0.0 is stable even with this line enabled
 			this.mergeWithIntersected();
 		}
+		
+//		this.updateAngles();
+//		this.adjacentCorners().forEach((corner) => {
+//			corner.updateAngles();
+//		}); 
+		
 		this.dispatchEvent({type:EVENT_MOVED, item: this, position: new Vector2(newX, newY)});
 		//      this.moved_callbacks.fire(this.x, this.y);
 
@@ -335,6 +365,73 @@ export class Corner extends EventDispatcher
 		this.wallEnds.forEach((wall) => {
 			wall.fireMoved();
 		});
+	}
+	
+	//Angle is in degrees 0 - 360
+	closestAngle(angle)
+	{
+		var neighbors = this.adjacentCorners();
+		var delta = 999999;
+		var closestAngle = 0;
+		var point = new Vector2();
+		for (var i=0;i<neighbors.length;i++)
+		{
+			var neighbourAngle = neighbors[i].location.clone().sub(this.location).angle();
+			neighbourAngle = (neighbourAngle * 180) / Math.PI;
+			var diff = Math.abs(angle - neighbourAngle);
+			if(diff < delta)
+			{
+				delta = diff;
+				point.x = neighbors[i].location.x;
+				point.y = neighbors[i].location.y;
+				closestAngle = neighbourAngle;
+			}
+		}		
+		return {angle: closestAngle, point: point};
+	}
+	
+	updateAngles()
+	{
+		var neighbors = this.adjacentCorners();
+		this._angles = [];
+		this._angleDirections = [];
+		this._startAngles = [];
+		this._endAngles = [];
+		this._cyclicNeighbors = [];
+		if(neighbors.length < 2)
+		{
+			return;
+		}
+		var start = this.location.clone();
+		var points = [];
+		for (var i=0;i<neighbors.length;i++)
+		{
+			points.push(neighbors[i].location);
+		}
+		var indicesAndAngles = Utils.getCyclicOrder(points, start);
+		var indices = indicesAndAngles['indices'];
+		var angles = indicesAndAngles['angles'];
+//		var N = (indices.length%2 == 0)? (indices.length < 3) ? indices.length - 1 : indices.length : indices.length - 1;
+		var N = (indices.length < 3) ? 1 : indices.length;
+		for (i=0;i<N;i++)
+		{
+			var next = (i + 1) % indices.length;
+			var cindex = indices[i];
+			var nindex = indices[next];
+			
+			var vectorA = points[cindex].clone().sub(start).normalize();
+			var vectorB = points[nindex].clone().sub(start).normalize();
+			var midVector = vectorA.add(vectorB).multiplyScalar(20.0);
+			
+			var diffAngle = Math.abs(angles[next] - angles[i]);
+			diffAngle = (diffAngle > 180) ? 360 - diffAngle : diffAngle;
+			diffAngle = Math.round(diffAngle * 10) / 10;
+			this._startAngles.push(angles[i]);
+			this._endAngles.push(angles[next]);
+			this._angles.push(diffAngle);
+			this._angleDirections.push(midVector);
+			this._cyclicNeighbors.push(neighbors[indices[i]]);
+		}
 	}
 
 	/**

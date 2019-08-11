@@ -104,18 +104,47 @@ export class FloorplannerView2D
 		// this.context.globalAlpha = 1.0;
 
 		this.floorplan.getWalls().forEach((wall) => {this.drawWall(wall);});
-		this.floorplan.getCorners().forEach((corner) => {this.drawCorner(corner);});
+		this.floorplan.getCorners().forEach((corner) => {
+			this.drawCorner(corner);
+//			this.drawCornerAngles(corner);
+			});
 		if (this.viewmodel.mode == floorplannerModes.DRAW)
 		{
 			this.drawTarget(this.viewmodel.targetX, this.viewmodel.targetY, this.viewmodel.lastNode);
 			//Enable the below lines for measurement while drawing, still needs work as it is crashing the whole thing
-			if(this.viewmodel.lastNode != null)
+			if(this.viewmodel.lastNode != null && this.viewmodel.lastNode != undefined)
 			{
 				var a = new Vector2(this.viewmodel.lastNode.x,this.viewmodel.lastNode.y);
 				var b = new Vector2(this.viewmodel.targetX, this.viewmodel.targetY);
 				var abvector = b.clone().sub(a);
 				var midPoint = abvector.multiplyScalar(0.5).add(a);
 				this.drawTextLabel(Dimensioning.cmToMeasure(a.distanceTo(b)), this.viewmodel.convertX(midPoint.x), this.viewmodel.convertY(midPoint.y));
+				
+				//Show angle to the nearest wall
+				var vector = b.clone().sub(a);
+				var sAngle = (vector.angle()*180) / Math.PI;
+				var result = this.viewmodel.lastNode.closestAngle(sAngle);				
+				var eAngle = result['angle'];
+				
+				var closestVector = result['point'].sub(a);
+				var location = vector.normalize().add(closestVector.normalize()).multiplyScalar(60).add(a);
+				
+				var angle = Math.abs(eAngle - sAngle);
+				angle = (angle > 180) ? 360 - angle : angle;
+				angle = Math.round(angle * 10) / 10;
+				
+				var ox = this.viewmodel.convertX(this.viewmodel.lastNode.x);
+				var oy = this.viewmodel.convertY(this.viewmodel.lastNode.y);
+				
+				sAngle = (sAngle * Math.PI) / 180;
+				eAngle = (eAngle * Math.PI) / 180;
+				
+				this.context.strokeStyle = '#FF0000';
+				this.context.lineWidth = 4;
+				this.context.beginPath();
+				this.context.arc(ox, oy, 20, Math.min(sAngle, eAngle), Math.max(sAngle, eAngle), false);
+				this.context.stroke();
+				this.drawTextLabel(`${angle}°`, this.viewmodel.convertX(location.x), this.viewmodel.convertY(location.y));
 			}
 		}
 		this.floorplan.getWalls().forEach((wall) => {this.drawWallLabels(wall);});
@@ -123,6 +152,53 @@ export class FloorplannerView2D
 		{
 			this.drawCircle(this.viewmodel.convertX(this.viewmodel._clickedWallControl.x), this.viewmodel.convertY(this.viewmodel._clickedWallControl.y), 7, '#F7F7F7');
 		}
+	}
+	
+	
+	drawCornerAngles(corner)
+	{
+		var ox = this.viewmodel.convertX(corner.location.x);
+		var oy = this.viewmodel.convertY(corner.location.y);
+		var offsetRatio = 2.0;
+		for (var i=0;i<corner.angles.length;i++)
+		{
+			var direction = corner.angleDirections[i];
+			var location = direction.clone().add(corner.location);
+			var sAngle = (corner.startAngles[i]*Math.PI)/180;
+			var eAngle = (corner.endAngles[i]*Math.PI)/180;
+			var angle = corner.angles[i];
+			var lx = this.viewmodel.convertX(location.x);
+			var ly = this.viewmodel.convertY(location.y);
+			var radius = direction.length() * offsetRatio * 0.5;
+			if( angle > 130)
+			{
+				continue;
+			}
+			var ccwise = (Math.abs(corner.startAngles[i] - corner.endAngles[i]) > 180);			
+			this.context.strokeStyle = '#000000';
+			this.context.lineWidth = 4;
+			this.context.beginPath();
+			if(angle == 90)
+			{
+				var location2 = direction.clone().multiplyScalar(offsetRatio).add(corner.location);
+				var lxx = this.viewmodel.convertX(location2.x);
+				var lyy = this.viewmodel.convertY(location2.y);
+				var b = {x:lxx, y:oy};
+				var c = {x:lxx, y:lyy};
+				var d = {x:ox, y:lyy};
+				this.drawLine(b.x,b.y,c.x,c.y,this.context.lineWidth,this.context.strokeStyle);
+				this.drawLine(c.x,c.y,d.x,d.y,this.context.lineWidth,this.context.strokeStyle);
+			}
+			else
+			{
+				this.context.arc(ox, oy, radius, Math.min(sAngle, eAngle), Math.max(sAngle, eAngle), ccwise);
+			}
+			
+			this.context.stroke();
+//			this.drawCircle(this.viewmodel.convertX(location.x), this.viewmodel.convertY(location.y), 7, '#000000');
+			this.drawTextLabel(`${angle}°`, lx, ly);
+		}
+		
 	}
 
 	drawOriginCrossHair()
@@ -343,6 +419,12 @@ export class FloorplannerView2D
 		if (!hover && !selected && wall.backEdge)
 		{
 			this.drawEdge(wall.backEdge, hover, isCurved);
+		}
+		
+		if(selected)
+		{			
+			this.drawCornerAngles(wall.start);
+			this.drawCornerAngles(wall.end);
 		}
 	}
 
@@ -570,6 +652,13 @@ export class FloorplannerView2D
 		var offsetY = this.calculateGridOffset(-this.viewmodel.originY);
 		var width = this.canvasElement.width;
 		var height = this.canvasElement.height;
+		var scale = Configuration.getNumericValue('scale');
+		if(scale < 1.0)
+		{
+			width = width / scale;
+			height = height / scale;
+		}
+		
 		for (var x = 0; x <= (width / gridSpacing); x++)
 		{
 			this.drawLine(gridSpacing * Configuration.getNumericValue('scale') * x + offsetX, 0, gridSpacing * Configuration.getNumericValue('scale') * x + offsetX, height, gridWidth, gridColor);
