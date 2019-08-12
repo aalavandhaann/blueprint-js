@@ -508,6 +508,16 @@ export class FloorplannerView2D
 		{
 			color = cornerColorSelected;
 		}
+		
+		if(selected)
+		{
+			this.drawCornerAngles(corner);
+			corner.adjacentCorners().forEach((neighbour) => 
+			{
+				this.drawCornerAngles(neighbour);
+			});
+		}
+		
 		this.drawCircle(cornerX, cornerY, hover ? cornerRadiusHover : selected ? cornerRadiusSelected : cornerRadius, color);
 		// let cx = Dimensioning.roundOff(corner.x, 10);
 		// let cy = Dimensioning.roundOff(corner.y, 10);
