@@ -1,6 +1,7 @@
 import {EventDispatcher} from 'three';
 import {EVENT_UPDATED} from '../core/events.js';
 import {cmPerPixel, pixelsPerCm, Dimensioning} from '../core/dimensioning.js';
+import {Configuration} from '../core/configuration.js';
 
 /**
  * The View to be used by a Floorplanner to render in/interact with.
@@ -255,7 +256,7 @@ export class CarbonSheet extends EventDispatcher
 			this.context.translate(conX, conY);
 			
 			this.context.globalAlpha = this._transparency;			
-			this.context.drawImage(this._image, -this._anchorX*this._scaleX, -this._anchorY*this._scaleY, this._drawWidthPixels, this._drawHeightPixels);
+			this.context.drawImage(this._image, -this._anchorX*this._scaleX* Configuration.getNumericValue('scale'), -this._anchorY*this._scaleY* Configuration.getNumericValue('scale'), this._drawWidthPixels* Configuration.getNumericValue('scale'), this._drawHeightPixels* Configuration.getNumericValue('scale'));
 			this.context.globalAlpha = 1.0;
 			
 			this.context.beginPath();			
