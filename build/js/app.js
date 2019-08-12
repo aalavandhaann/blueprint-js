@@ -296,6 +296,7 @@ var Wall2DProperties = function(wall2d, gui)
 	this.gui = gui;
 	this.wall2d = wall2d;		
 	this.walltype = 'Straight';
+	this.walllength = BP3DJS.Dimensioning.cmToMeasureRaw( wall2d.wallSize);
 	function onChangeWallType()
 	{
 		if(scope.walltype == 'Straight')
@@ -305,9 +306,18 @@ var Wall2DProperties = function(wall2d, gui)
 		else if(scope.walltype == 'Curved')
 		{
 			scope.wall2d.wallType = BP3DJS.WallTypes.CURVED;
+			
 		}
 		blueprint3d.floorplanner.view.draw();
 	}
+	
+	function onChangeWallLength()
+	{
+		scope.wall2d.wallSize = BP3DJS.Dimensioning.cmFromMeasureRaw(scope.walllength);
+		blueprint3d.floorplanner.view.draw();
+	}
+	
+	
 	this.options = ['Straight', 'Curved'];
 	if(this.wall2d.wallType == BP3DJS.WallTypes.CURVED)
 	{
@@ -315,6 +325,10 @@ var Wall2DProperties = function(wall2d, gui)
 	}
 	this.f = gui.addFolder('Current Wall 2D');
 	this.typecontrol = f.add(this, 'walltype', this.options).name("Wall Type").onChange(()=>{onChangeWallType()});
+	if(this.wall2d.wallType == BP3DJS.WallTypes.STRAIGHT)
+	{
+		this.lengthcontrol = f.add(this, 'walllength').name("Wall Length").onChange(()=>{onChangeWallLength()});
+	}	
 	return this.f;
 }
 

@@ -132,8 +132,11 @@ export class FloorplannerView2D
 				var eAngle = result['angle'];
 				var closestVector = result['point'].sub(a);
 				
-				var radius = 60;
-				var location = vector.normalize().add(closestVector.normalize()).multiplyScalar(radius).add(a);
+				var textDistance = 60;
+				var radius = Math.min(textDistance, vector.length());
+//				radius = Math.max(radius, )
+				var location = vector.normalize().add(closestVector.normalize()).multiplyScalar(textDistance).add(a);
+				
 				var ox = this.viewmodel.convertX(this.viewmodel.lastNode.x);
 				var oy = this.viewmodel.convertY(this.viewmodel.lastNode.y);
 				var angle = Math.abs(eAngle - sAngle);
@@ -146,7 +149,7 @@ export class FloorplannerView2D
 				this.context.strokeStyle = '#FF0000';
 				this.context.lineWidth = 4;
 				this.context.beginPath();
-				this.context.arc(ox, oy, radius, Math.min(sAngle, eAngle), Math.max(sAngle, eAngle), false);
+				this.context.arc(ox, oy, radius*0.5, Math.min(sAngle, eAngle), Math.max(sAngle, eAngle), false);
 				this.context.stroke();
 				this.drawTextLabel(`${angle}°`, this.viewmodel.convertX(location.x), this.viewmodel.convertY(location.y));
 			}

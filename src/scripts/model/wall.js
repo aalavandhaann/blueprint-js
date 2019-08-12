@@ -274,6 +274,30 @@ export class Wall extends EventDispatcher
 			//this.backEdge.redrawCallbacks.fire();
 		}
 	}
+	
+	set wallSize(value)
+	{
+		if(this.wallType == WallTypes.STRAIGHT)
+		{
+			var vector = this.getEnd().location.clone().sub(this.getStart().location);
+			var currentLength = this.wallLength();
+			var changeInLength = value / currentLength;
+			var changeInLengthOffset = (changeInLength - 1) * 0.5;
+			var movementVector = vector.clone().multiplyScalar(changeInLengthOffset); 
+			var endPoint = movementVector.clone().add(this.getEnd().location);
+			var startPoint = movementVector.clone().multiplyScalar(-1).add(this.getStart().location);			
+			
+			this.getStart().move(startPoint.x, startPoint.y);
+			this.getEnd().move(endPoint.x, endPoint.y);
+//			vector = vector.multiplyScalar(changeInLength).add(this.getStart().location);
+//			this.getEnd().move(vector.x, vector.y);
+		}
+	}
+	
+	get wallSize()
+	{
+		return this.wallLength();
+	}
 		
 	get wallType()
 	{
