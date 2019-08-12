@@ -13,7 +13,9 @@ export const configSystemUI = 'systemUI';
 
 export const scale = 'scale';
 
-export var config = {dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 10, systemUI: false, scale: 1};
+export const snapToGrid = 'snapToGrid';
+
+export var config = {dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 10, systemUI: false, scale: 1, snapToGrid: false};
 
 export var wallInformation = {exterior: false, interior: false, midline: true, labels: true, exteriorlabel:'e:', interiorlabel:'i:', midlinelabel:'m:'};
 
@@ -66,6 +68,7 @@ export class Configuration
 		case configWallHeight:
 		case configWallThickness:
 		case scale:
+		case snapToGrid:
 //			return Number(this.data[key]);
 			return Number(Configuration.getData()[key]);
 		default:

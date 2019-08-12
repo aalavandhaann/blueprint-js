@@ -639,14 +639,22 @@ function getCameraRangePropertiesFolder(gui, camerarange)
 
 function getGlobalPropertiesFolder(gui, global)
 {
-	var f = gui.addFolder('Global');
-	var ficontrol = f.add(global.units, 'a',).name("Feets'' Inches'").onChange(function(){global.setUnit("a")});
-	var icontrol = f.add(global.units, 'b',).name("Inches'").onChange(function(){global.setUnit("b")});
-	var ccontrol = f.add(global.units, 'c',).name('Cm').onChange(function(){global.setUnit("c")});
-	var mmcontrol = f.add(global.units, 'd',).name('mm').onChange(function(){global.setUnit("d")});
-	var mcontrol = f.add(global.units, 'e',).name('m').onChange(function(){global.setUnit("e")});
+	var f = gui.addFolder('Interface');
+	
+	var unitsf = f.addFolder('Units');	
+	var ficontrol = unitsf.add(global.units, 'a',).name("Feets'' Inches'").onChange(function(){global.setUnit("a")});
+	var icontrol = unitsf.add(global.units, 'b',).name("Inches'").onChange(function(){global.setUnit("b")});
+	var ccontrol = unitsf.add(global.units, 'c',).name('Cm').onChange(function(){global.setUnit("c")});
+	var mmcontrol = unitsf.add(global.units, 'd',).name('mm').onChange(function(){global.setUnit("d")});
+	var mcontrol = unitsf.add(global.units, 'e',).name('m').onChange(function(){global.setUnit("e")});
 	global.setGUIControllers([ficontrol, icontrol, ccontrol, mmcontrol, mcontrol]);
-
+	
+	var view2df = f.addFolder('View 2D');
+	view2df.add(BP3DJS.config, 'snapToGrid',).name("Snap To Grid");
+	view2df.add(BP3DJS.config, 'scale', 0.25, 5, ).step(0.25).onChange(()=>{blueprint3d.floorplanner.view.draw();});
+//	this.xcontrol = f.add(this, 'x').name(`x(${BP3DJS.Configuration.getStringValue(BP3DJS.configDimUnit)})`).step(0.01).onChange(()=>{onChangeX()});
+	view2df.open();
+	f.open();
 	return f;
 }
 
@@ -763,8 +771,8 @@ function datGUI(three, floorplanner)
 	wallPropFolder = getWallAndFloorPropertiesFolder(gui, aWall);
 	itemPropFolder = getItemPropertiesFolder(gui, anItem);
 	
-	var f = gui.addFolder('View 2D');
-	f.add(BP3DJS.config, 'scale', 0.25, 5, ).step(0.25).onChange(()=>{blueprint3d.floorplanner.view.draw();});
+//	var f = gui.addFolder('View 2D');
+//	f.add(BP3DJS.config, 'scale', 0.25, 5, ).step(0.25).onChange(()=>{blueprint3d.floorplanner.view.draw();});
 }
 
 
