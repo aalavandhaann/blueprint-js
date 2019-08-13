@@ -290,7 +290,7 @@ export class Wall extends EventDispatcher
 			
 			changeInLengthOffset = (changeInLength - 1);
 			
-			if(!neighboursCountStart && !neighboursCountEnd)
+			if((!neighboursCountStart && !neighboursCountEnd) || (neighboursCountStart && neighboursCountEnd))
 			{
 				changeInLengthOffset *= 0.5;
 				movementVector = vector.clone().multiplyScalar(changeInLengthOffset);
