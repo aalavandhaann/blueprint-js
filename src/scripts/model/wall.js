@@ -282,13 +282,38 @@ export class Wall extends EventDispatcher
 			var vector = this.getEnd().location.clone().sub(this.getStart().location);
 			var currentLength = this.wallLength();
 			var changeInLength = value / currentLength;
-			var changeInLengthOffset = (changeInLength - 1) * 0.5;
-			var movementVector = vector.clone().multiplyScalar(changeInLengthOffset); 
-			var endPoint = movementVector.clone().add(this.getEnd().location);
-			var startPoint = movementVector.clone().multiplyScalar(-1).add(this.getStart().location);			
 			
+			var neighboursCountStart = (this.getStart().adjacentCorners().length == 1);
+			var neighboursCountEnd = (this.getEnd().adjacentCorners().length  == 1);
+			
+			var changeInLengthOffset, movementVector, startPoint, endPoint;
+			
+			changeInLengthOffset = (changeInLength - 1);
+			
+			if(!neighboursCountStart && !neighboursCountEnd)
+			{
+				changeInLengthOffset *= 0.5;
+				movementVector = vector.clone().multiplyScalar(changeInLengthOffset);
+				startPoint = movementVector.clone().multiplyScalar(-1).add(this.getStart().location);
+				endPoint = movementVector.clone().add(this.getEnd().location);
+			}
+			else if(neighboursCountStart)
+			{
+				movementVector = vector.clone().multiplyScalar(changeInLengthOffset);
+				startPoint = movementVector.clone().multiplyScalar(-1).add(this.getStart().location);
+				endPoint = this.getEnd().location;
+			}
+			
+			else if(neighboursCountEnd)
+			{
+				movementVector = vector.clone().multiplyScalar(changeInLengthOffset);
+				endPoint = movementVector.clone().add(this.getEnd().location);
+				startPoint = this.getStart().location;
+			}
 			this.getStart().move(startPoint.x, startPoint.y);
-			this.getEnd().move(endPoint.x, endPoint.y);
+			this.getEnd().move(endPoint.x, endPoint.y);		
+			
+			
 //			vector = vector.multiplyScalar(changeInLength).add(this.getStart().location);
 //			this.getEnd().move(vector.x, vector.y);
 		}
