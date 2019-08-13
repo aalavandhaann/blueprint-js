@@ -285,19 +285,19 @@ export class Room extends EventDispatcher
 			var b = points[inext];
 			//Another irregular polygon method based on the url below
 			//https://www.mathsisfun.com/geometry/area-irregular-polygons.html
-			var width = a.x - b.x;
-			var height = (a.y + b.y) * 0.5;
-			var delta = Math.abs(width * height);
-//			var ax_by = (a.x * b.y);
-//			var ay_bx = (a.y * b.x);
-//			var delta = ax_by - ay_bx;
+//			var width = a.x - b.x;
+//			var height = (a.y + b.y) * 0.5;
+//			var delta = Math.abs(width * height);
+			var ax_by = (a.x * b.y);
+			var ay_bx = (a.y * b.x);
+			var delta = ax_by - ay_bx;
 			area += delta;
 		}
 		this._polygonPoints = points;
-//		this.area = Math.abs(area) * 0.5;
+		this.area = Math.abs(area) * 0.5;
 //		if we are using the method in url https://www.mathsisfun.com/geometry/area-irregular-polygons.html 
 //		then we dont have to multiply the area by 0.5;
-		this.area = Math.abs(area);
+//		this.area = Math.abs(area);
 		this.dispatchEvent({type:EVENT_ROOM_ATTRIBUTES_CHANGED, item:this, info:{from: oldarea, to: this.area}});
 	}
 
