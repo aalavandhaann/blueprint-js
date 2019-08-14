@@ -253,36 +253,31 @@ export class Floorplan extends EventDispatcher
 			{
 				var nCorner = this.newCorner(iPoint.x, iPoint.y);
 				newCorners.push(nCorner);
+				nCorner.mergeWithIntersected(false);
 				intersections = true;
-				// Curved walls cannot be intersected. So make them Straight
-				// walls again
-// if(twall.wallType == WallTypes.CURVED)
-// {
-// twall.wallType = WallTypes.STRAIGHT;
-// }
 			}
 		}
-		for( i=0;i<this.corners.length;i++)
-		{
-			var aCorner = this.corners[i];
-			if(aCorner)
-			{
-				aCorner.relativeMove(0, 0);
-				aCorner.snapToAxis(25);
-			}
-		}
+//		for( i=0;i<this.corners.length;i++)
+//		{
+//			var aCorner = this.corners[i];
+//			if(aCorner)
+//			{
+//				aCorner.relativeMove(0, 0);
+//				aCorner.snapToAxis(25);
+//			}
+//		}
+//		this.update();
+//		for( i=0;i<this.corners.length;i++)
+//		{
+//			aCorner = this.corners[i];
+//			if(aCorner)
+//			{
+//				aCorner.relativeMove(0, 0);
+//				aCorner.snapToAxis(25);
+//			}
+//		}
 		this.update();
-		for( i=0;i<this.corners.length;i++)
-		{
-			aCorner = this.corners[i];
-			if(aCorner)
-			{
-				aCorner.relativeMove(0, 0);
-				aCorner.snapToAxis(25);
-			}
-		}
-
-		this.update();
+		
 		return intersections;
 	}
 
@@ -796,7 +791,8 @@ export class Floorplan extends EventDispatcher
 					room.name = scope.metaroomsdata[room.roomByCornersId]['name'];
 				}
 			}
-		});				this.assignOrphanEdges();
+		});				
+		this.assignOrphanEdges();
 		this.updateFloorTextures();
 		this.dispatchEvent({type: EVENT_UPDATED, item: this});
 // console.log('TOTAL WALLS ::: ', this.walls.length);

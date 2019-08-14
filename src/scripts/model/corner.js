@@ -141,8 +141,10 @@ export class Corner extends EventDispatcher
 		this._x = value;
 		if(this._hasChanged)
 		{
+			this._co.x = this._x;
+			this.floorplan.update();
 			this.dispatchEvent({type:EVENT_CORNER_ATTRIBUTES_CHANGED, item:this, info:{from: oldvalue, to: this._x}});
-		}
+		}		
 	}
 	
 	get y()
@@ -160,6 +162,8 @@ export class Corner extends EventDispatcher
 		this._y = value;
 		if(this._hasChanged)
 		{
+			this._co.y = this._y;
+			this.floorplan.update();
 			this.dispatchEvent({type:EVENT_CORNER_ATTRIBUTES_CHANGED, item:this, info:{from: oldvalue, to: this._y}});
 		}
 	}
@@ -336,7 +340,7 @@ export class Corner extends EventDispatcher
 	 * @param {Number} newX The new x position.
 	 * @param {Number} newY The new y position.
 	 */
-	move(newX, newY, mergeWithIntersections=true)
+	move(newX, newY, mergeWithIntersections=true, updateFloorPlan=true)
 	{
 		this.x = newX;
 		this.y = newY;
@@ -350,12 +354,10 @@ export class Corner extends EventDispatcher
 			this.mergeWithIntersected();
 		}
 		
-		this.floorplan.update();
-		
-//		this.updateAngles();
-//		this.adjacentCorners().forEach((corner) => {
-//			corner.updateAngles();
-//		}); 
+		if(updateFloorPlan)
+		{
+			this.floorplan.update();
+		}
 		
 		this.dispatchEvent({type:EVENT_MOVED, item: this, position: new Vector2(newX, newY)});
 		//      this.moved_callbacks.fire(this.x, this.y);
@@ -656,7 +658,7 @@ export class Corner extends EventDispatcher
 		this.floorplan.update();
 	}
 
-	mergeWithIntersected()
+	mergeWithIntersected(updateFloorPlan=true)
 	{
 		var i =0;
 		//console.log('mergeWithIntersected for object: ' + this.type);
@@ -686,16 +688,10 @@ export class Corner extends EventDispatcher
 				{
 					intersection = wall.bezier.project(new Vector2(this.x, this.y));
 				}				
-				//The below line is crashing because of recursive. This function mergeWithIntersected is called 
-				//From move(newX, newY) method. Now if we call move(newX, newY) from inside this method
-				//It will lead to recursion. So ensure in the move(newX, newY) method mergeWithIntersected is not called
-				//Hence added a third parameter to move(newX, newY, mergeWithIntersections) that is a boolean value
-				//Send this boolean value as false to avoid recursion crashing of the application
-				this.move(intersection.x, intersection.y, false); //Causes Recursion if third parameter is true
 				
 				if(wall.wallType == WallTypes.STRAIGHT)
 				{
-					// merge this corner into wall by breaking wall into two parts				
+					// merge this corner into wall by breaking wall into two parts
 					this.floorplan.newWall(this, wall.getEnd());
 					wall.setEnd(this);
 				}
@@ -705,8 +701,15 @@ export class Corner extends EventDispatcher
 					this.floorplan.newWall(this, wall.getEnd());
 					wall.setEnd(this);
 				}
+				
+				//The below line is crashing because of recursive. This function mergeWithIntersected is called 
+				//From move(newX, newY) method. Now if we call move(newX, newY) from inside this method
+				//It will lead to recursion. So ensure in the move(newX, newY) method mergeWithIntersected is not called
+				//Hence added a third parameter to move(newX, newY, mergeWithIntersections) that is a boolean value
+				//Send this boolean value as false to avoid recursion crashing of the application
+				this.move(intersection.x, intersection.y, false, updateFloorPlan); //Causes Recursion if third parameter is true
 					
-				this.floorplan.update();
+//				this.floorplan.update();
 				return true;
 			}
 		}
