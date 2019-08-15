@@ -222,17 +222,55 @@ export class Room extends EventDispatcher
 
 	updateArea()
 	{
+		var scope = this;
+		var isComplexRoom = false;
 		var oldarea = this.area;
 		var points = [];
 		var N = 0;
 		var area = 0;
 		this.areaCenter = new Vector2();
 		this._polygonPoints = [];
-
-		this.updateWalls();
-		this.updateInteriorCorners();
-		this.generatePlane();
-		this.generateRoofPlane();
+		
+		//The below makes this routine too slow
+//		this.updateWalls();
+//		this.updateInteriorCorners();
+//		this.generatePlane();
+//		this.generateRoofPlane();
+		
+		
+		for(var i=0;i<this.corners.length;i++)
+		{
+			var firstCorner = this.corners[i];
+			var secondCorner = this.corners[(i + 1) % this.corners.length];
+			var wall = firstCorner.wallToOrFrom(secondCorner);
+			isComplexRoom |= (wall.wallType == WallTypes.CURVED);
+		}
+		
+		var inext, a, b, ax_by, ay_bx, delta;
+		if(!isComplexRoom)
+		{
+			this.corners.forEach((corner) => {
+				var co = new Vector2(corner.x,corner.y);
+				scope.areaCenter.add(co);
+				points.push(co);
+			});
+			this.areaCenter.multiplyScalar(1.0 / points.length);
+			for (i=0;i<points.length;i++)
+			{
+				inext = (i+1 ) % points.length;
+				a = points[i];
+				b = points[inext];
+				ax_by = (a.x * b.y);
+				ay_bx = (a.y * b.x);
+				delta = ax_by - ay_bx;
+				area += delta;
+			}
+			this.area = Math.abs(area) * 0.5;
+			this._polygonPoints = points;
+			this.dispatchEvent({type:EVENT_ROOM_ATTRIBUTES_CHANGED, item:this, info:{from: oldarea, to: this.area}});
+			return;
+		}
+		
 		
 //		this.corners.forEach((corner) => {
 //			var co = new Vector2(corner.x,corner.y);
@@ -242,11 +280,11 @@ export class Room extends EventDispatcher
 		
 		N = this.corners.length;
 		
-		for(var i=0;i<this.corners.length;i++)
+		for(i=0;i<this.corners.length;i++)
 		{
-			var firstCorner = this.corners[i];
-			var secondCorner = this.corners[(i + 1) % this.corners.length];
-			var wall = firstCorner.wallToOrFrom(secondCorner);
+			firstCorner = this.corners[i];
+			secondCorner = this.corners[(i + 1) % this.corners.length];
+			wall = firstCorner.wallToOrFrom(secondCorner);
 			this.areaCenter.add(firstCorner.location);
 			
 			if(wall != null)
@@ -280,17 +318,17 @@ export class Room extends EventDispatcher
 		
 		for (i=0;i<points.length;i++)
 		{
-			var inext = (i+1 ) % points.length;
-			var a = points[i];
-			var b = points[inext];
+			inext = (i+1 ) % points.length;
+			a = points[i];
+			b = points[inext];
 			//Another irregular polygon method based on the url below
 			//https://www.mathsisfun.com/geometry/area-irregular-polygons.html
 //			var width = a.x - b.x;
 //			var height = (a.y + b.y) * 0.5;
 //			var delta = Math.abs(width * height);
-			var ax_by = (a.x * b.y);
-			var ay_bx = (a.y * b.x);
-			var delta = ax_by - ay_bx;
+			ax_by = (a.x * b.y);
+			ay_bx = (a.y * b.x);
+			delta = ax_by - ay_bx;
 			area += delta;
 		}
 		this._polygonPoints = points;

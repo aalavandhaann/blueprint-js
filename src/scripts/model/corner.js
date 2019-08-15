@@ -142,7 +142,8 @@ export class Corner extends EventDispatcher
 		if(this._hasChanged)
 		{
 			this._co.x = this._x;
-			this.floorplan.update();
+			this.updateAttachedRooms();
+//			this.floorplan.update(false);
 			this.dispatchEvent({type:EVENT_CORNER_ATTRIBUTES_CHANGED, item:this, info:{from: oldvalue, to: this._x}});
 		}		
 	}
@@ -163,7 +164,8 @@ export class Corner extends EventDispatcher
 		if(this._hasChanged)
 		{
 			this._co.y = this._y;
-			this.floorplan.update();
+			this.updateAttachedRooms();
+//			this.floorplan.update(false);
 			this.dispatchEvent({type:EVENT_CORNER_ATTRIBUTES_CHANGED, item:this, info:{from: oldvalue, to: this._y}});
 		}
 	}
@@ -340,10 +342,12 @@ export class Corner extends EventDispatcher
 	 * @param {Number} newX The new x position.
 	 * @param {Number} newY The new y position.
 	 */
-	move(newX, newY, mergeWithIntersections=true, updateFloorPlan=true)
+	move(newX, newY, mergeWithIntersections=true)
 	{
-		this.x = newX;
-		this.y = newY;
+//		this.x = newX;
+//		this.y = newY;
+		this._x = newX;
+		this._y = newY;
 		this._co.x = newX;
 		this._co.y = newY;
 		
@@ -352,11 +356,10 @@ export class Corner extends EventDispatcher
 			//The below line is crashing after makign the changes for curved walls
 			//While release v1.0.0 is stable even with this line enabled
 			this.mergeWithIntersected();
-		}
-		
-		if(updateFloorPlan)
-		{
-			this.floorplan.update();
+			if(this.floorplan.rooms.length < 10)
+			{
+				this.updateAttachedRooms(true);
+			}
 		}
 		
 		this.dispatchEvent({type:EVENT_MOVED, item: this, position: new Vector2(newX, newY)});
@@ -368,7 +371,7 @@ export class Corner extends EventDispatcher
 
 		this.wallEnds.forEach((wall) => {
 			wall.fireMoved();
-		});
+		});		
 	}
 	
 	//Angle is in degrees 0 - 360
@@ -410,7 +413,7 @@ export class Corner extends EventDispatcher
 		if(neighbors.length < 2)
 		{
 			return;
-		}
+		}		
 				
 		var start = this.location.clone();
 		var points = [];
@@ -467,14 +470,15 @@ export class Corner extends EventDispatcher
 		* let corner = new Corner(floorplan, 0, 0);
 		* corner.move(10, 0);
 	**/
-	updateAttachedRooms()
+	updateAttachedRooms(explicit=false)
 	{
-		if(!this._hasChanged)
+		if(!this._hasChanged && !explicit)
 		{
 			return;
 		}
+//		console.log('UPDATE ALL ATTACHED ROOMS :: ');
 		this.attachedRooms.forEach((room)=>{
-				room.updateArea();
+			room.updateArea();
 		});
 		this._hasChanged = false;
 	}
@@ -709,7 +713,7 @@ export class Corner extends EventDispatcher
 				//Send this boolean value as false to avoid recursion crashing of the application
 				this.move(intersection.x, intersection.y, false, updateFloorPlan); //Causes Recursion if third parameter is true
 					
-//				this.floorplan.update();
+				this.floorplan.update();
 				return true;
 			}
 		}

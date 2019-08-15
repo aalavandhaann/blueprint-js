@@ -191,7 +191,7 @@ export class Wall extends EventDispatcher
 		this._bezier.update();
 		if(this.getStart() || this.getEnd())
 		{
-			(this.getStart() != null) ? this.getStart().floorplan.update() : (this.getEnd() != null) ? this.getEnd().floorplan.update() : false;
+			(this.getStart() != null) ? this.getStart().floorplan.update(false) : (this.getEnd() != null) ? this.getEnd().floorplan.update(false) : false;
 		}		
 //		this._a_vector = this._a.clone().sub(this.start.location);
 //		this._b_vector = this._b.clone().sub(this.start.location);
@@ -499,15 +499,15 @@ export class Wall extends EventDispatcher
 		return null;
 	}
 
-	updateAttachedRooms()
+	updateAttachedRooms(explicit=false)
 	{
 		if(this.start != null)
 		{
-			this.start.updateAttachedRooms();
+			this.start.updateAttachedRooms(explicit);
 		}
 		if(this.end)
 		{
-			this.end.updateAttachedRooms();
+			this.end.updateAttachedRooms(explicit);
 		}
 	}
 }

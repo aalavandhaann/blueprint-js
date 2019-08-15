@@ -580,7 +580,10 @@ function addBlueprintListeners(blueprint3d)
 	function itemUnselected()
 	{
 		closeCurrent3DSelectionFolders();
-		anItem.setItem(undefined);
+		if(anItem!=null)
+		{
+			anItem.setItem(undefined);
+		}
 	}
 
 	three.addEventListener(BP3DJS.EVENT_ITEM_SELECTED, function(o){itemSelected(o.item);});

@@ -521,11 +521,11 @@ export class Floorplanner2D extends EventDispatcher
 		{
 			if(this.activeCorner != null)
 			{
-				this.activeCorner.updateAttachedRooms();
+				this.activeCorner.updateAttachedRooms(true);
 			}
 			if(this.activeWall != null)
 			{
-				this.activeWall.updateAttachedRooms();
+				this.activeWall.updateAttachedRooms(true);
 			}
 		}
 		this.view.draw();

@@ -1,5 +1,5 @@
 import {EVENT_UPDATED, EVENT_LOADED, EVENT_NEW, EVENT_DELETED, EVENT_ROOM_NAME_CHANGED} from '../core/events.js';
-import {EVENT_CORNER_ATTRIBUTES_CHANGED, EVENT_WALL_ATTRIBUTES_CHANGED, EVENT_ROOM_ATTRIBUTES_CHANGED} from '../core/events.js';
+import {EVENT_CORNER_ATTRIBUTES_CHANGED, EVENT_WALL_ATTRIBUTES_CHANGED, EVENT_ROOM_ATTRIBUTES_CHANGED, EVENT_MOVED} from '../core/events.js';
 import {EventDispatcher, Vector2, Vector3} from 'three';
 import {Utils} from '../core/utils.js';
 import {Dimensioning} from '../core/dimensioning.js';
@@ -338,7 +338,17 @@ export class Floorplan extends EventDispatcher
 		corner.addEventListener(EVENT_DELETED, function(o){scope.removeCorner(o.item);});
 		corner.addEventListener(EVENT_CORNER_ATTRIBUTES_CHANGED, function(o){
 			scope.dispatchEvent(o);
-			scope.update();
+			var updatecorners = o.item.adjacentCorners();
+			updatecorners.push(o.item);
+			scope.update(false, updatecorners);
+//			scope.update(false);//For debug reasons
+			});
+		corner.addEventListener(EVENT_MOVED, function(o){
+			scope.dispatchEvent(o);
+			var updatecorners = o.item.adjacentCorners();
+			updatecorners.push(o.item);
+			scope.update(false, updatecorners);
+//			scope.update(false);//For debug reasons
 			});
 		
 		this.dispatchEvent({type: EVENT_NEW, item: this, newItem: corner});
@@ -744,8 +754,24 @@ export class Floorplan extends EventDispatcher
 	/**
 	 * Update the floorplan with new rooms, remove old rooms etc.
 	 */
-	update()
+	update(updateroomconfiguration = true, updatecorners=null)//Should include for , updatewalls=null, updaterooms=null
 	{
+		if(updatecorners!=null)
+		{
+//			console.log('UPDATE CORNER ANGLES ::: ', updatecorners.length);
+			updatecorners.forEach((corner)=>{
+				corner.updateAngles();
+			})
+		} 
+		
+		if(!updateroomconfiguration)
+		{
+			this.dispatchEvent({type: EVENT_UPDATED, item: this});
+			return;			
+		}
+		
+//		console.log('UPDATE ROOM WITH NEW ENTRIES ::: ');
+		
 		var scope = this;
 		this.walls.forEach((wall) => {
 			wall.resetFrontBack();
@@ -760,7 +786,7 @@ export class Floorplan extends EventDispatcher
 
 		this.corners.forEach((corner)=>{
 			corner.clearAttachedRooms();
-			corner.updateAngles();
+//			corner.updateAngles();
 		});
 
 		roomCorners.forEach((corners) =>

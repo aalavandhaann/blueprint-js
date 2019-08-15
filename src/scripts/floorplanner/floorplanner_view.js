@@ -100,7 +100,7 @@ export class FloorplannerView2D
 		this.drawOriginCrossHair();
 
 		// this.context.globalAlpha = 0.3;
-//		this.floorplan.getRooms().forEach((room) => {this.drawRoom(room);});
+		this.floorplan.getRooms().forEach((room) => {this.drawRoom(room);});
 		// this.context.globalAlpha = 1.0;
 
 		this.floorplan.getWalls().forEach((wall) => {this.drawWall(wall);});
@@ -110,7 +110,7 @@ export class FloorplannerView2D
 			});
 		
 		// this.context.globalAlpha = 0.3;
-		this.floorplan.getRooms().forEach((room) => {this.drawRoom(room);});
+//		this.floorplan.getRooms().forEach((room) => {this.drawRoom(room);});
 		// this.context.globalAlpha = 1.0;
 		
 		if (this.viewmodel.mode == floorplannerModes.DRAW)
