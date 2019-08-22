@@ -339,13 +339,14 @@ export class Floorplanner2D extends EventDispatcher
 	/** */
 	mousemove(event)
 	{
-		this.mouseMoved = true;
-
+		var originalEvent = event;
+		this.mouseMoved = true;	
+		
 		if(event.touches)
 		{
 			event = event.touches[0];
 		}
-
+		
 		// update mouse
 		this.rawMouseX = event.clientX;
 		this.rawMouseY = event.clientY;
@@ -365,8 +366,9 @@ export class Floorplanner2D extends EventDispatcher
 		}
 
 		// update object target
-		if (this.mode != floorplannerModes.DRAW && !this.mouseDown)
+		if (this.mode != floorplannerModes.DRAW && (!this.mouseDown || originalEvent.type == 'touchmove'))
 		{
+			console.log('UPDATE HOVER CORNERS ', this.mouseDown);
 			var hoverCorner = this.floorplan.overlappedCorner(this.mouseX, this.mouseY);
 			var hoverWall = this.floorplan.overlappedWall(this.mouseX, this.mouseY);
 			var hoverRoom = this.floorplan.overlappedRoom(this.mouseX, this.mouseY);
@@ -412,19 +414,9 @@ export class Floorplanner2D extends EventDispatcher
 			}
 		}
 
-		// panning
-		if (this.mouseDown && !this.activeCorner && !this.activeWall && this._clickedWallControl == null)
-		{
-			this.originX += (this.lastX - this.rawMouseX);
-			this.originY += (this.lastY - this.rawMouseY);
-			this.lastX = this.rawMouseX;
-			this.lastY = this.rawMouseY;
-			this.view.draw();
-		}
-		
 		var mx, my;
 		// dragging
-		if (this.mode == floorplannerModes.MOVE && this.mouseDown)
+		if (this.mode == floorplannerModes.MOVE && this.mouseDown && (this.activeCorner!=null || this.activeWall!=null || this._clickedWallControl != null))
 		{
 			if(this._clickedWallControl != null)
 			{
@@ -487,6 +479,17 @@ export class Floorplanner2D extends EventDispatcher
 				this.lastX = this.rawMouseX;
 				this.lastY = this.rawMouseY;
 			}
+			this.view.draw();
+		}
+		
+		// panning
+		else if (this.mouseDown && (this.activeCorner==null) && (this.activeWall==null) && (this._clickedWallControl == null))
+		{
+			console.log('PANNING :: ', this.activeCorner, this.activeWall);
+			this.originX += (this.lastX - this.rawMouseX);
+			this.originY += (this.lastY - this.rawMouseY);
+			this.lastX = this.rawMouseX;
+			this.lastY = this.rawMouseY;
 			this.view.draw();
 		}
 	}
