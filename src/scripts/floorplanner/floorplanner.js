@@ -301,9 +301,9 @@ export class Floorplanner2D extends EventDispatcher
 		
 		if(mDownCorner == null && mDownWall == null && mDownRoom == null)
 		{
-			this._clickedCorner = null;
-			this._clickedWall = null;
-			this._clickedRoom = null;
+			this._clickedCorner = undefined;
+			this._clickedWall = undefined;
+			this._clickedRoom = undefined;
 			this.floorplan.dispatchEvent({type:EVENT_NOTHING_CLICKED});
 		}
 		
@@ -339,8 +339,7 @@ export class Floorplanner2D extends EventDispatcher
 	/** */
 	mousemove(event)
 	{
-		var originalEvent = event;
-		this.mouseMoved = true;	
+		this.mouseMoved = true;
 		
 		if(event.touches)
 		{
@@ -366,9 +365,8 @@ export class Floorplanner2D extends EventDispatcher
 		}
 
 		// update object target
-		if (this.mode != floorplannerModes.DRAW && (!this.mouseDown || originalEvent.type == 'touchmove'))
+		if (this.mode != floorplannerModes.DRAW && !this.mouseDown)
 		{
-//			console.log('UPDATE HOVER CORNERS ', this.mouseDown);
 			var hoverCorner = this.floorplan.overlappedCorner(this.mouseX, this.mouseY);
 			var hoverWall = this.floorplan.overlappedWall(this.mouseX, this.mouseY);
 			var hoverRoom = this.floorplan.overlappedRoom(this.mouseX, this.mouseY);
@@ -416,7 +414,7 @@ export class Floorplanner2D extends EventDispatcher
 
 		var mx, my;
 		// dragging
-		if (this.mode == floorplannerModes.MOVE && this.mouseDown && (this.activeCorner!=null || this.activeWall!=null || this._clickedWallControl != null))
+		if (this.mode == floorplannerModes.MOVE && this.mouseDown && (this._clickedCorner || this._clickedWall || this._clickedWallControl != null))
 		{
 			if(this._clickedWallControl != null)
 			{
@@ -434,7 +432,7 @@ export class Floorplanner2D extends EventDispatcher
 				this.view.draw();
 				return;
 			}
-			if (this.activeCorner)
+			if (this._clickedCorner)
 			{
 				if(this.gridsnapmode || Configuration.getNumericValue('snapToGrid'))
 				{
@@ -444,18 +442,18 @@ export class Floorplanner2D extends EventDispatcher
 					mx = Math.floor(this.mouseX / snapTolerance) * snapTolerance;
 					my = Math.floor(this.mouseY / snapTolerance) * snapTolerance;
 					
-					this.activeCorner.move(Math.round(mx), Math.round(my));
+					this._clickedCorner.move(Math.round(mx), Math.round(my));
 				}
 				else
 				{
-					this.activeCorner.move(this.mouseX, this.mouseY);
+					this._clickedCorner.move(this.mouseX, this.mouseY);
 				}
 //				if(this.shiftkey)
 //				{
 //					this.activeCorner.snapToAxis(snapTolerance);
 //				}
 			}
-			else if (this.activeWall)
+			else if (this._clickedWall)
 			{
 				if(this.gridsnapmode || Configuration.getNumericValue('snapToGrid'))
 				{
@@ -463,18 +461,18 @@ export class Floorplanner2D extends EventDispatcher
 					var dy = Dimensioning.pixelToCm(this.rawMouseY - this.lastY);
 					mx = Math.floor(dx / snapTolerance) * snapTolerance;
 					my = Math.floor(dy / snapTolerance) * snapTolerance;
-					this.activeWall.relativeMove(mx, my);
+					this._clickedWall.relativeMove(mx, my);
 				}
 				else
 				{
-					this.activeWall.relativeMove(Dimensioning.pixelToCm(this.rawMouseX - this.lastX), Dimensioning.pixelToCm(this.rawMouseY - this.lastY));
+					this._clickedWall.relativeMove(Dimensioning.pixelToCm(this.rawMouseX - this.lastX), Dimensioning.pixelToCm(this.rawMouseY - this.lastY));
 				}
 				
 				
 //				this.activeWall.relativeMove((this.rawMouseX - this.lastX) * this.cmPerPixel, (this.rawMouseY - this.lastY) * this.cmPerPixel);
 				if(this.gridsnapmode || Configuration.getNumericValue('snapToGrid'))
 				{
-					this.activeWall.snapToAxis(snapTolerance);
+					this._clickedWall.snapToAxis(snapTolerance);
 				}
 				this.lastX = this.rawMouseX;
 				this.lastY = this.rawMouseY;
@@ -483,7 +481,8 @@ export class Floorplanner2D extends EventDispatcher
 		}
 		
 		// panning
-		else if (this.mouseDown && (this.activeCorner==null) && (this.activeWall==null) && (this._clickedWallControl == null))
+//		else if (this.mouseDown && (this.activeCorner==null) && (this.activeWall==null) && (this._clickedWallControl == null))
+		else if (this.mouseDown && (!this._clickedCorner) && (!this._clickedWall) && (this._clickedWallControl == null))
 		{
 //			console.log('PANNING :: ', this.activeCorner, this.activeWall);
 			this.originX += (this.lastX - this.rawMouseX);
@@ -495,10 +494,10 @@ export class Floorplanner2D extends EventDispatcher
 	}
 
 	/** */
-	mouseup()
+	mouseup(event)
 	{
 		this.mouseDown = false;
-
+		console.log(event.type)
 		// drawing
 		if (this.mode == floorplannerModes.DRAW && !this.mouseMoved)
 		{
@@ -539,6 +538,11 @@ export class Floorplanner2D extends EventDispatcher
 	{
 		this.mouseDown = false;
 		// scope.setMode(scope.modes.MOVE);
+	}
+	
+	__updateInteractiveElements()
+	{
+		
 	}
 
 	/** */
