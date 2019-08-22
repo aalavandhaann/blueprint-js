@@ -368,7 +368,7 @@ export class Floorplanner2D extends EventDispatcher
 		// update object target
 		if (this.mode != floorplannerModes.DRAW && (!this.mouseDown || originalEvent.type == 'touchmove'))
 		{
-			console.log('UPDATE HOVER CORNERS ', this.mouseDown);
+//			console.log('UPDATE HOVER CORNERS ', this.mouseDown);
 			var hoverCorner = this.floorplan.overlappedCorner(this.mouseX, this.mouseY);
 			var hoverWall = this.floorplan.overlappedWall(this.mouseX, this.mouseY);
 			var hoverRoom = this.floorplan.overlappedRoom(this.mouseX, this.mouseY);
@@ -485,7 +485,7 @@ export class Floorplanner2D extends EventDispatcher
 		// panning
 		else if (this.mouseDown && (this.activeCorner==null) && (this.activeWall==null) && (this._clickedWallControl == null))
 		{
-			console.log('PANNING :: ', this.activeCorner, this.activeWall);
+//			console.log('PANNING :: ', this.activeCorner, this.activeWall);
 			this.originX += (this.lastX - this.rawMouseX);
 			this.originY += (this.lastY - this.rawMouseY);
 			this.lastX = this.rawMouseX;
