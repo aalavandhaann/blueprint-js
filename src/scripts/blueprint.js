@@ -19,7 +19,7 @@ export {ELogContext, ELogLevel, logContext, isLogging, log} from './core/log.js'
 export {dimInch, dimFeetAndInch, dimMeter, dimCentiMeter, dimMilliMeter, dimensioningOptions, decimals, Dimensioning} from './core/dimensioning.js';
 export {cmPerFoot, pixelsPerFoot, cmPerPixel, pixelsPerCm} from './core/dimensioning.js';
 
-export {cornerTolerance, configDimUnit, configWallHeight, configWallThickness, configSystemUI, wallInformation, scale, snapToGrid, config, Configuration} from './core/configuration.js';
+export {cornerTolerance, configDimUnit, configWallHeight, configWallThickness, configSystemUI, wallInformation, scale, snapToGrid, snapTolerance, gridSpacing, config, Configuration} from './core/configuration.js';
 export {VIEW_TOP, VIEW_FRONT, VIEW_RIGHT, VIEW_LEFT, VIEW_ISOMETRY} from './core/constants.js';
 export {WallTypes} from './core/constants.js';
 
@@ -33,7 +33,7 @@ export {Scene} from './model/scene.js';
 export {defaultWallTexture, Wall} from './model/wall.js';
 
 //Classes from floorplanner module
-export {floorplannerModes, gridSpacing, gridWidth, gridColor, deleteColor} from './floorplanner/floorplanner_view.js';
+export {floorplannerModes, gridWidth, gridColor, deleteColor} from './floorplanner/floorplanner_view.js';
 export {roomColor, roomColorHover, roomColorSelected} from './floorplanner/floorplanner_view.js';
 export {wallWidth, wallWidthHover, wallWidthSelected, wallColor, wallColorHover, wallColorSelected}  from './floorplanner/floorplanner_view.js';
 export {edgeColor, edgeColorHover, edgeWidth} from './floorplanner/floorplanner_view.js';
@@ -41,7 +41,7 @@ export {cornerRadius, cornerRadiusHover, cornerRadiusSelected, cornerColor, corn
 export {FloorplannerView2D} from './floorplanner/floorplanner_view.js';
 
 
-export {snapTolerance, Floorplanner2D} from './floorplanner/floorplanner.js';
+export {Floorplanner2D} from './floorplanner/floorplanner.js';
 export {CarbonSheet} from './floorplanner/carbonsheet.js';
 
 //Classes from items module

@@ -192,7 +192,10 @@ var GlobalProperties = function()
 		BP3DJS.Configuration.setValue(BP3DJS.configDimUnit, this.unitslabel[unit]);
 
 		console.log(this.units, this.unitslabel[unit], BP3DJS.Configuration.getStringValue(BP3DJS.configDimUnit));
-
+		
+//		globalPropFolder = getGlobalPropertiesFolder(gui, aGlobal, floorplanner);
+		var view2df = construct2dInterfaceFolder(globalPropFolder, aGlobal, blueprint3d.floorplanner);
+		blueprint3d.floorplanner.view.draw();
 		for (var i in this.guiControllers) // Iterate over gui controllers to update the values
 		{
 			this.guiControllers[i].updateDisplay();
@@ -676,21 +679,33 @@ function getCameraRangePropertiesFolder(gui, camerarange)
 
 }
 
-function getGlobalPropertiesFolder(gui, global, floorplanner)
+function construct2dInterfaceFolder(f, global, floorplanner)
 {
-	var f = gui.addFolder('Interface & Configuration');
+	function onChangeSnapResolution()
+	{
+		BP3DJS.Configuration.setValue(BP3DJS.snapTolerance, BP3DJS.Dimensioning.cmFromMeasureRaw(view2dindirect.snapValue));
+	}
 	
-	var unitsf = f.addFolder('Units');	
-	var ficontrol = unitsf.add(global.units, 'a',).name("Feets'' Inches'").onChange(function(){global.setUnit("a")});
-	var icontrol = unitsf.add(global.units, 'b',).name("Inches'").onChange(function(){global.setUnit("b")});
-	var ccontrol = unitsf.add(global.units, 'c',).name('Cm').onChange(function(){global.setUnit("c")});
-	var mmcontrol = unitsf.add(global.units, 'd',).name('mm').onChange(function(){global.setUnit("d")});
-	var mcontrol = unitsf.add(global.units, 'e',).name('m').onChange(function(){global.setUnit("e")});
-	global.setGUIControllers([ficontrol, icontrol, ccontrol, mmcontrol, mcontrol]);
+	function onChangeGridResolution()
+	{
+		BP3DJS.Configuration.setValue(BP3DJS.gridSpacing, BP3DJS.Dimensioning.cmFromMeasureRaw(view2dindirect.gridResValue));
+		blueprint3d.floorplanner.view.draw();
+	}
+	
+	var units = BP3DJS.Configuration.getStringValue(BP3DJS.configDimUnit);
+	var view2dindirect = {
+			'snapValue': BP3DJS.Dimensioning.cmToMeasureRaw(BP3DJS.Configuration.getNumericValue(BP3DJS.snapTolerance)), 
+			'gridResValue': BP3DJS.Dimensioning.cmToMeasureRaw(BP3DJS.Configuration.getNumericValue(BP3DJS.gridSpacing))
+			};	
+	
+	f.removeFolder('2D Editor');
 	
 	var view2df = f.addFolder('2D Editor');
 	view2df.add(BP3DJS.config, 'snapToGrid',).name("Snap To Grid");
+	view2df.add(view2dindirect, 'snapValue', 0.1).name(`Snap Every(${units})`).onChange(onChangeSnapResolution);
+	view2df.add(view2dindirect, 'gridResValue', 0.1).name(`Grid Resolution(${units})`).onChange(onChangeGridResolution);
 	view2df.add(BP3DJS.config, 'scale', 0.25, 5, ).step(0.25).onChange(()=>{blueprint3d.floorplanner.view.draw();});
+	
 	
 	var wallf = view2df.addFolder('Wall Measurements');
 	wallf.add(BP3DJS.wallInformation, 'exterior').name('Exterior');
@@ -704,6 +719,24 @@ function getGlobalPropertiesFolder(gui, global, floorplanner)
 	var carbonPropsFolder = getCarbonSheetPropertiesFolder(view2df, floorplanner.carbonSheet, global);
 	
 	view2df.open();
+	return view2df;
+}
+
+function getGlobalPropertiesFolder(gui, global, floorplanner)
+{
+	var f = gui.addFolder('Interface & Configuration');
+	
+	var unitsf = f.addFolder('Units');	
+	var ficontrol = unitsf.add(global.units, 'a',).name("Feets'' Inches'").onChange(function(){global.setUnit("a")});
+	var icontrol = unitsf.add(global.units, 'b',).name("Inches'").onChange(function(){global.setUnit("b")});
+	var ccontrol = unitsf.add(global.units, 'c',).name('Cm').onChange(function(){global.setUnit("c")});
+	var mmcontrol = unitsf.add(global.units, 'd',).name('mm').onChange(function(){global.setUnit("d")});
+	var mcontrol = unitsf.add(global.units, 'e',).name('m').onChange(function(){global.setUnit("e")});
+	global.setGUIControllers([ficontrol, icontrol, ccontrol, mmcontrol, mcontrol]);
+	
+//	BP3DJS.Dimensioning.cmFromMeasureRaw(scope.x);
+//	BP3DJS.Dimensioning.cmToMeasureRaw(scope.x);
+	
 	f.open();
 	return f;
 }
@@ -805,6 +838,9 @@ function datGUI(three, floorplanner)
 
 	f3d = globalPropFolder.addFolder('3D Editor')
 	cameraPropFolder = getCameraRangePropertiesFolder(f3d, aCameraRange);
+	
+	var view2df = construct2dInterfaceFolder(globalPropFolder, aGlobal, floorplanner);
+	view2df.open();
 	
 	selectionsFolder = gui.addFolder('Selections');
 }

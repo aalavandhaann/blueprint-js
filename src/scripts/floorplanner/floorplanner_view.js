@@ -5,14 +5,14 @@ import {Utils} from '../core/utils.js';
 import {EVENT_UPDATED} from '../core/events.js';
 
 import {Dimensioning} from '../core/dimensioning.js';
-import {Configuration, configWallThickness, wallInformation} from '../core/configuration.js';
+import {Configuration, gridSpacing, configWallThickness, wallInformation} from '../core/configuration.js';
 import {CarbonSheet} from './carbonsheet.js';
 
 /** */
 export const floorplannerModes = {MOVE: 0,DRAW: 1,DELETE: 2};
 
 // grid parameters
-export const gridSpacing = Dimensioning.cmToPixel(25);//20; // pixels
+//export const gridSpacing = Dimensioning.cmToPixel(25);//20; // pixels
 export const gridWidth = 1;
 export const gridColor = '#f1f1f1';
 
@@ -685,19 +685,21 @@ export class FloorplannerView2D
 	/** returns n where -gridSize/2 < n <= gridSize/2  */
 	calculateGridOffset(n)
 	{
+		var gspacing = Dimensioning.cmToPixel(Configuration.getNumericValue(gridSpacing));
 		if (n >= 0)
 		{
-			return (n + (gridSpacing* Configuration.getNumericValue('scale')) / 2.0) % (gridSpacing* Configuration.getNumericValue('scale')) - (gridSpacing* Configuration.getNumericValue('scale')) / 2.0;
+			return (n + (gspacing* Configuration.getNumericValue('scale')) / 2.0) % (gspacing* Configuration.getNumericValue('scale')) - (gspacing* Configuration.getNumericValue('scale')) / 2.0;
 		}
 		else
 		{
-			return (n - (gridSpacing* Configuration.getNumericValue('scale')) / 2.0) % (gridSpacing* Configuration.getNumericValue('scale')) + (gridSpacing* Configuration.getNumericValue('scale')) / 2.0;
+			return (n - (gspacing* Configuration.getNumericValue('scale')) / 2.0) % (gspacing* Configuration.getNumericValue('scale')) + (gspacing* Configuration.getNumericValue('scale')) / 2.0;
 		}
 	}
 
 	/** */
 	drawGrid()
 	{
+		var gspacing = Dimensioning.cmToPixel(Configuration.getNumericValue(gridSpacing));
 		var offsetX = this.calculateGridOffset(-this.viewmodel.originX);
 		var offsetY = this.calculateGridOffset(-this.viewmodel.originY);
 		var width = this.canvasElement.width;
@@ -709,13 +711,13 @@ export class FloorplannerView2D
 			height = height / scale;
 		}
 		
-		for (var x = 0; x <= (width / gridSpacing); x++)
+		for (var x = 0; x <= (width / gspacing); x++)
 		{
-			this.drawLine(gridSpacing * Configuration.getNumericValue('scale') * x + offsetX, 0, gridSpacing * Configuration.getNumericValue('scale') * x + offsetX, height, gridWidth, gridColor);
+			this.drawLine(gspacing * Configuration.getNumericValue('scale') * x + offsetX, 0, gspacing * Configuration.getNumericValue('scale') * x + offsetX, height, gridWidth, gridColor);
 		}
-		for (var y = 0; y <= (height / gridSpacing); y++)
+		for (var y = 0; y <= (height / gspacing); y++)
 		{
-			this.drawLine(0, gridSpacing * Configuration.getNumericValue('scale') * y + offsetY, width, gridSpacing * Configuration.getNumericValue('scale') * y + offsetY, gridWidth, gridColor);
+			this.drawLine(0, gspacing * Configuration.getNumericValue('scale') * y + offsetY, width, gspacing * Configuration.getNumericValue('scale') * y + offsetY, gridWidth, gridColor);
 		}
 	}
 }

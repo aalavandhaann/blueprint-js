@@ -14,6 +14,7 @@ export const dimCentiMeter = 'cm';
 /** Dimensioning in Milli Meter. */
 export const dimMilliMeter = 'mm';
 
+
 export const decimals = 1000;
 
 export const cmPerFoot = 30.48;
