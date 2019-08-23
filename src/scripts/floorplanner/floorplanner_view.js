@@ -77,17 +77,6 @@ export class FloorplannerView2D
 	
 	orientationChange()
 	{
-		var canvasSel = $('#' + this.canvas);
-		var parent = canvasSel.parent();
-		var w = parent.innerWidth();
-		var h = parent.innerHeight();
-		
-		canvasSel.height(h);
-		canvasSel.width(w);
-		this.canvasElement.height = h;
-		this.canvasElement.width = w;
-		
-		this.draw();
 		this.handleWindowResize();
 	}
 
@@ -96,8 +85,14 @@ export class FloorplannerView2D
 	{
 		var canvasSel = $('#' + this.canvas);
 		var parent = canvasSel.parent();
-		var w = parent.innerWidth();
-		var h = parent.innerHeight();
+		
+		parent.css({width: window.innerWidth, height: window.innerHeight});
+		
+		var w = window.innerWidth;//parent.innerWidth();
+		var h = window.innerHeight;//parent.innerHeight();
+		
+//		console.log(window.innerWidth, window.innerHeight);
+//		console.log(w, h);
 		
 		canvasSel.height(h);
 		canvasSel.width(w);
