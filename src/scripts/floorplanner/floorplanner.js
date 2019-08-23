@@ -418,7 +418,8 @@ export class Floorplanner2D extends EventDispatcher
 
 		var mx, my;
 		// dragging
-		if (this.mode == floorplannerModes.MOVE && this.mouseDown && (this._clickedCorner || this._clickedWall || this._clickedWallControl != null))
+		if (this.mode == floorplannerModes.MOVE && this.mouseDown)
+//		if (this.mode == floorplannerModes.MOVE && this.mouseDown && (this._clickedCorner || this._clickedWall || this._clickedWallControl != null))
 		{
 			if(this._clickedWallControl != null)
 			{
@@ -436,7 +437,7 @@ export class Floorplanner2D extends EventDispatcher
 				this.view.draw();
 				return;
 			}
-			if (this._clickedCorner)
+			if (this.activeCorner)
 			{
 				if(this.gridsnapmode || Configuration.getNumericValue('snapToGrid'))
 				{
@@ -446,18 +447,18 @@ export class Floorplanner2D extends EventDispatcher
 					mx = Math.floor(this.mouseX / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
 					my = Math.floor(this.mouseY / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
 					
-					this._clickedCorner.move(Math.round(mx), Math.round(my));
+					this.activeCorner.move(Math.round(mx), Math.round(my));
 				}
 				else
 				{
-					this._clickedCorner.move(this.mouseX, this.mouseY);
+					this.activeCorner.move(this.mouseX, this.mouseY);
 				}
 //				if(this.shiftkey)
 //				{
 //					this.activeCorner.snapToAxis(Configuration.getNumericValue(snapTolerance));
 //				}
 			}
-			else if (this._clickedWall)
+			else if (this.activeWall)
 			{
 				if(this.gridsnapmode || Configuration.getNumericValue('snapToGrid'))
 				{
@@ -465,18 +466,18 @@ export class Floorplanner2D extends EventDispatcher
 					var dy = Dimensioning.pixelToCm(this.rawMouseY - this.lastY);
 					mx = Math.floor(dx / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
 					my = Math.floor(dy / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
-					this._clickedWall.relativeMove(mx, my);
+					this.activeWall.relativeMove(mx, my);
 				}
 				else
 				{
-					this._clickedWall.relativeMove(Dimensioning.pixelToCm(this.rawMouseX - this.lastX), Dimensioning.pixelToCm(this.rawMouseY - this.lastY));
+					this.activeWall.relativeMove(Dimensioning.pixelToCm(this.rawMouseX - this.lastX), Dimensioning.pixelToCm(this.rawMouseY - this.lastY));
 				}
 				
 				
 //				this.activeWall.relativeMove((this.rawMouseX - this.lastX) * this.cmPerPixel, (this.rawMouseY - this.lastY) * this.cmPerPixel);
 				if(this.gridsnapmode || Configuration.getNumericValue('snapToGrid'))
 				{
-					this._clickedWall.snapToAxis(Configuration.getNumericValue(snapTolerance));
+					this.activeWall.snapToAxis(Configuration.getNumericValue(snapTolerance));
 				}
 				this.lastX = this.rawMouseX;
 				this.lastY = this.rawMouseY;
@@ -484,9 +485,10 @@ export class Floorplanner2D extends EventDispatcher
 			this.view.draw();
 		}
 		
-		// panning
+		// panning.
+		if (this.mouseDown  && !this.activeCorner && !this.activeWall)
 //		else if (this.mouseDown && (this.activeCorner==null) && (this.activeWall==null) && (this._clickedWallControl == null))
-		else if (this.mouseDown && (!this._clickedCorner) && (!this._clickedWall) && (this._clickedWallControl == null))
+//		else if (this.mouseDown && (!this._clickedCorner) && (!this._clickedWall) && (this._clickedWallControl == null))
 		{
 //			console.log('PANNING :: ', this.activeCorner, this.activeWall);
 			this.originX += (this.lastX - this.rawMouseX);
@@ -526,6 +528,7 @@ export class Floorplanner2D extends EventDispatcher
 				this.setMode(floorplannerModes.MOVE);
 			}
 			this.lastNode = corner;
+			this._clickedCorner = corner;
 		}
 		else
 		{

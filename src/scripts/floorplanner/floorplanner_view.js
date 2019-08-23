@@ -66,6 +66,7 @@ export class FloorplannerView2D
 		this.floorplan.carbonSheet = this._carbonsheet;
 
 		$(window).resize(() => {scope.handleWindowResize();});
+		$(window).on('orientationchange', () => {scope.orientationChange();});
 		this.handleWindowResize();
 	}
 
@@ -73,16 +74,36 @@ export class FloorplannerView2D
 	{
 		return this._carbonsheet;
 	}
+	
+	orientationChange()
+	{
+		var canvasSel = $('#' + this.canvas);
+		var parent = canvasSel.parent();
+		var w = parent.innerWidth();
+		var h = parent.innerHeight();
+		
+		canvasSel.height(h);
+		canvasSel.width(w);
+		this.canvasElement.height = h;
+		this.canvasElement.width = w;
+		
+		this.draw();
+		this.handleWindowResize();
+	}
 
 	/** */
 	handleWindowResize()
 	{
 		var canvasSel = $('#' + this.canvas);
 		var parent = canvasSel.parent();
-		canvasSel.height(parent.innerHeight());
-		canvasSel.width(parent.innerWidth());
-		this.canvasElement.height = parent.innerHeight();
-		this.canvasElement.width = parent.innerWidth();
+		var w = parent.innerWidth();
+		var h = parent.innerHeight();
+		
+		canvasSel.height(h);
+		canvasSel.width(w);
+		this.canvasElement.height = h;
+		this.canvasElement.width = w;
+		
 		this.draw();
 	}
 
