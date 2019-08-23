@@ -506,7 +506,6 @@ export class Floorplanner2D extends EventDispatcher
 			event.stopPropagation();
 			event.preventDefault();
 		}
-		console.log(event.type)
 		// drawing
 		if (this.mode == floorplannerModes.DRAW && !this.mouseMoved)
 		{
