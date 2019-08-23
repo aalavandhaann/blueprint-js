@@ -644,6 +644,14 @@ function addBlueprintListeners(blueprint3d)
     model_floorplan.addEventListener(BP3DJS.EVENT_WALL_ATTRIBUTES_CHANGED, echoEvents);
     model_floorplan.addEventListener(BP3DJS.EVENT_ROOM_ATTRIBUTES_CHANGED, echoEvents);
     
+    
+    function deleteEvent(evt)
+    {
+    	console.log('DELETED ', evt);
+    }
+    
+    model_floorplan.addEventListener(BP3DJS.EVENT_DELETED, deleteEvent);
+    
     BP3DJS.Configuration.setValue(BP3DJS.configSystemUI, false);
     
     

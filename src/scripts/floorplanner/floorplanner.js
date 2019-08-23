@@ -345,8 +345,8 @@ export class Floorplanner2D extends EventDispatcher
 		
 		if(event.touches)
 		{
-//			event.stopPropagation();
-//			event.preventDefault();
+			event.stopPropagation();
+			event.preventDefault();
 			event = event.touches[0];
 		}
 		

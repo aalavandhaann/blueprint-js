@@ -335,7 +335,9 @@ export class Floorplan extends EventDispatcher
 		}
 		
 		this.corners.push(corner);
-		corner.addEventListener(EVENT_DELETED, function(o){scope.removeCorner(o.item);});
+		corner.addEventListener(EVENT_DELETED, function(o)
+				{scope.removeCorner(o.item);}
+		);
 		corner.addEventListener(EVENT_CORNER_ATTRIBUTES_CHANGED, function(o){
 			scope.dispatchEvent(o);
 			var updatecorners = o.item.adjacentCorners();
@@ -368,7 +370,7 @@ export class Floorplan extends EventDispatcher
 	 */
 	removeWall(wall)
 	{
-		this.dispatchEvent({type: EVENT_DELETED, item: this, deleted: wall, type: 'wall'});
+		this.dispatchEvent({type: EVENT_DELETED, item: this, deleted: wall, item_type: 'wall'});
 		Utils.removeValue(this.walls, wall);
 		this.update();
 	}
@@ -381,7 +383,7 @@ export class Floorplan extends EventDispatcher
 	 */
 	removeCorner(corner)
 	{
-		this.dispatchEvent({type: EVENT_DELETED, item: this, deleted: corner, type: 'corner'});
+		this.dispatchEvent({type: EVENT_DELETED, item: this, deleted: corner, item_type: 'corner'});
 		Utils.removeValue(this.corners, corner);
 	}
 
