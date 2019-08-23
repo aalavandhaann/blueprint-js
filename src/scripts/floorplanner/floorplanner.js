@@ -417,6 +417,18 @@ export class Floorplanner2D extends EventDispatcher
 		}
 
 		var mx, my;
+		// panning.
+		if (this.mouseDown  && !this.activeCorner && !this.activeWall)
+//		else if (this.mouseDown && (this.activeCorner==null) && (this.activeWall==null) && (this._clickedWallControl == null))
+//		else if (this.mouseDown && (!this._clickedCorner) && (!this._clickedWall) && (this._clickedWallControl == null))
+		{
+//			console.log('PANNING :: ', this.activeCorner, this.activeWall);
+			this.originX += (this.lastX - this.rawMouseX);
+			this.originY += (this.lastY - this.rawMouseY);
+			this.lastX = this.rawMouseX;
+			this.lastY = this.rawMouseY;
+			this.view.draw();
+		}
 		// dragging
 		if (this.mode == floorplannerModes.MOVE && this.mouseDown)
 //		if (this.mode == floorplannerModes.MOVE && this.mouseDown && (this._clickedCorner || this._clickedWall || this._clickedWallControl != null))
@@ -482,19 +494,6 @@ export class Floorplanner2D extends EventDispatcher
 				this.lastX = this.rawMouseX;
 				this.lastY = this.rawMouseY;
 			}
-			this.view.draw();
-		}
-		
-		// panning.
-		if (this.mouseDown  && !this.activeCorner && !this.activeWall)
-//		else if (this.mouseDown && (this.activeCorner==null) && (this.activeWall==null) && (this._clickedWallControl == null))
-//		else if (this.mouseDown && (!this._clickedCorner) && (!this._clickedWall) && (this._clickedWallControl == null))
-		{
-//			console.log('PANNING :: ', this.activeCorner, this.activeWall);
-			this.originX += (this.lastX - this.rawMouseX);
-			this.originY += (this.lastY - this.rawMouseY);
-			this.lastX = this.rawMouseX;
-			this.lastY = this.rawMouseY;
 			this.view.draw();
 		}
 	}
