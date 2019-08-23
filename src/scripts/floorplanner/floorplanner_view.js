@@ -713,11 +713,11 @@ export class FloorplannerView2D
 		
 		for (var x = 0; x <= (width / gspacing); x++)
 		{
-			this.drawLine(gspacing * Configuration.getNumericValue('scale') * x + offsetX, 0, gspacing * Configuration.getNumericValue('scale') * x + offsetX, height, gridWidth, gridColor);
+			this.drawLine(gspacing * x + offsetX, 0, gspacing * x + offsetX, height, gridWidth, gridColor);
 		}
 		for (var y = 0; y <= (height / gspacing); y++)
 		{
-			this.drawLine(0, gspacing * Configuration.getNumericValue('scale') * y + offsetY, width, gspacing * Configuration.getNumericValue('scale') * y + offsetY, gridWidth, gridColor);
+			this.drawLine(0, gspacing * y + offsetY, width, gspacing * y + offsetY, gridWidth, gridColor);
 		}
 	}
 }
