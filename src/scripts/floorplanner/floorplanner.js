@@ -249,6 +249,8 @@ export class Floorplanner2D extends EventDispatcher
 		this.mouseMoved = false;
 		if(event.touches)
 		{
+			event.stopPropagation();
+			event.preventDefault();
 			this.rawMouseX = event.touches[0].clientX;
 			this.rawMouseY = event.touches[0].clientY;
 			//The below line is very important for touch events to work
@@ -343,6 +345,8 @@ export class Floorplanner2D extends EventDispatcher
 		
 		if(event.touches)
 		{
+			event.stopPropagation();
+			event.preventDefault();
 			event = event.touches[0];
 		}
 		
@@ -497,6 +501,11 @@ export class Floorplanner2D extends EventDispatcher
 	mouseup(event)
 	{
 		this.mouseDown = false;
+		if(event.touches)
+		{
+			event.stopPropagation();
+			event.preventDefault();
+		}
 		console.log(event.type)
 		// drawing
 		if (this.mode == floorplannerModes.DRAW && !this.mouseMoved)
