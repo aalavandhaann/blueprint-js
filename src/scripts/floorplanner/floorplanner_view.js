@@ -110,7 +110,7 @@ export class FloorplannerView2D
 		wallWidthSelected = Dimensioning.cmToPixel(Configuration.getNumericValue(configWallThickness))*0.9;
 		
 		this.context.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
-
+		
 		this._carbonsheet.draw();
 		this.drawGrid();
 		this.drawOriginCrossHair();
@@ -177,6 +177,25 @@ export class FloorplannerView2D
 		}
 	}
 	
+	zoom()
+	{
+		var originx = this.viewmodel.canvasElement.innerWidth() / 2.0;
+		var originy = this.viewmodel.canvasElement.innerHeight() / 2.0;
+		
+		if(Configuration.getNumericValue('scale') != 1)
+		{
+			this.context.setTransform(1, 0, 0, 1, 0, 0);
+			this.context.translate(originx, originy);
+			this.context.scale(Configuration.getNumericValue('scale'), Configuration.getNumericValue('scale'));
+			this.context.translate(-originx, -originy);
+		}		
+		else
+		{
+//			this.context.restore();
+			this.context.setTransform(1, 0, 0, 1, 0, 0);
+		}
+		this.draw();
+	}
 	
 	drawCornerAngles(corner)
 	{
@@ -452,6 +471,7 @@ export class FloorplannerView2D
 				this.drawCornerAngles(wall.end);
 			}
 		}
+		this.drawCircle(this.viewmodel.canvasElement.innerWidth() / 2.0, this.viewmodel.canvasElement.innerHeight() / 2.0, 3, '#FF0000');
 	}
 
 	/** */
@@ -704,11 +724,11 @@ export class FloorplannerView2D
 		var gspacing = Dimensioning.cmToPixel(Configuration.getNumericValue(gridSpacing));
 		if (n >= 0)
 		{
-			return (n + (gspacing* Configuration.getNumericValue('scale')) / 2.0) % (gspacing* Configuration.getNumericValue('scale')) - (gspacing* Configuration.getNumericValue('scale')) / 2.0;
+			return (n + (gspacing) / 2.0) % (gspacing) - (gspacing) / 2.0;
 		}
 		else
 		{
-			return (n - (gspacing* Configuration.getNumericValue('scale')) / 2.0) % (gspacing* Configuration.getNumericValue('scale')) + (gspacing* Configuration.getNumericValue('scale')) / 2.0;
+			return (n - (gspacing) / 2.0) % (gspacing) + (gspacing) / 2.0;
 		}
 	}
 
@@ -729,11 +749,11 @@ export class FloorplannerView2D
 		
 		for (var x = 0; x <= (width / gspacing); x++)
 		{
-			this.drawLine(gspacing * x + offsetX, 0, gspacing * x + offsetX, height, gridWidth, gridColor);
+			this.drawLine((gspacing * x) + offsetX, 0, (gspacing * x) + offsetX, height, gridWidth, gridColor);
 		}
 		for (var y = 0; y <= (height / gspacing); y++)
 		{
-			this.drawLine(0, gspacing * y + offsetY, width, gspacing * y + offsetY, gridWidth, gridColor);
+			this.drawLine(0, (gspacing * y) + offsetY, width, (gspacing * y) + offsetY, gridWidth, gridColor);
 		}
 	}
 }

@@ -28,14 +28,22 @@ export const dimensioningOptions = [dimInch, dimFeetAndInch, dimMeter, dimCentiM
 /** Dimensioning functions. */
 export class Dimensioning
 {
-	static cmToPixel(cm)
+	static cmToPixel(cm, apply_scale=false)
 	{
-		return cm * pixelsPerCm * Configuration.getNumericValue('scale');
+		if(apply_scale)
+		{
+			return cm * pixelsPerCm * Configuration.getNumericValue('scale');
+		}
+		return cm * pixelsPerCm;
 	}
 	
-	static pixelToCm(pixel)
+	static pixelToCm(pixel, apply_scale=false)
 	{
-		return pixel * cmPerPixel * (1.0 / Configuration.getNumericValue('scale'));
+		if(apply_scale)
+		{
+			return pixel * cmPerPixel * (1.0 / Configuration.getNumericValue('scale'));
+		}
+		return pixel * cmPerPixel;
 	}
 	
 	static roundOff(value, decimals)

@@ -585,8 +585,8 @@ export class Floorplanner2D extends EventDispatcher
 	{
 		var centerX = this.canvasElement.innerWidth() / 2.0;
 		var centerY = this.canvasElement.innerHeight() / 2.0;
-		var centerFloorplan = this.floorplan.getCenter();
 		
+		var centerFloorplan = this.floorplan.getCenter();		
 		this.originX = Dimensioning.cmToPixel(centerFloorplan.x) - centerX;
 		this.originY = Dimensioning.cmToPixel(centerFloorplan.z) - centerY;
 		

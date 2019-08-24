@@ -1,5 +1,6 @@
 import {dimCentiMeter} from './dimensioning.js';
 
+
 // GENERAL:
 /** The dimensioning unit for 2D floorplan measurements. */
 export var configDimUnit = 'dimUnit';
@@ -27,7 +28,7 @@ export var wallInformation = {exterior: false, interior: false, midline: true, l
 export const cornerTolerance = 20;
 
 /** Global configuration to customize the whole system.  */
-export class Configuration 
+export class Configuration
 {
 	constructor()
 	{
