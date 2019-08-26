@@ -313,6 +313,7 @@ export class Wall extends EventDispatcher
 			this.getStart().move(startPoint.x, startPoint.y);
 			this.getEnd().move(endPoint.x, endPoint.y);		
 			
+			this.updateAttachedRooms();
 			
 //			vector = vector.multiplyScalar(changeInLength).add(this.getStart().location);
 //			this.getEnd().move(vector.x, vector.y);
@@ -336,6 +337,7 @@ export class Wall extends EventDispatcher
 			this._walltype = value;
 		}
 		this.updateControlVectors();
+		this.updateAttachedRooms(true);
 	}
 	
 	get startElevation()

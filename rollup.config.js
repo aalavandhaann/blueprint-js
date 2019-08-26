@@ -14,7 +14,7 @@ var cache;
 
 export default {
   input: 'src/scripts/blueprint.js',
-  output:{name: 'BP3DJS',file: (isProduction)?'build/js/bp3djs.min.js': 'build/js/bp3djs.js',format: 'iife',sourceMap: true,},
+  output:{name: 'BP3DJS',file: (isProduction)?'build/js/bp3djs.min.js': 'build/js/bp3djs.js',format: 'iife',sourceMap: true, },
   cache: cache,
   treeshake: true,
   plugins: [
@@ -33,6 +33,7 @@ export default {
         'node_modules/three-reflector2/**',
         'node_modules/@calvinscofield/three-objloader/**',
         'node_modules/bezier-js/**',
+        'node_modules/@thi.ng/**',
       ]
     }),
       postcss({extensions: [ '.css' ],plugins: [cssnano()]}),

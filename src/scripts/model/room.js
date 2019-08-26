@@ -1,5 +1,9 @@
 import {EVENT_CHANGED, EVENT_ROOM_ATTRIBUTES_CHANGED} from '../core/events.js';
+import {Region} from '../core/utils.js';
 import {EventDispatcher, Vector2, Vector3, Face3, Geometry, Shape, ShapeGeometry, Mesh, MeshBasicMaterial, DoubleSide, Box3} from 'three';
+
+import { grahamScan2 } from '@thi.ng/geom-hull';
+//import * as concaveman from 'concaveman';
 
 import {WallTypes} from '../core/constants.js';
 
@@ -219,8 +223,68 @@ export class Room extends EventDispatcher
 			}
 		}
 	}
-
+	
 	updateArea()
+	{
+		var isComplex = false;
+		var oldarea = this.area;
+		var points = [];
+		var allpoints = [];
+		var hullPoints = [];
+		this.areaCenter = new Vector2();
+		this._polygonPoints = [];
+		
+		var firstCorner, secondCorner, wall, i, h_ull, corner, hPoint, region;
+		
+		for(i=0;i<this.corners.length;i++)
+		{
+			corner = this.corners[i];
+			hullPoints.push([corner.x,corner.y]);
+			allpoints.push(corner.location.clone());
+			firstCorner = this.corners[i];
+			secondCorner = this.corners[(i + 1) % this.corners.length];			
+			wall = firstCorner.wallToOrFrom(secondCorner);
+			
+			if(wall != null)
+			{
+				if(wall.wallType == WallTypes.CURVED)
+				{
+					var LUT = wall.bezier.getLUT(20);
+					isComplex |= true;
+					for(var j=0;j<LUT.length;j++)
+					{ 
+						var p = LUT[j];
+						hullPoints.push([p.x, p.y]);
+						allpoints.push(new Vector2(p.x, p.y));
+					}
+				}
+			}
+		}
+		h_ull = grahamScan2(hullPoints);
+		for (i=0;i<h_ull.length;i++)
+		{
+			hPoint = h_ull[i];
+			points.push(new Vector2(hPoint[0], hPoint[1]));
+		}
+		
+		region  = new Region(points);
+		this.area = Math.abs(region.area());
+		this.areaCenter = region.centroid();
+		
+		if(isComplex)
+		{
+			var indicesAndAngles = Utils.getCyclicOrder(allpoints, this.areaCenter);
+			points = indicesAndAngles['points'];
+			region  = new Region(points);
+			this.area = Math.abs(region.area());
+			this.areaCenter = region.centroid();
+		}
+		
+		this._polygonPoints = points;
+		this.dispatchEvent({type:EVENT_ROOM_ATTRIBUTES_CHANGED, item:this, info:{from: oldarea, to: this.area}});
+	}
+	
+	updateArea2()
 	{
 		var scope = this;
 		var isComplexRoom = false;
