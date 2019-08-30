@@ -28,7 +28,7 @@ export const dimensioningOptions = [dimInch, dimFeetAndInch, dimMeter, dimCentiM
 /** Dimensioning functions. */
 export class Dimensioning
 {
-	static cmToPixel(cm, apply_scale=false)
+	static cmToPixel(cm, apply_scale=true)
 	{
 		if(apply_scale)
 		{
@@ -37,7 +37,7 @@ export class Dimensioning
 		return cm * pixelsPerCm;
 	}
 	
-	static pixelToCm(pixel, apply_scale=false)
+	static pixelToCm(pixel, apply_scale=true)
 	{
 		if(apply_scale)
 		{

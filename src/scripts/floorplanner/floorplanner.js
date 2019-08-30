@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import {EventDispatcher} from 'three';
+import {EventDispatcher, Vector2} from 'three';
 import {cmPerPixel, pixelsPerCm, Dimensioning} from '../core/dimensioning.js';
 import {configDimUnit, snapTolerance, Configuration} from '../core/configuration.js';
 import {EVENT_MODE_RESET, EVENT_LOADED} from '../core/events.js';
@@ -43,6 +43,10 @@ export class Floorplanner2D extends EventDispatcher
 		this.originX = 0;
 		/** */
 		this.originY = 0;
+		/** */
+		this.unScaledOriginX = 0;
+		/** */
+		this.unScaledOriginY = 0;
 		/** drawing state */
 		this.targetX = 0;
 		/** drawing state */
@@ -425,6 +429,8 @@ export class Floorplanner2D extends EventDispatcher
 //			console.log('PANNING :: ', this.activeCorner, this.activeWall);
 			this.originX += (this.lastX - this.rawMouseX);
 			this.originY += (this.lastY - this.rawMouseY);
+			this.unScaledOriginX += (this.lastX - this.rawMouseX) * (1 / Configuration.getNumericValue('scale'));
+			this.unScaledOriginY += (this.lastY - this.rawMouseY) * (1 / Configuration.getNumericValue('scale'));
 			this.lastX = this.rawMouseX;
 			this.lastY = this.rawMouseY;
 			this.view.draw();
@@ -590,8 +596,23 @@ export class Floorplanner2D extends EventDispatcher
 		this.originX = Dimensioning.cmToPixel(centerFloorplan.x) - centerX;
 		this.originY = Dimensioning.cmToPixel(centerFloorplan.z) - centerY;
 		
+		this.unScaledOriginX = Dimensioning.cmToPixel(centerFloorplan.x, false) - centerX;
+		this.unScaledOriginY = Dimensioning.cmToPixel(centerFloorplan.z, false) - centerY;
+		
 //		this.originX = centerFloorplan.x * this.pixelsPerCm - centerX;
 //		this.originY = centerFloorplan.z * this.pixelsPerCm - centerY;
+	}
+	
+	zoom ()
+	{	
+		var centerX = this.canvasElement.innerWidth() / 2.0;
+		var centerY = this.canvasElement.innerHeight() / 2.0;
+		var originScreen = new Vector2(centerX, centerY);
+		var currentPan = new Vector2(this.unScaledOriginX+centerX, this.unScaledOriginY+centerY);
+		currentPan = currentPan.multiplyScalar(Configuration.getNumericValue('scale')).sub(originScreen);
+		
+		this.originX = currentPan.x;
+		this.originY = currentPan.y;
 	}
 
 	/** Convert from THREEjs coords to canvas coords. */

@@ -712,10 +712,11 @@ function construct2dInterfaceFolder(f, global, floorplanner)
 	view2df.add(BP3DJS.config, 'snapToGrid',).name("Snap To Grid");
 	view2df.add(view2dindirect, 'snapValue', 0.1).name(`Snap Every(${units})`).onChange(onChangeSnapResolution);
 	view2df.add(view2dindirect, 'gridResValue', 0.1).name(`Grid Resolution(${units})`).onChange(onChangeGridResolution);
-//	view2df.add(BP3DJS.config, 'scale', 0.25, 5, ).step(0.25).onChange(()=>{
-	view2df.add(BP3DJS.config, 'scale', 1.0, 10, ).step(0.25).onChange(()=>{
-		blueprint3d.floorplanner.view.zoom();
-//		blueprint3d.floorplanner.view.draw();
+	view2df.add(BP3DJS.config, 'scale', 0.25, 5, ).step(0.25).onChange(()=>{
+//	view2df.add(BP3DJS.config, 'scale', 1.0, 10, ).step(0.25).onChange(()=>{
+		blueprint3d.floorplanner.zoom();
+//		blueprint3d.floorplanner.view.zoom();
+		blueprint3d.floorplanner.view.draw();
 		});
 	
 	
