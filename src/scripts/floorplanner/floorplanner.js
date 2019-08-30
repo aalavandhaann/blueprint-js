@@ -422,7 +422,7 @@ export class Floorplanner2D extends EventDispatcher
 
 		var mx, my;
 		// panning.
-		if (this.mouseDown  && !this.activeCorner && !this.activeWall)
+		if (this.mouseDown  && !this.activeCorner && !this.activeWall && !this._clickedWallControl)
 //		else if (this.mouseDown && (this.activeCorner==null) && (this.activeWall==null) && (this._clickedWallControl == null))
 //		else if (this.mouseDown && (!this._clickedCorner) && (!this._clickedWall) && (this._clickedWallControl == null))
 		{
@@ -505,7 +505,7 @@ export class Floorplanner2D extends EventDispatcher
 	}
 
 	/** */
-	mouseup(event)
+	mouseup(/*event*/)
 	{
 		this.mouseDown = false;
 //		if(event.touches)
@@ -543,6 +543,15 @@ export class Floorplanner2D extends EventDispatcher
 			if(this.activeWall != null)
 			{
 				this.activeWall.updateAttachedRooms(true);
+			}
+			
+			if(this._clickedCorner)
+			{
+				this._clickedCorner.updateAttachedRooms(true);
+			}
+			if(this._clickedWall)
+			{
+				this._clickedWall.updateAttachedRooms(true);
 			}
 		}
 		this.view.draw();
