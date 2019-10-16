@@ -656,6 +656,23 @@ export class Corner extends EventDispatcher
 		{
 			corner.wallEnds[i].setEnd(this);
 		}
+		
+		var rooms = corner.getAttachedRooms(); 
+		for (i=0;i<rooms.length;i++)
+		{
+			var room = rooms[i];
+			//Below returns the roomname object
+			var roomname = this.floorplan.metaroomsdata[room.roomByCornersId];
+			if(roomname)
+			{
+				var oldId = room.roomByCornersId;
+				var newId = oldId.replace(corner.id, this.id);
+				this.floorplan.metaroomsdata[newId] = {};
+				this.floorplan.metaroomsdata[newId]['name'] = roomname['name'];
+				delete this.floorplan.metaroomsdata[oldId];
+			}
+		}
+		
 		// delete the other corner
 		corner.removeAll();
 		this.removeDuplicateWalls();

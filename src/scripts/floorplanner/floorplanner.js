@@ -2,6 +2,7 @@ import $ from 'jquery';
 import {EventDispatcher, Vector2} from 'three';
 import {cmPerPixel, pixelsPerCm, Dimensioning} from '../core/dimensioning.js';
 import {configDimUnit, snapTolerance, Configuration} from '../core/configuration.js';
+//import {gridSpacing} from '../core/configuration.js';
 import {EVENT_MODE_RESET, EVENT_LOADED} from '../core/events.js';
 import {EVENT_CORNER_ATTRIBUTES_CHANGED, EVENT_WALL_ATTRIBUTES_CHANGED, EVENT_ROOM_ATTRIBUTES_CHANGED} from '../core/events.js';
 import {EVENT_CORNER_2D_HOVER, EVENT_WALL_2D_HOVER, EVENT_ROOM_2D_HOVER} from '../core/events.js';
@@ -240,7 +241,11 @@ export class Floorplanner2D extends EventDispatcher
 		if(this.gridsnapmode || Configuration.getNumericValue('snapToGrid'))
 		{			
 			this.targetX = Math.floor(this.targetX / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
-			this.targetY = Math.floor(this.targetY / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);			
+			this.targetY = Math.floor(this.targetY / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
+			
+			//The below will not work, the snapTolerance is necessary for X, Y axis snapping, where as grid snapping is for snapping to grid lines
+//			this.targetX = Math.floor(this.targetX / Configuration.getNumericValue(gridSpacing)) * Configuration.getNumericValue(gridSpacing);
+//			this.targetY = Math.floor(this.targetY / Configuration.getNumericValue(gridSpacing)) * Configuration.getNumericValue(gridSpacing);
 		}
 
 		this.view.draw();
