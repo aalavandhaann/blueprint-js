@@ -65,7 +65,7 @@ export class Wall extends EventDispatcher
 		this._a_vector = this._a.clone().sub(start.location);
 		this._b_vector = this._b.clone().sub(start.location);
 		
-		this._bezier = new Bezier(start.location.x,start.location.y , this._a.x,this._a.y , this._b.x,this._b.y , end.location.x,end.location.y);		
+		this._bezier = new Bezier(start.location.x,start.location.y , this._a.x,this._a.y , this._b.x,this._b.y , end.location.x,end.location.y);
 
 		this.id = this.getUuid();
 

@@ -177,6 +177,9 @@ export class FloorplannerView2D
 		}
 	}
 	
+	/**
+	 * @depreceated
+	 */
 	zoom()
 	{
 		var originx = this.viewmodel.canvasElement.innerWidth() / 2.0;
@@ -518,8 +521,8 @@ export class FloorplannerView2D
 //			for (i=0;i<room.roomCornerPoints.length;i++)
 //			{
 //				var p = room.roomCornerPoints[i];
-//				this.drawCircle(this.viewmodel.convertX(p.x), this.viewmodel.convertY(p.y), 6, '#999999');
-//				this.drawTextLabel(`p:${i+1}`, this.viewmodel.convertX(p.x), this.viewmodel.convertY(p.y), '#363636', '#00FF0000', 'bold italic');
+////				this.drawCircle(this.viewmodel.convertX(p.x), this.viewmodel.convertY(p.y), 6, '#999999');
+//				this.drawTextLabel(`p:${i+0}`, this.viewmodel.convertX(p.x), this.viewmodel.convertY(p.y), '#363636', '#00FF0000', 'bold italic');
 //			}
 //		}
 	}
