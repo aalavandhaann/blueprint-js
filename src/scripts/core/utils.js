@@ -192,7 +192,7 @@ export class Utils
 			{
 				tSecondCorner = firstCorners[tI + 1];
 			}
-			if (Utils.linePolygonIntersect(tFirstCorner.x, tFirstCorner.y,tSecondCorner.x, tSecondCorner.y, secondCorners))
+			if (Utils.linePolygonIntersect(new Vector2(tFirstCorner.x, tFirstCorner.y), new Vector2(tSecondCorner.x, tSecondCorner.y), secondCorners))
 			{
 				return true;
 			}
@@ -305,7 +305,8 @@ export class Utils
 				tSecondCorner = corners[tI + 1];
 			}
 
-			if (Utils.lineLineIntersect(start, point, tFirstCorner.x, tFirstCorner.y, tSecondCorner.x, tSecondCorner.y))
+			if (Utils.lineLineIntersect(start, point,
+				new Vector2(tFirstCorner.x, tFirstCorner.y), new Vector2(tSecondCorner.x, tSecondCorner.y)))
 			{
 				tIntersects++;
 			}
