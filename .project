@@ -5,13 +5,16 @@
 	<projects>
 	</projects>
 	<buildSpec>
-		<!-- JSHint validation -->
+		<buildCommand>
+			<name>org.python.pydev.PyDevBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 		<buildCommand>
 			<name>com.eclipsesource.jshint.ui.builder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
-		<!-- no validation, JSDoc, TODOs processing -->
 		<buildCommand>
 			<name>org.eclipse.wst.jsdt.core.javascriptValidator</name>
 			<arguments>
@@ -22,5 +25,6 @@
 		<nature>org.nodeclipse.ui.NodeNature</nature>
 		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
 		<nature>tern.eclipse.ide.core.ternnature</nature>
+		<nature>org.python.pydev.pythonNature</nature>
 	</natures>
 </projectDescription>

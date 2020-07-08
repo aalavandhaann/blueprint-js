@@ -1,0 +1,61 @@
+{
+  "name": "blueprint3d-js",
+  "version": "0.1.0",
+  "description": "This is the core framework of Blueprint-js for creating floorplans in 2d and 3d",
+  "main": "build/js/bp3djs.js",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "reload": "livereload 'build/'",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "npm-run-all --parallel reload dev",
+    "docs": "esdoc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/aalavandhaann/blueprint-js.git"
+  },
+  "author": "#0K Srinivasan <ashok.srinivasan2002@gmail.com> (@aalavandhaann)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aalavandhaann/blueprint-js/issues"
+  },
+  "devDependencies": {
+    "@thi.ng/geom-hull": "0.0.27",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-preset-latest": "^6.24.1",
+    "bezier-js": "^2.4.0",
+    "cssnano": "^3.10.0",
+    "esdoc": "^1.1.0",
+    "esdoc-standard-plugin": "^1.0.0",
+    "eslint": "^3.19.0",
+    "eslint-plugin-import": "^2.17.3",
+    "event-stream": ">4.0.0",
+    "livereload": "^0.7.0",
+    "npm-run-all": "^4.0.2",
+    "rollup": "^1.6.0",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-commonjs": "^9.3.4",
+    "rollup-plugin-eslint": "^3.0.0",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-postcss": "^0.5.3",
+    "rollup-plugin-replace": "^1.1.1",
+    "rollup-plugin-serve": "^0.3.0",
+    "rollup-plugin-uglify": "^2.0.1",
+    "rollup-plugin-uglify-es": "0.0.1",
+    "rollup-watch": "^4.0.0"
+  },
+  "dependencies": {
+    "@calvinscofield/three-objloader": "^1.0.4",
+    "braces": "^2.3.2",
+    "es6-enum": "^1.1.0",
+    "jquery": "^3.4.1",
+    "line-intersect": "^2.2.1",
+    "nodeclipse": "^0.17.2",
+    "three": "^0.98.0",
+    "three-gltf-exporter": "0.0.1",
+    "three-gltf-loader": "^1.105.0",
+    "three-reflector": "^1.0.2",
+    "three-reflector2": "0.0.5"
+  }
+}

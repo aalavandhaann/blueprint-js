@@ -583,3 +583,5 @@ export class HalfEdge extends EventDispatcher
 		return halfAngleVector;
 	}
 }
+
+export default HalfEdge;
