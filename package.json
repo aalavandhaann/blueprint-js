@@ -28,7 +28,7 @@
         "cssnano": "^4.1.10",
         "esdoc": "^1.1.0",
         "esdoc-standard-plugin": "^1.0.0",
-        "eslint": "^3.19.0",
+        "eslint": "^4.18.2",
         "eslint-plugin-import": "^2.17.3",
         "event-stream": ">4.0.0",
         "livereload": "^0.7.0",
