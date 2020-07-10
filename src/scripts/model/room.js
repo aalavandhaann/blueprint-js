@@ -77,6 +77,47 @@ export class Room extends EventDispatcher {
         this.updateArea();
     }
 
+    __getOrderedCorners(wall) {
+        let i = this.corners.indexOf(wall.start);
+        let j = this.corners.indexOf(wall.end);
+        let start = this.corners[Math.max(i, j)].location.clone();
+        let end = this.corners[Math.min(i, j)].location.clone();
+        if ((i === 0 && j === this.corners.length - 1) || (j === 0 && i === this.corners.length - 1)) {
+            end = this.corners[this.corners.length - 1].location.clone();
+            start = this.corners[0].location.clone();
+        }
+        return { 'start': start, 'end': end };
+    }
+
+    getWallOutDirection(wall) {
+        let orderedCorners = this.__getOrderedCorners(wall);
+        let start = orderedCorners['start'];
+        let end = orderedCorners['end'];
+        let vect = end.sub(start);
+        let vect3 = new Vector3(vect.x, vect.y, 0);
+        vect3.applyAxisAngle(new Vector3(0, 0, 1), 1.57);
+        return vect3.normalize();
+    }
+
+    getWallDirection(wall) {
+        let orderedCorners = this.__getOrderedCorners(wall);
+        let start = orderedCorners['start'];
+        let end = orderedCorners['end'];
+        let vect = end.sub(start);
+        let vect3 = new Vector3(vect.x, vect.y, 0);
+        return vect3.normalize();
+    }
+
+    getWallStart(wall) {
+        let orderedCorners = this.__getOrderedCorners(wall);
+        return orderedCorners['start'];
+    }
+
+    getWallEnd(wall) {
+        let orderedCorners = this.__getOrderedCorners(wall);
+        return orderedCorners['end'];
+    }
+
     roomIdentifier() {
         var cornerids = [];
         this.corners.forEach((corner) => {
