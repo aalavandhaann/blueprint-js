@@ -1,4 +1,5 @@
 import { EventDispatcher, Vector2, Vector3, Face3, Geometry, Shape, ShapeGeometry, Mesh, MeshBasicMaterial, DoubleSide, Box3 } from 'three';
+import { Plane, Matrix4 } from 'three';
 import { EVENT_CHANGED, EVENT_ROOM_ATTRIBUTES_CHANGED, EVENT_MOVED } from '../core/events.js';
 import { Region } from '../core/utils.js';
 import { WallTypes } from '../core/constants.js';
@@ -116,6 +117,16 @@ export class Room extends EventDispatcher {
     getWallEnd(wall) {
         let orderedCorners = this.__getOrderedCorners(wall);
         return orderedCorners['end'];
+    }
+    
+    getWallPlane(wall) {
+        let planeLocation = wall.start.location.clone().add(wall.end.location).multiplyScalar(0.5);
+        let normal = this.getWallOutDirection(wall);
+        let plane = new Plane(normal, 0);
+        let m = new Matrix4();
+        m.makeTranslation(planeLocation.x, planeLocation.y, 0);
+        plane = plane.applyMatrix4(m);
+        return plane;
     }
 
     roomIdentifier() {
