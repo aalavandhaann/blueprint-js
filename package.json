@@ -1,6 +1,6 @@
 {
     "name": "blueprint3d-js",
-    "version": "0.1.1",
+    "version": "1.0.0",
     "description": "This is the core framework of Blueprint-js for creating floorplans in 2d and 3d",
     "main": "build/js/bp3djs.js",
     "scripts": {
