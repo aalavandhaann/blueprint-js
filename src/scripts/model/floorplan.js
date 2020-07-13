@@ -3,7 +3,7 @@ import { EVENT_CORNER_ATTRIBUTES_CHANGED, EVENT_WALL_ATTRIBUTES_CHANGED, EVENT_R
 import { EventDispatcher, Vector2, Vector3 } from 'three';
 import { Utils } from '../core/utils.js';
 import { Dimensioning } from '../core/dimensioning.js';
-import { dimInch, dimFeetAndInch, dimMeter, dimCentiMeter, dimMilliMeter } from '../core/dimensioning.js';
+import { dimInch, dimFeetAndInch, dimMeter, dimCentiMeter, dimMilliMeter } from '../core/constants.js';
 import { WallTypes } from '../core/constants.js';
 import { Version } from '../core/version.js';
 import { cornerTolerance, Configuration, configDimUnit } from '../core/configuration.js';

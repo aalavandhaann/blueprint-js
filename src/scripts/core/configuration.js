@@ -1,4 +1,4 @@
-import {dimCentiMeter} from './dimensioning.js';
+import { dimCentiMeter } from './constants.js';
 
 
 // GENERAL:
@@ -16,11 +16,11 @@ export const scale = 'scale';
 
 export const gridSpacing = 'gridSpacing';
 export const snapToGrid = 'snapToGrid';
-export const snapTolerance = 'snapTolerance';//In CMS
+export const snapTolerance = 'snapTolerance'; //In CMS
 
-export var config = {dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 10, systemUI: false, scale: 1, snapToGrid: false, snapTolerance: 25, gridSpacing: 25};
+export var config = { dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 10, systemUI: false, scale: 1, snapToGrid: false, snapTolerance: 25, gridSpacing: 25 };
 
-export var wallInformation = {exterior: false, interior: false, midline: true, labels: true, exteriorlabel:'e:', interiorlabel:'i:', midlinelabel:'m:'};
+export var wallInformation = { exterior: false, interior: false, midline: true, labels: true, exteriorlabel: 'e:', interiorlabel: 'i:', midlinelabel: 'm:' };
 
 
 /** 
@@ -28,56 +28,48 @@ export var wallInformation = {exterior: false, interior: false, midline: true, l
 export const cornerTolerance = 20;
 
 /** Global configuration to customize the whole system.  */
-export class Configuration
-{
-	constructor()
-	{
-		/** Configuration data loaded from/stored to extern. */
-//		this.data = {dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 10};
-	}
-	
-	static getData()
-	{
-//		return {dimUnit: dimCentiMeter,wallHeight: 250, wallThickness: 10};
-		return config;
-	}
+export class Configuration {
+    constructor() {
+        /** Configuration data loaded from/stored to extern. */
+        //		this.data = {dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 10};
+    }
 
-	/** Set a configuration parameter. */
-	static setValue(key, value) 
-	{
-//		this.data[key] = value;
-		config[key] = value;
-	}
+    static getData() {
+        //		return {dimUnit: dimCentiMeter,wallHeight: 250, wallThickness: 10};
+        return config;
+    }
 
-	/** Get a string configuration parameter. */
-	static getStringValue(key)
-	{
-		switch (key) 
-		{
-		case configDimUnit:
-//			return String(this.data[key]);
-			return String(Configuration.getData()[key]);
-		default:
-			throw new Error('Invalid string configuration parameter: ' + key);
-		}
-	}
+    /** Set a configuration parameter. */
+    static setValue(key, value) {
+        //		this.data[key] = value;
+        config[key] = value;
+    }
 
-	/** Get a numeric configuration parameter. */
-	static getNumericValue(key)
-	{
-		switch (key) 
-		{
-		case configSystemUI:
-		case configWallHeight:
-		case configWallThickness:
-		case scale:
-		case snapToGrid:
-		case snapTolerance:
-		case gridSpacing:
-//			return Number(this.data[key]);
-			return Number(Configuration.getData()[key]);
-		default:
-			throw new Error('Invalid numeric configuration parameter: ' + key);
-		}
-	}
+    /** Get a string configuration parameter. */
+    static getStringValue(key) {
+        switch (key) {
+            case configDimUnit:
+                //			return String(this.data[key]);
+                return String(Configuration.getData()[key]);
+            default:
+                throw new Error('Invalid string configuration parameter: ' + key);
+        }
+    }
+
+    /** Get a numeric configuration parameter. */
+    static getNumericValue(key) {
+        switch (key) {
+            case configSystemUI:
+            case configWallHeight:
+            case configWallThickness:
+            case scale:
+            case snapToGrid:
+            case snapTolerance:
+            case gridSpacing:
+                //			return Number(this.data[key]);
+                return Number(Configuration.getData()[key]);
+            default:
+                throw new Error('Invalid numeric configuration parameter: ' + key);
+        }
+    }
 }

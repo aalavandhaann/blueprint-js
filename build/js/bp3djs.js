@@ -53491,6 +53491,29 @@ vec4 envMapTexelToLinear(vec4 color) {
   	console.log(tPrefix + message);
   }
 
+  /** Dimensioning in Inch. */
+  var dimInch = 'inch';
+
+  /** Dimensioning in Inch. */
+  var dimFeetAndInch = 'feetAndInch';
+
+  /** Dimensioning in Meter. */
+  var dimMeter = 'm';
+
+  /** Dimensioning in Centi Meter. */
+  var dimCentiMeter = 'cm';
+
+  /** Dimensioning in Milli Meter. */
+  var dimMilliMeter = 'mm';
+
+  var VIEW_TOP = 'topview';
+  var VIEW_FRONT = 'frontview';
+  var VIEW_RIGHT = 'rightview';
+  var VIEW_LEFT = 'leftview';
+  var VIEW_ISOMETRY = 'isometryview';
+
+  var WallTypes = _enum('STRAIGHT', 'CURVED');
+
   // GENERAL:
   /** The dimensioning unit for 2D floorplan measurements. */
   var configDimUnit = 'dimUnit';
@@ -53518,80 +53541,65 @@ vec4 envMapTexelToLinear(vec4 color) {
 
   /** Global configuration to customize the whole system.  */
   var Configuration = function () {
-  	function Configuration() {
-  		/** Configuration data loaded from/stored to extern. */
-  		//		this.data = {dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 10};
+      function Configuration() {
+          /** Configuration data loaded from/stored to extern. */
+          //		this.data = {dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 10};
 
-  		classCallCheck(this, Configuration);
-  	}
+          classCallCheck(this, Configuration);
+      }
 
-  	createClass(Configuration, null, [{
-  		key: 'getData',
-  		value: function getData() {
-  			//		return {dimUnit: dimCentiMeter,wallHeight: 250, wallThickness: 10};
-  			return config;
-  		}
+      createClass(Configuration, null, [{
+          key: 'getData',
+          value: function getData() {
+              //		return {dimUnit: dimCentiMeter,wallHeight: 250, wallThickness: 10};
+              return config;
+          }
 
-  		/** Set a configuration parameter. */
+          /** Set a configuration parameter. */
 
-  	}, {
-  		key: 'setValue',
-  		value: function setValue(key, value) {
-  			//		this.data[key] = value;
-  			config[key] = value;
-  		}
+      }, {
+          key: 'setValue',
+          value: function setValue(key, value) {
+              //		this.data[key] = value;
+              config[key] = value;
+          }
 
-  		/** Get a string configuration parameter. */
+          /** Get a string configuration parameter. */
 
-  	}, {
-  		key: 'getStringValue',
-  		value: function getStringValue(key) {
-  			switch (key) {
-  				case configDimUnit:
-  					//			return String(this.data[key]);
-  					return String(Configuration.getData()[key]);
-  				default:
-  					throw new Error('Invalid string configuration parameter: ' + key);
-  			}
-  		}
+      }, {
+          key: 'getStringValue',
+          value: function getStringValue(key) {
+              switch (key) {
+                  case configDimUnit:
+                      //			return String(this.data[key]);
+                      return String(Configuration.getData()[key]);
+                  default:
+                      throw new Error('Invalid string configuration parameter: ' + key);
+              }
+          }
 
-  		/** Get a numeric configuration parameter. */
+          /** Get a numeric configuration parameter. */
 
-  	}, {
-  		key: 'getNumericValue',
-  		value: function getNumericValue(key) {
-  			switch (key) {
-  				case configSystemUI:
-  				case configWallHeight:
-  				case configWallThickness:
-  				case scale:
-  				case snapToGrid:
-  				case snapTolerance:
-  				case gridSpacing:
-  					//			return Number(this.data[key]);
-  					return Number(Configuration.getData()[key]);
-  				default:
-  					throw new Error('Invalid numeric configuration parameter: ' + key);
-  			}
-  		}
-  	}]);
-  	return Configuration;
+      }, {
+          key: 'getNumericValue',
+          value: function getNumericValue(key) {
+              switch (key) {
+                  case configSystemUI:
+                  case configWallHeight:
+                  case configWallThickness:
+                  case scale:
+                  case snapToGrid:
+                  case snapTolerance:
+                  case gridSpacing:
+                      //			return Number(this.data[key]);
+                      return Number(Configuration.getData()[key]);
+                  default:
+                      throw new Error('Invalid numeric configuration parameter: ' + key);
+              }
+          }
+      }]);
+      return Configuration;
   }();
-
-  /** Dimensioning in Inch. */
-  var dimInch = 'inch';
-
-  /** Dimensioning in Inch. */
-  var dimFeetAndInch = 'feetAndInch';
-
-  /** Dimensioning in Meter. */
-  var dimMeter = 'm';
-
-  /** Dimensioning in Centi Meter. */
-  var dimCentiMeter = 'cm';
-
-  /** Dimensioning in Milli Meter. */
-  var dimMilliMeter = 'mm';
 
   var decimals = 1000;
 
@@ -53604,153 +53612,145 @@ vec4 envMapTexelToLinear(vec4 color) {
 
   /** Dimensioning functions. */
   var Dimensioning = function () {
-  	function Dimensioning() {
-  		classCallCheck(this, Dimensioning);
-  	}
+      function Dimensioning() {
+          classCallCheck(this, Dimensioning);
+      }
 
-  	createClass(Dimensioning, null, [{
-  		key: 'cmToPixel',
-  		value: function cmToPixel(cm) {
-  			var apply_scale = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+      createClass(Dimensioning, null, [{
+          key: 'cmToPixel',
+          value: function cmToPixel(cm) {
+              var apply_scale = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
-  			if (apply_scale) {
-  				return cm * pixelsPerCm * Configuration.getNumericValue('scale');
-  			}
-  			return cm * pixelsPerCm;
-  		}
-  	}, {
-  		key: 'pixelToCm',
-  		value: function pixelToCm(pixel) {
-  			var apply_scale = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+              if (apply_scale) {
+                  return cm * pixelsPerCm * Configuration.getNumericValue('scale');
+              }
+              return cm * pixelsPerCm;
+          }
+      }, {
+          key: 'pixelToCm',
+          value: function pixelToCm(pixel) {
+              var apply_scale = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
-  			if (apply_scale) {
-  				return pixel * cmPerPixel * (1.0 / Configuration.getNumericValue('scale'));
-  			}
-  			return pixel * cmPerPixel;
-  		}
-  	}, {
-  		key: 'roundOff',
-  		value: function roundOff(value, decimals) {
-  			return Math.round(decimals * value) / decimals;
-  		}
-  		/** Converts cm to dimensioning number.
-     * @param cm Centi meter value to be converted.
-     * @returns Number representation.
-     */
+              if (apply_scale) {
+                  return pixel * cmPerPixel * (1.0 / Configuration.getNumericValue('scale'));
+              }
+              return pixel * cmPerPixel;
+          }
+      }, {
+          key: 'roundOff',
+          value: function roundOff(value, decimals) {
+              return Math.round(decimals * value) / decimals;
+          }
+          /** Converts cm to dimensioning number.
+           * @param cm Centi meter value to be converted.
+           * @returns Number representation.
+           */
 
-  	}, {
-  		key: 'cmFromMeasureRaw',
-  		value: function cmFromMeasureRaw(measure) {
-  			switch (Configuration.getStringValue(configDimUnit)) {
-  				case dimFeetAndInch:
-  					return Math.round(decimals * (measure * 30.480016459203095991)) / decimals;
-  				case dimInch:
-  					return Math.round(decimals * (measure * 2.5400013716002578512)) / decimals;
-  				case dimMilliMeter:
-  					return Math.round(decimals * (measure * 0.10000005400001014955)) / decimals;
-  				case dimCentiMeter:
-  					return measure;
-  				case dimMeter:
-  				default:
-  					return Math.round(decimals * 100 * measure) / decimals;
-  			}
-  		}
+      }, {
+          key: 'cmFromMeasureRaw',
+          value: function cmFromMeasureRaw(measure) {
+              switch (Configuration.getStringValue(configDimUnit)) {
+                  case dimFeetAndInch:
+                      return Math.round(decimals * (measure * 30.480016459203095991)) / decimals;
+                  case dimInch:
+                      return Math.round(decimals * (measure * 2.5400013716002578512)) / decimals;
+                  case dimMilliMeter:
+                      return Math.round(decimals * (measure * 0.10000005400001014955)) / decimals;
+                  case dimCentiMeter:
+                      return measure;
+                  case dimMeter:
+                  default:
+                      return Math.round(decimals * 100 * measure) / decimals;
+              }
+          }
 
-  		/** Converts cm to dimensioning string.
-     * @param cm Centi meter value to be converted.
-     * @returns String representation.
-     */
+          /** Converts cm to dimensioning string.
+           * @param cm Centi meter value to be converted.
+           * @returns String representation.
+           */
 
-  	}, {
-  		key: 'cmFromMeasure',
-  		value: function cmFromMeasure(measure) {
-  			switch (Configuration.getStringValue(configDimUnit)) {
-  				case dimFeetAndInch:
-  					return Math.round(decimals * (measure * 30.480016459203095991)) / decimals + 'cm';
-  				case dimInch:
-  					return Math.round(decimals * (measure * 2.5400013716002578512)) / decimals + 'cm';
-  				case dimMilliMeter:
-  					return Math.round(decimals * (measure * 0.10000005400001014955)) / decimals + 'cm';
-  				case dimCentiMeter:
-  					return measure;
-  				case dimMeter:
-  				default:
-  					return Math.round(decimals * 100 * measure) / decimals + 'cm';
-  			}
-  		}
+      }, {
+          key: 'cmFromMeasure',
+          value: function cmFromMeasure(measure) {
+              switch (Configuration.getStringValue(configDimUnit)) {
+                  case dimFeetAndInch:
+                      return Math.round(decimals * (measure * 30.480016459203095991)) / decimals + 'cm';
+                  case dimInch:
+                      return Math.round(decimals * (measure * 2.5400013716002578512)) / decimals + 'cm';
+                  case dimMilliMeter:
+                      return Math.round(decimals * (measure * 0.10000005400001014955)) / decimals + 'cm';
+                  case dimCentiMeter:
+                      return measure;
+                  case dimMeter:
+                  default:
+                      return Math.round(decimals * 100 * measure) / decimals + 'cm';
+              }
+          }
 
-  		/** Converts cm to dimensioning string.
-     * @param cm Centi meter value to be converted.
-     * @returns String representation.
-     */
+          /** Converts cm to dimensioning string.
+           * @param cm Centi meter value to be converted.
+           * @returns String representation.
+           */
 
-  	}, {
-  		key: 'cmToMeasureRaw',
-  		value: function cmToMeasureRaw(cm) {
-  			var power = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+      }, {
+          key: 'cmToMeasureRaw',
+          value: function cmToMeasureRaw(cm) {
+              var power = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
 
-  			switch (Configuration.getStringValue(configDimUnit)) {
-  				case dimFeetAndInch:
-  					// dimFeetAndInch returns only the feet
-  					var allInFeet = cm * Math.pow(0.032808416666669996953, power);
-  					return allInFeet;
-  				case dimInch:
-  					var inches = Math.round(decimals * (cm * Math.pow(0.393700, power))) / decimals;
-  					return inches;
-  				case dimMilliMeter:
-  					var mm = Math.round(decimals * (cm * Math.pow(10, power))) / decimals;
-  					return mm;
-  				case dimCentiMeter:
-  					return Math.round(decimals * cm) / decimals;
-  				case dimMeter:
-  				default:
-  					var m = Math.round(decimals * (cm * Math.pow(0.01, power))) / decimals;
-  					return m;
-  			}
-  		}
+              switch (Configuration.getStringValue(configDimUnit)) {
+                  case dimFeetAndInch:
+                      // dimFeetAndInch returns only the feet
+                      var allInFeet = cm * Math.pow(0.032808416666669996953, power);
+                      return allInFeet;
+                  case dimInch:
+                      var inches = Math.round(decimals * (cm * Math.pow(0.393700, power))) / decimals;
+                      return inches;
+                  case dimMilliMeter:
+                      var mm = Math.round(decimals * (cm * Math.pow(10, power))) / decimals;
+                      return mm;
+                  case dimCentiMeter:
+                      return Math.round(decimals * cm) / decimals;
+                  case dimMeter:
+                  default:
+                      var m = Math.round(decimals * (cm * Math.pow(0.01, power))) / decimals;
+                      return m;
+              }
+          }
 
-  		/** Converts cm to dimensioning string.
-     * @param cm Centi meter value to be converted.
-     * @returns String representation.
-     */
+          /** Converts cm to dimensioning string.
+           * @param cm Centi meter value to be converted.
+           * @returns String representation.
+           */
 
-  	}, {
-  		key: 'cmToMeasure',
-  		value: function cmToMeasure(cm) {
-  			var power = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+      }, {
+          key: 'cmToMeasure',
+          value: function cmToMeasure(cm) {
+              var power = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
 
-  			switch (Configuration.getStringValue(configDimUnit)) {
-  				case dimFeetAndInch:
-  					var allInFeet = cm * Math.pow(0.032808416666669996953, power);
-  					var floorFeet = Math.floor(allInFeet);
-  					var remainingFeet = allInFeet - floorFeet;
-  					var remainingInches = Math.round(remainingFeet * 12);
-  					return floorFeet + '\'' + remainingInches + '"';
-  				case dimInch:
-  					var inches = Math.round(decimals * (cm * Math.pow(0.393700, power))) / decimals;
-  					return inches + '\'';
-  				case dimMilliMeter:
-  					var mm = Math.round(decimals * (cm * Math.pow(10, power))) / decimals;
-  					return '' + mm + 'mm';
-  				case dimCentiMeter:
-  					return '' + Math.round(decimals * cm) / decimals + 'cm';
-  				case dimMeter:
-  				default:
-  					var m = Math.round(decimals * (cm * Math.pow(0.01, power))) / decimals;
-  					return '' + m + 'm';
-  			}
-  		}
-  	}]);
-  	return Dimensioning;
+              switch (Configuration.getStringValue(configDimUnit)) {
+                  case dimFeetAndInch:
+                      var allInFeet = cm * Math.pow(0.032808416666669996953, power);
+                      var floorFeet = Math.floor(allInFeet);
+                      var remainingFeet = allInFeet - floorFeet;
+                      var remainingInches = Math.round(remainingFeet * 12);
+                      return floorFeet + '\'' + remainingInches + '"';
+                  case dimInch:
+                      var inches = Math.round(decimals * (cm * Math.pow(0.393700, power))) / decimals;
+                      return inches + '\'';
+                  case dimMilliMeter:
+                      var mm = Math.round(decimals * (cm * Math.pow(10, power))) / decimals;
+                      return '' + mm + 'mm';
+                  case dimCentiMeter:
+                      return '' + Math.round(decimals * cm) / decimals + 'cm';
+                  case dimMeter:
+                  default:
+                      var m = Math.round(decimals * (cm * Math.pow(0.01, power))) / decimals;
+                      return '' + m + 'm';
+              }
+          }
+      }]);
+      return Dimensioning;
   }();
-
-  var VIEW_TOP = 'topview';
-  var VIEW_FRONT = 'frontview';
-  var VIEW_RIGHT = 'rightview';
-  var VIEW_LEFT = 'leftview';
-  var VIEW_ISOMETRY = 'isometryview';
-
-  var WallTypes = _enum('STRAIGHT', 'CURVED');
 
   /**
    * Half Edges are created by Room.
@@ -78919,570 +78919,32 @@ vec4 envMapTexelToLinear(vec4 color) {
   	this.resizable = false;
   };
 
-  //import $ from 'jquery';
-
-  var states = { UNSELECTED: 0, SELECTED: 1, DRAGGING: 2, ROTATING: 3, ROTATING_FREE: 4, PANNING: 5 };
-
-  // Controller is the class that maintains the items, floors, walls selection in
-  // the 3d scene
-  var Controller = function (_EventDispatcher) {
-      inherits(Controller, _EventDispatcher);
-
-      function Controller(three, model, camera, element, controls, hud) {
-          classCallCheck(this, Controller);
-
-          var _this = possibleConstructorReturn(this, (Controller.__proto__ || Object.getPrototypeOf(Controller)).call(this));
-
-          _this.three = three;
-          _this.model = model;
-          _this.camera = camera;
-          _this.element = element;
-          _this.controls = controls;
-          _this.hud = hud;
-
-          _this.enabled = true;
-          _this.scene = model.scene;
-
-          _this.plane = null;
-          _this.mouse = new Vector2(0, 0);
-          _this.alternateMouse = new Vector2(0, 0);
-
-          _this.intersectedObject = null;
-          _this.mouseoverObject = null;
-          _this.selectedObject = null;
-
-          _this.mouseDown = false;
-          _this.mouseMoved = false; // has mouse moved since down click
-          _this.rotateMouseOver = false;
-
-          _this.state = states.UNSELECTED;
-          _this.needsUpdate = true;
-
-          var scope = _this;
-          _this.itemremovedevent = function (o) {
-              scope.itemRemoved(o.item);
-          };
-          _this.itemloadedevent = function (o) {
-              scope.itemLoaded(o.item);
-          };
-
-          _this.mousedownevent = function (event) {
-              scope.mouseDownEvent(event);
-          };
-          _this.mouseupevent = function (event) {
-              scope.mouseUpEvent(event);
-          };
-          _this.mousemoveevent = function (event) {
-              scope.mouseMoveEvent(event);
-          };
-          _this.init();
-          return _this;
-      }
-
-      createClass(Controller, [{
-          key: 'init',
-          value: function init() {
-
-              //		this.element.mousedown(this.mousedownevent);
-              //		this.element.mouseup(this.mouseupevent);
-              //		this.element.mousemove(this.mousemoveevent);
-
-              this.element.bind('touchstart mousedown', this.mousedownevent);
-              this.element.bind('touchmove mousemove', this.mousemoveevent);
-              this.element.bind('touchend mouseup', this.mouseupevent);
-
-              this.scene.addEventListener(EVENT_ITEM_REMOVED, this.itemremovedevent);
-              this.scene.addEventListener(EVENT_ITEM_LOADED, this.itemloadedevent);
-              this.setGroundPlane();
-          }
-      }, {
-          key: 'itemRemoved',
-          value: function itemRemoved(item) {
-              // invoked as a callback to event in Scene
-              if (item === this.selectedObject) {
-                  this.selectedObject.setUnselected();
-                  this.selectedObject.mouseOff();
-                  this.setSelectedObject(null);
-              }
-          }
-
-          // invoked via callback when item is loaded
-
-      }, {
-          key: 'itemLoaded',
-          value: function itemLoaded(item) {
-              var scope = this;
-              if (!item.position_set) {
-                  scope.setSelectedObject(item);
-                  scope.switchState(states.DRAGGING);
-                  var pos = item.position.clone();
-                  pos.y = 0;
-                  var vec = scope.three.projectVector(pos);
-                  scope.clickPressed(vec);
-              }
-              item.position_set = true;
-          }
-      }, {
-          key: 'clickPressed',
-          value: function clickPressed(vec2) {
-              this.mouse = vec2 || this.mouse;
-              var intersection = this.itemIntersection(this.mouse, this.selectedObject);
-              if (intersection) {
-                  this.selectedObject.clickPressed(intersection);
-              }
-          }
-      }, {
-          key: 'clickDragged',
-          value: function clickDragged(vec2) {
-              var scope = this;
-              this.mouse = vec2 || this.mouse;
-              var intersection = scope.itemIntersection(this.mouse, this.selectedObject);
-              if (intersection) {
-                  if (scope.isRotating()) {
-                      this.selectedObject.rotate(intersection);
-                  } else {
-                      this.selectedObject.clickDragged(intersection);
-                  }
-              }
-          }
-      }, {
-          key: 'showGroundPlane',
-          value: function showGroundPlane(flag) {
-              this.plane.visible = flag;
-          }
-      }, {
-          key: 'setGroundPlane',
-          value: function setGroundPlane() {
-              // ground plane used to find intersections
-              var size = 10000;
-
-              // The below line was originally setting the plane visibility to false
-              // Now its setting visibility to true. This is necessary to be detected
-              // with the raycaster objects to click walls and floors.
-              this.plane = new Mesh(new PlaneGeometry(size, size), new MeshBasicMaterial({ visible: false }));
-              this.plane.rotation.x = -Math.PI / 2;
-              this.plane.visible = true;
-              this.scene.add(this.plane);
-          }
-      }, {
-          key: 'checkWallsAndFloors',
-          value: function checkWallsAndFloors() {
-              // double click on a wall or floor brings up texture change modal
-              if (this.state == states.UNSELECTED && this.mouseoverObject == null) {
-                  // check walls
-                  var wallEdgePlanes = this.model.floorplan.wallEdgePlanes();
-                  var wallIntersects = this.getIntersections(this.mouse, wallEdgePlanes, true);
-                  if (wallIntersects.length > 0) {
-                      var wall = wallIntersects[0].object.edge;
-                      // three.wallClicked.fire(wall);
-                      this.three.wallIsClicked(wall);
-                      return;
-                  }
-
-                  // check floors
-                  var floorPlanes = this.model.floorplan.floorPlanes();
-                  var floorIntersects = this.getIntersections(this.mouse, floorPlanes, false);
-                  if (floorIntersects.length > 0) {
-                      var room = floorIntersects[0].object.room;
-                      // this.three.floorClicked.fire(room);
-                      this.three.floorIsClicked(room);
-                      return;
-                  }
-                  // three.nothingClicked.fire();
-                  this.three.nothingIsClicked();
-              }
-          }
-      }, {
-          key: 'isRotating',
-          value: function isRotating() {
-              return this.state == states.ROTATING || this.state == states.ROTATING_FREE;
-          }
-      }, {
-          key: 'mouseDownEvent',
-          value: function mouseDownEvent(event) {
-              if (this.enabled) {
-                  event.preventDefault();
-
-                  this.mouseMoved = false;
-                  this.mouseDown = true;
-
-                  if (event.touches) {
-                      //In case if this is a touch device do the necessary to click and drag items
-                      this.mouse.x = event.touches[0].clientX;
-                      this.mouse.y = event.touches[0].clientY;
-                      this.alternateMouse.x = event.touches[0].clientX;
-                      this.alternateMouse.y = event.touches[0].clientY;
-                      this.updateIntersections();
-                      this.checkWallsAndFloors();
-                  }
-
-                  switch (this.state) {
-                      case states.SELECTED:
-                          if (this.rotateMouseOver) {
-                              this.switchState(states.ROTATING);
-                          } else if (this.intersectedObject != null) {
-                              this.setSelectedObject(this.intersectedObject);
-                              if (!this.intersectedObject.fixed) {
-                                  this.switchState(states.DRAGGING);
-                              }
-                          }
-                          break;
-                      case states.UNSELECTED:
-                          if (this.intersectedObject != null) {
-                              this.setSelectedObject(this.intersectedObject);
-                              if (!this.intersectedObject.fixed) {
-                                  this.switchState(states.DRAGGING);
-                              }
-                          }
-                          break;
-                      case states.DRAGGING:
-                      case states.ROTATING:
-                          break;
-                      case states.ROTATING_FREE:
-                          this.switchState(states.SELECTED);
-                          break;
-                  }
-              }
-          }
-      }, {
-          key: 'mouseMoveEvent',
-          value: function mouseMoveEvent(event) {
-              if (this.enabled) {
-                  event.preventDefault();
-                  this.mouseMoved = true;
-
-                  this.mouse.x = event.clientX;
-                  this.mouse.y = event.clientY;
-                  this.alternateMouse.x = event.clientX;
-                  this.alternateMouse.y = event.clientY;
-
-                  if (event.touches) {
-                      this.mouse.x = event.touches[0].clientX;
-                      this.mouse.y = event.touches[0].clientY;
-                      this.alternateMouse.x = event.touches[0].clientX;
-                      this.alternateMouse.y = event.touches[0].clientY;
-                  }
-
-                  if (!this.mouseDown) {
-                      this.updateIntersections();
-                  }
-
-                  switch (this.state) {
-                      case states.UNSELECTED:
-                          this.updateMouseover();
-                          break;
-                      case states.SELECTED:
-                          this.updateMouseover();
-                          break;
-                      case states.DRAGGING:
-                      case states.ROTATING:
-                      case states.ROTATING_FREE:
-                          this.clickDragged();
-                          this.hud.update();
-                          this.needsUpdate = true;
-                          break;
-                  }
-              }
-          }
-      }, {
-          key: 'mouseUpEvent',
-          value: function mouseUpEvent() {
-              if (this.enabled) {
-                  this.mouseDown = false;
-
-                  switch (this.state) {
-                      case states.DRAGGING:
-                          this.selectedObject.clickReleased();
-                          this.switchState(states.SELECTED);
-                          break;
-                      case states.ROTATING:
-                          if (!this.mouseMoved) {
-                              this.switchState(states.ROTATING_FREE);
-                          } else {
-                              this.switchState(states.SELECTED);
-                          }
-                          break;
-                      case states.UNSELECTED:
-                          if (!this.mouseMoved) {
-                              this.checkWallsAndFloors();
-                          }
-                          break;
-                      case states.SELECTED:
-                          if (this.intersectedObject == null && !this.mouseMoved) {
-                              this.switchState(states.UNSELECTED);
-                              this.checkWallsAndFloors();
-                          }
-                          break;
-                  }
-              }
-          }
-      }, {
-          key: 'switchState',
-          value: function switchState(newState) {
-              if (newState != this.state) {
-                  this.onExit(this.state);
-                  this.onEntry(newState);
-              }
-              this.state = newState;
-              this.hud.setRotating(this.isRotating());
-          }
-      }, {
-          key: 'onEntry',
-          value: function onEntry(state) {
-              switch (state) {
-                  case states.UNSELECTED:
-                      this.setSelectedObject(null);
-                      break;
-                  case states.SELECTED:
-                      this.controls.enabled = true;
-                      break;
-                  case states.ROTATING:
-                  case states.ROTATING_FREE:
-                      this.controls.enabled = false;
-                      break;
-                  case states.DRAGGING:
-                      this.three.setCursorStyle('move');
-                      this.clickPressed();
-                      this.controls.enabled = false;
-                      break;
-              }
-          }
-      }, {
-          key: 'onExit',
-          value: function onExit(state) {
-              switch (state) {
-                  case states.UNSELECTED:
-                  case states.SELECTED:
-                      break;
-                  case states.DRAGGING:
-                      if (this.mouseoverObject) {
-                          this.three.setCursorStyle('pointer');
-                      } else {
-                          this.three.setCursorStyle('auto');
-                      }
-                      break;
-              }
-          }
-      }, {
-          key: 'selectedObject',
-          value: function selectedObject() {
-              return this.selectedObject;
-          }
-
-          // updates the vector of the intersection with the plane of a given
-          // mouse position, and the intersected object
-          // both may be set to null if no intersection found
-
-      }, {
-          key: 'updateIntersections',
-          value: function updateIntersections() {
-              // check the rotate arrow
-              var hudObject = this.hud.getObject();
-              if (hudObject != null) {
-                  var hudIntersects = this.getIntersections(this.mouse, hudObject, false, false, true);
-                  if (hudIntersects.length > 0) {
-                      this.rotateMouseOver = true;
-                      this.hud.setMouseover(true);
-                      this.intersectedObject = null;
-                      return;
-                  }
-              }
-              this.rotateMouseOver = false;
-              this.hud.setMouseover(false);
-
-              // check objects
-              var items = this.model.scene.getItems();
-              var intersects = this.getIntersections(this.mouse, items, false, true);
-              if (intersects.length > 0) {
-                  this.intersectedObject = intersects[0].object;
-              } else {
-                  this.intersectedObject = null;
-              }
-          }
-
-          // returns the first intersection object
-
-      }, {
-          key: 'itemIntersection',
-          value: function itemIntersection(vec2, item) {
-              var customIntersections = item.customIntersectionPlanes();
-              if (item.freePosition) {
-                  return this.freeMouse3D(vec2);
-              }
-              var intersections = null;
-              if (customIntersections && customIntersections.length > 0) {
-                  intersections = this.getIntersections(vec2, customIntersections, true);
-              } else {
-                  intersections = this.getIntersections(vec2, this.plane);
-              }
-              if (intersections.length > 0) {
-                  return intersections[0];
-              } else {
-                  return null;
-              }
-          }
-
-          // sets coords to -1 to 1
-
-      }, {
-          key: 'normalizeVector2',
-          value: function normalizeVector2(vec2) {
-              var retVec = new Vector2();
-              retVec.x = (vec2.x - this.three.widthMargin) / (window.innerWidth - this.three.widthMargin) * 2 - 1;
-              retVec.y = -((vec2.y - this.three.heightMargin) / (window.innerHeight - this.three.heightMargin)) * 2 + 1;
-              return retVec;
-          }
-
-          //
-
-      }, {
-          key: 'mouseToVec3',
-          value: function mouseToVec3(vec2) {
-              var normVec2 = this.normalizeVector2(vec2);
-              var vector = new Vector3(normVec2.x, normVec2.y, 0.5);
-              vector.unproject(this.camera);
-              return vector;
-          }
-      }, {
-          key: 'freeMouse3D',
-          value: function freeMouse3D(vec2) {
-              var distance;
-              var pos = new Vector3();
-              var vector = this.mouseToVec3(vec2);
-              vector.sub(this.camera.position).normalize();
-              distance = -this.camera.position.z / vector.z;
-              pos.copy(this.camera.position).add(vector.multiplyScalar(distance));
-              return { point: pos, distance: distance };
-          }
-
-          // filter by normals will only return objects facing the camera
-          // objects can be an array of objects or a single object
-
-      }, {
-          key: 'getIntersections',
-          value: function getIntersections(vec2, objects, filterByNormals, onlyVisible, recursive, linePrecision) {
-              var vector = this.mouseToVec3(vec2);
-              onlyVisible = onlyVisible || false;
-              filterByNormals = filterByNormals || false;
-              recursive = recursive || false;
-              linePrecision = linePrecision || 20;
-
-              var direction = vector.sub(this.camera.position).normalize();
-              var raycaster = new Raycaster(this.camera.position, direction);
-              // raycaster.linePrecision = linePrecision;
-              raycaster.params.Line.threshold = linePrecision;
-
-              raycaster = new Raycaster();
-              raycaster.setFromCamera(this.normalizeVector2(this.alternateMouse), this.camera);
-
-              var intersections;
-
-              if (objects instanceof Array) {
-                  intersections = raycaster.intersectObjects(objects, recursive);
-              } else {
-                  intersections = raycaster.intersectObject(objects, recursive);
-              }
-              // filter by visible, if true
-              if (onlyVisible) {
-                  intersections = Utils.removeIf(intersections, function (intersection) {
-                      return !intersection.object.visible;
-                  });
-              }
-
-              // filter by normals, if true
-              if (filterByNormals) {
-                  intersections = Utils.removeIf(intersections, function (intersection) {
-                      var dot = intersection.face.normal.dot(direction);return dot > 0;
-                  });
-              }
-              return intersections;
-          }
-
-          // manage the selected object
-
-      }, {
-          key: 'setSelectedObject',
-          value: function setSelectedObject(object) {
-              if (this.state === states.UNSELECTED) {
-                  this.switchState(states.SELECTED);
-              }
-              if (this.selectedObject != null) {
-                  this.selectedObject.setUnselected();
-              }
-              if (object != null) {
-                  this.selectedObject = object;
-                  this.selectedObject.setSelected();
-                  // three.itemSelectedCallbacks.fire(object);
-                  this.three.itemIsSelected(object);
-              } else {
-                  this.selectedObject = null;
-                  // three.itemUnselectedCallbacks.fire();
-                  this.three.itemIsUnselected();
-              }
-              this.needsUpdate = true;
-          }
-
-          // TODO: there MUST be simpler logic for expressing this
-
-      }, {
-          key: 'updateMouseover',
-          value: function updateMouseover() {
-              if (this.intersectedObject != null) {
-                  if (this.mouseoverObject != null) {
-                      if (this.mouseoverObject !== this.intersectedObject) {
-                          this.mouseoverObject.mouseOff();
-                          this.mouseoverObject = this.intersectedObject;
-                          this.mouseoverObject.mouseOver();
-                          this.needsUpdate = true;
-                      }
-                  } else {
-                      this.mouseoverObject = this.intersectedObject;
-                      this.mouseoverObject.mouseOver();
-                      this.three.setCursorStyle('pointer');
-                      this.needsUpdate = true;
-                  }
-              } else if (this.mouseoverObject != null) {
-                  this.mouseoverObject.mouseOff();
-                  this.three.setCursorStyle('auto');
-                  this.mouseoverObject = null;
-                  this.needsUpdate = true;
-              }
-          }
-      }, {
-          key: 'changeCamera',
-          value: function changeCamera(newCamera) {
-              this.camera = newCamera;
-          }
-      }]);
-      return Controller;
-  }(EventDispatcher);
-
   /**
    * @author qiao / https://github.com/qiao
    * @author mrdoob / http://mrdoob.com
    * @author alteredq / http://alteredqualia.com/
    * @author WestLangley / http://github.com/WestLangley
    * @author erich666 / http://erichaines.com
+   * @author ScieCode / http://github.com/sciecode
    */
 
   // This set of controls performs orbiting, dollying (zooming), and panning.
-  // Unlike TrackballControls, it maintains the "up" direction object.up (+Y by
-  // default).
+  // Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
+  //
+  //    Orbit - left mouse / touch: one-finger move
+  //    Zoom - middle mouse, or mousewheel / touch: two-finger spread or squish
+  //    Pan - right mouse, or left mouse + ctrl/meta/shiftKey, or arrow keys / touch: two-finger move
 
-  // Orbit - left mouse / touch: one-finger move
-  // Zoom - middle mouse, or mousewheel / touch: two-finger spread or squish
-  // Pan - right mouse, or left mouse + ctrl/metaKey, or arrow keys / touch:
-  // two-finger move
+  var OrbitControls = function ( object, domElement ) {
 
-  function OrbitControls(object, domElement) {
+  	if ( domElement === undefined ) console.warn( 'THREE.OrbitControls: The second parameter "domElement" is now mandatory.' );
+  	if ( domElement === document ) console.error( 'THREE.OrbitControls: "document" should not be used as the target "domElement". Please use "renderer.domElement" instead.' );
 
   	this.object = object;
-
-  	this.domElement = domElement !== undefined ? domElement : document;
+  	this.domElement = domElement;
 
   	// Set to false to disable this control
   	this.enabled = true;
-  	this.needsUpdate = true;
 
   	// "target" sets the location of focus, where the object orbits around
   	this.target = new Vector3();
@@ -79501,18 +78963,16 @@ vec4 envMapTexelToLinear(vec4 color) {
   	this.maxPolarAngle = Math.PI; // radians
 
   	// How far you can orbit horizontally, upper and lower limits.
-  	// If set, must be a sub-interval of the interval [ - Math.PI, Math.PI ].
-  	this.minAzimuthAngle = -Infinity; // radians
+  	// If set, the interval [ min, max ] must be a sub-interval of [ - 2 PI, 2 PI ], with ( max - min < 2 PI )
+  	this.minAzimuthAngle = - Infinity; // radians
   	this.maxAzimuthAngle = Infinity; // radians
 
   	// Set to true to enable damping (inertia)
-  	// If damping is enabled, you must call controls.update() in your animation
-  	// loop
+  	// If damping is enabled, you must call controls.update() in your animation loop
   	this.enableDamping = false;
-  	this.dampingFactor = 0.25;
+  	this.dampingFactor = 0.05;
 
-  	// This option actually enables dollying in and out; left as "zoom" for
-  	// backwards compatibility.
+  	// This option actually enables dollying in and out; left as "zoom" for backwards compatibility.
   	// Set to false to disable zooming
   	this.enableZoom = true;
   	this.zoomSpeed = 1.0;
@@ -79524,12 +78984,11 @@ vec4 envMapTexelToLinear(vec4 color) {
   	// Set to false to disable panning
   	this.enablePan = true;
   	this.panSpeed = 1.0;
-  	this.screenSpacePanning = false; // if true, pan in screen-space
-  	this.keyPanSpeed = 7.0; // pixels moved per arrow key push
+  	this.screenSpacePanning = true; // if false, pan orthogonal to world-space direction camera.up
+  	this.keyPanSpeed = 7.0;	// pixels moved per arrow key push
 
   	// Set to true to automatically rotate around the target
-  	// If auto-rotate is enabled, you must call controls.update() in your
-  	// animation loop
+  	// If auto-rotate is enabled, you must call controls.update() in your animation loop
   	this.autoRotate = false;
   	this.autoRotateSpeed = 2.0; // 30 seconds per round when fps is 60
 
@@ -79540,7 +78999,10 @@ vec4 envMapTexelToLinear(vec4 color) {
   	this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 };
 
   	// Mouse buttons
-  	this.mouseButtons = { LEFT: MOUSE.LEFT, MIDDLE: MOUSE.MIDDLE, RIGHT: MOUSE.RIGHT };
+  	this.mouseButtons = { LEFT: MOUSE.ROTATE, MIDDLE: MOUSE.DOLLY, RIGHT: MOUSE.PAN };
+
+  	// Touch fingers
+  	this.touches = { ONE: TOUCH.ROTATE, TWO: TOUCH.DOLLY_PAN };
 
   	// for reset
   	this.target0 = this.target.clone();
@@ -79554,103 +79016,152 @@ vec4 envMapTexelToLinear(vec4 color) {
   	this.getPolarAngle = function () {
 
   		return spherical.phi;
+
   	};
 
   	this.getAzimuthalAngle = function () {
 
   		return spherical.theta;
+
   	};
 
   	this.saveState = function () {
 
-  		scope.target0.copy(scope.target);
-  		scope.position0.copy(scope.object.position);
+  		scope.target0.copy( scope.target );
+  		scope.position0.copy( scope.object.position );
   		scope.zoom0 = scope.object.zoom;
+
   	};
 
   	this.reset = function () {
 
-  		scope.target.copy(scope.target0);
-  		scope.object.position.copy(scope.position0);
+  		scope.target.copy( scope.target0 );
+  		scope.object.position.copy( scope.position0 );
   		scope.object.zoom = scope.zoom0;
 
   		scope.object.updateProjectionMatrix();
-  		scope.dispatchEvent(changeEvent);
-  		scope.dispatchEvent({ type: EVENT_CAMERA_MOVED });
+  		scope.dispatchEvent( changeEvent );
 
   		scope.update();
 
   		state = STATE.NONE;
+
   	};
 
-  	// this method is exposed, but perhaps it would be better if we can make it
-  	// private...
+  	// this method is exposed, but perhaps it would be better if we can make it private...
   	this.update = function () {
+
   		var offset = new Vector3();
 
   		// so camera.up is the orbit axis
-  		var quat = new Quaternion().setFromUnitVectors(object.up, new Vector3(0, 1, 0));
+  		var quat = new Quaternion().setFromUnitVectors( object.up, new Vector3( 0, 1, 0 ) );
   		var quatInverse = quat.clone().inverse();
 
   		var lastPosition = new Vector3();
   		var lastQuaternion = new Quaternion();
 
+  		var twoPI = 2 * Math.PI;
+
   		return function update() {
 
   			var position = scope.object.position;
 
-  			offset.copy(position).sub(scope.target);
+  			offset.copy( position ).sub( scope.target );
 
   			// rotate offset to "y-axis-is-up" space
-  			offset.applyQuaternion(quat);
+  			offset.applyQuaternion( quat );
 
   			// angle from z-axis around y-axis
-  			spherical.setFromVector3(offset);
+  			spherical.setFromVector3( offset );
 
-  			if (scope.autoRotate && state === STATE.NONE) {
+  			if ( scope.autoRotate && state === STATE.NONE ) {
 
-  				rotateLeft(getAutoRotationAngle());
+  				rotateLeft( getAutoRotationAngle() );
+
   			}
 
-  			spherical.theta += sphericalDelta.theta;
-  			spherical.phi += sphericalDelta.phi;
+  			if ( scope.enableDamping ) {
+
+  				spherical.theta += sphericalDelta.theta * scope.dampingFactor;
+  				spherical.phi += sphericalDelta.phi * scope.dampingFactor;
+
+  			} else {
+
+  				spherical.theta += sphericalDelta.theta;
+  				spherical.phi += sphericalDelta.phi;
+
+  			}
 
   			// restrict theta to be between desired limits
-  			spherical.theta = Math.max(scope.minAzimuthAngle, Math.min(scope.maxAzimuthAngle, spherical.theta));
+
+  			var min = scope.minAzimuthAngle;
+  			var max = scope.maxAzimuthAngle;
+
+  			if ( isFinite ( min ) && isFinite( max ) ) {
+
+  				if ( min < - Math.PI ) min += twoPI; else if ( min > Math.PI ) min -= twoPI;
+
+  				if ( max < - Math.PI ) max += twoPI; else if ( max > Math.PI ) max -= twoPI;
+
+  				if ( min < max ) {
+
+  					spherical.theta = Math.max( min, Math.min( max, spherical.theta ) );
+
+  				} else {
+
+  					spherical.theta = ( spherical.theta > ( min + max ) / 2 ) ?
+  						Math.max( min, spherical.theta ) :
+  						Math.min( max, spherical.theta );
+
+  				}
+
+  			}
 
   			// restrict phi to be between desired limits
-  			spherical.phi = Math.max(scope.minPolarAngle, Math.min(scope.maxPolarAngle, spherical.phi));
+  			spherical.phi = Math.max( scope.minPolarAngle, Math.min( scope.maxPolarAngle, spherical.phi ) );
 
   			spherical.makeSafe();
+
 
   			spherical.radius *= scale;
 
   			// restrict radius to be between desired limits
-  			spherical.radius = Math.max(scope.minDistance, Math.min(scope.maxDistance, spherical.radius));
+  			spherical.radius = Math.max( scope.minDistance, Math.min( scope.maxDistance, spherical.radius ) );
 
   			// move target to panned location
-  			scope.target.add(panOffset);
 
-  			offset.setFromSpherical(spherical);
+  			if ( scope.enableDamping === true ) {
 
-  			// rotate offset back to "camera-up-vector-is-up" space
-  			offset.applyQuaternion(quatInverse);
+  				scope.target.addScaledVector( panOffset, scope.dampingFactor );
 
-  			position.copy(scope.target).add(offset);
-
-  			scope.object.lookAt(scope.target);
-
-  			if (scope.enableDamping === true) {
-
-  				sphericalDelta.theta *= 1 - scope.dampingFactor;
-  				sphericalDelta.phi *= 1 - scope.dampingFactor;
-
-  				panOffset.multiplyScalar(1 - scope.dampingFactor);
   			} else {
 
-  				sphericalDelta.set(0, 0, 0);
+  				scope.target.add( panOffset );
 
-  				panOffset.set(0, 0, 0);
+  			}
+
+  			offset.setFromSpherical( spherical );
+
+  			// rotate offset back to "camera-up-vector-is-up" space
+  			offset.applyQuaternion( quatInverse );
+
+  			position.copy( scope.target ).add( offset );
+
+  			scope.object.lookAt( scope.target );
+
+  			if ( scope.enableDamping === true ) {
+
+  				sphericalDelta.theta *= ( 1 - scope.dampingFactor );
+  				sphericalDelta.phi *= ( 1 - scope.dampingFactor );
+
+  				panOffset.multiplyScalar( 1 - scope.dampingFactor );
+
+  			} else {
+
+  				sphericalDelta.set( 0, 0, 0 );
+
+  				panOffset.set( 0, 0, 0 );
+
   			}
 
   			scale = 1;
@@ -79659,39 +79170,43 @@ vec4 envMapTexelToLinear(vec4 color) {
   			// min(camera displacement, camera rotation in radians)^2 > EPS
   			// using small-angle approximation cos(x/2) = 1 - x^2 / 8
 
-  			if (zoomChanged || lastPosition.distanceToSquared(scope.object.position) > EPS || 8 * (1 - lastQuaternion.dot(scope.object.quaternion)) > EPS) {
-  				scope.dispatchEvent(changeEvent);
-  				scope.dispatchEvent({ type: EVENT_CAMERA_MOVED });
-  				lastPosition.copy(scope.object.position);
-  				lastQuaternion.copy(scope.object.quaternion);
+  			if ( zoomChanged ||
+  				lastPosition.distanceToSquared( scope.object.position ) > EPS ||
+  				8 * ( 1 - lastQuaternion.dot( scope.object.quaternion ) ) > EPS ) {
+
+  				scope.dispatchEvent( changeEvent );
+
+  				lastPosition.copy( scope.object.position );
+  				lastQuaternion.copy( scope.object.quaternion );
   				zoomChanged = false;
-  				this.needsUpdate = true;
+
   				return true;
-  			} else {
-  				this.needsUpdate = false;
+
   			}
 
   			return false;
+
   		};
+
   	}();
 
   	this.dispose = function () {
 
-  		scope.domElement.removeEventListener('contextmenu', onContextMenu, false);
-  		scope.domElement.removeEventListener('mousedown', onMouseDown, false);
-  		scope.domElement.removeEventListener('wheel', onMouseWheel, false);
+  		scope.domElement.removeEventListener( 'contextmenu', onContextMenu, false );
+  		scope.domElement.removeEventListener( 'mousedown', onMouseDown, false );
+  		scope.domElement.removeEventListener( 'wheel', onMouseWheel, false );
 
-  		scope.domElement.removeEventListener('touchstart', onTouchStart, false);
-  		scope.domElement.removeEventListener('touchend', onTouchEnd, false);
-  		scope.domElement.removeEventListener('touchmove', onTouchMove, false);
+  		scope.domElement.removeEventListener( 'touchstart', onTouchStart, false );
+  		scope.domElement.removeEventListener( 'touchend', onTouchEnd, false );
+  		scope.domElement.removeEventListener( 'touchmove', onTouchMove, false );
 
-  		document.removeEventListener('mousemove', onMouseMove, false);
-  		document.removeEventListener('mouseup', onMouseUp, false);
+  		scope.domElement.ownerDocument.removeEventListener( 'mousemove', onMouseMove, false );
+  		scope.domElement.ownerDocument.removeEventListener( 'mouseup', onMouseUp, false );
 
-  		window.removeEventListener('keydown', onKeyDown, false);
+  		scope.domElement.removeEventListener( 'keydown', onKeyDown, false );
 
-  		// scope.dispatchEvent( { type: 'dispose' } ); // should this be added
-  		// here?
+  		//scope.dispatchEvent( { type: 'dispose' } ); // should this be added here?
+
   	};
 
   	//
@@ -79704,7 +79219,16 @@ vec4 envMapTexelToLinear(vec4 color) {
   	var startEvent = { type: 'start' };
   	var endEvent = { type: 'end' };
 
-  	var STATE = { NONE: -1, ROTATE: 0, DOLLY: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_DOLLY_PAN: 4 };
+  	var STATE = {
+  		NONE: - 1,
+  		ROTATE: 0,
+  		DOLLY: 1,
+  		PAN: 2,
+  		TOUCH_ROTATE: 3,
+  		TOUCH_PAN: 4,
+  		TOUCH_DOLLY_PAN: 5,
+  		TOUCH_DOLLY_ROTATE: 6
+  	};
 
   	var state = STATE.NONE;
 
@@ -79733,56 +79257,65 @@ vec4 envMapTexelToLinear(vec4 color) {
   	function getAutoRotationAngle() {
 
   		return 2 * Math.PI / 60 / 60 * scope.autoRotateSpeed;
+
   	}
 
   	function getZoomScale() {
 
-  		return Math.pow(0.95, scope.zoomSpeed);
+  		return Math.pow( 0.95, scope.zoomSpeed );
+
   	}
 
-  	function rotateLeft(angle) {
+  	function rotateLeft( angle ) {
 
   		sphericalDelta.theta -= angle;
+
   	}
 
-  	function rotateUp(angle) {
+  	function rotateUp( angle ) {
 
   		sphericalDelta.phi -= angle;
+
   	}
 
   	var panLeft = function () {
 
   		var v = new Vector3();
 
-  		return function panLeft(distance, objectMatrix) {
+  		return function panLeft( distance, objectMatrix ) {
 
-  			v.setFromMatrixColumn(objectMatrix, 0); // get X column of
-  			// objectMatrix
-  			v.multiplyScalar(-distance);
+  			v.setFromMatrixColumn( objectMatrix, 0 ); // get X column of objectMatrix
+  			v.multiplyScalar( - distance );
 
-  			panOffset.add(v);
+  			panOffset.add( v );
+
   		};
+
   	}();
 
   	var panUp = function () {
 
   		var v = new Vector3();
 
-  		return function panUp(distance, objectMatrix) {
+  		return function panUp( distance, objectMatrix ) {
 
-  			if (scope.screenSpacePanning === true) {
+  			if ( scope.screenSpacePanning === true ) {
 
-  				v.setFromMatrixColumn(objectMatrix, 1);
+  				v.setFromMatrixColumn( objectMatrix, 1 );
+
   			} else {
 
-  				v.setFromMatrixColumn(objectMatrix, 0);
-  				v.crossVectors(scope.object.up, v);
+  				v.setFromMatrixColumn( objectMatrix, 0 );
+  				v.crossVectors( scope.object.up, v );
+
   			}
 
-  			v.multiplyScalar(distance);
+  			v.multiplyScalar( distance );
 
-  			panOffset.add(v);
+  			panOffset.add( v );
+
   		};
+
   	}();
 
   	// deltaX and deltaY are in pixels; right and down are positive
@@ -79790,441 +79323,615 @@ vec4 envMapTexelToLinear(vec4 color) {
 
   		var offset = new Vector3();
 
-  		return function pan(deltaX, deltaY) {
+  		return function pan( deltaX, deltaY ) {
 
-  			var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
+  			var element = scope.domElement;
 
-  			if (scope.object.isPerspectiveCamera) {
+  			if ( scope.object.isPerspectiveCamera ) {
 
   				// perspective
   				var position = scope.object.position;
-  				offset.copy(position).sub(scope.target);
+  				offset.copy( position ).sub( scope.target );
   				var targetDistance = offset.length();
 
   				// half of the fov is center to top of screen
-  				targetDistance *= Math.tan(scope.object.fov / 2 * Math.PI / 180.0);
+  				targetDistance *= Math.tan( ( scope.object.fov / 2 ) * Math.PI / 180.0 );
 
-  				// we use only clientHeight here so aspect ratio does not
-  				// distort speed
-  				panLeft(2 * deltaX * targetDistance / element.clientHeight, scope.object.matrix);
-  				panUp(2 * deltaY * targetDistance / element.clientHeight, scope.object.matrix);
-  			} else if (scope.object.isOrthographicCamera) {
+  				// we use only clientHeight here so aspect ratio does not distort speed
+  				panLeft( 2 * deltaX * targetDistance / element.clientHeight, scope.object.matrix );
+  				panUp( 2 * deltaY * targetDistance / element.clientHeight, scope.object.matrix );
+
+  			} else if ( scope.object.isOrthographicCamera ) {
 
   				// orthographic
-  				panLeft(deltaX * (scope.object.right - scope.object.left) / scope.object.zoom / element.clientWidth, scope.object.matrix);
-  				panUp(deltaY * (scope.object.top - scope.object.bottom) / scope.object.zoom / element.clientHeight, scope.object.matrix);
+  				panLeft( deltaX * ( scope.object.right - scope.object.left ) / scope.object.zoom / element.clientWidth, scope.object.matrix );
+  				panUp( deltaY * ( scope.object.top - scope.object.bottom ) / scope.object.zoom / element.clientHeight, scope.object.matrix );
+
   			} else {
 
   				// camera neither orthographic nor perspective
-  				console.warn('WARNING: OrbitControls.js encountered an unknown camera type - pan disabled.');
+  				console.warn( 'WARNING: OrbitControls.js encountered an unknown camera type - pan disabled.' );
   				scope.enablePan = false;
+
   			}
+
   		};
+
   	}();
 
-  	function dollyIn(dollyScale) {
+  	function dollyOut( dollyScale ) {
 
-  		if (scope.object.isPerspectiveCamera) {
+  		if ( scope.object.isPerspectiveCamera ) {
 
   			scale /= dollyScale;
-  		} else if (scope.object.isOrthographicCamera) {
 
-  			scope.object.zoom = Math.max(scope.minZoom, Math.min(scope.maxZoom, scope.object.zoom * dollyScale));
+  		} else if ( scope.object.isOrthographicCamera ) {
+
+  			scope.object.zoom = Math.max( scope.minZoom, Math.min( scope.maxZoom, scope.object.zoom * dollyScale ) );
   			scope.object.updateProjectionMatrix();
   			zoomChanged = true;
+
   		} else {
 
-  			console.warn('WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.');
+  			console.warn( 'WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.' );
   			scope.enableZoom = false;
+
   		}
+
   	}
 
-  	function dollyOut(dollyScale) {
+  	function dollyIn( dollyScale ) {
 
-  		if (scope.object.isPerspectiveCamera) {
+  		if ( scope.object.isPerspectiveCamera ) {
 
   			scale *= dollyScale;
-  		} else if (scope.object.isOrthographicCamera) {
 
-  			scope.object.zoom = Math.max(scope.minZoom, Math.min(scope.maxZoom, scope.object.zoom / dollyScale));
+  		} else if ( scope.object.isOrthographicCamera ) {
+
+  			scope.object.zoom = Math.max( scope.minZoom, Math.min( scope.maxZoom, scope.object.zoom / dollyScale ) );
   			scope.object.updateProjectionMatrix();
   			zoomChanged = true;
+
   		} else {
 
-  			console.warn('WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.');
+  			console.warn( 'WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.' );
   			scope.enableZoom = false;
+
   		}
+
   	}
 
   	//
   	// event callbacks - update the object state
   	//
 
-  	function handleMouseDownRotate(event) {
+  	function handleMouseDownRotate( event ) {
 
-  		// console.log( 'handleMouseDownRotate' );
+  		rotateStart.set( event.clientX, event.clientY );
 
-  		rotateStart.set(event.clientX, event.clientY);
   	}
 
-  	function handleMouseDownDolly(event) {
+  	function handleMouseDownDolly( event ) {
 
-  		// console.log( 'handleMouseDownDolly' );
+  		dollyStart.set( event.clientX, event.clientY );
 
-  		dollyStart.set(event.clientX, event.clientY);
   	}
 
-  	function handleMouseDownPan(event) {
+  	function handleMouseDownPan( event ) {
 
-  		// console.log( 'handleMouseDownPan' );
+  		panStart.set( event.clientX, event.clientY );
 
-  		panStart.set(event.clientX, event.clientY);
   	}
 
-  	function handleMouseMoveRotate(event) {
+  	function handleMouseMoveRotate( event ) {
 
-  		// console.log( 'handleMouseMoveRotate' );
+  		rotateEnd.set( event.clientX, event.clientY );
 
-  		rotateEnd.set(event.clientX, event.clientY);
+  		rotateDelta.subVectors( rotateEnd, rotateStart ).multiplyScalar( scope.rotateSpeed );
 
-  		rotateDelta.subVectors(rotateEnd, rotateStart).multiplyScalar(scope.rotateSpeed);
+  		var element = scope.domElement;
 
-  		var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
+  		rotateLeft( 2 * Math.PI * rotateDelta.x / element.clientHeight ); // yes, height
 
-  		rotateLeft(2 * Math.PI * rotateDelta.x / element.clientHeight); // yes,
-  		// height
+  		rotateUp( 2 * Math.PI * rotateDelta.y / element.clientHeight );
 
-  		rotateUp(2 * Math.PI * rotateDelta.y / element.clientHeight);
-
-  		rotateStart.copy(rotateEnd);
+  		rotateStart.copy( rotateEnd );
 
   		scope.update();
+
   	}
 
-  	function handleMouseMoveDolly(event) {
+  	function handleMouseMoveDolly( event ) {
 
-  		// console.log( 'handleMouseMoveDolly' );
+  		dollyEnd.set( event.clientX, event.clientY );
 
-  		dollyEnd.set(event.clientX, event.clientY);
+  		dollyDelta.subVectors( dollyEnd, dollyStart );
 
-  		dollyDelta.subVectors(dollyEnd, dollyStart);
+  		if ( dollyDelta.y > 0 ) {
 
-  		if (dollyDelta.y > 0) {
+  			dollyOut( getZoomScale() );
 
-  			dollyIn(getZoomScale());
-  		} else if (dollyDelta.y < 0) {
+  		} else if ( dollyDelta.y < 0 ) {
 
-  			dollyOut(getZoomScale());
+  			dollyIn( getZoomScale() );
+
   		}
 
-  		dollyStart.copy(dollyEnd);
+  		dollyStart.copy( dollyEnd );
 
   		scope.update();
+
   	}
 
-  	function handleMouseMovePan(event) {
+  	function handleMouseMovePan( event ) {
 
-  		// console.log( 'handleMouseMovePan' );
+  		panEnd.set( event.clientX, event.clientY );
 
-  		panEnd.set(event.clientX, event.clientY);
+  		panDelta.subVectors( panEnd, panStart ).multiplyScalar( scope.panSpeed );
 
-  		panDelta.subVectors(panEnd, panStart).multiplyScalar(scope.panSpeed);
+  		pan( panDelta.x, panDelta.y );
 
-  		pan(panDelta.x, panDelta.y);
-
-  		panStart.copy(panEnd);
+  		panStart.copy( panEnd );
 
   		scope.update();
+
   	}
 
-  	function handleMouseWheel(event) {
+  	function handleMouseWheel( event ) {
 
-  		// console.log( 'handleMouseWheel' );
+  		if ( event.deltaY < 0 ) {
 
-  		if (event.deltaY < 0) {
+  			dollyIn( getZoomScale() );
 
-  			dollyOut(getZoomScale());
-  		} else if (event.deltaY > 0) {
+  		} else if ( event.deltaY > 0 ) {
 
-  			dollyIn(getZoomScale());
+  			dollyOut( getZoomScale() );
+
   		}
 
   		scope.update();
+
   	}
 
-  	function handleKeyDown(event) {
+  	function handleKeyDown( event ) {
 
-  		// console.log( 'handleKeyDown' );
+  		var needsUpdate = false;
 
-  		switch (event.keyCode) {
+  		switch ( event.keyCode ) {
 
   			case scope.keys.UP:
-  				pan(0, scope.keyPanSpeed);
-  				scope.update();
+  				pan( 0, scope.keyPanSpeed );
+  				needsUpdate = true;
   				break;
 
   			case scope.keys.BOTTOM:
-  				pan(0, -scope.keyPanSpeed);
-  				scope.update();
+  				pan( 0, - scope.keyPanSpeed );
+  				needsUpdate = true;
   				break;
 
   			case scope.keys.LEFT:
-  				pan(scope.keyPanSpeed, 0);
-  				scope.update();
+  				pan( scope.keyPanSpeed, 0 );
+  				needsUpdate = true;
   				break;
 
   			case scope.keys.RIGHT:
-  				pan(-scope.keyPanSpeed, 0);
-  				scope.update();
+  				pan( - scope.keyPanSpeed, 0 );
+  				needsUpdate = true;
   				break;
 
   		}
-  	}
 
-  	function handleTouchStartRotate(event) {
+  		if ( needsUpdate ) {
 
-  		// console.log( 'handleTouchStartRotate' );
+  			// prevent the browser from scrolling on cursor keys
+  			event.preventDefault();
 
-  		rotateStart.set(event.touches[0].pageX, event.touches[0].pageY);
-  	}
+  			scope.update();
 
-  	function handleTouchStartDollyPan(event) {
-
-  		// console.log( 'handleTouchStartDollyPan' );
-
-  		if (scope.enableZoom) {
-
-  			var dx = event.touches[0].pageX - event.touches[1].pageX;
-  			var dy = event.touches[0].pageY - event.touches[1].pageY;
-
-  			var distance = Math.sqrt(dx * dx + dy * dy);
-
-  			dollyStart.set(0, distance);
   		}
 
-  		if (scope.enablePan) {
 
-  			var x = 0.5 * (event.touches[0].pageX + event.touches[1].pageX);
-  			var y = 0.5 * (event.touches[0].pageY + event.touches[1].pageY);
-
-  			panStart.set(x, y);
-  		}
   	}
 
-  	function handleTouchMoveRotate(event) {
+  	function handleTouchStartRotate( event ) {
 
-  		// console.log( 'handleTouchMoveRotate' );
+  		if ( event.touches.length == 1 ) {
 
-  		rotateEnd.set(event.touches[0].pageX, event.touches[0].pageY);
+  			rotateStart.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
 
-  		rotateDelta.subVectors(rotateEnd, rotateStart).multiplyScalar(scope.rotateSpeed);
+  		} else {
 
-  		var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
+  			var x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
+  			var y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
 
-  		rotateLeft(2 * Math.PI * rotateDelta.x / element.clientHeight); // yes,
-  		// height
+  			rotateStart.set( x, y );
 
-  		rotateUp(2 * Math.PI * rotateDelta.y / element.clientHeight);
-
-  		rotateStart.copy(rotateEnd);
-
-  		scope.update();
-  	}
-
-  	function handleTouchMoveDollyPan(event) {
-
-  		// console.log( 'handleTouchMoveDollyPan' );
-
-  		if (scope.enableZoom) {
-
-  			var dx = event.touches[0].pageX - event.touches[1].pageX;
-  			var dy = event.touches[0].pageY - event.touches[1].pageY;
-
-  			var distance = Math.sqrt(dx * dx + dy * dy);
-
-  			dollyEnd.set(0, distance);
-
-  			dollyDelta.set(0, Math.pow(dollyEnd.y / dollyStart.y, scope.zoomSpeed));
-
-  			dollyIn(dollyDelta.y);
-
-  			dollyStart.copy(dollyEnd);
   		}
 
-  		if (scope.enablePan) {
-
-  			var x = 0.5 * (event.touches[0].pageX + event.touches[1].pageX);
-  			var y = 0.5 * (event.touches[0].pageY + event.touches[1].pageY);
-
-  			panEnd.set(x, y);
-
-  			panDelta.subVectors(panEnd, panStart).multiplyScalar(scope.panSpeed);
-
-  			pan(panDelta.x, panDelta.y);
-
-  			panStart.copy(panEnd);
-  		}
-
-  		scope.update();
   	}
 
-  	// console.log( 'handleTouchEnd' );
+  	function handleTouchStartPan( event ) {
+
+  		if ( event.touches.length == 1 ) {
+
+  			panStart.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
+
+  		} else {
+
+  			var x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
+  			var y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
+
+  			panStart.set( x, y );
+
+  		}
+
+  	}
+
+  	function handleTouchStartDolly( event ) {
+
+  		var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
+  		var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
+
+  		var distance = Math.sqrt( dx * dx + dy * dy );
+
+  		dollyStart.set( 0, distance );
+
+  	}
+
+  	function handleTouchStartDollyPan( event ) {
+
+  		if ( scope.enableZoom ) handleTouchStartDolly( event );
+
+  		if ( scope.enablePan ) handleTouchStartPan( event );
+
+  	}
+
+  	function handleTouchStartDollyRotate( event ) {
+
+  		if ( scope.enableZoom ) handleTouchStartDolly( event );
+
+  		if ( scope.enableRotate ) handleTouchStartRotate( event );
+
+  	}
+
+  	function handleTouchMoveRotate( event ) {
+
+  		if ( event.touches.length == 1 ) {
+
+  			rotateEnd.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
+
+  		} else {
+
+  			var x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
+  			var y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
+
+  			rotateEnd.set( x, y );
+
+  		}
+
+  		rotateDelta.subVectors( rotateEnd, rotateStart ).multiplyScalar( scope.rotateSpeed );
+
+  		var element = scope.domElement;
+
+  		rotateLeft( 2 * Math.PI * rotateDelta.x / element.clientHeight ); // yes, height
+
+  		rotateUp( 2 * Math.PI * rotateDelta.y / element.clientHeight );
+
+  		rotateStart.copy( rotateEnd );
+
+  	}
+
+  	function handleTouchMovePan( event ) {
+
+  		if ( event.touches.length == 1 ) {
+
+  			panEnd.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
+
+  		} else {
+
+  			var x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
+  			var y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
+
+  			panEnd.set( x, y );
+
+  		}
+
+  		panDelta.subVectors( panEnd, panStart ).multiplyScalar( scope.panSpeed );
+
+  		pan( panDelta.x, panDelta.y );
+
+  		panStart.copy( panEnd );
+
+  	}
+
+  	function handleTouchMoveDolly( event ) {
+
+  		var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
+  		var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
+
+  		var distance = Math.sqrt( dx * dx + dy * dy );
+
+  		dollyEnd.set( 0, distance );
+
+  		dollyDelta.set( 0, Math.pow( dollyEnd.y / dollyStart.y, scope.zoomSpeed ) );
+
+  		dollyOut( dollyDelta.y );
+
+  		dollyStart.copy( dollyEnd );
+
+  	}
+
+  	function handleTouchMoveDollyPan( event ) {
+
+  		if ( scope.enableZoom ) handleTouchMoveDolly( event );
+
+  		if ( scope.enablePan ) handleTouchMovePan( event );
+
+  	}
+
+  	function handleTouchMoveDollyRotate( event ) {
+
+  		if ( scope.enableZoom ) handleTouchMoveDolly( event );
+
+  		if ( scope.enableRotate ) handleTouchMoveRotate( event );
+
+  	}
 
   	//
   	// event handlers - FSM: listen for events and reset state
   	//
 
-  	function onMouseDown(event) {
-  		if (scope.enabled === false) return;
+  	function onMouseDown( event ) {
 
+  		if ( scope.enabled === false ) return;
+
+  		// Prevent the browser from scrolling.
   		event.preventDefault();
 
-  		switch (event.button) {
+  		// Manually set the focus since calling preventDefault above
+  		// prevents the browser from setting it automatically.
 
-  			case scope.mouseButtons.LEFT:
+  		scope.domElement.focus ? scope.domElement.focus() : window.focus();
 
-  				if (event.ctrlKey || event.metaKey) {
+  		var mouseAction;
 
-  					if (scope.enablePan === false) return;
+  		switch ( event.button ) {
 
-  					handleMouseDownPan(event);
+  			case 0:
 
-  					state = STATE.PAN;
-  				} else {
-
-  					if (scope.enableRotate === false) return;
-
-  					handleMouseDownRotate(event);
-
-  					state = STATE.ROTATE;
-  				}
-
+  				mouseAction = scope.mouseButtons.LEFT;
   				break;
 
-  			case scope.mouseButtons.MIDDLE:
+  			case 1:
 
-  				if (scope.enableZoom === false) return;
+  				mouseAction = scope.mouseButtons.MIDDLE;
+  				break;
 
-  				handleMouseDownDolly(event);
+  			case 2:
+
+  				mouseAction = scope.mouseButtons.RIGHT;
+  				break;
+
+  			default:
+
+  				mouseAction = - 1;
+
+  		}
+
+  		switch ( mouseAction ) {
+
+  			case MOUSE.DOLLY:
+
+  				if ( scope.enableZoom === false ) return;
+
+  				handleMouseDownDolly( event );
 
   				state = STATE.DOLLY;
 
   				break;
 
-  			case scope.mouseButtons.RIGHT:
+  			case MOUSE.ROTATE:
 
-  				if (scope.enablePan === false) return;
+  				if ( event.ctrlKey || event.metaKey || event.shiftKey ) {
 
-  				handleMouseDownPan(event);
+  					if ( scope.enablePan === false ) return;
 
-  				state = STATE.PAN;
+  					handleMouseDownPan( event );
+
+  					state = STATE.PAN;
+
+  				} else {
+
+  					if ( scope.enableRotate === false ) return;
+
+  					handleMouseDownRotate( event );
+
+  					state = STATE.ROTATE;
+
+  				}
 
   				break;
 
+  			case MOUSE.PAN:
+
+  				if ( event.ctrlKey || event.metaKey || event.shiftKey ) {
+
+  					if ( scope.enableRotate === false ) return;
+
+  					handleMouseDownRotate( event );
+
+  					state = STATE.ROTATE;
+
+  				} else {
+
+  					if ( scope.enablePan === false ) return;
+
+  					handleMouseDownPan( event );
+
+  					state = STATE.PAN;
+
+  				}
+
+  				break;
+
+  			default:
+
+  				state = STATE.NONE;
+
   		}
 
-  		if (state !== STATE.NONE) {
-  			document.addEventListener('mousemove', onMouseMove, false);
-  			document.addEventListener('mouseup', onMouseUp, false);
+  		if ( state !== STATE.NONE ) {
 
-  			scope.dispatchEvent(startEvent);
+  			scope.domElement.ownerDocument.addEventListener( 'mousemove', onMouseMove, false );
+  			scope.domElement.ownerDocument.addEventListener( 'mouseup', onMouseUp, false );
+
+  			scope.dispatchEvent( startEvent );
+
   		}
+
   	}
 
-  	function onMouseMove(event) {
-  		if (scope.enabled === false) return;
+  	function onMouseMove( event ) {
+
+  		if ( scope.enabled === false ) return;
 
   		event.preventDefault();
 
-  		switch (state) {
+  		switch ( state ) {
 
   			case STATE.ROTATE:
 
-  				if (scope.enableRotate === false) return;
+  				if ( scope.enableRotate === false ) return;
 
-  				handleMouseMoveRotate(event);
+  				handleMouseMoveRotate( event );
 
   				break;
 
   			case STATE.DOLLY:
 
-  				if (scope.enableZoom === false) return;
+  				if ( scope.enableZoom === false ) return;
 
-  				handleMouseMoveDolly(event);
+  				handleMouseMoveDolly( event );
 
   				break;
 
   			case STATE.PAN:
 
-  				if (scope.enablePan === false) return;
+  				if ( scope.enablePan === false ) return;
 
-  				handleMouseMovePan(event);
+  				handleMouseMovePan( event );
 
   				break;
 
   		}
+
   	}
 
-  	function onMouseUp(event) {
+  	function onMouseUp( event ) {
 
-  		if (scope.enabled === false) return;
+  		if ( scope.enabled === false ) return;
 
-  		document.removeEventListener('mousemove', onMouseMove, false);
-  		document.removeEventListener('mouseup', onMouseUp, false);
+  		scope.domElement.ownerDocument.removeEventListener( 'mousemove', onMouseMove, false );
+  		scope.domElement.ownerDocument.removeEventListener( 'mouseup', onMouseUp, false );
 
-  		scope.dispatchEvent(endEvent);
+  		scope.dispatchEvent( endEvent );
 
   		state = STATE.NONE;
+
   	}
 
-  	function onMouseWheel(event) {
+  	function onMouseWheel( event ) {
 
-  		if (scope.enabled === false || scope.enableZoom === false || state !== STATE.NONE && state !== STATE.ROTATE) return;
+  		if ( scope.enabled === false || scope.enableZoom === false || ( state !== STATE.NONE && state !== STATE.ROTATE ) ) return;
 
   		event.preventDefault();
   		event.stopPropagation();
 
-  		scope.dispatchEvent(startEvent);
+  		scope.dispatchEvent( startEvent );
 
-  		handleMouseWheel(event);
+  		handleMouseWheel( event );
 
-  		scope.dispatchEvent(endEvent);
+  		scope.dispatchEvent( endEvent );
+
   	}
 
-  	function onKeyDown(event) {
+  	function onKeyDown( event ) {
 
-  		if (scope.enabled === false || scope.enableKeys === false || scope.enablePan === false) return;
+  		if ( scope.enabled === false || scope.enableKeys === false || scope.enablePan === false ) return;
 
-  		handleKeyDown(event);
+  		handleKeyDown( event );
+
   	}
 
-  	function onTouchStart(event) {
+  	function onTouchStart( event ) {
 
-  		if (scope.enabled === false) return;
+  		if ( scope.enabled === false ) return;
 
-  		event.preventDefault();
+  		event.preventDefault(); // prevent scrolling
 
-  		switch (event.touches.length) {
+  		switch ( event.touches.length ) {
 
   			case 1:
-  				// one-fingered touch: rotate
 
-  				if (scope.enableRotate === false) return;
+  				switch ( scope.touches.ONE ) {
 
-  				handleTouchStartRotate(event);
+  					case TOUCH.ROTATE:
 
-  				state = STATE.TOUCH_ROTATE;
+  						if ( scope.enableRotate === false ) return;
+
+  						handleTouchStartRotate( event );
+
+  						state = STATE.TOUCH_ROTATE;
+
+  						break;
+
+  					case TOUCH.PAN:
+
+  						if ( scope.enablePan === false ) return;
+
+  						handleTouchStartPan( event );
+
+  						state = STATE.TOUCH_PAN;
+
+  						break;
+
+  					default:
+
+  						state = STATE.NONE;
+
+  				}
 
   				break;
 
   			case 2:
-  				// two-fingered touch: dolly-pan
 
-  				if (scope.enableZoom === false && scope.enablePan === false) return;
+  				switch ( scope.touches.TWO ) {
 
-  				handleTouchStartDollyPan(event);
+  					case TOUCH.DOLLY_PAN:
 
-  				state = STATE.TOUCH_DOLLY_PAN;
+  						if ( scope.enableZoom === false && scope.enablePan === false ) return;
+
+  						handleTouchStartDollyPan( event );
+
+  						state = STATE.TOUCH_DOLLY_PAN;
+
+  						break;
+
+  					case TOUCH.DOLLY_ROTATE:
+
+  						if ( scope.enableZoom === false && scope.enableRotate === false ) return;
+
+  						handleTouchStartDollyRotate( event );
+
+  						state = STATE.TOUCH_DOLLY_ROTATE;
+
+  						break;
+
+  					default:
+
+  						state = STATE.NONE;
+
+  				}
 
   				break;
 
@@ -80234,39 +79941,60 @@ vec4 envMapTexelToLinear(vec4 color) {
 
   		}
 
-  		if (state !== STATE.NONE) {
+  		if ( state !== STATE.NONE ) {
 
-  			scope.dispatchEvent(startEvent);
+  			scope.dispatchEvent( startEvent );
+
   		}
+
   	}
 
-  	function onTouchMove(event) {
+  	function onTouchMove( event ) {
 
-  		if (scope.enabled === false) return;
+  		if ( scope.enabled === false ) return;
 
-  		event.preventDefault();
+  		event.preventDefault(); // prevent scrolling
   		event.stopPropagation();
 
-  		switch (event.touches.length) {
+  		switch ( state ) {
 
-  			case 1:
-  				// one-fingered touch: rotate
+  			case STATE.TOUCH_ROTATE:
 
-  				if (scope.enableRotate === false) return;
-  				if (state !== STATE.TOUCH_ROTATE) return; // is this needed?
+  				if ( scope.enableRotate === false ) return;
 
-  				handleTouchMoveRotate(event);
+  				handleTouchMoveRotate( event );
+
+  				scope.update();
 
   				break;
 
-  			case 2:
-  				// two-fingered touch: dolly-pan
+  			case STATE.TOUCH_PAN:
 
-  				if (scope.enableZoom === false && scope.enablePan === false) return;
-  				if (state !== STATE.TOUCH_DOLLY_PAN) return; // is this
-  				// needed?
+  				if ( scope.enablePan === false ) return;
 
-  				handleTouchMoveDollyPan(event);
+  				handleTouchMovePan( event );
+
+  				scope.update();
+
+  				break;
+
+  			case STATE.TOUCH_DOLLY_PAN:
+
+  				if ( scope.enableZoom === false && scope.enablePan === false ) return;
+
+  				handleTouchMoveDollyPan( event );
+
+  				scope.update();
+
+  				break;
+
+  			case STATE.TOUCH_DOLLY_ROTATE:
+
+  				if ( scope.enableZoom === false && scope.enableRotate === false ) return;
+
+  				handleTouchMoveDollyRotate( event );
+
+  				scope.update();
 
   				break;
 
@@ -80275,2576 +80003,347 @@ vec4 envMapTexelToLinear(vec4 color) {
   				state = STATE.NONE;
 
   		}
+
   	}
 
-  	function onTouchEnd(event) {
+  	function onTouchEnd( event ) {
 
-  		if (scope.enabled === false) return;
+  		if ( scope.enabled === false ) return;
 
-  		scope.dispatchEvent(endEvent);
+  		scope.dispatchEvent( endEvent );
 
   		state = STATE.NONE;
+
   	}
 
-  	function onContextMenu(event) {
+  	function onContextMenu( event ) {
 
-  		if (scope.enabled === false) return;
+  		if ( scope.enabled === false ) return;
 
   		event.preventDefault();
+
   	}
 
   	//
 
-  	scope.domElement.addEventListener('contextmenu', onContextMenu, false);
+  	scope.domElement.addEventListener( 'contextmenu', onContextMenu, false );
 
-  	scope.domElement.addEventListener('mousedown', onMouseDown, false);
-  	scope.domElement.addEventListener('wheel', onMouseWheel, false);
+  	scope.domElement.addEventListener( 'mousedown', onMouseDown, false );
+  	scope.domElement.addEventListener( 'wheel', onMouseWheel, false );
 
-  	scope.domElement.addEventListener('touchstart', onTouchStart, false);
-  	scope.domElement.addEventListener('touchend', onTouchEnd, false);
-  	scope.domElement.addEventListener('touchmove', onTouchMove, false);
+  	scope.domElement.addEventListener( 'touchstart', onTouchStart, false );
+  	scope.domElement.addEventListener( 'touchend', onTouchEnd, false );
+  	scope.domElement.addEventListener( 'touchmove', onTouchMove, false );
 
-  	window.addEventListener('keydown', onKeyDown, false);
+  	scope.domElement.addEventListener( 'keydown', onKeyDown, false );
+
+  	// make sure element can receive keys.
+
+  	if ( scope.domElement.tabIndex === - 1 ) {
+
+  		scope.domElement.tabIndex = 0;
+
+  	}
 
   	// force an update at start
 
   	this.update();
-  }
 
-  OrbitControls.prototype = Object.assign(Object.create(EventDispatcher.prototype), {
-  	constructor: OrbitControls,
-  	center: {
-  		get: function get() {
-  			console.warn('OrbitControls: .center has been renamed to .target');
-  			return this.target;
-  		}
-  	},
+  };
 
-  	// backward compatibility
-  	noZoom: {
-  		get: function get() {
-  			console.warn('OrbitControls: .noZoom has been deprecated. Use .enableZoom instead.');
-  			return !this.enableZoom;
-  		},
-  		set: function set(value) {
-  			console.warn('OrbitControls: .noZoom has been deprecated. Use .enableZoom instead.');
-  			this.enableZoom = !value;
-  		}
+  OrbitControls.prototype = Object.create( EventDispatcher.prototype );
+  OrbitControls.prototype.constructor = OrbitControls;
 
-  	},
 
-  	noRotate: {
-  		get: function get() {
-  			console.warn('OrbitControls: .noRotate has been deprecated. Use .enableRotate instead.');
-  			return !this.enableRotate;
-  		},
+  // This set of controls performs orbiting, dollying (zooming), and panning.
+  // Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
+  // This is very similar to OrbitControls, another set of touch behavior
+  //
+  //    Orbit - right mouse, or left mouse + ctrl/meta/shiftKey / touch: two-finger rotate
+  //    Zoom - middle mouse, or mousewheel / touch: two-finger spread or squish
+  //    Pan - left mouse, or arrow keys / touch: one-finger move
 
-  		set: function set(value) {
-  			console.warn('OrbitControls: .noRotate has been deprecated. Use .enableRotate instead.');
-  			this.enableRotate = !value;
-  		}
-  	},
+  var MapControls = function ( object, domElement ) {
 
-  	noPan: {
+  	OrbitControls.call( this, object, domElement );
 
-  		get: function get() {
-  			console.warn('OrbitControls: .noPan has been deprecated. Use .enablePan instead.');
-  			return !this.enablePan;
-  		},
+  	this.screenSpacePanning = false; // pan orthogonal to world-space direction camera.up
 
-  		set: function set(value) {
-  			console.warn('OrbitControls: .noPan has been deprecated. Use .enablePan instead.');
-  			this.enablePan = !value;
-  		}
-  	},
+  	this.mouseButtons.LEFT = MOUSE.PAN;
+  	this.mouseButtons.RIGHT = MOUSE.ROTATE;
 
-  	noKeys: {
-  		get: function get() {
-  			console.warn('OrbitControls: .noKeys has been deprecated. Use .enableKeys instead.');
-  			return !this.enableKeys;
-  		},
-  		set: function set(value) {
-  			console.warn('OrbitControls: .noKeys has been deprecated. Use .enableKeys instead.');
-  			this.enableKeys = !value;
-  		}
-  	},
+  	this.touches.ONE = TOUCH.PAN;
+  	this.touches.TWO = TOUCH.DOLLY_ROTATE;
 
-  	staticMoving: {
-  		get: function get() {
-  			console.warn('OrbitControls: .staticMoving has been deprecated. Use .enableDamping instead.');
-  			return !this.enableDamping;
-  		},
+  };
 
-  		set: function set(value) {
-  			console.warn('OrbitControls: .staticMoving has been deprecated. Use .enableDamping instead.');
-  			this.enableDamping = !value;
-  		}
-  	},
-
-  	dynamicDampingFactor: {
-  		get: function get() {
-  			console.warn('OrbitControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead.');
-  			return this.dampingFactor;
-  		},
-
-  		set: function set(value) {
-  			console.warn('OrbitControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead.');
-  			this.dampingFactor = value;
-  		}
-  	}
-  });
+  MapControls.prototype = Object.create( EventDispatcher.prototype );
+  MapControls.prototype.constructor = MapControls;
 
   /**
-   * FirstPersonControls class
-   * 
-   * @author mrdoob / http://mrdoob.com/
-   * @author alteredq / http://alteredqualia.com/
-   * @author paulirish / http://paulirish.com/
+   * @author zz85 / https://github.com/zz85
+   * @author mrdoob / http://mrdoob.com
+   * Running this will allow you to drag three.js objects around the screen.
    */
 
-  var FirstPersonControls = function () {
-  	/**
-    * Constructor
-    * 
-    * @param {object}
-    *            object Object
-    * @param {object}
-    *            domElement Dom element
-    */
-  	function FirstPersonControls(object) {
-  		var domElement = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : document;
-  		classCallCheck(this, FirstPersonControls);
+  var DragControls = function ( _objects, _camera, _domElement ) {
 
-  		this.object = object;
-  		this.target = new Vector3(0, 0, 0);
+  	var _plane = new Plane();
+  	var _raycaster = new Raycaster();
 
-  		this.domElement = domElement;
+  	var _mouse = new Vector2();
+  	var _offset = new Vector3();
+  	var _intersection = new Vector3();
+  	var _worldPosition = new Vector3();
+  	var _inverseMatrix = new Matrix4();
+  	var _intersections = [];
 
-  		this.enabled = true;
+  	var _selected = null, _hovered = null;
 
-  		this.movementSpeed = 1.0;
-  		this.lookSpeed = 0.005;
-
-  		this.lookVertical = true;
-  		this.autoForward = false;
-
-  		this.activeLook = true;
-
-  		this.heightSpeed = false;
-  		this.heightCoef = 1.0;
-  		this.heightMin = 0.0;
-  		this.heightMax = 1.0;
-
-  		this.constrainVertical = false;
-  		this.verticalMin = 0;
-  		this.verticalMax = Math.PI;
-
-  		this.autoSpeedFactor = 0.0;
-
-  		this.mouseX = 0;
-  		this.mouseY = 0;
-
-  		this.lat = 0;
-  		this.lon = 0;
-  		this.phi = 0;
-  		this.theta = 0;
-
-  		this.moveForward = false;
-  		this.moveBackward = false;
-  		this.moveLeft = false;
-  		this.moveRight = false;
-
-  		this.mouseDragOn = false;
-
-  		this.viewHalfX = 0;
-  		this.viewHalfY = 0;
-
-  		if (this.domElement !== document) {
-  			this.domElement.setAttribute('tabindex', -1);
-  		}
-
-  		this._contextMenu = this.contextMenu.bind(this);
-  		this._onMouseMove = this.onMouseMove.bind(this);
-  		this._onMouseDown = this.onMouseDown.bind(this);
-  		this._onMouseUp = this.onMouseUp.bind(this);
-  		this._onKeyDown = this.onKeyDown.bind(this);
-  		this._onKeyUp = this.onKeyUp.bind(this);
-
-  		this.handleResize();
-  		this.bindEvents();
-  	}
-
-  	/**
-    * HandleResize function
-    */
-
-
-  	createClass(FirstPersonControls, [{
-  		key: 'handleResize',
-  		value: function handleResize() {
-  			if (this.domElement === document) {
-  				this.viewHalfX = window.innerWidth / 2;
-  				this.viewHalfY = window.innerHeight / 2;
-  			} else {
-  				this.viewHalfX = this.domElement.offsetWidth / 2;
-  				this.viewHalfY = this.domElement.offsetHeight / 2;
-  			}
-  		}
-
-  		/**
-     * BindEvents function
-     */
-
-  	}, {
-  		key: 'bindEvents',
-  		value: function bindEvents() {
-  			this.domElement.addEventListener('contextmenu', this._contextmenu, false);
-  			this.domElement.addEventListener('mousemove', this._onMouseMove, false);
-  			this.domElement.addEventListener('mousedown', this._onMouseDown, false);
-  			this.domElement.addEventListener('mouseup', this._onMouseUp, false);
-
-  			window.addEventListener('keydown', this._onKeyDown, false);
-  			window.addEventListener('keyup', this._onKeyUp, false);
-  		}
-
-  		/**
-     * OnMouseDown function
-     * 
-     * @param {object}
-     *            event Event
-     */
-
-  	}, {
-  		key: 'onMouseDown',
-  		value: function onMouseDown(event) {
-  			if (!this.enabled) {
-  				return;
-  			}
-  			if (this.domElement !== document) {
-  				this.domElement.focus();
-  			}
-
-  			event.preventDefault();
-  			event.stopPropagation();
-
-  			if (this.activeLook) {
-  				switch (event.button) {
-  					case 0:
-  						this.moveForward = true;
-  						break;
-  					case 2:
-  						this.moveBackward = true;
-  						break;
-  				}
-  			}
-
-  			this.mouseDragOn = true;
-  		}
-
-  		/**
-     * OnMouseUp function
-     * 
-     * @param {object}
-     *            event Event
-     */
-
-  	}, {
-  		key: 'onMouseUp',
-  		value: function onMouseUp(event) {
-  			if (!this.enabled) {
-  				return;
-  			}
-  			event.preventDefault();
-  			event.stopPropagation();
-
-  			if (this.activeLook) {
-  				switch (event.button) {
-  					case 0:
-  						this.moveForward = false;
-  						break;
-  					case 2:
-  						this.moveBackward = false;
-  						break;
-  				}
-  			}
-
-  			this.mouseDragOn = false;
-  		}
-
-  		/**
-     * OnMouseMove function
-     * 
-     * @param {object}
-     *            event Event
-     */
-
-  	}, {
-  		key: 'onMouseMove',
-  		value: function onMouseMove(event) {
-  			if (!this.enabled) {
-  				return;
-  			}
-  			if (this.domElement === document) {
-  				this.mouseX = event.pageX - this.viewHalfX;
-  				this.mouseY = event.pageY - this.viewHalfY;
-  			} else {
-  				this.mouseX = event.pageX - this.domElement.offsetLeft - this.viewHalfX;
-  				this.mouseY = event.pageY - this.domElement.offsetTop - this.viewHalfY;
-  			}
-  		}
-
-  		/**
-     * OnKeyDown function
-     * 
-     * @param {object}
-     *            event Event
-     */
-
-  	}, {
-  		key: 'onKeyDown',
-  		value: function onKeyDown(event) {
-  			if (!this.enabled) {
-  				return;
-  			}
-  			switch (event.keyCode) {
-
-  				case 38: /* up */
-  				case 87:
-  					/* W */
-  					this.moveForward = true;
-  					break;
-
-  				case 37: /* left */
-  				case 65:
-  					/* A */
-  					this.moveLeft = true;
-  					break;
-
-  				case 40: /* down */
-  				case 83:
-  					/* S */
-  					this.moveBackward = true;
-  					break;
-
-  				case 39: /* right */
-  				case 68:
-  					/* D */
-  					this.moveRight = true;
-  					break;
-
-  				case 82:
-  					/* R */
-  					this.moveUp = true;
-  					break;
-  				case 70:
-  					/* F */
-  					this.moveDown = true;
-  					break;
-  			}
-  		}
-
-  		/**
-     * OnKeyUp function
-     * 
-     * @param {object}
-     *            event Event
-     */
-
-  	}, {
-  		key: 'onKeyUp',
-  		value: function onKeyUp(event) {
-  			if (!this.enabled) {
-  				return;
-  			}
-  			switch (event.keyCode) {
-
-  				case 38: /* up */
-  				case 87:
-  					/* W */
-  					this.moveForward = false;
-  					break;
-
-  				case 37: /* left */
-  				case 65:
-  					/* A */
-  					this.moveLeft = false;
-  					break;
-  				case 40: /* down */
-  				case 83:
-  					/* S */
-  					this.moveBackward = false;
-  					break;
-
-  				case 39: /* right */
-  				case 68:
-  					/* D */
-  					this.moveRight = false;
-  					break;
-
-  				case 82:
-  					/* R */
-  					this.moveUp = false;
-  					break;
-
-  				case 70:
-  					/* F */
-  					this.moveDown = false;
-  					break;
-  			}
-  		}
-
-  		/**
-     * Update function
-     * 
-     * @param {object}
-     *            delta Delta
-     */
-
-  	}, {
-  		key: 'update',
-  		value: function update(delta) {
-  			if (this.enabled === false) {
-  				return;
-  			}
-
-  			if (this.heightSpeed) {
-  				var y = MathUtils.clamp(this.object.position.y, this.heightMin, this.heightMax);
-  				var heightDelta = y - this.heightMin;
-
-  				this.autoSpeedFactor = delta * (heightDelta * this.heightCoef);
-  			} else {
-  				this.autoSpeedFactor = 0.0;
-  			}
-
-  			var actualMoveSpeed = delta * this.movementSpeed;
-
-  			if (this.moveForward || this.autoForward && !this.moveBackward) {
-  				this.object.translateZ(-(actualMoveSpeed + this.autoSpeedFactor));
-  			}
-  			if (this.moveBackward) {
-  				this.object.translateZ(actualMoveSpeed);
-  			}
-
-  			if (this.moveLeft) {
-  				this.object.translateX(-actualMoveSpeed);
-  			}
-  			if (this.moveRight) {
-  				this.object.translateX(actualMoveSpeed);
-  			}
-
-  			if (this.moveUp) {
-  				this.object.translateY(actualMoveSpeed);
-  			}
-  			if (this.moveDown) {
-  				this.object.translateY(-actualMoveSpeed);
-  			}
-
-  			var actualLookSpeed = delta * this.lookSpeed;
-
-  			if (!this.activeLook) {
-  				actualLookSpeed = 0;
-  			}
-
-  			var verticalLookRatio = 1;
-
-  			if (this.constrainVertical) {
-  				verticalLookRatio = Math.PI / (this.verticalMax - this.verticalMin);
-  			}
-
-  			this.lon += this.mouseX * actualLookSpeed;
-  			if (this.lookVertical) {
-  				this.lat -= this.mouseY * actualLookSpeed * verticalLookRatio;
-  			}
-
-  			this.lat = Math.max(-85, Math.min(85, this.lat));
-  			this.phi = MathUtils.degToRad(90 - this.lat);
-
-  			this.theta = MathUtils.degToRad(this.lon);
-
-  			if (this.constrainVertical) {
-  				this.phi = MathUtils.mapLinear(this.phi, 0, Math.PI, this.verticalMin, this.verticalMax);
-  			}
-
-  			var targetPosition = this.target;
-  			var position = this.object.position;
-
-  			targetPosition.x = position.x + 100 * Math.sin(this.phi) * Math.cos(this.theta);
-  			targetPosition.y = position.y + 100 * Math.cos(this.phi);
-  			targetPosition.z = position.z + 100 * Math.sin(this.phi) * Math.sin(this.theta);
-
-  			this.object.lookAt(targetPosition);
-  		}
-
-  		/**
-     * ContextMenu function
-     * 
-     * @param {object}
-     *            event Event
-     */
-
-  	}, {
-  		key: 'contextMenu',
-  		value: function contextMenu(event) {
-  			if (!this.enabled) {
-  				return;
-  			}
-  			event.preventDefault();
-  		}
-
-  		/**
-     * Dispose function
-     */
-
-  	}, {
-  		key: 'dispose',
-  		value: function dispose() {
-  			this.domElement.removeEventListener('contextmenu', this._contextmenu, false);
-  			this.domElement.removeEventListener('mousedown', this._onMouseDown, false);
-  			this.domElement.removeEventListener('mousemove', this._onMouseMove, false);
-  			this.domElement.removeEventListener('mouseup', this._onMouseUp, false);
-
-  			window.removeEventListener('keydown', this._onKeyDown, false);
-  			window.removeEventListener('keyup', this._onKeyUp, false);
-  		}
-  	}]);
-  	return FirstPersonControls;
-  }();
-
-  /**
-   * @author mrdoob / http://mrdoob.com/
-   * @author Mugen87 / https://github.com/Mugen87
-   */
-
-  function PointerLockControls(camera, domElement) {
+  	//
 
   	var scope = this;
 
-  	this.domElement = domElement || document.body;
-  	this.enabled = false;
-  	this.isLocked = true;
-  	this.walkspeed = 3000;
-  	this.lookspeed = 0.002;
-  	this.characterHeight = 125;
+  	function activate() {
 
-  	camera.rotation.set(0, 0, 0);
+  		_domElement.addEventListener( 'mousemove', onDocumentMouseMove, false );
+  		_domElement.addEventListener( 'mousedown', onDocumentMouseDown, false );
+  		_domElement.addEventListener( 'mouseup', onDocumentMouseCancel, false );
+  		_domElement.addEventListener( 'mouseleave', onDocumentMouseCancel, false );
+  		_domElement.addEventListener( 'touchmove', onDocumentTouchMove, false );
+  		_domElement.addEventListener( 'touchstart', onDocumentTouchStart, false );
+  		_domElement.addEventListener( 'touchend', onDocumentTouchEnd, false );
 
-  	var pitchObject = new Object3D();
-  	pitchObject.add(camera);
-
-  	var yawObject = new Object3D();
-  	yawObject.position.y = this.characterHeight;
-  	yawObject.add(pitchObject);
-
-  	var PI_2 = Math.PI / 2;
-
-  	var moveForward = false;
-  	var moveBackward = false;
-  	var moveLeft = false;
-  	var moveRight = false;
-  	var canJump = false;
-
-  	var velocity = new Vector3();
-  	var direction = new Vector3();
-
-  	function onMouseDown() {
-  		if (scope.enabled && !scope.isLocked) ;
   	}
 
-  	function onMouseMove(event) {
+  	function deactivate() {
 
-  		if (scope.enabled === false) return;
+  		_domElement.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+  		_domElement.removeEventListener( 'mousedown', onDocumentMouseDown, false );
+  		_domElement.removeEventListener( 'mouseup', onDocumentMouseCancel, false );
+  		_domElement.removeEventListener( 'mouseleave', onDocumentMouseCancel, false );
+  		_domElement.removeEventListener( 'touchmove', onDocumentTouchMove, false );
+  		_domElement.removeEventListener( 'touchstart', onDocumentTouchStart, false );
+  		_domElement.removeEventListener( 'touchend', onDocumentTouchEnd, false );
 
-  		var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-  		var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+  		_domElement.style.cursor = '';
 
-  		yawObject.rotation.y -= movementX * scope.lookspeed;
-  		pitchObject.rotation.x -= movementY * scope.lookspeed;
-
-  		pitchObject.rotation.x = Math.max(-PI_2, Math.min(PI_2, pitchObject.rotation.x));
   	}
 
-  	function onKeyDown(event) {
-  		if (scope.enabled === false) return;
-  		switch (event.keyCode) {
+  	function dispose() {
 
-  			case 38: // up
-  			case 87:
-  				// w
-  				moveForward = true;
-  				break;
+  		deactivate();
 
-  			case 37: // left
-  			case 65:
-  				// a
-  				moveLeft = true;break;
+  	}
 
-  			case 40: // down
-  			case 83:
-  				// s
-  				moveBackward = true;
-  				break;
+  	function getObjects() {
 
-  			case 39: // right
-  			case 68:
-  				// d
-  				moveRight = true;
-  				break;
+  		return _objects;
 
-  			case 32:
-  				// space
-  				if (canJump === true) {
-  					velocity.y += 350;
-  				}
-  				canJump = false;
-  				break;
+  	}
+
+  	function onDocumentMouseMove( event ) {
+
+  		event.preventDefault();
+
+  		var rect = _domElement.getBoundingClientRect();
+
+  		_mouse.x = ( ( event.clientX - rect.left ) / rect.width ) * 2 - 1;
+  		_mouse.y = - ( ( event.clientY - rect.top ) / rect.height ) * 2 + 1;
+
+  		_raycaster.setFromCamera( _mouse, _camera );
+
+  		if ( _selected && scope.enabled ) {
+
+  			if ( _raycaster.ray.intersectPlane( _plane, _intersection ) ) {
+
+  				_selected.position.copy( _intersection.sub( _offset ).applyMatrix4( _inverseMatrix ) );
+
+  			}
+
+  			scope.dispatchEvent( { type: 'drag', object: _selected } );
+
+  			return;
 
   		}
-  	}
 
-  	function onKeyUp(event) {
-  		if (scope.enabled === false) return;
-  		switch (event.keyCode) {
+  		_intersections.length = 0;
 
-  			case 38: // up
-  			case 87:
-  				// w
-  				moveForward = false;
-  				break;
+  		_raycaster.setFromCamera( _mouse, _camera );
+  		_raycaster.intersectObjects( _objects, true, _intersections );
 
-  			case 37: // left
-  			case 65:
-  				// a
-  				moveLeft = false;
-  				break;
+  		if ( _intersections.length > 0 ) {
 
-  			case 40: // down
-  			case 83:
-  				// s
-  				moveBackward = false;
-  				break;
+  			var object = _intersections[ 0 ].object;
 
-  			case 39: // right
-  			case 68:
-  				// d
-  				moveRight = false;
-  				break;
+  			_plane.setFromNormalAndCoplanarPoint( _camera.getWorldDirection( _plane.normal ), _worldPosition.setFromMatrixPosition( object.matrixWorld ) );
 
-  		}
-  	}
+  			if ( _hovered !== object ) {
 
-  	this.update = function (delta2) {
-  		var delta = delta2;
+  				scope.dispatchEvent( { type: 'hoveron', object: object } );
 
-  		velocity.x -= velocity.x * 10.0 * delta;
-  		velocity.z -= velocity.z * 10.0 * delta;
+  				_domElement.style.cursor = 'pointer';
+  				_hovered = object;
 
-  		velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
+  			}
 
-  		direction.z = Number(moveForward) - Number(moveBackward);
-  		direction.x = Number(moveLeft) - Number(moveRight);
-  		direction.normalize(); // this ensures consistent movements in all directions
-
-  		if (moveForward || moveBackward) velocity.z -= direction.z * this.walkspeed * delta;
-  		if (moveLeft || moveRight) velocity.x -= direction.x * this.walkspeed * delta;
-
-  		scope.getObject().translateX(velocity.x * delta);
-  		scope.getObject().translateY(velocity.y * delta);
-  		scope.getObject().translateZ(velocity.z * delta);
-
-  		if (scope.getObject().position.y < scope.characterHeight) {
-  			velocity.y = 0;
-  			scope.getObject().position.y = scope.characterHeight;
-  			canJump = true;
-  		}
-  	};
-
-  	function onPointerlockChange() {
-
-  		if (document.pointerLockElement === scope.domElement) {
-
-  			scope.dispatchEvent({ type: 'lock' });
-  			scope.isLocked = true;
   		} else {
 
-  			scope.dispatchEvent({ type: 'unlock' });
+  			if ( _hovered !== null ) {
 
-  			scope.isLocked = false;
+  				scope.dispatchEvent( { type: 'hoveroff', object: _hovered } );
+
+  				_domElement.style.cursor = 'auto';
+  				_hovered = null;
+
+  			}
+
   		}
+
   	}
 
-  	function onPointerlockError() {
+  	function onDocumentMouseDown( event ) {
 
-  		console.error('THREE.PointerLockControls: Unable to use Pointer Lock API');
+  		event.preventDefault();
+
+  		_intersections.length = 0;
+
+  		_raycaster.setFromCamera( _mouse, _camera );
+  		_raycaster.intersectObjects( _objects, true, _intersections );
+
+  		if ( _intersections.length > 0 ) {
+
+  			_selected = ( scope.transformGroup === true ) ? _objects[ 0 ] : _intersections[ 0 ].object;
+
+  			if ( _raycaster.ray.intersectPlane( _plane, _intersection ) ) {
+
+  				_inverseMatrix.getInverse( _selected.parent.matrixWorld );
+  				_offset.copy( _intersection ).sub( _worldPosition.setFromMatrixPosition( _selected.matrixWorld ) );
+
+  			}
+
+  			_domElement.style.cursor = 'move';
+
+  			scope.dispatchEvent( { type: 'dragstart', object: _selected } );
+
+  		}
+
+
   	}
 
-  	this.connect = function () {
+  	function onDocumentMouseCancel( event ) {
 
-  		document.addEventListener('keydown', onKeyDown, false);
-  		document.addEventListener('keyup', onKeyUp, false);
-  		document.addEventListener('mousedown', onMouseDown, false);
-  		document.addEventListener('mousemove', onMouseMove, false);
-  		document.addEventListener('pointerlockchange', onPointerlockChange, false);
-  		document.addEventListener('pointerlockerror', onPointerlockError, false);
-  	};
+  		event.preventDefault();
 
-  	this.disconnect = function () {
-  		document.addEventListener('keydown', onKeyDown, false);
-  		document.addEventListener('keyup', onKeyUp, false);
-  		document.removeEventListener('mousedown', onMouseDown, false);
-  		document.removeEventListener('mousemove', onMouseMove, false);
-  		document.removeEventListener('pointerlockchange', onPointerlockChange, false);
-  		document.removeEventListener('pointerlockerror', onPointerlockError, false);
-  	};
+  		if ( _selected ) {
 
-  	this.dispose = function () {
+  			scope.dispatchEvent( { type: 'dragend', object: _selected } );
 
-  		this.disconnect();
-  	};
+  			_selected = null;
 
-  	this.getObject = function () {
-
-  		return yawObject;
-  	};
-
-  	this.getDirection = function () {
-
-  		// assumes the camera itself is not rotated
-
-  		var direction = new Vector3(0, 0, -1);
-  		var rotation = new Euler(0, 0, 0, 'YXZ');
-
-  		return function (v) {
-
-  			rotation.set(pitchObject.rotation.x, yawObject.rotation.y, 0);
-
-  			v.copy(direction).applyEuler(rotation);
-
-  			return v;
-  		};
-  	}();
-  	this.lock = function () {
-  		this.domElement.requestPointerLock();
-  		var i = this.domElement;
-  		if (i.requestFullscreen) {
-  			i.requestFullscreen();
-  		} else if (i.webkitRequestFullscreen) {
-  			i.webkitRequestFullscreen();
-  		} else if (i.mozRequestFullScreen) {
-  			i.mozRequestFullScreen();
-  		} else if (i.msRequestFullscreen) {
-  			i.msRequestFullscreen();
   		}
-  	};
 
-  	this.unlock = function () {
-  		if (document.exitPointerLock) {
-  			document.exitPointerLock();
-  		}
-  	};
+  		_domElement.style.cursor = _hovered ? 'pointer' : 'auto';
 
-  	this.connect();
-  }
-  PointerLockControls.prototype = Object.create(EventDispatcher.prototype);
-  PointerLockControls.prototype.constructor = PointerLockControls;
-
-  /**
-  This file is a modified version of THREE.OrbitControls
-  Contributors:
-   * @author qiao / https://github.com/qiao
-   * @author mrdoob / http://mrdoob.com
-   * @author alteredq / http://alteredqualia.com/
-   * @author WestLangley / http://github.com/WestLangley
-   * @author erich666 / http://erichaines.com
-   */
-  var STATE = { NONE: -1, ROTATE: 0, DOLLY: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_DOLLY: 4, TOUCH_PAN: 5 };
-
-  var Controls = function (_EventDispatcher) {
-  	inherits(Controls, _EventDispatcher);
-
-  	function Controls(object, domElement) {
-  		classCallCheck(this, Controls);
-
-  		var _this = possibleConstructorReturn(this, (Controls.__proto__ || Object.getPrototypeOf(Controls)).call(this));
-
-  		_this.object = object;
-  		_this.domElement = domElement !== undefined ? domElement : jquery(document);
-  		// Set to false to disable this control
-  		_this.enabled = true;
-  		// "target" sets the location of focus, where the control orbits around
-  		// and where it pans with respect to.
-  		_this.target = new Vector3();
-  		// center is old, deprecated; use "target" instead
-  		_this.center = _this.target;
-  		// This option actually enables dollying in and out; left as "zoom" for
-  		// backwards compatibility
-  		_this.noZoom = false;
-  		_this.zoomSpeed = 1.0;
-  		// Limits to how far you can dolly in and out
-  		_this.minDistance = 0;
-  		_this.maxDistance = 2500; //Infinity;
-  		// Set to true to disable this control
-  		_this.noRotate = false;
-  		_this.rotateSpeed = 1.0;
-  		// Set to true to disable this control
-  		_this.noPan = false;
-  		_this.keyPanSpeed = 40.0; // pixels moved per arrow key push
-  		// Set to true to automatically rotate around the target
-  		_this.autoRotate = false;
-  		_this.autoRotateSpeed = 2.0; // 30 seconds per round when fps is 60
-  		// How far you can orbit vertically, upper and lower limits.
-  		// Range is 0 to Math.PI radians.
-  		_this.minPolarAngle = 0; // radians
-  		_this.maxPolarAngle = Math.PI / 2; // radians
-  		// Set to true to disable use of the keys
-  		_this.noKeys = false;
-  		// The four arrow keys
-  		_this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 };
-  		_this.cameraMovedCallbacks = jquery.Callbacks();
-  		_this.needsUpdate = true;
-
-  		// internals
-  		//		var window = $(window);
-
-  		_this.EPS = 0.000001;
-  		_this.rotateStart = new Vector2();
-  		_this.rotateEnd = new Vector2();
-  		_this.rotateDelta = new Vector2();
-  		_this.panStart = new Vector2();
-  		_this.panEnd = new Vector2();
-  		_this.panDelta = new Vector2();
-  		_this.dollyStart = new Vector2();
-  		_this.dollyEnd = new Vector2();
-  		_this.dollyDelta = new Vector2();
-
-  		_this.phiDelta = 0;
-  		_this.thetaDelta = 0;
-  		_this.scale = 1;
-  		_this.pan = new Vector3();
-  		_this.state = STATE.NONE;
-
-  		_this.mouseupevent = function (event) {
-  			_this.onMouseUp(event);
-  		};
-  		_this.mousemoveevent = function (event) {
-  			_this.onMouseMove(event);
-  		};
-  		_this.mousedownevent = function (event) {
-  			_this.onMouseDown(event);
-  		};
-  		_this.mousewheelevent = function (event) {
-  			_this.onMouseWheel(event);
-  		};
-  		_this.touchstartevent = function (event) {
-  			_this.touchstart(event);
-  		};
-  		_this.touchendevent = function (event) {
-  			_this.touchend(event);
-  		};
-  		_this.touchmoveevent = function (event) {
-  			_this.touchmove(event);
-  		};
-  		_this.keydownevent = function (event) {
-  			_this.onKeyDown(event);
-  		};
-
-  		_this.domElement.addEventListener('contextmenu', function (event) {
-  			event.preventDefault();
-  		}, false);
-  		_this.domElement.addEventListener('mousedown', _this.mousedownevent, false);
-  		_this.domElement.addEventListener('mousewheel', _this.mousewheelevent, false);
-  		_this.domElement.addEventListener('DOMMouseScroll', _this.mousewheelevent, false); // firefox
-  		_this.domElement.addEventListener('touchstart', _this.touchstartevent, false);
-  		_this.domElement.addEventListener('touchend', _this.touchendevent, false);
-  		_this.domElement.addEventListener('touchmove', _this.touchmoveevent, false);
-  		window.addEventListener('keydown', _this.keydownevent, false);
-  		return _this;
   	}
 
-  	createClass(Controls, [{
-  		key: 'controlsActive',
-  		value: function controlsActive() {
-  			return this.state === STATE.NONE;
-  		}
-  	}, {
-  		key: 'setPan',
-  		value: function setPan(vec3) {
-  			this.pan = vec3;
-  		}
-  	}, {
-  		key: 'panTo',
-  		value: function panTo(vec3) {
-  			var newTarget = new Vector3(vec3.x, this.target.y, vec3.z);
-  			var delta = this.target.clone().sub(newTarget);
-  			this.pan.sub(delta);
-  			this.update();
-  		}
-  	}, {
-  		key: 'rotateLeft',
-  		value: function rotateLeft(angle) {
-  			if (angle === undefined) {
-  				angle = this.getAutoRotationAngle();
+  	function onDocumentTouchMove( event ) {
+
+  		event.preventDefault();
+  		event = event.changedTouches[ 0 ];
+
+  		var rect = _domElement.getBoundingClientRect();
+
+  		_mouse.x = ( ( event.clientX - rect.left ) / rect.width ) * 2 - 1;
+  		_mouse.y = - ( ( event.clientY - rect.top ) / rect.height ) * 2 + 1;
+
+  		_raycaster.setFromCamera( _mouse, _camera );
+
+  		if ( _selected && scope.enabled ) {
+
+  			if ( _raycaster.ray.intersectPlane( _plane, _intersection ) ) {
+
+  				_selected.position.copy( _intersection.sub( _offset ).applyMatrix4( _inverseMatrix ) );
+
   			}
-  			this.thetaDelta -= angle;
-  		}
-  	}, {
-  		key: 'rotateUp',
-  		value: function rotateUp(angle) {
-  			if (angle === undefined) {
-  				angle = this.getAutoRotationAngle();
-  			}
-  			this.phiDelta -= angle;
+
+  			scope.dispatchEvent( { type: 'drag', object: _selected } );
+
+  			return;
+
   		}
 
-  		// pass in distance in world space to move left
-
-  	}, {
-  		key: 'panLeft',
-  		value: function panLeft(distance) {
-
-  			var panOffset = new Vector3();
-  			var te = this.object.matrix.elements;
-  			// get X column of matrix
-  			panOffset.set(te[0], 0, te[2]);
-  			panOffset.normalize();
-  			panOffset.multiplyScalar(-distance);
-  			this.pan.add(panOffset);
-  		}
-
-  		// pass in distance in world space to move up
-
-  	}, {
-  		key: 'panUp',
-  		value: function panUp(distance) {
-  			var panOffset = new Vector3();
-  			var te = this.object.matrix.elements;
-  			// get Y column of matrix
-  			panOffset.set(te[4], 0, te[6]);
-  			panOffset.normalize();
-  			panOffset.multiplyScalar(distance);
-  			this.pan.add(panOffset);
-  		}
-
-  		// main entry point; pass in Vector2 of change desired in pixel space,
-  		// right and down are positive
-  		//	Avoid the method name 'pan' this is conflicting with a variable name
-  		//	pan(delta)
-
-  	}, {
-  		key: 'updatePan',
-  		value: function updatePan(delta) {
-  			var element = this.domElement === jquery(document) ? this.domElement.body : this.domElement;
-  			if (this.object.fov !== undefined) {
-  				// perspective
-  				var position = this.object.position;
-  				var offset = position.clone().sub(this.target);
-  				var targetDistance = offset.length();
-  				// half of the fov is center to top of screen
-  				targetDistance *= Math.tan(this.object.fov / 2 * Math.PI / 180.0);
-  				// we actually don't use screenWidth, since perspective camera is fixed to screen height
-  				this.panLeft(2 * delta.x * targetDistance / element.clientHeight);
-  				this.panUp(2 * delta.y * targetDistance / element.clientHeight);
-  			} else if (this.object.top !== undefined) {
-  				// orthographic
-  				this.panLeft(delta.x * (this.object.right - this.object.left) / element.clientWidth);
-  				this.panUp(delta.y * (this.object.top - this.object.bottom) / element.clientHeight);
-  			} else {
-  				// camera neither orthographic or perspective - warn user
-  				console.warn('WARNING: OrbitControls.js encountered an unknown camera type - pan disabled.');
-  			}
-
-  			this.update();
-  		}
-  	}, {
-  		key: 'panXY',
-  		value: function panXY(x, y) {
-  			//		this.pan(new Vector2(x, y));
-  			this.updatePan(new Vector2(x, y));
-  		}
-  	}, {
-  		key: 'dollyIn',
-  		value: function dollyIn(dollyScale) {
-  			if (dollyScale === undefined) {
-  				dollyScale = this.getZoomScale();
-  			}
-  			this.scale /= dollyScale;
-  		}
-  	}, {
-  		key: 'dollyOut',
-  		value: function dollyOut(dollyScale) {
-  			if (dollyScale === undefined) {
-  				dollyScale = this.getZoomScale();
-  			}
-  			this.scale *= dollyScale;
-  		}
-  	}, {
-  		key: 'update',
-  		value: function update() {
-  			var position = this.object.position;
-  			var offset = position.clone().sub(this.target);
-
-  			// angle from z-axis around y-axis
-  			var theta = Math.atan2(offset.x, offset.z);
-  			// angle from y-axis
-  			var phi = Math.atan2(Math.sqrt(offset.x * offset.x + offset.z * offset.z), offset.y);
-
-  			if (this.autoRotate) {
-  				this.rotateLeft(this.getAutoRotationAngle());
-  			}
-
-  			theta += this.thetaDelta;
-  			phi += this.phiDelta;
-
-  			// restrict phi to be between desired limits
-  			phi = Math.max(this.minPolarAngle, Math.min(this.maxPolarAngle, phi));
-
-  			// restrict phi to be betwee EPS and PI-EPS
-  			phi = Math.max(this.EPS, Math.min(Math.PI - this.EPS, phi));
-
-  			var radius = offset.length() * this.scale;
-
-  			// restrict radius to be between desired limits
-  			radius = Math.max(this.minDistance, Math.min(this.maxDistance, radius));
-
-  			// move target to panned location
-  			this.target.add(this.pan);
-
-  			offset.x = radius * Math.sin(phi) * Math.sin(theta);
-  			offset.y = radius * Math.cos(phi);
-  			offset.z = radius * Math.sin(phi) * Math.cos(theta);
-
-  			position.copy(this.target).add(offset);
-
-  			this.object.lookAt(this.target);
-
-  			this.thetaDelta = 0;
-  			this.phiDelta = 0;
-  			this.scale = 1;
-  			this.pan.set(0, 0, 0);
-
-  			//		this.cameraMovedCallbacks.fire();
-  			this.dispatchEvent({ type: EVENT_CAMERA_MOVED });
-  			this.needsUpdate = true;
-  		}
-  	}, {
-  		key: 'getAutoRotationAngle',
-  		value: function getAutoRotationAngle() {
-  			return 2 * Math.PI / 60 / 60 * this.autoRotateSpeed;
-  		}
-  	}, {
-  		key: 'getZoomScale',
-  		value: function getZoomScale() {
-  			return Math.pow(0.95, this.zoomSpeed);
-  		}
-  	}, {
-  		key: 'onMouseDown',
-  		value: function onMouseDown(event) {
-  			if (this.enabled === false) {
-  				return;
-  			}
-  			event.preventDefault();
-
-  			if (event.button === 0) {
-  				if (this.noRotate === true) {
-  					return;
-  				}
-  				this.state = STATE.ROTATE;
-  				this.rotateStart.set(event.clientX, event.clientY);
-  			} else if (event.button === 1) {
-  				if (this.noZoom === true) {
-  					return;
-  				}
-  				this.state = STATE.DOLLY;
-  				this.dollyStart.set(event.clientX, event.clientY);
-  			} else if (event.button === 2) {
-  				if (this.noPan === true) {
-  					return;
-  				}
-  				this.state = STATE.PAN;
-  				this.panStart.set(event.clientX, event.clientY);
-  			}
-  			// Greggman fix: https://github.com/greggman/three.js/commit/fde9f9917d6d8381f06bf22cdff766029d1761be
-  			this.domElement.addEventListener('mousemove', this.mousemoveevent, false);
-  			this.domElement.addEventListener('mouseup', this.mouseupevent, false);
-  		}
-  	}, {
-  		key: 'onMouseMove',
-  		value: function onMouseMove(event) {
-  			if (this.enabled === false) {
-  				return;
-  			}
-
-  			event.preventDefault();
-  			var element = this.domElement === jquery(document) ? this.domElement.body : this.domElement;
-  			if (this.state === STATE.ROTATE) {
-  				if (this.noRotate === true) {
-  					return;
-  				}
-  				this.rotateEnd.set(event.clientX, event.clientY);
-  				this.rotateDelta.subVectors(this.rotateEnd, this.rotateStart);
-  				// rotating across whole screen goes 360 degrees around
-  				this.rotateLeft(2 * Math.PI * this.rotateDelta.x / element.clientWidth * this.rotateSpeed);
-  				// rotating up and down along whole screen attempts to go 360, but limited to 180
-  				this.rotateUp(2 * Math.PI * this.rotateDelta.y / element.clientHeight * this.rotateSpeed);
-  				this.rotateStart.copy(this.rotateEnd);
-  			} else if (this.state === STATE.DOLLY) {
-  				if (this.noZoom === true) {
-  					return;
-  				}
-  				this.dollyEnd.set(event.clientX, event.clientY);
-  				this.dollyDelta.subVectors(this.dollyEnd, this.dollyStart);
-  				if (this.dollyDelta.y > 0) {
-  					this.dollyIn();
-  				} else {
-  					this.dollyOut();
-  				}
-  				this.dollyStart.copy(this.dollyEnd);
-  			} else if (this.state === STATE.PAN) {
-  				if (this.noPan === true) {
-  					return;
-  				}
-  				this.panEnd.set(event.clientX, event.clientY);
-  				this.panDelta.subVectors(this.panEnd, this.panStart);
-  				//			this.pan(this.panDelta);
-  				this.updatePan(this.panDelta);
-  				this.panStart.copy(this.panEnd);
-  			}
-  			// Greggman fix: https://github.com/greggman/three.js/commit/fde9f9917d6d8381f06bf22cdff766029d1761be
-  			this.update();
-  		}
-  	}, {
-  		key: 'onMouseUp',
-  		value: function onMouseUp() /* event */{
-  			if (this.enabled === false) {
-  				return;
-  			}
-  			// Greggman fix: https://github.com/greggman/three.js/commit/fde9f9917d6d8381f06bf22cdff766029d1761be
-  			this.domElement.removeEventListener('mousemove', this.mousemoveevent, false);
-  			this.domElement.removeEventListener('mouseup', this.mouseupevent, false);
-  			this.state = STATE.NONE;
-  		}
-  	}, {
-  		key: 'onMouseWheel',
-  		value: function onMouseWheel(event) {
-  			if (this.enabled === false || this.noZoom === true) {
-  				return;
-  			}
-
-  			var delta = 0;
-  			if (event.wheelDelta) {
-  				// WebKit / Opera / Explorer 9
-  				delta = event.wheelDelta;
-  			} else if (event.detail) {
-  				// Firefox
-  				delta = -event.detail;
-  			}
-
-  			if (delta > 0) {
-  				this.dollyOut();
-  			} else {
-  				this.dollyIn();
-  			}
-  			this.update();
-  		}
-  	}, {
-  		key: 'onKeyDown',
-  		value: function onKeyDown(event) {
-
-  			if (this.enabled === false) {
-  				return;
-  			}
-  			if (this.noKeys === true) {
-  				return;
-  			}
-  			if (this.noPan === true) {
-  				return;
-  			}
-
-  			switch (event.keyCode) {
-  				case this.keys.UP:
-  					//			this.pan(new Vector2(0, this.keyPanSpeed));
-  					this.updatePan(new Vector2(0, this.keyPanSpeed));
-  					break;
-  				case this.keys.BOTTOM:
-  					//			this.pan(new Vector2(0, -this.keyPanSpeed));
-  					this.updatePan(new Vector2(0, -this.keyPanSpeed));
-  					break;
-  				case this.keys.LEFT:
-  					//			this.pan(new Vector2(this.keyPanSpeed, 0));
-  					this.updatePan(new Vector2(this.keyPanSpeed, 0));
-  					break;
-  				case this.keys.RIGHT:
-  					//			this.pan(new Vector2(-this.keyPanSpeed, 0));
-  					this.updatePan(new Vector2(-this.keyPanSpeed, 0));
-  					break;
-  			}
-  		}
-  	}, {
-  		key: 'touchstart',
-  		value: function touchstart(event) {
-  			if (this.enabled === false) {
-  				return;
-  			}
-  			switch (event.touches.length) {
-
-  				case 1:
-  					// one-fingered touch: rotate
-  					if (this.noRotate === true) {
-  						return;
-  					}
-  					this.state = STATE.TOUCH_ROTATE;
-  					this.rotateStart.set(event.touches[0].pageX, event.touches[0].pageY);
-  					break;
-  				case 2:
-  					// two-fingered touch: dolly
-  					if (this.noZoom === true) {
-  						return;
-  					}
-  					this.state = STATE.TOUCH_DOLLY;
-  					var dx = event.touches[0].pageX - event.touches[1].pageX;
-  					var dy = event.touches[0].pageY - event.touches[1].pageY;
-  					var distance = Math.sqrt(dx * dx + dy * dy);
-  					this.dollyStart.set(0, distance);
-  					break;
-
-  				case 3:
-  					// three-fingered touch: pan
-  					if (this.noPan === true) {
-  						return;
-  					}
-  					this.state = STATE.TOUCH_PAN;
-  					this.panStart.set(event.touches[0].pageX, event.touches[0].pageY);
-  					break;
-  				default:
-  					this.state = STATE.NONE;
-  			}
-  		}
-  	}, {
-  		key: 'touchmove',
-  		value: function touchmove(event) {
-  			if (this.enabled === false) {
-  				return;
-  			}
-  			event.preventDefault();
-  			event.stopPropagation();
-  			var element = this.domElement === jquery(document) ? this.domElement.body : this.domElement;
-
-  			switch (event.touches.length) {
-  				case 1:
-  					// one-fingered touch: rotate
-  					if (this.noRotate === true) {
-  						return;
-  					}
-  					if (this.state !== STATE.TOUCH_ROTATE) {
-  						return;
-  					}
-  					this.rotateEnd.set(event.touches[0].pageX, event.touches[0].pageY);
-  					this.rotateDelta.subVectors(this.rotateEnd, this.rotateStart);
-  					// rotating across whole screen goes 360 degrees around
-  					this.rotateLeft(2 * Math.PI * this.rotateDelta.x / element.clientWidth * this.rotateSpeed);
-  					// rotating up and down along whole screen attempts to go 360, but limited to 180
-  					this.rotateUp(2 * Math.PI * this.rotateDelta.y / element.clientHeight * this.rotateSpeed);
-  					this.rotateStart.copy(this.rotateEnd);
-  					break;
-
-  				case 2:
-  					// two-fingered touch: dolly
-  					if (this.noZoom === true) {
-  						return;
-  					}
-  					if (this.state !== STATE.TOUCH_DOLLY) {
-  						return;
-  					}
-  					var dx = event.touches[0].pageX - event.touches[1].pageX;
-  					var dy = event.touches[0].pageY - event.touches[1].pageY;
-  					var distance = Math.sqrt(dx * dx + dy * dy);
-  					this.dollyEnd.set(0, distance);
-  					this.dollyDelta.subVectors(this.dollyEnd, this.dollyStart);
-  					if (this.dollyDelta.y > 0) {
-  						this.dollyOut();
-  					} else {
-  						this.dollyIn();
-  					}
-  					this.dollyStart.copy(this.dollyEnd);
-  					break;
-
-  				case 3:
-  					// three-fingered touch: pan
-  					if (this.noPan === true) {
-  						return;
-  					}
-  					if (this.state !== STATE.TOUCH_PAN) {
-  						return;
-  					}
-  					this.panEnd.set(event.touches[0].pageX, event.touches[0].pageY);
-  					this.panDelta.subVectors(this.panEnd, this.panStart);
-  					this.pan(this.panDelta);
-  					this.panStart.copy(this.panEnd);
-  					break;
-  				default:
-  					this.state = STATE.NONE;
-  			}
-  		}
-  	}, {
-  		key: 'touchend',
-  		value: function touchend() /* event */{
-  			if (this.enabled === false) {
-  				return;
-  			}
-  			this.state = STATE.NONE;
-  		}
-  	}]);
-  	return Controls;
-  }(EventDispatcher);
-
-  var Edge = function (_EventDispatcher) {
-  	inherits(Edge, _EventDispatcher);
-
-  	function Edge(scene, edge, controls) {
-  		classCallCheck(this, Edge);
-
-  		var _this = possibleConstructorReturn(this, (Edge.__proto__ || Object.getPrototypeOf(Edge)).call(this));
-
-  		_this.name = 'edge';
-  		_this.scene = scene;
-  		_this.edge = edge;
-  		_this.controls = controls;
-
-  		_this.wall = edge.wall;
-  		_this.front = edge.front;
-
-  		_this.planes = [];
-  		_this.phantomPlanes = [];
-  		_this.basePlanes = []; // always visible
-
-  		//Debug wall intersection planes. Edge.plane is the plane used for intersection
-  		//		this.phantomPlanes.push(this.edge.plane);//Enable this line to see the wall planes
-
-  		_this.texture = new TextureLoader();
-
-  		_this.lightMap = new TextureLoader().load('rooms/textures/walllightmap.png');
-  		_this.fillerColor = 0xdddddd;
-  		_this.sideColor = 0xcccccc;
-  		_this.baseColor = 0xdddddd;
-  		_this.visible = false;
-
-  		var scope = _this;
-
-  		_this.redrawevent = function () {
-  			scope.redraw();
-  		};
-  		_this.visibilityevent = function () {
-  			scope.updateVisibility();
-  		};
-  		_this.showallevent = function () {
-  			scope.showAll();
-  		};
-
-  		_this.visibilityfactor = true;
-  		_this.init();
-
-  		return _this;
   	}
 
-  	createClass(Edge, [{
-  		key: 'remove',
-  		value: function remove() {
-  			this.edge.removeEventListener(EVENT_REDRAW, this.redrawevent);
-  			this.controls.removeEventListener(EVENT_CAMERA_MOVED, this.visibilityevent);
-  			this.controls.removeEventListener(EVENT_CAMERA_ACTIVE_STATUS, this.showallevent);
-  			this.removeFromScene();
-  		}
-  	}, {
-  		key: 'init',
-  		value: function init() {
-  			this.edge.addEventListener(EVENT_REDRAW, this.redrawevent);
-  			this.controls.addEventListener(EVENT_CAMERA_MOVED, this.visibilityevent);
-  			this.controls.addEventListener(EVENT_CAMERA_ACTIVE_STATUS, this.showallevent);
+  	function onDocumentTouchStart( event ) {
 
-  			this.updateTexture();
-  			this.updatePlanes();
-  			this.addToScene();
-  		}
-  	}, {
-  		key: 'redraw',
-  		value: function redraw() {
-  			this.removeFromScene();
-  			this.updateTexture();
-  			this.updatePlanes();
-  			this.addToScene();
-  		}
-  	}, {
-  		key: 'removeFromScene',
-  		value: function removeFromScene() {
-  			var scope = this;
-  			scope.planes.forEach(function (plane) {
-  				scope.scene.remove(plane);
-  			});
-  			scope.basePlanes.forEach(function (plane) {
-  				scope.scene.remove(plane);
-  			});
-  			scope.phantomPlanes.forEach(function (plane) {
-  				scope.scene.remove(plane);
-  			});
-  			scope.planes = [];
-  			scope.basePlanes = [];
-  		}
-  	}, {
-  		key: 'addToScene',
-  		value: function addToScene() {
-  			var scope = this;
-  			this.planes.forEach(function (plane) {
-  				scope.scene.add(plane);
-  			});
-  			this.basePlanes.forEach(function (plane) {
-  				scope.scene.add(plane);
-  			});
-  			this.phantomPlanes.forEach(function (plane) {
-  				scope.scene.add(plane);
-  			});
-  			this.updateVisibility();
-  		}
-  	}, {
-  		key: 'showAll',
-  		value: function showAll() {
-  			var scope = this;
-  			scope.visible = true;
-  			scope.planes.forEach(function (plane) {
-  				plane.material.transparent = !scope.visible;
-  				plane.material.opacity = 1.0;
-  				plane.visible = scope.visible;
-  			});
+  		event.preventDefault();
+  		event = event.changedTouches[ 0 ];
 
-  			this.wall.items.forEach(function (item) {
-  				item.updateEdgeVisibility(scope.visible, scope.front);
-  			});
-  			this.wall.onItems.forEach(function (item) {
-  				item.updateEdgeVisibility(scope.visible, scope.front);
-  			});
-  		}
-  	}, {
-  		key: 'switchWireframe',
-  		value: function switchWireframe(flag) {
-  			var scope = this;
-  			scope.visible = true;
-  			scope.planes.forEach(function (plane) {
-  				plane.material.wireframe = flag;
-  			});
-  		}
-  	}, {
-  		key: 'updateVisibility',
-  		value: function updateVisibility() {
-  			var scope = this;
-  			// finds the normal from the specified edge
-  			var start = scope.edge.interiorStart();
-  			var end = scope.edge.interiorEnd();
-  			var x = end.x - start.x;
-  			var y = end.y - start.y;
-  			// rotate 90 degrees CCW
-  			var normal = new Vector3(-y, 0, x);
-  			normal.normalize();
+  		var rect = _domElement.getBoundingClientRect();
 
-  			// setup camera: scope.controls.object refers to the camera of the scene
-  			var position = scope.controls.object.position.clone();
-  			var focus = new Vector3((start.x + end.x) / 2.0, 0, (start.y + end.y) / 2.0);
-  			var direction = position.sub(focus).normalize();
+  		_mouse.x = ( ( event.clientX - rect.left ) / rect.width ) * 2 - 1;
+  		_mouse.y = - ( ( event.clientY - rect.top ) / rect.height ) * 2 + 1;
 
-  			// find dot
-  			var dot = normal.dot(direction);
-  			// update visible
-  			scope.visible = dot >= 0;
-  			// show or hide planes
-  			scope.planes.forEach(function (plane) {
-  				plane.material.transparent = !scope.visible;
-  				plane.material.opacity = scope.visible ? 1.0 : 0.3;
-  				//			plane.visible = scope.visible;
-  			});
-  			scope.updateObjectVisibility();
-  		}
-  	}, {
-  		key: 'updateObjectVisibility',
-  		value: function updateObjectVisibility() {
-  			//		var scope = this;
-  			//		this.wall.items.forEach((item) => {
-  			//			item.updateEdgeVisibility(scope.visible, scope.front);
-  			//		});
-  			//		this.wall.onItems.forEach((item) => {
-  			//			item.updateEdgeVisibility(scope.visible, scope.front);
-  			//		});
-  		}
-  	}, {
-  		key: 'updateTexture',
-  		value: function updateTexture(callback) {
-  			var scope = this;
-  			// callback is fired when texture loads
-  			callback = callback || function () {
-  				scope.scene.needsUpdate = true;
-  			};
-  			var textureData = this.edge.getTexture();
-  			var stretch = textureData.stretch;
-  			var url = textureData.url;
-  			var scale = textureData.scale;
-  			this.texture = new TextureLoader().load(url, callback);
+  		_intersections.length = 0;
 
-  			if (!stretch) {
-  				var height = this.wall.height;
-  				var width = this.edge.interiorDistance();
-  				this.texture.wrapT = RepeatWrapping;
-  				this.texture.wrapS = RepeatWrapping;
-  				this.texture.repeat.set(width / scale, height / scale);
-  				this.texture.needsUpdate = true;
-  			}
-  		}
-  	}, {
-  		key: 'updatePlanes',
-  		value: function updatePlanes() {
-  			//		var extStartCorner = this.wall.getClosestCorner(this.edge.exteriorStart());
-  			//		var extEndCorner = this.wall.getClosestCorner(this.edge.exteriorEnd());		
+  		_raycaster.setFromCamera( _mouse, _camera );
+  		 _raycaster.intersectObjects( _objects, true, _intersections );
 
-  			var extStartCorner = this.edge.getStart();
-  			var extEndCorner = this.edge.getEnd();
+  		if ( _intersections.length > 0 ) {
 
-  			if (extStartCorner == null || extEndCorner == null) {
-  				return;
+  			_selected = ( scope.transformGroup === true ) ? _objects[ 0 ] : _intersections[ 0 ].object;
+
+  			_plane.setFromNormalAndCoplanarPoint( _camera.getWorldDirection( _plane.normal ), _worldPosition.setFromMatrixPosition( _selected.matrixWorld ) );
+
+  			if ( _raycaster.ray.intersectPlane( _plane, _intersection ) ) {
+
+  				_inverseMatrix.getInverse( _selected.parent.matrixWorld );
+  				_offset.copy( _intersection ).sub( _worldPosition.setFromMatrixPosition( _selected.matrixWorld ) );
+
   			}
 
-  			var color = 0xFFFFFF;
-  			var wallMaterial = new MeshBasicMaterial({
-  				color: color,
-  				side: FrontSide,
-  				map: this.texture,
-  				transparent: true,
-  				lightMap: this.lightMap,
-  				opacity: 1.0,
-  				wireframe: false
-  			});
-  			var fillerMaterial = new MeshBasicMaterial({
-  				color: this.fillerColor,
-  				side: DoubleSide,
-  				map: this.texture,
-  				transparent: true,
-  				opacity: 1.0,
-  				wireframe: false
-  			});
+  			_domElement.style.cursor = 'move';
 
-  			// exterior plane for real exterior walls
-  			//If the walls have corners that have more than one room attached
-  			//Then there is no need to construct an exterior wall
-  			if (this.edge.wall.start.getAttachedRooms().length < 2 || this.edge.wall.end.getAttachedRooms().length < 2) {
-  				this.planes.push(this.makeWall(this.edge.exteriorStart(), this.edge.exteriorEnd(), this.edge.exteriorTransform, this.edge.invExteriorTransform, fillerMaterial));
-  			}
-  			// interior plane
-  			this.planes.push(this.makeWall(this.edge.interiorStart(), this.edge.interiorEnd(), this.edge.interiorTransform, this.edge.invInteriorTransform, wallMaterial));
-  			// bottom
-  			// put into basePlanes since this is always visible
-  			this.basePlanes.push(this.buildFillerUniformHeight(this.edge, 0, BackSide, this.baseColor));
-  			if (this.edge.wall.start.getAttachedRooms().length < 2 || this.edge.wall.end.getAttachedRooms().length < 2) {
-  				this.planes.push(this.buildFillerVaryingHeights(this.edge, DoubleSide, this.fillerColor));
-  			}
+  			scope.dispatchEvent( { type: 'dragstart', object: _selected } );
 
-  			// sides
-  			this.planes.push(this.buildSideFillter(this.edge.interiorStart(), this.edge.exteriorStart(), extStartCorner.elevation, this.sideColor));
-  			this.planes.push(this.buildSideFillter(this.edge.interiorEnd(), this.edge.exteriorEnd(), extEndCorner.elevation, this.sideColor));
-  			//		this.planes.push(this.buildSideFillter(this.edge.interiorStart(), this.edge.exteriorStart(), this.wall.startElevation, this.sideColor));
-  			//		this.planes.push(this.buildSideFillter(this.edge.interiorEnd(), this.edge.exteriorEnd(), extEndCorner.endElevation, this.sideColor));
   		}
 
-  		// start, end have x and y attributes (i.e. corners)
 
-  	}, {
-  		key: 'makeWall',
-  		value: function makeWall(start, end, transform, invTransform, material) {
-  			var v1 = this.toVec3(start);
-  			var v2 = this.toVec3(end);
-  			var v3 = v2.clone();
-  			var v4 = v1.clone();
-
-  			v3.y = this.edge.getEnd().elevation;
-  			v4.y = this.edge.getStart().elevation;
-
-  			//		v3.y = this.wall.getClosestCorner(end).elevation;
-  			//		v4.y = this.wall.getClosestCorner(start).elevation;
-
-  			var points = [v1.clone(), v2.clone(), v3.clone(), v4.clone()];
-
-  			points.forEach(function (p) {
-  				p.applyMatrix4(transform);
-  			});
-
-  			var spoints = [new Vector2(points[0].x, points[0].y), new Vector2(points[1].x, points[1].y), new Vector2(points[2].x, points[2].y), new Vector2(points[3].x, points[3].y)];
-  			var shape = new Shape(spoints);
-
-  			// add holes for each wall item
-  			this.wall.items.forEach(function (item) {
-  				var pos = item.position.clone();
-  				pos.applyMatrix4(transform);
-  				var halfSize = item.halfSize;
-  				var min = halfSize.clone().multiplyScalar(-1);
-  				var max = halfSize.clone();
-  				min.add(pos);
-  				max.add(pos);
-
-  				var holePoints = [new Vector2(min.x, min.y), new Vector2(max.x, min.y), new Vector2(max.x, max.y), new Vector2(min.x, max.y)];
-  				shape.holes.push(new Path(holePoints));
-  			});
-
-  			var geometry = new ShapeGeometry(shape);
-  			geometry.vertices.forEach(function (v) {
-  				v.applyMatrix4(invTransform);
-  			});
-
-  			// make UVs
-  			var totalDistance = Utils.distance(new Vector2(v1.x, v1.z), new Vector2(v2.x, v2.z));
-  			var height = this.wall.height;
-  			geometry.faceVertexUvs[0] = [];
-
-  			geometry.faces.forEach(function (face) {
-  				var vertA = geometry.vertices[face.a];
-  				var vertB = geometry.vertices[face.b];
-  				var vertC = geometry.vertices[face.c];
-  				geometry.faceVertexUvs[0].push([vertexToUv(vertA), vertexToUv(vertB), vertexToUv(vertC)]);
-  			});
-
-  			geometry.faceVertexUvs[1] = geometry.faceVertexUvs[0];
-  			geometry.computeFaceNormals();
-  			geometry.computeVertexNormals();
-
-  			function vertexToUv(vertex) {
-  				var x = Utils.distance(new Vector2(v1.x, v1.z), new Vector2(vertex.x, vertex.z)) / totalDistance;
-  				var y = vertex.y / height;
-  				return new Vector2(x, y);
-  			}
-
-  			var mesh = new Mesh(geometry, material);
-  			mesh.name = 'wall';
-  			return mesh;
-  		}
-  	}, {
-  		key: 'buildSideFillter',
-  		value: function buildSideFillter(p1, p2, height, color) {
-  			var points = [this.toVec3(p1), this.toVec3(p2), this.toVec3(p2, height), this.toVec3(p1, height)];
-
-  			var geometry = new Geometry();
-  			points.forEach(function (p) {
-  				geometry.vertices.push(p);
-  			});
-  			geometry.faces.push(new Face3(0, 1, 2));
-  			geometry.faces.push(new Face3(0, 2, 3));
-
-  			var fillerMaterial = new MeshBasicMaterial({ color: color, side: DoubleSide });
-  			var filler = new Mesh(geometry, fillerMaterial);
-  			return filler;
-  		}
-  	}, {
-  		key: 'buildFillerVaryingHeights',
-  		value: function buildFillerVaryingHeights(edge, side, color) {
-  			var a = this.toVec3(edge.exteriorStart(), this.edge.getStart().elevation);
-  			var b = this.toVec3(edge.exteriorEnd(), this.edge.getEnd().elevation);
-  			var c = this.toVec3(edge.interiorEnd(), this.edge.getEnd().elevation);
-  			var d = this.toVec3(edge.interiorStart(), this.edge.getStart().elevation);
-
-  			//		var a = this.toVec3(edge.exteriorStart(), this.wall.getClosestCorner(edge.exteriorStart()).elevation);
-  			//		var b = this.toVec3(edge.exteriorEnd(), this.wall.getClosestCorner(edge.exteriorEnd()).elevation);
-  			//		var c = this.toVec3(edge.interiorEnd(), this.wall.getClosestCorner(edge.interiorEnd()).elevation);
-  			//		var d = this.toVec3(edge.interiorStart(), this.wall.getClosestCorner(edge.interiorStart()).elevation);
-
-
-  			var fillerMaterial = new MeshBasicMaterial({ color: color, side: side });
-
-  			var geometry = new Geometry();
-  			geometry.vertices.push(a, b, c, d);
-  			geometry.faces.push(new Face3(0, 1, 2));
-  			geometry.faces.push(new Face3(0, 2, 3));
-
-  			var filler = new Mesh(geometry, fillerMaterial);
-  			return filler;
-  		}
-  	}, {
-  		key: 'buildFillerUniformHeight',
-  		value: function buildFillerUniformHeight(edge, height, side, color) {
-  			var points = [this.toVec2(edge.exteriorStart()), this.toVec2(edge.exteriorEnd()), this.toVec2(edge.interiorEnd()), this.toVec2(edge.interiorStart())];
-
-  			var fillerMaterial = new MeshBasicMaterial({ color: color, side: side });
-  			var shape = new Shape(points);
-  			var geometry = new ShapeGeometry(shape);
-  			var filler = new Mesh(geometry, fillerMaterial);
-  			filler.rotation.set(Math.PI / 2, 0, 0);
-  			filler.position.y = height;
-  			return filler;
-  		}
-  	}, {
-  		key: 'toVec2',
-  		value: function toVec2(pos) {
-  			return new Vector2(pos.x, pos.y);
-  		}
-  	}, {
-  		key: 'toVec3',
-  		value: function toVec3(pos, height) {
-  			height = height || 0;
-  			return new Vector3(pos.x, height, pos.y);
-  		}
-  	}]);
-  	return Edge;
-  }(EventDispatcher);
-
-  var Floor = function (_EventDispatcher) {
-  	inherits(Floor, _EventDispatcher);
-
-  	function Floor(scene, room) {
-  		classCallCheck(this, Floor);
-
-  		var _this = possibleConstructorReturn(this, (Floor.__proto__ || Object.getPrototypeOf(Floor)).call(this));
-
-  		_this.scene = scene;
-  		_this.room = room;
-  		_this.floorPlane = null;
-  		_this.roofPlane = null;
-  		_this.changedevent = function () {
-  			_this.redraw();
-  		};
-  		_this.init();
-  		return _this;
   	}
 
-  	createClass(Floor, [{
-  		key: 'switchWireframe',
-  		value: function switchWireframe(flag) {
-  			this.floorPlane.visible = !flag;
-  			this.roofPlane.visible = !flag;
-  		}
-  	}, {
-  		key: 'init',
-  		value: function init() {
-  			//		this.room.fireOnFloorChange(redraw);
-  			this.room.addEventListener(EVENT_CHANGED, this.changedevent);
+  	function onDocumentTouchEnd( event ) {
 
-  			this.floorPlane = this.buildFloor();
-  			// roofs look weird, so commented out
-  			// this.roofPlane = this.buildRoofUniformHeight();
-  			this.roofPlane = this.buildRoofVaryingHeight();
-  		}
-  	}, {
-  		key: 'redraw',
-  		value: function redraw() {
-  			this.removeFromScene();
-  			this.floorPlane = this.buildFloor();
-  			this.roofPlane = this.buildRoofVaryingHeight();
-  			this.addToScene();
-  		}
-  	}, {
-  		key: 'buildFloor',
-  		value: function buildFloor() {
-  			var textureSettings = this.room.getTexture();
-  			// setup texture
-  			//		var floorTexture = ImageUtils.loadTexture(textureSettings.url);
-  			var floorTexture = new TextureLoader().load(textureSettings.url);
-  			floorTexture.wrapS = RepeatWrapping;
-  			floorTexture.wrapT = RepeatWrapping;
-  			floorTexture.repeat.set(1, 1);
-  			var floorMaterialTop = new MeshPhongMaterial({
-  				map: floorTexture,
-  				side: DoubleSide,
-  				// ambient: 0xffffff, TODO_Ekki
-  				color: 0xcccccc,
-  				specular: 0x0a0a0a
-  			});
+  		event.preventDefault();
 
-  			var textureScale = textureSettings.scale;
-  			// http://stackoverflow.com/questions/19182298/how-to-texture-a-three-js-mesh-created-with-shapegeometry
-  			// scale down coords to fit 0 -> 1, then rescale
+  		if ( _selected ) {
 
-  			var points = [];
-  			this.room.interiorCorners.forEach(function (corner) {
-  				points.push(new Vector2(corner.x / textureScale, corner.y / textureScale));
-  			});
-  			var shape = new Shape(points);
-  			var geometry = new ShapeGeometry(shape);
-  			var floor = new Mesh(geometry, floorMaterialTop);
+  			scope.dispatchEvent( { type: 'dragend', object: _selected } );
 
-  			floor.rotation.set(Math.PI / 2, 0, 0);
-  			floor.scale.set(textureScale, textureScale, textureScale);
-  			floor.receiveShadow = true;
-  			floor.castShadow = false;
-  			return floor;
+  			_selected = null;
+
   		}
-  	}, {
-  		key: 'buildRoofVaryingHeight',
-  		value: function buildRoofVaryingHeight() {
-  			// setup texture
-  			var roofMaterial = new MeshBasicMaterial({ side: FrontSide, color: 0xe5e5e5 });
-  			var geometry = new Geometry();
 
-  			this.room.corners.forEach(function (corner) {
-  				var vertex = new Vector3(corner.x, corner.elevation, corner.y);
-  				geometry.vertices.push(vertex);
-  			});
-  			for (var i = 2; i < geometry.vertices.length; i++) {
-  				var face = new Face3(0, i - 1, i);
-  				geometry.faces.push(face);
-  			}
-  			var roof = new Mesh(geometry, roofMaterial);
-  			// roof.rotation.set(Math.PI / 2, 0, 0);
-  			// roof.position.y = Configuration.getNumericValue(configWallHeight);
-  			return roof;
-  		}
-  	}, {
-  		key: 'buildRoofUniformHeight',
-  		value: function buildRoofUniformHeight() {
-  			// setup texture
-  			var roofMaterial = new MeshBasicMaterial({ side: FrontSide, color: 0xe5e5e5 });
-  			var points = [];
-  			this.room.interiorCorners.forEach(function (corner) {
-  				points.push(new Vector2(corner.x, corner.y));
-  			});
-  			var shape = new Shape(points);
-  			var geometry = new ShapeGeometry(shape);
-  			var roof = new Mesh(geometry, roofMaterial);
-  			roof.rotation.set(Math.PI / 2, 0, 0);
-  			roof.position.y = Configuration.getNumericValue(configWallHeight);
-  			return roof;
-  		}
-  	}, {
-  		key: 'addToScene',
-  		value: function addToScene() {
-  			this.scene.add(this.floorPlane);
-  			this.scene.add(this.roofPlane);
-  			//scene.add(roofPlane);
-  			// hack so we can do intersect testing
-  			this.scene.add(this.room.floorPlane);
-  			this.scene.add(this.room.roofPlane);
-  		}
-  	}, {
-  		key: 'removeFromScene',
-  		value: function removeFromScene() {
-  			this.scene.remove(this.floorPlane);
-  			this.scene.remove(this.roofPlane);
-  			this.scene.remove(this.room.floorPlane);
-  			this.scene.remove(this.room.roofPlane);
-  		}
-  	}, {
-  		key: 'showRoof',
-  		value: function showRoof(flag) {
-  			console.log(flag);
-  			// this.roofPlane.visible = flag;
-  		}
-  	}]);
-  	return Floor;
-  }(EventDispatcher);
+  		_domElement.style.cursor = 'auto';
 
-  var Floorplan3D = function (_EventDispatcher) {
-  	inherits(Floorplan3D, _EventDispatcher);
-
-  	function Floorplan3D(scene, floorPlan, controls) {
-  		classCallCheck(this, Floorplan3D);
-
-  		var _this = possibleConstructorReturn(this, (Floorplan3D.__proto__ || Object.getPrototypeOf(Floorplan3D)).call(this));
-
-  		_this.scene = scene;
-  		_this.floorplan = floorPlan;
-  		_this.controls = controls;
-  		_this.floors = [];
-  		_this.edges = [];
-  		var scope = _this;
-  		// floorPlan.fireOnUpdatedRooms(redraw);
-  		_this.updatedroomsevent = function () {
-  			scope.redraw();
-  		};
-  		_this.floorplan.addEventListener(EVENT_UPDATED, _this.updatedroomsevent);
-  		return _this;
   	}
 
-  	createClass(Floorplan3D, [{
-  		key: 'switchWireframe',
-  		value: function switchWireframe(flag) {
-  			this.floors.forEach(function (floor) {
-  				floor.switchWireframe(flag);
-  			});
-  			this.edges.forEach(function (edge) {
-  				edge.switchWireframe(flag);
-  			});
-  		}
-  	}, {
-  		key: 'redraw',
-  		value: function redraw() {
-  			var _this2 = this;
+  	activate();
 
-  			var scope = this;
-  			// clear scene
-  			this.floors.forEach(function (floor) {
-  				floor.removeFromScene();
-  			});
+  	// API
 
-  			this.edges.forEach(function (edge) {
-  				edge.remove();
-  			});
-  			this.floors = [];
-  			this.edges = [];
+  	this.enabled = true;
+  	this.transformGroup = false;
 
-  			// draw floors
-  			this.floorplan.getRooms().forEach(function (room) {
-  				var threeFloor = new Floor(_this2.scene, room);
-  				_this2.floors.push(threeFloor);
-  				threeFloor.addToScene();
-  			});
+  	this.activate = activate;
+  	this.deactivate = deactivate;
+  	this.dispose = dispose;
+  	this.getObjects = getObjects;
 
-  			var eindex = 0;
-  			// draw edges
-  			this.floorplan.wallEdges().forEach(function (edge) {
-  				var threeEdge = new Edge(scope.scene, edge, scope.controls);
-  				threeEdge.name = 'edge_' + eindex;
-  				_this2.edges.push(threeEdge);
-  				eindex += 1;
-  			});
-  		}
-  	}, {
-  		key: 'showRoof',
-  		value: function showRoof(flag) {
-  			// draw floors
-  			this.floors.forEach(function (threeFloor) {
-  				threeFloor.showRoof(flag);
-  			});
-  		}
-  	}]);
-  	return Floorplan3D;
-  }(EventDispatcher);
+  };
 
-  //As far as I understand the HUD is here to show a rotation control on every item
-  //If this idea is correct then it seriously sucks. A whole rendering to show just cones and lines as arrows?
-  var HUD = function (_EventDispatcher) {
-  	inherits(HUD, _EventDispatcher);
-
-  	function HUD(three, scene) {
-  		classCallCheck(this, HUD);
-
-  		var _this = possibleConstructorReturn(this, (HUD.__proto__ || Object.getPrototypeOf(HUD)).call(this));
-
-  		_this.three = three;
-  		if (!scene) {
-  			_this.scene = new Scene();
-  		} else {
-  			_this.scene = scene;
-  		}
-
-  		_this.selectedItem = null;
-
-  		_this.rotating = false;
-  		_this.mouseover = false;
-
-  		_this.tolerance = 10;
-  		_this.height = 5;
-  		_this.distance = 20;
-
-  		_this.color = '#ffffff';
-  		_this.hoverColor = '#f1c40f';
-
-  		_this.activeObject = null;
-
-  		var scope = _this;
-  		_this.itemselectedevent = function (o) {
-  			scope.itemSelected(o.item);
-  		};
-  		_this.itemunselectedevent = function () {
-  			scope.itemUnselected();
-  		};
-
-  		_this.init();
-  		return _this;
-  	}
-
-  	createClass(HUD, [{
-  		key: 'init',
-  		value: function init() {
-  			//		this.three.itemSelectedCallbacks.add(itemSelected);
-  			//		this.three.itemUnselectedCallbacks.add(itemUnselected);
-  			this.three.addEventListener(EVENT_ITEM_SELECTED, this.itemselectedevent);
-  			this.three.addEventListener(EVENT_ITEM_UNSELECTED, this.itemunselectedevent);
-  		}
-  	}, {
-  		key: 'getScene',
-  		value: function getScene() {
-  			return this.scene;
-  		}
-  	}, {
-  		key: 'getObject',
-  		value: function getObject() {
-  			return this.activeObject;
-  		}
-  	}, {
-  		key: 'resetSelectedItem',
-  		value: function resetSelectedItem() {
-  			this.selectedItem = null;
-  			if (this.activeObject) {
-  				this.scene.remove(this.activeObject);
-  				this.activeObject = null;
-  			}
-  		}
-  	}, {
-  		key: 'itemSelected',
-  		value: function itemSelected(item) {
-  			if (this.selectedItem != item) {
-  				this.resetSelectedItem();
-  				if (item.allowRotate && !item.fixed) {
-  					this.selectedItem = item;
-  					this.activeObject = this.makeObject(this.selectedItem);
-  					this.scene.add(this.activeObject);
-  				}
-  			}
-  		}
-  	}, {
-  		key: 'itemUnselected',
-  		value: function itemUnselected() {
-  			this.resetSelectedItem();
-  		}
-  	}, {
-  		key: 'setRotating',
-  		value: function setRotating(isRotating) {
-  			this.rotating = isRotating;
-  			this.setColor();
-  		}
-  	}, {
-  		key: 'setMouseover',
-  		value: function setMouseover(isMousedOver) {
-  			this.mouseover = isMousedOver;
-  			this.setColor();
-  		}
-  	}, {
-  		key: 'setColor',
-  		value: function setColor() {
-  			var scope = this;
-  			if (scope.activeObject) {
-  				scope.activeObject.children.forEach(function (obj) {
-  					obj.material.color.set(scope.getColor());
-  				});
-  			}
-  			//		this.three.needsUpdate();
-  			scope.three.ensureNeedsUpdate();
-  		}
-  	}, {
-  		key: 'getColor',
-  		value: function getColor() {
-  			return this.mouseover || this.rotating ? this.hoverColor : this.color;
-  		}
-  	}, {
-  		key: 'update',
-  		value: function update() {
-  			if (this.activeObject) {
-  				this.activeObject.rotation.y = this.selectedItem.rotation.y;
-  				this.activeObject.position.x = this.selectedItem.position.x;
-  				this.activeObject.position.z = this.selectedItem.position.z;
-  			}
-  		}
-  	}, {
-  		key: 'makeLineGeometry',
-  		value: function makeLineGeometry(item) {
-  			var geometry = new Geometry();
-  			geometry.vertices.push(new Vector3(0, 0, 0), this.rotateVector(item));
-  			return geometry;
-  		}
-  	}, {
-  		key: 'rotateVector',
-  		value: function rotateVector(item) {
-  			var vec = new Vector3(0, 0, Math.max(item.halfSize.x, item.halfSize.z) + 1.4 + this.distance);
-  			return vec;
-  		}
-  	}, {
-  		key: 'makeLineMaterial',
-  		value: function makeLineMaterial() {
-  			var mat = new LineBasicMaterial({ color: this.getColor(), linewidth: 3 });
-  			return mat;
-  		}
-  	}, {
-  		key: 'makeCone',
-  		value: function makeCone(item) {
-  			var coneGeo = new CylinderGeometry(5, 0, 10);
-  			var coneMat = new MeshBasicMaterial({ color: this.getColor() });
-  			var cone = new Mesh(coneGeo, coneMat);
-  			cone.position.copy(this.rotateVector(item));
-  			cone.rotation.x = -Math.PI / 2.0;
-  			return cone;
-  		}
-  	}, {
-  		key: 'makeSphere',
-  		value: function makeSphere() {
-  			var geometry = new SphereGeometry(4, 16, 16);
-  			var material = new MeshBasicMaterial({ color: this.getColor() });
-  			var sphere = new Mesh(geometry, material);
-  			return sphere;
-  		}
-  	}, {
-  		key: 'makeObject',
-  		value: function makeObject(item) {
-  			var object = new Object3D();
-  			var line = new LineSegments(this.makeLineGeometry(item), this.makeLineMaterial(this.rotating));
-  			var cone = this.makeCone(item);
-  			var sphere = this.makeSphere(item);
-  			object.add(line);
-  			object.add(cone);
-  			object.add(sphere);
-  			object.rotation.y = item.rotation.y;
-  			object.position.x = item.position.x;
-  			object.position.z = item.position.z;
-  			object.position.y = this.height;
-  			return object;
-  		}
-  	}]);
-  	return HUD;
-  }(EventDispatcher);
-
-  var Lights = function (_EventDispatcher) {
-  	inherits(Lights, _EventDispatcher);
-
-  	function Lights(scene, floorplan) {
-  		classCallCheck(this, Lights);
-
-  		var _this = possibleConstructorReturn(this, (Lights.__proto__ || Object.getPrototypeOf(Lights)).call(this));
-
-  		_this.scene = scene;
-  		_this.floorplan = floorplan;
-  		_this.tol = 1;
-  		_this.height = 300; // TODO: share with Blueprint.Wall
-  		_this.dirLight = null;
-  		_this.updatedroomsevent = function () {
-  			_this.updateShadowCamera();
-  		};
-  		_this.init();
-  		return _this;
-  	}
-
-  	createClass(Lights, [{
-  		key: 'getDirLight',
-  		value: function getDirLight() {
-  			return this.dirLight;
-  		}
-  	}, {
-  		key: 'init',
-  		value: function init() {
-  			var light = new HemisphereLight(0xffffff, 0x888888, 1.1);
-  			light.position.set(0, this.height, 0);
-  			this.scene.add(light);
-
-  			this.dirLight = new DirectionalLight(0xffffff, 0.5);
-  			this.dirLight.color.setHSL(1, 1, 0.1);
-
-  			this.dirLight.castShadow = true;
-
-  			this.dirLight.shadow.mapSize.width = 1024;
-  			this.dirLight.shadow.mapSize.height = 1024;
-
-  			this.dirLight.shadow.camera.far = this.height + this.tol;
-  			this.dirLight.shadow.bias = -0.0001;
-  			this.dirLight.shadowDarkness = 0.2;
-  			this.dirLight.visible = true;
-  			this.dirLight.shadowCameraVisible = false;
-
-  			this.scene.add(this.dirLight);
-  			this.scene.add(this.dirLight.target);
-
-  			//		this.floorplan.fireOnUpdatedRooms(updateShadowCamera);
-  			this.floorplan.addEventListener(EVENT_UPDATED, this.updatedroomsevent);
-  		}
-  	}, {
-  		key: 'updateShadowCamera',
-  		value: function updateShadowCamera() {
-  			var size = this.floorplan.getSize();
-  			var d = (Math.max(size.z, size.x) + this.tol) / 2.0;
-  			var center = this.floorplan.getCenter();
-  			var pos = new Vector3(center.x, this.height, center.z);
-  			this.dirLight.position.copy(pos);
-  			this.dirLight.target.position.copy(center);
-  			//dirLight.updateMatrix();
-  			//dirLight.updateWorldMatrix()
-  			this.dirLight.shadow.camera.left = -d;
-  			this.dirLight.shadow.camera.right = d;
-  			this.dirLight.shadow.camera.top = d;
-  			this.dirLight.shadow.camera.bottom = -d;
-  			// this is necessary for updates
-  			if (this.dirLight.shadowCamera) {
-  				this.dirLight.shadow.camera.left = this.dirLight.shadowCameraLeft;
-  				this.dirLight.shadow.camera.right = this.dirLight.shadowCameraRight;
-  				this.dirLight.shadow.camera.top = this.dirLight.shadowCameraTop;
-  				this.dirLight.shadow.camera.bottom = this.dirLight.shadowCameraBottom;
-  				this.dirLight.shadowCamera.updateProjectionMatrix();
-  			}
-  		}
-  	}]);
-  	return Lights;
-  }(EventDispatcher);
-
-  const ReflectorShader = {
-  		uniforms: UniformsUtils.merge( [
-  		UniformsLib[ "ambient" ],
-  		UniformsLib['lights'],
-  	    UniformsLib[ "fog" ],{
-  			'color': 
-  			{
-  				type: 'c',
-  				value: null
-  			},
-  			'tDiffuse': 
-  			{
-  				type: 't',
-  				value: null
-  			},
-  			'textureMatrix': 
-  			{
-  				type: 'm4',
-  				value: null
-  			},
-  			'intensity': 
-  			{
-  				type: 'f',
-  				value: 0.5
-  			},
-  			'tOneWrapX': 
-  			{
-  				type: 'f',
-  				value: 1.0
-  			},
-  			'tOneWrapY': 
-  			{
-  				type: 'f',
-  				value: 1.0
-  			},
-  			'tTwoWrapX': 
-  			{
-  				type: 'f',
-  				value: 1.0
-  			},
-  			'tTwoWrapY': 
-  			{
-  				type: 'f',
-  				value: 1.0
-  			},
-  			'tOne': 
-  			{
-  				type: 't',
-  				value: null
-  			},
-  			'tSec':
-  			{
-  				type: 't',
-  				value: null
-  			},
-  			'tOneFlag':
-  			{
-  				type: 'b',
-  				value: false
-  			},
-  			'tTwoFlag':
-  			{
-  				type: 'b',
-  				value: false
-  			},
-  			'invertedUV':
-  			{
-  				type: 'b',
-  				value: false
-  			}
-  		}]),
-
-  		vertexShader: [
-  		'#ifdef GL_ES',
-  	        'precision highp float;',
-  	      '#endif',
-
-  	      'uniform bool invertedUV;',
-
-  	      'uniform mat4 textureMatrix;',
-  	      'varying vec2 vUv;',
-  	      'varying vec4 vUv2;',
-
-  	      'void main()', 
-  	      '{',
-  	        'vUv = uv;',
-  	        'vUv2 = textureMatrix * vec4( position, 1.0 );',
-  	        'if(invertedUV)',
-  	        '{',
-  	          'vUv[0] = uv[0];',
-  	          'vUv[1] = 1.0 - uv[1];',
-  	        '}',       
-  	        'gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
-  	      '}',
-  		].join( '\n' ),
-
-  		fragmentShader: [
-  		  '// All variables related to Texture one and two',
-  	      '//Is Texture One available',
-  	      'uniform bool tOneFlag;',
-  	      '//Is Texture Two available',
-  	      'uniform bool tTwoFlag;',
-  	      '//If the model is GLTF sometimes the uv is inverted',
-  	      'uniform bool invertedUV;',
-  	      '//The wrap repeat x and y for texture one',
-  	      'uniform float tOneWrapX;',
-  	      'uniform float tOneWrapY;',      
-  	      '//The wrap repeat x and y for texture two',
-  	      'uniform float tTwoWrapX;',
-  	      'uniform float tTwoWrapY;',
-  	      '//The textures themselves',
-  	      'uniform sampler2D tOne;',
-  	      'uniform sampler2D tSec;',
-  	      '//The tDiffuse holds the texture of the scene reflection',
-  	      'uniform sampler2D tDiffuse;  '   , 
-  	      '//The intensity of the reflection',
-  	      'uniform float intensity;',
-  	      '//The color of the material incase of two textures arent available',
-  	      'uniform vec3 color;',
-  	      '//vUv2 and vUv is coming from uv coordinates and texture matrix projection',
-  	      'varying vec2 vUv;',
-  	      'varying vec4 vUv2;',
-  	      ShaderChunk[ "common" ],
-  	      ShaderChunk[ "fog_pars_fragment" ],
-  	      'void main() ',
-  	      '{',
-  	            'vec3 c;',
-  	            'vec3 tcolors;',
-  	            'vec4 reflection = texture2DProj( tDiffuse, vUv2 );',
-  	            'vec4 Ca;',
-  	            'vec4 Cb;',
-  	            
-  	            'if(!tOneFlag && !tTwoFlag)',
-  	            '{',
-  	                'c = (reflection.rgb * (reflection.a * intensity)) + (color.rgb * (1.0 - (reflection.a * intensity)));',
-  	            '}',
-  	            'if(tOneFlag && tTwoFlag)',
-  	            '{',
-  	            	'Ca = texture2D(tOne, vec2(vUv[0] * tOneWrapX, vUv[1] * tOneWrapY));',
-  	        		'Cb = texture2D(tSec, vec2(vUv[0] * tTwoWrapY, vUv[1] * tTwoWrapY));',
-  	                
-  	                'tcolors = (Ca.rgb * 0.5) + (Cb.rgb * 0.5);',
-  	                'c = (reflection.rgb * (reflection.a * intensity)) + (tcolors.rgb * (1.0 - (reflection.a * intensity)));',
-  	            '}',
-  	            'else if(tOneFlag && !tTwoFlag)',
-  	            '{',
-  	            	'Ca = texture2D(tOne, vec2(vUv[0] * tOneWrapX, vUv[1] * tOneWrapY));',
-  	                'tcolors = (Ca.rgb * 1.0);',
-  	                'c = (reflection.rgb * (reflection.a * intensity)) + (tcolors.rgb * (1.0 - (reflection.a * intensity)));',
-  	            '}',
-  	            'else if(!tOneFlag && tTwoFlag)',
-  	            '{',
-  	            	'Cb = texture2D(tSec, vec2(vUv[0] * tTwoWrapY, vUv[1] * tTwoWrapY));',
-  	                'tcolors = (Cb.rgb * 1.0);',
-  	                'c = (reflection.rgb * (reflection.a * intensity)) + (tcolors.rgb * (1.0 - (reflection.a * intensity)));',
-  	            '}',
-  	            'gl_FragColor += vec4(c, 1.0);',
-  	            ShaderChunk[ "fog_fragment" ],
-  	      '}',
-  		].join( '\n' ),
-  	};
-
-
-  class GroundSceneReflector 
-  {
-  	constructor(meshobject, renderer, scene, data)
-  	{
-  	    var mirrorObj = meshobject;
-
-  	    if(!mirrorObj)
-  	    {
-  	    	return;
-  	    }
-
-  	    this.renderer = renderer;
-  	    this.data = (data) ? data : {};
-  	    // this.renderer.alpha = true;
-
-  	    this.data.textureWidth = (this.data.textureWidth)? this.data.textureWidth : 256;
-  	    this.data.textureHeight = (this.data.textureHeight)? this.data.textureHeight : 256;
-  	    this.data.intensity = (this.data.intensity)? this.data.intensity : 0.5;
-  	    this.data.invertedUV = (this.data.invertedUV)? this.data.invertedUV : false;
-  	    this.data.wrapOne = (this.data.wrapOne)? this.data.wrapOne : {x:1, y: 1};
-  	    this.data.wrapTwo = (this.data.wrapTwo)? this.data.wrapTwo : {x:1, y: 1};
-  	    this.data.color = (this.data.color)? this.data.color : '#848485';
-  	    
-  	    
-  	    var reflectorPlane = new Plane();
-  		var normal = new Vector3();
-  		var reflectorWorldPosition = new Vector3();
-  		var cameraWorldPosition = new Vector3();
-  		var rotationMatrix = new Matrix4();
-  		var lookAtPosition = new Vector3( 0, 0, - 1 );
-  		var clipPlane = new Vector4();
-  		var viewport = new Vector4();
-
-  		var view = new Vector3();
-  		var target = new Vector3();
-  		var q = new Vector4();
-
-  		var textureMatrix = new Matrix4();
-  		var virtualCamera = new PerspectiveCamera();
-  	    var renderTarget = new WebGLRenderTarget(this.data.textureWidth, this.data.textureHeight, {minFilter: LinearFilter, magFilter: LinearFilter, format: RGBAFormat, } );
-
-
-  	    if ( ! MathUtils.isPowerOfTwo( this.data.textureWidth ) || ! MathUtils.isPowerOfTwo( this.data.textureHeight ) ) 
-  	    {
-  			renderTarget.texture.generateMipmaps = false;
-  		}
-
-  		var scope = mirrorObj;
-  		var color = this.data.color;
-  		var textureWidth = this.data.textureWidth;
-  		var textureHeight = this.data.textureHeight;
-  		var clipBias = 0;
-  		var shader = ReflectorShader;
-  		var recursion = 0;
-
-  		var material = undefined;
-  		mirrorObj.material = undefined;
-  		if(!mirrorObj.material)
-  		{
-  			material = new ShaderMaterial( {
-  			uniforms: UniformsUtils.clone( shader.uniforms ),
-  			fragmentShader: shader.fragmentShader,
-  			vertexShader: shader.vertexShader,
-  			side: DoubleSide,
-  			transparent: true,
-  			lights: true,
-  			});
-
-  			material.uniforms.intensity.value = this.data.intensity;
-  			material.uniforms.tDiffuse.value  = renderTarget.texture;
-  			material.uniforms.color.value = new Color(this.data.color);
-  			material.uniforms.invertedUV.value = this.data.invertedUV;
-  			material.uniforms.textureMatrix.value = textureMatrix;
-
-  			if(this.data.textureOne)
-  			{
-  				var texture = new TextureLoader().load(this.data.textureOne);
-  				texture.wrapS = RepeatWrapping;
-  	        	texture.wrapT = RepeatWrapping;
-  		        texture.repeat.set( this.data.wrapOne.x, this.data.wrapOne.y );
-  		        material.uniforms.tOneFlag.value = true;
-  		        material.uniforms.tOne.value = texture;
-  		        material.uniforms.tOneWrapX.value = texture.repeat.x;
-  		        material.uniforms.tOneWrapY.value = texture.repeat.y;
-  			}
-
-  			if(this.data.textureTwo)
-  			{
-  				var texture = new TextureLoader().load(this.data.textureTwo);
-  				texture.wrapS = RepeatWrapping;
-  	        	texture.wrapT = RepeatWrapping;
-  		        texture.repeat.set( this.data.wrapTwo.x, this.data.wrapTwo.y );
-  		        material.uniforms.tTwoFlag.value = true;
-  		        material.uniforms.tSec.value = texture;
-  		        material.uniforms.tTwoWrapX.value = texture.repeat.x;
-  		        material.uniforms.tTwoWrapY.value = texture.repeat.y;
-  			}
-  			mirrorObj.material = material;
-  			this.material = material;
-  		}
-
-  	    mirrorObj.onBeforeRender = function(renderer, scene, camera)
-  	    {
-  	    	if ( 'recursion' in camera.userData ) 
-  	    	{
-  				if ( camera.userData.recursion === recursion ) return;
-  				camera.userData.recursion ++;
-  			}
-
-  			reflectorWorldPosition.setFromMatrixPosition( scope.matrixWorld );
-  			cameraWorldPosition.setFromMatrixPosition( camera.matrixWorld );
-  			rotationMatrix.extractRotation( scope.matrixWorld );
-  			normal.set( 0, 0, 1 );
-  			normal.applyMatrix4( rotationMatrix );
-  			view.subVectors( reflectorWorldPosition, cameraWorldPosition );
-  			// Avoid rendering when reflector is facing away
-
-  			// if ( view.dot( normal ) > 0 ) return;
-  			view.reflect( normal ).negate();
-  			view.add( reflectorWorldPosition );
-  			rotationMatrix.extractRotation( camera.matrixWorld );
-  			lookAtPosition.set( 0, 0, - 1 );
-  			lookAtPosition.applyMatrix4( rotationMatrix );
-  			lookAtPosition.add( cameraWorldPosition );
-  			target.subVectors( reflectorWorldPosition, lookAtPosition );
-  			target.reflect( normal ).negate();
-  			target.add( reflectorWorldPosition );
-  			virtualCamera.position.copy( view );
-  			virtualCamera.up.set( 0, 1, 0 );
-  			virtualCamera.up.applyMatrix4( rotationMatrix );
-  			virtualCamera.up.reflect( normal );
-  			virtualCamera.lookAt( target );
-  			virtualCamera.near = camera.near;
-  			virtualCamera.far = camera.far; // Used in WebGLBackground
-  			virtualCamera.fov = camera.fov;
-  			virtualCamera.updateMatrixWorld();
-  			virtualCamera.projectionMatrix.copy( camera.projectionMatrix );
-  			virtualCamera.userData.recursion = 0;
-  			// Update the texture matrix
-  			textureMatrix.set(
-  				0.5, 0.0, 0.0, 0.5,
-  				0.0, 0.5, 0.0, 0.5,
-  				0.0, 0.0, 0.5, 0.5,
-  				0.0, 0.0, 0.0, 1.0
-  			);
-
-  			textureMatrix.multiply( virtualCamera.projectionMatrix );
-  			textureMatrix.multiply( virtualCamera.matrixWorldInverse );
-  			textureMatrix.multiply( scope.matrixWorld );
-
-
-
-  			// Now update projection matrix with new clip plane, implementing code from: http://www.terathon.com/code/oblique.html
-  			// Paper explaining this technique: http://www.terathon.com/lengyel/Lengyel-Oblique.pdf
-  			reflectorPlane.setFromNormalAndCoplanarPoint( normal, reflectorWorldPosition );
-  			reflectorPlane.applyMatrix4( virtualCamera.matrixWorldInverse );
-
-  			clipPlane.set( reflectorPlane.normal.x, reflectorPlane.normal.y, reflectorPlane.normal.z, reflectorPlane.constant );
-
-  			var projectionMatrix = virtualCamera.projectionMatrix;
-  			q.x = ( Math.sign( clipPlane.x ) + projectionMatrix.elements[ 8 ] ) / projectionMatrix.elements[ 0 ];
-  			q.y = ( Math.sign( clipPlane.y ) + projectionMatrix.elements[ 9 ] ) / projectionMatrix.elements[ 5 ];
-  			q.z = - 1.0;
-  			q.w = ( 1.0 + projectionMatrix.elements[ 10 ] ) / projectionMatrix.elements[ 14 ];
-
-  			// Calculate the scaled plane vector
-  			clipPlane.multiplyScalar( 2.0 / clipPlane.dot( q ) );
-  			// Replacing the third row of the projection matrix
-  			projectionMatrix.elements[ 2 ] = clipPlane.x;
-  			projectionMatrix.elements[ 6 ] = clipPlane.y;
-  			projectionMatrix.elements[ 10 ] = clipPlane.z + 1.0 - clipBias;
-  			projectionMatrix.elements[ 14 ] = clipPlane.w;
-
-  			// Render
-
-  			scope.visible = false;
-
-  			var currentRenderTarget = renderer.getRenderTarget();
-
-  			var currentVrEnabled = renderer.vr.enabled;
-  			var currentShadowAutoUpdate = renderer.shadowMap.autoUpdate;
-
-  			renderer.vr.enabled = false; // Avoid camera modification and recursion
-  			renderer.shadowMap.autoUpdate = false; // Avoid re-computing shadows
-
-  			renderer.render( scene, virtualCamera, renderTarget, true );
-
-  			renderer.vr.enabled = currentVrEnabled;
-  			renderer.shadowMap.autoUpdate = currentShadowAutoUpdate;
-
-  			renderer.setRenderTarget( currentRenderTarget );
-
-  			// Restore viewport
-
-  			var bounds = camera.bounds;
-
-  			if ( bounds !== undefined ) {
-
-  				var size = renderer.getSize();
-  				var pixelRatio = renderer.getPixelRatio();
-
-  				viewport.x = bounds.x * size.width * pixelRatio;
-  				viewport.y = bounds.y * size.height * pixelRatio;
-  				viewport.z = bounds.z * size.width * pixelRatio;
-  				viewport.w = bounds.w * size.height * pixelRatio;
-
-  				renderer.state.viewport( viewport );
-
-  			}
-  			scope.visible = true;
-  	    };	    
-  	}
-  }
+  DragControls.prototype = Object.create( EventDispatcher.prototype );
+  DragControls.prototype.constructor = DragControls;
 
   var Skybox = function (_EventDispatcher) {
       inherits(Skybox, _EventDispatcher);
@@ -82886,25 +80385,15 @@ vec4 envMapTexelToLinear(vec4 color) {
           _this.sky = new Mesh(_this.skyGeo, _this.skyMat);
           //		this.sky.position.x += this.sphereRadius*0.5;
 
-
-          var groundT = new TextureLoader().load('rooms/textures/Ground_4K.jpg', function () {});
-          groundT.wrapS = groundT.wrapT = RepeatWrapping;
-          groundT.repeat.set(10, 10);
-
-          //		var uniforms2 = {topColor: {type: 'c',value: new Color(0xFFFFFF)},bottomColor: {type: 'c',value: new Color(0x999999)},offset: {type: 'f',value: this.verticalOffset}, exponent: {type:'f', value: this.exponent}};
-          _this.groundGeo = new PlaneGeometry(10000, 10000, 10);
-          _this.groundMat = new MeshBasicMaterial({ color: 0xEAEAEA, side: DoubleSide, map: groundT });
-          _this.ground = new Mesh(_this.groundGeo, _this.groundMat);
-          _this.ground.rotateX(-Math.PI * 0.5);
-          _this.ground.position.y = -1;
-
-          _this.groundSceneReflector = new GroundSceneReflector(_this.ground, _this.renderer, _this.scene, { textureOne: 'rooms/textures/Ground_4K.jpg', textureTwo: 'rooms/textures/GroundRough.jpg', wrapOne: { x: 40, y: 40 }, wrapTwo: { x: 50, y: 50 }, textureWidth: 512, textureHeight: 512, intensity: 0.1, blendIntensity: 0.05 });
+          _this.ground = new GridHelper(10000, 100, 0x0F0F0F, 0x808080);
+          _this.ground.position.y = -10;
 
           _this.scene.add(_this.sky);
           _this.scene.add(_this.ground);
 
-          var axesHelper = new AxesHelper(100);
+          var axesHelper = new AxesHelper(1000);
           _this.scene.add(axesHelper);
+          // axesHelper.visible = false;
 
           _this.init();
           return _this;
@@ -82964,13 +80453,619 @@ vec4 envMapTexelToLinear(vec4 color) {
       return Skybox;
   }(EventDispatcher);
 
-  var Main = function (_EventDispatcher) {
-      inherits(Main, _EventDispatcher);
+  var Edge3D = function (_EventDispatcher) {
+      inherits(Edge3D, _EventDispatcher);
 
-      function Main(model, element, canvasElement, opts) {
-          classCallCheck(this, Main);
+      function Edge3D(scene, edge, controls) {
+          classCallCheck(this, Edge3D);
 
-          var _this = possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this));
+          var _this = possibleConstructorReturn(this, (Edge3D.__proto__ || Object.getPrototypeOf(Edge3D)).call(this));
+
+          _this.name = 'edge';
+          _this.scene = scene;
+          _this.edge = edge;
+          _this.controls = controls;
+
+          _this.wall = edge.wall;
+          _this.front = edge.front;
+
+          _this.planes = [];
+          _this.phantomPlanes = [];
+          _this.basePlanes = []; // always visible
+
+          //Debug wall intersection planes. Edge.plane is the plane used for intersection
+          //		this.phantomPlanes.push(this.edge.plane);//Enable this line to see the wall planes
+
+          _this.texture = new TextureLoader();
+
+          _this.lightMap = new TextureLoader().load('rooms/textures/walllightmap.png');
+          _this.fillerColor = 0xdddddd;
+          _this.sideColor = 0xcccccc;
+          _this.baseColor = 0xdddddd;
+          _this.visible = false;
+
+          var scope = _this;
+
+          _this.redrawevent = function () {
+              scope.redraw();
+          };
+          _this.visibilityevent = function () {
+              scope.updateVisibility();
+          };
+          _this.showallevent = function () {
+              scope.showAll();
+          };
+
+          _this.visibilityfactor = true;
+          _this.init();
+          return _this;
+      }
+
+      createClass(Edge3D, [{
+          key: 'remove',
+          value: function remove() {
+              this.edge.removeEventListener(EVENT_REDRAW, this.redrawevent);
+              this.controls.removeEventListener('change', this.visibilityevent);
+              this.removeFromScene();
+          }
+      }, {
+          key: 'init',
+          value: function init() {
+              this.edge.addEventListener(EVENT_REDRAW, this.redrawevent);
+              this.controls.addEventListener('change', this.visibilityevent);
+
+              this.updateTexture();
+              this.updatePlanes();
+              this.addToScene();
+          }
+      }, {
+          key: 'redraw',
+          value: function redraw() {
+              this.removeFromScene();
+              this.updateTexture();
+              this.updatePlanes();
+              this.addToScene();
+          }
+      }, {
+          key: 'removeFromScene',
+          value: function removeFromScene() {
+              var scope = this;
+              scope.planes.forEach(function (plane) {
+                  scope.scene.remove(plane);
+              });
+              scope.basePlanes.forEach(function (plane) {
+                  scope.scene.remove(plane);
+              });
+              scope.phantomPlanes.forEach(function (plane) {
+                  scope.scene.remove(plane);
+              });
+              scope.planes = [];
+              scope.basePlanes = [];
+          }
+      }, {
+          key: 'addToScene',
+          value: function addToScene() {
+              var scope = this;
+              this.planes.forEach(function (plane) {
+                  scope.scene.add(plane);
+              });
+              this.basePlanes.forEach(function (plane) {
+                  scope.scene.add(plane);
+              });
+              this.phantomPlanes.forEach(function (plane) {
+                  scope.scene.add(plane);
+              });
+              this.updateVisibility();
+          }
+      }, {
+          key: 'showAll',
+          value: function showAll() {
+              var scope = this;
+              scope.visible = true;
+              scope.planes.forEach(function (plane) {
+                  plane.material.transparent = !scope.visible;
+                  plane.material.opacity = 1.0;
+                  plane.visible = scope.visible;
+              });
+
+              this.wall.items.forEach(function (item) {
+                  item.updateEdgeVisibility(scope.visible, scope.front);
+              });
+              this.wall.onItems.forEach(function (item) {
+                  item.updateEdgeVisibility(scope.visible, scope.front);
+              });
+          }
+      }, {
+          key: 'switchWireframe',
+          value: function switchWireframe(flag) {
+              var scope = this;
+              scope.visible = true;
+              scope.planes.forEach(function (plane) {
+                  plane.material.wireframe = flag;
+              });
+          }
+      }, {
+          key: 'updateVisibility',
+          value: function updateVisibility() {
+              var scope = this;
+              // finds the normal from the specified edge
+              var start = scope.edge.interiorStart();
+              var end = scope.edge.interiorEnd();
+              var x = end.x - start.x;
+              var y = end.y - start.y;
+              // rotate 90 degrees CCW
+              var normal = new Vector3(-y, 0, x);
+              normal.normalize();
+
+              // setup camera: scope.controls.object refers to the camera of the scene
+              var position = scope.controls.object.position.clone();
+              var focus = new Vector3((start.x + end.x) / 2.0, 0, (start.y + end.y) / 2.0);
+              var direction = position.sub(focus).normalize();
+
+              // find dot
+              var dot = normal.dot(direction);
+              // update visible
+              scope.visible = dot >= 0;
+              // show or hide planes
+              scope.planes.forEach(function (plane) {
+                  // plane.material.transparent = !scope.visible;
+                  // plane.material.opacity = (scope.visible) ? 1.0 : 0.3;
+                  plane.visible = scope.visible;
+              });
+              scope.updateObjectVisibility();
+          }
+      }, {
+          key: 'updateObjectVisibility',
+          value: function updateObjectVisibility() {
+              //		var scope = this;
+              //		this.wall.items.forEach((item) => {
+              //			item.updateEdgeVisibility(scope.visible, scope.front);
+              //		});
+              //		this.wall.onItems.forEach((item) => {
+              //			item.updateEdgeVisibility(scope.visible, scope.front);
+              //		});
+          }
+      }, {
+          key: 'updateTexture',
+          value: function updateTexture(callback) {
+              if (this.edge == null) {
+                  return;
+              }
+              var scope = this;
+              // callback is fired when texture loads
+              callback = callback || function () {
+                  scope.scene.needsUpdate = true;
+              };
+              var textureData = this.edge.getTexture();
+              var stretch = textureData.stretch;
+              var url = textureData.url; //this is a hack temperory
+              var scale = textureData.scale;
+              this.texture = new TextureLoader().load(url, callback);
+
+              if (!stretch) {
+                  var height = this.wall.height;
+                  var width = this.edge.interiorDistance();
+                  this.texture.wrapT = RepeatWrapping;
+                  this.texture.wrapS = RepeatWrapping;
+                  this.texture.repeat.set(width / scale, height / scale);
+                  this.texture.needsUpdate = true;
+              }
+          }
+      }, {
+          key: 'updatePlanes',
+          value: function updatePlanes() {
+              var extStartCorner = this.edge.getStart();
+              var extEndCorner = this.edge.getEnd();
+
+              if (extStartCorner == null || extEndCorner == null) {
+                  return;
+              }
+
+              var color = 0xFFFFFF;
+              var wallMaterial = new MeshBasicMaterial({
+                  color: color,
+                  side: FrontSide,
+                  map: this.texture,
+                  transparent: true,
+                  lightMap: this.lightMap,
+                  opacity: 1.0,
+                  wireframe: false
+              });
+              var fillerMaterial = new MeshBasicMaterial({
+                  color: this.fillerColor,
+                  side: DoubleSide,
+                  map: this.texture,
+                  transparent: true,
+                  opacity: 1.0,
+                  wireframe: false
+              });
+
+              // exterior plane for real exterior walls
+              //If the walls have corners that have more than one room attached
+              //Then there is no need to construct an exterior wall
+              if (this.edge.wall.start.getAttachedRooms().length < 2 || this.edge.wall.end.getAttachedRooms().length < 2) {
+                  this.planes.push(this.makeWall(this.edge.exteriorStart(), this.edge.exteriorEnd(), this.edge.exteriorTransform, this.edge.invExteriorTransform, fillerMaterial));
+              }
+              // interior plane
+              this.planes.push(this.makeWall(this.edge.interiorStart(), this.edge.interiorEnd(), this.edge.interiorTransform, this.edge.invInteriorTransform, wallMaterial));
+              // bottom
+              // put into basePlanes since this is always visible
+              this.basePlanes.push(this.buildFillerUniformHeight(this.edge, 0, BackSide, this.baseColor));
+              if (this.edge.wall.start.getAttachedRooms().length < 2 || this.edge.wall.end.getAttachedRooms().length < 2) {
+                  this.planes.push(this.buildFillerVaryingHeights(this.edge, DoubleSide, this.fillerColor));
+              }
+
+              // sides
+              this.planes.push(this.buildSideFillter(this.edge.interiorStart(), this.edge.exteriorStart(), extStartCorner.elevation, this.sideColor));
+              this.planes.push(this.buildSideFillter(this.edge.interiorEnd(), this.edge.exteriorEnd(), extEndCorner.elevation, this.sideColor));
+              //		this.planes.push(this.buildSideFillter(this.edge.interiorStart(), this.edge.exteriorStart(), this.wall.startElevation, this.sideColor));
+              //		this.planes.push(this.buildSideFillter(this.edge.interiorEnd(), this.edge.exteriorEnd(), extEndCorner.endElevation, this.sideColor));
+          }
+
+          // start, end have x and y attributes (i.e. corners)
+
+      }, {
+          key: 'makeWall',
+          value: function makeWall(start, end, transform, invTransform, material) {
+              var v1 = this.toVec3(start);
+              var v2 = this.toVec3(end);
+              var v3 = v2.clone();
+              var v4 = v1.clone();
+
+              v3.y = this.edge.getEnd().elevation;
+              v4.y = this.edge.getStart().elevation;
+
+              //		v3.y = this.wall.getClosestCorner(end).elevation;
+              //		v4.y = this.wall.getClosestCorner(start).elevation;
+
+              var points = [v1.clone(), v2.clone(), v3.clone(), v4.clone()];
+
+              points.forEach(function (p) {
+                  p.applyMatrix4(transform);
+              });
+
+              var spoints = [new Vector2(points[0].x, points[0].y), new Vector2(points[1].x, points[1].y), new Vector2(points[2].x, points[2].y), new Vector2(points[3].x, points[3].y)];
+              var shape = new Shape(spoints);
+
+              // add holes for each wall item
+              this.wall.items.forEach(function (item) {
+                  var pos = item.position.clone();
+                  pos.applyMatrix4(transform);
+                  var halfSize = item.halfSize;
+                  var min = halfSize.clone().multiplyScalar(-1);
+                  var max = halfSize.clone();
+                  min.add(pos);
+                  max.add(pos);
+
+                  var holePoints = [new Vector2(min.x, min.y), new Vector2(max.x, min.y), new Vector2(max.x, max.y), new Vector2(min.x, max.y)];
+                  shape.holes.push(new Path(holePoints));
+              });
+
+              var geometry = new ShapeGeometry(shape);
+              geometry.vertices.forEach(function (v) {
+                  v.applyMatrix4(invTransform);
+              });
+
+              // make UVs
+              var totalDistance = Utils.distance(new Vector2(v1.x, v1.z), new Vector2(v2.x, v2.z));
+              var height = this.wall.height;
+              geometry.faceVertexUvs[0] = [];
+
+              geometry.faces.forEach(function (face) {
+                  var vertA = geometry.vertices[face.a];
+                  var vertB = geometry.vertices[face.b];
+                  var vertC = geometry.vertices[face.c];
+                  geometry.faceVertexUvs[0].push([vertexToUv(vertA), vertexToUv(vertB), vertexToUv(vertC)]);
+              });
+
+              geometry.faceVertexUvs[1] = geometry.faceVertexUvs[0];
+              geometry.computeFaceNormals();
+              geometry.computeVertexNormals();
+
+              function vertexToUv(vertex) {
+                  var x = Utils.distance(new Vector2(v1.x, v1.z), new Vector2(vertex.x, vertex.z)) / totalDistance;
+                  var y = vertex.y / height;
+                  return new Vector2(x, y);
+              }
+
+              var mesh = new Mesh(geometry, material);
+              mesh.name = 'wall';
+              return mesh;
+          }
+      }, {
+          key: 'buildSideFillter',
+          value: function buildSideFillter(p1, p2, height, color) {
+              var points = [this.toVec3(p1), this.toVec3(p2), this.toVec3(p2, height), this.toVec3(p1, height)];
+
+              var geometry = new Geometry();
+              points.forEach(function (p) {
+                  geometry.vertices.push(p);
+              });
+              geometry.faces.push(new Face3(0, 1, 2));
+              geometry.faces.push(new Face3(0, 2, 3));
+
+              var fillerMaterial = new MeshBasicMaterial({ color: color, side: DoubleSide });
+              var filler = new Mesh(geometry, fillerMaterial);
+              return filler;
+          }
+      }, {
+          key: 'buildFillerVaryingHeights',
+          value: function buildFillerVaryingHeights(edge, side, color) {
+              var a = this.toVec3(edge.exteriorStart(), this.edge.getStart().elevation);
+              var b = this.toVec3(edge.exteriorEnd(), this.edge.getEnd().elevation);
+              var c = this.toVec3(edge.interiorEnd(), this.edge.getEnd().elevation);
+              var d = this.toVec3(edge.interiorStart(), this.edge.getStart().elevation);
+
+              //		var a = this.toVec3(edge.exteriorStart(), this.wall.getClosestCorner(edge.exteriorStart()).elevation);
+              //		var b = this.toVec3(edge.exteriorEnd(), this.wall.getClosestCorner(edge.exteriorEnd()).elevation);
+              //		var c = this.toVec3(edge.interiorEnd(), this.wall.getClosestCorner(edge.interiorEnd()).elevation);
+              //		var d = this.toVec3(edge.interiorStart(), this.wall.getClosestCorner(edge.interiorStart()).elevation);
+
+
+              var fillerMaterial = new MeshBasicMaterial({ color: color, side: side });
+
+              var geometry = new Geometry();
+              geometry.vertices.push(a, b, c, d);
+              geometry.faces.push(new Face3(0, 1, 2));
+              geometry.faces.push(new Face3(0, 2, 3));
+
+              var filler = new Mesh(geometry, fillerMaterial);
+              return filler;
+          }
+      }, {
+          key: 'buildFillerUniformHeight',
+          value: function buildFillerUniformHeight(edge, height, side, color) {
+              var points = [this.toVec2(edge.exteriorStart()), this.toVec2(edge.exteriorEnd()), this.toVec2(edge.interiorEnd()), this.toVec2(edge.interiorStart())];
+
+              var fillerMaterial = new MeshBasicMaterial({ color: color, side: side });
+              var shape = new Shape(points);
+              var geometry = new ShapeGeometry(shape);
+              var filler = new Mesh(geometry, fillerMaterial);
+              filler.rotation.set(Math.PI / 2, 0, 0);
+              filler.position.y = height;
+              return filler;
+          }
+      }, {
+          key: 'toVec2',
+          value: function toVec2(pos) {
+              return new Vector2(pos.x, pos.y);
+          }
+      }, {
+          key: 'toVec3',
+          value: function toVec3(pos, height) {
+              height = height || 0;
+              return new Vector3(pos.x, height, pos.y);
+          }
+      }]);
+      return Edge3D;
+  }(EventDispatcher);
+
+  var Floor3D = function (_EventDispatcher) {
+      inherits(Floor3D, _EventDispatcher);
+
+      function Floor3D(scene, room) {
+          classCallCheck(this, Floor3D);
+
+          var _this = possibleConstructorReturn(this, (Floor3D.__proto__ || Object.getPrototypeOf(Floor3D)).call(this));
+
+          _this.scene = scene;
+          _this.room = room;
+          _this.floorPlane = null;
+          _this.roofPlane = null;
+          _this.changedevent = function () {
+              _this.redraw();
+          };
+          _this.init();
+          return _this;
+      }
+
+      createClass(Floor3D, [{
+          key: 'switchWireframe',
+          value: function switchWireframe(flag) {
+              this.floorPlane.visible = !flag;
+              this.roofPlane.visible = !flag;
+          }
+      }, {
+          key: 'init',
+          value: function init() {
+              this.room.addEventListener(EVENT_CHANGED, this.changedevent);
+              this.floorPlane = this.buildFloor();
+              // roofs look weird, so commented out
+              // this.roofPlane = this.buildRoofUniformHeight();
+              this.roofPlane = this.buildRoofVaryingHeight();
+          }
+      }, {
+          key: 'redraw',
+          value: function redraw() {
+              this.removeFromScene();
+              this.floorPlane = this.buildFloor();
+              this.roofPlane = this.buildRoofVaryingHeight();
+              this.addToScene();
+          }
+      }, {
+          key: 'buildFloor',
+          value: function buildFloor() {
+              var textureSettings = this.room.getTexture();
+              // setup texture
+              //		var floorTexture = ImageUtils.loadTexture(textureSettings.url);
+              var floorTexture = new TextureLoader().load(textureSettings.url);
+              floorTexture.wrapS = RepeatWrapping;
+              floorTexture.wrapT = RepeatWrapping;
+              floorTexture.repeat.set(1, 1);
+
+              var textureScale = textureSettings.scale;
+              // http://stackoverflow.com/questions/19182298/how-to-texture-a-three-js-mesh-created-with-shapegeometry
+              // scale down coords to fit 0 -> 1, then rescale
+
+              var points = [];
+              this.room.interiorCorners.forEach(function (corner) {
+                  points.push(new Vector2(corner.x / textureScale, corner.y / textureScale));
+              });
+              var shape = new Shape(points);
+              var geometry = new ShapeGeometry(shape);
+              // var floor = new Mesh(geometry, floorMaterialTop);
+              var floor = new Mesh(geometry, new MeshBasicMaterial({ color: 0xC00C0C0, side: DoubleSide }));
+
+              floor.rotation.set(Math.PI / 2, 0, 0);
+              floor.scale.set(textureScale, textureScale, textureScale);
+              // floor.receiveShadow = true;
+              floor.castShadow = false;
+              return floor;
+          }
+      }, {
+          key: 'buildRoofVaryingHeight',
+          value: function buildRoofVaryingHeight() {
+              // setup texture
+              var roofMaterial = new MeshBasicMaterial({ side: FrontSide, color: 0xe5e5e5 });
+              var geometry = new Geometry();
+
+              this.room.corners.forEach(function (corner) {
+                  var vertex = new Vector3(corner.x, corner.elevation, corner.y);
+                  geometry.vertices.push(vertex);
+              });
+              for (var i = 2; i < geometry.vertices.length; i++) {
+                  var face = new Face3(0, i - 1, i);
+                  geometry.faces.push(face);
+              }
+              var roof = new Mesh(geometry, roofMaterial);
+              // roof.rotation.set(Math.PI / 2, 0, 0);
+              // roof.position.y = Configuration.getNumericValue(configWallHeight);
+              return roof;
+          }
+      }, {
+          key: 'buildRoofUniformHeight',
+          value: function buildRoofUniformHeight() {
+              // setup texture
+              var roofMaterial = new MeshBasicMaterial({ side: FrontSide, color: 0xe5e5e5 });
+              var points = [];
+              this.room.interiorCorners.forEach(function (corner) {
+                  points.push(new Vector2(corner.x, corner.y));
+              });
+              var shape = new Shape(points);
+              var geometry = new ShapeGeometry(shape);
+              var roof = new Mesh(geometry, roofMaterial);
+              roof.rotation.set(Math.PI / 2, 0, 0);
+              roof.position.y = Configuration.getNumericValue(configWallHeight);
+              return roof;
+          }
+      }, {
+          key: 'addToScene',
+          value: function addToScene() {
+              this.scene.add(this.floorPlane);
+              this.scene.add(this.roofPlane);
+              //scene.add(roofPlane);
+              // hack so we can do intersect testing
+              this.scene.add(this.room.floorPlane);
+              this.scene.add(this.room.roofPlane);
+          }
+      }, {
+          key: 'removeFromScene',
+          value: function removeFromScene() {
+              this.scene.remove(this.floorPlane);
+              this.scene.remove(this.roofPlane);
+              this.scene.remove(this.room.floorPlane);
+              this.scene.remove(this.room.roofPlane);
+          }
+      }, {
+          key: 'showRoof',
+          value: function showRoof(flag) {
+              console.log(flag);
+              // this.roofPlane.visible = flag;
+          }
+      }]);
+      return Floor3D;
+  }(EventDispatcher);
+
+  var Lights3D = function (_EventDispatcher) {
+      inherits(Lights3D, _EventDispatcher);
+
+      function Lights3D(scene, floorplan) {
+          classCallCheck(this, Lights3D);
+
+          var _this = possibleConstructorReturn(this, (Lights3D.__proto__ || Object.getPrototypeOf(Lights3D)).call(this));
+
+          _this.scene = scene;
+          _this.floorplan = floorplan;
+          _this.tol = 1;
+          _this.height = 300; // TODO: share with Blueprint.Wall
+          _this.dirLight = null;
+          _this.updatedroomsevent = function () {
+              _this.updateShadowCamera();
+          };
+          _this.init();
+          return _this;
+      }
+
+      createClass(Lights3D, [{
+          key: 'getDirLight',
+          value: function getDirLight() {
+              return this.dirLight;
+          }
+      }, {
+          key: 'init',
+          value: function init() {
+              var light = new HemisphereLight(0xffffff, 0x888888, 1.1);
+              light.position.set(300, this.height, 500);
+              this.scene.add(light);
+
+              this.dirLight = new DirectionalLight(0xffffff, 0.5);
+              this.dirLight.color.setHSL(1, 1, 0.1);
+
+              this.ambLight = new AmbientLight(0x404040); // soft white light
+              this.ambLight.intensity = 1.25;
+
+              this.dirLight.castShadow = true;
+
+              this.dirLight.shadow.mapSize.width = 1024;
+              this.dirLight.shadow.mapSize.height = 1024;
+
+              this.dirLight.shadow.camera.far = this.height + this.tol;
+              this.dirLight.shadow.bias = -0.0001;
+              this.dirLight.shadowDarkness = 0.2;
+              this.dirLight.visible = true;
+              this.dirLight.shadowCameraVisible = false;
+
+              this.scene.add(this.dirLight);
+              this.scene.add(this.dirLight.target);
+              this.scene.add(this.ambLight);
+
+              this.floorplan.addEventListener(EVENT_UPDATED, this.updatedroomsevent);
+          }
+      }, {
+          key: 'updateShadowCamera',
+          value: function updateShadowCamera() {
+              var size = this.floorplan.getSize();
+              var d = (Math.max(size.z, size.x) + this.tol) / 2.0;
+              var center = this.floorplan.getCenter();
+              var pos = new Vector3(center.x, this.height, center.z);
+              this.dirLight.position.copy(pos);
+              this.dirLight.target.position.copy(center);
+              //dirLight.updateMatrix();
+              //dirLight.updateWorldMatrix()
+              this.dirLight.shadow.camera.left = -d;
+              this.dirLight.shadow.camera.right = d;
+              this.dirLight.shadow.camera.top = d;
+              this.dirLight.shadow.camera.bottom = -d;
+              // this is necessary for updates
+              if (this.dirLight.shadowCamera) {
+                  this.dirLight.shadow.camera.left = this.dirLight.shadowCameraLeft;
+                  this.dirLight.shadow.camera.right = this.dirLight.shadowCameraRight;
+                  this.dirLight.shadow.camera.top = this.dirLight.shadowCameraTop;
+                  this.dirLight.shadow.camera.bottom = this.dirLight.shadowCameraBottom;
+                  this.dirLight.shadowCamera.updateProjectionMatrix();
+              }
+          }
+      }]);
+      return Lights3D;
+  }(EventDispatcher);
+
+  var Viewer3D = function (_EventDispatcher) {
+      inherits(Viewer3D, _EventDispatcher);
+
+      function Viewer3D(model, element, canvasElement, opts) {
+          classCallCheck(this, Viewer3D);
+
+          var _this = possibleConstructorReturn(this, (Viewer3D.__proto__ || Object.getPrototypeOf(Viewer3D)).call(this));
 
           var options = { resize: true, pushHref: false, spin: true, spinSpeed: .00002, clickPan: true, canMoveFixedItems: false };
           for (var opt in options) {
@@ -82978,28 +81073,21 @@ vec4 envMapTexelToLinear(vec4 color) {
                   options[opt] = opts[opt];
               }
           }
-
-          _this.pauseRender = true;
           _this.model = model;
+          _this.floorplan = _this.model.floorplan;
           _this.scene = model.scene;
           _this.element = jquery(element);
           _this.canvasElement = canvasElement;
           _this.options = options;
 
           _this.domElement = null;
-          _this.orthocamera = null;
           _this.perspectivecamera = null;
           _this.camera = null;
-          _this.savedcameraposition = null;
-          _this.fpscamera = null;
 
           _this.cameraNear = 10;
           _this.cameraFar = 10000;
 
           _this.controls = null;
-          _this.fpscontrols = null;
-          _this.fpsclock = new Clock(true);
-          _this.firstpersonmode = false;
 
           _this.renderer = null;
           _this.controller = null;
@@ -83007,111 +81095,61 @@ vec4 envMapTexelToLinear(vec4 color) {
           _this.needsUpdate = false;
           _this.lastRender = Date.now();
 
-          _this.mouseOver = false;
-          _this.hasClicked = false;
-
-          _this.hud = null;
-
           _this.heightMargin = null;
           _this.widthMargin = null;
           _this.elementHeight = null;
           _this.elementWidth = null;
+          _this.pauseRender = false;
+          _this.edges3d = [];
+          _this.floors3d = [];
+          // this.walls3d = [];
+          _this.draggables = [];
 
-          _this.itemSelectedCallbacks = jquery.Callbacks(); // item
-          _this.itemUnselectedCallbacks = jquery.Callbacks();
-
-          _this.wallClicked = jquery.Callbacks(); // wall
-          _this.floorClicked = jquery.Callbacks(); // floor
-          _this.nothingClicked = jquery.Callbacks();
-
-          _this.floorplan = null;
-
-          var scope = _this;
-          _this.updatedevent = function () {
-              scope.centerCamera();
-          };
-          _this.gltfreadyevent = function (o) {
-              scope.gltfReady(o);
-          };
-
-          _this.clippingPlaneActive = new Plane(new Vector3(0, 0, 1), 0.0);
-          _this.clippingPlaneActive2 = new Plane(new Vector3(0, 0, -1), 0.0);
-          _this.globalClippingPlane = [_this.clippingPlaneActive, _this.clippingPlaneActive2];
-          _this.clippingEmpty = Object.freeze([]);
-          _this.clippingEnabled = false;
-
-          //		console.log('THIS ON MOBILE DEVICE ::: ', isMobile, isTablet);
+          _this.scene.needsUpdate = true;
 
           _this.init();
           return _this;
       }
 
-      createClass(Main, [{
-          key: 'getARenderer',
-          value: function getARenderer() {
-              // scope.renderer = new WebGLRenderer({antialias: true, preserveDrawingBuffer:
-              // true, alpha:true}); // preserveDrawingBuffer:true - required to support
-              // .toDataURL()
-              var renderer = new WebGLRenderer({ antialias: true, alpha: true });
-
-              // scope.renderer.autoClear = false;
-              renderer.shadowMap.enabled = true;
-              renderer.shadowMapSoft = true;
-              renderer.shadowMap.type = PCFSoftShadowMap;
-              renderer.setClearColor(0xFFFFFF, 1);
-              renderer.clippingPlanes = this.clippingEmpty;
-              renderer.localClippingEnabled = false;
-              //		renderer.setPixelRatio(window.devicePixelRatio);
-              // renderer.sortObjects = false;
-
-              return renderer;
-          }
-      }, {
+      createClass(Viewer3D, [{
           key: 'init',
           value: function init() {
               var scope = this;
               ImageUtils.crossOrigin = '';
-
-              var orthoScale = 100;
-              var orthoWidth = window.innerWidth;
-              var orthoHeight = window.innerHeight;
-
               scope.domElement = scope.element.get(0);
 
-              scope.fpscamera = new PerspectiveCamera(60, 1, 1, 10000);
-              scope.perspectivecamera = new PerspectiveCamera(45, 10, scope.cameraNear, scope.cameraFar);
-              scope.orthocamera = new OrthographicCamera(orthoWidth / -orthoScale, orthoWidth / orthoScale, orthoHeight / orthoScale, orthoHeight / -orthoScale, scope.cameraNear, scope.cameraFar);
-
-              scope.camera = scope.perspectivecamera;
-              // scope.camera = scope.orthocamera;
+              scope.camera = new PerspectiveCamera(45, 10, scope.cameraNear, scope.cameraFar);
 
               scope.renderer = scope.getARenderer();
               scope.domElement.appendChild(scope.renderer.domElement);
 
-              scope.skybox = new Skybox(scope.scene, scope.renderer);
-
+              scope.lights = new Lights3D(scope.scene, scope.floorplan);
+              scope.dragcontrols = new DragControls(scope.scene.items, scope.camera, scope.renderer.domElement);
               scope.controls = new OrbitControls(scope.camera, scope.domElement);
-              scope.controls.autoRotate = this.options['spin'];
-              scope.controls.enableDamping = true;
-              scope.controls.dampingFactor = 0.5;
-              scope.controls.maxPolarAngle = Math.PI * 0.5;
-              scope.controls.maxDistance = 3000;
-              scope.controls.minZoom = 0.9;
+              // scope.controls.autoRotate = this.options['spin'];
+              scope.controls.enableDamping = false;
+              scope.controls.dampingFactor = 0.1;
+              scope.controls.maxPolarAngle = Math.PI * 1.0; //Math.PI * 0.5; //Math.PI * 0.35;
+              scope.controls.maxDistance = 2500; //2500
+              scope.controls.minDistance = 10; //1000; //1000
               scope.controls.screenSpacePanning = true;
 
-              scope.fpscontrols = new PointerLockControls(scope.fpscamera);
-              scope.fpscontrols.characterHeight = 160;
+              scope.skybox = new Skybox(scope.scene, scope.renderer);
+              scope.camera.position.set(0, 600, 1500);
+              scope.controls.update();
 
-              this.scene.add(scope.fpscontrols.getObject());
-              this.fpscontrols.getObject().position.set(0, 200, 0);
+              scope.axes = new AxesHelper(500);
+              // scope.scene.add(scope.axes);
 
-              this.fpscontrols.addEventListener('unlock', function () {
-                  scope.switchFPSMode(false);
-                  scope.dispatchEvent({ type: EVENT_FPS_EXIT });
+              scope.dragcontrols.addEventListener('dragstart', function () {
+                  scope.controls.enabled = false;
               });
-
-              scope.hud = new HUD(scope, scope.scene);
-              scope.controller = new Controller(scope, scope.model, scope.camera, scope.element, scope.controls, scope.hud);
+              scope.dragcontrols.addEventListener('drag', function () {
+                  scope.scene.needsUpdate = true;
+              });
+              scope.dragcontrols.addEventListener('dragend', function () {
+                  scope.controls.enabled = true;
+              });
 
               // handle window resizing
               scope.updateWindowSize();
@@ -83121,140 +81159,86 @@ vec4 envMapTexelToLinear(vec4 color) {
                       scope.updateWindowSize();
                   });
               }
-              // setup camera nicely
-              scope.centerCamera();
-
-              scope.model.floorplan.addEventListener(EVENT_UPDATED, this.updatedevent);
-              scope.model.addEventListener(EVENT_GLTF_READY, this.gltfreadyevent);
-
-              scope.lights = new Lights(scope.scene, scope.model.floorplan);
-              scope.floorplan = new Floorplan3D(scope.scene, scope.model.floorplan, scope.controls);
 
               function animate() {
-                  //			requestAnimationFrame(animate);
                   scope.renderer.setAnimationLoop(function () {
                       scope.render();
                   });
                   scope.render();
               }
-              scope.switchFPSMode(false);
-              animate();
-
-              scope.element.mouseenter(function () {
-                  scope.mouseOver = true;
-              }).mouseleave(function () {
-                  scope.mouseOver = false;
-              }).click(function () {
-                  scope.hasClicked = true;
+              scope.floorplan.addEventListener(EVENT_UPDATED, function (evt) {
+                  return scope.addWalls(evt);
               });
+              // scope.addWalls();
+              this.controls.addEventListener('change', function () {
+                  scope.scene.needsUpdate = true;
+              });
+              animate();
           }
       }, {
-          key: 'exportForBlender',
-          value: function exportForBlender() {
-              this.skybox.setEnabled(false);
-              this.controller.showGroundPlane(false);
-              this.model.exportForBlender();
-          }
-      }, {
-          key: 'gltfReady',
-          value: function gltfReady(o) {
-              this.dispatchEvent({ type: EVENT_GLTF_READY, item: this, gltf: o.gltf });
-              this.skybox.setEnabled(true);
-              this.controller.showGroundPlane(true);
-          }
-      }, {
-          key: 'itemIsSelected',
-          value: function itemIsSelected(item) {
-              this.dispatchEvent({ type: EVENT_ITEM_SELECTED, item: item });
-          }
-      }, {
-          key: 'itemIsUnselected',
-          value: function itemIsUnselected() {
-              this.dispatchEvent({ type: EVENT_ITEM_UNSELECTED });
-          }
-      }, {
-          key: 'wallIsClicked',
-          value: function wallIsClicked(wall) {
-              this.dispatchEvent({ type: EVENT_WALL_CLICKED, item: wall, wall: wall });
-          }
-      }, {
-          key: 'floorIsClicked',
-          value: function floorIsClicked(item) {
-              this.dispatchEvent({ type: EVENT_FLOOR_CLICKED, item: item });
-          }
-      }, {
-          key: 'nothingIsClicked',
-          value: function nothingIsClicked() {
-              this.dispatchEvent({ type: EVENT_NOTHING_CLICKED });
-          }
-      }, {
-          key: 'spin',
-          value: function spin() {
+          key: 'addWalls',
+          value: function addWalls() {
               var scope = this;
-              scope.controls.autoRotate = scope.options.spin && !scope.mouseOver && !scope.hasClicked;
-          }
-      }, {
-          key: 'dataUrl',
-          value: function dataUrl() {
-              var dataUrl = this.renderer.domElement.toDataURL('image/png');
-              return dataUrl;
-          }
-      }, {
-          key: 'stopSpin',
-          value: function stopSpin() {
-              this.hasClicked = true;
-              this.controls.autoRotate = false;
-          }
-      }, {
-          key: 'options',
-          value: function options() {
-              return this.options;
-          }
-      }, {
-          key: 'getModel',
-          value: function getModel() {
-              return this.model;
-          }
-      }, {
-          key: 'getScene',
-          value: function getScene() {
-              return this.scene;
-          }
-      }, {
-          key: 'getController',
-          value: function getController() {
-              return this.controller;
-          }
-      }, {
-          key: 'getCamera',
-          value: function getCamera() {
-              return this.camera;
-          }
+              var i = 0;
 
-          /*
-           * This method name conflicts with a variable so changing it to a different
-           * name needsUpdate() { this.needsUpdate = true; }
-           */
+              // clear scene
+              scope.floors3d.forEach(function (floor) {
+                  floor.removeFromScene();
+              });
 
-      }, {
-          key: 'ensureNeedsUpdate',
-          value: function ensureNeedsUpdate() {
-              this.needsUpdate = true;
+              scope.edges3d.forEach(function (edge3d) {
+                  edge3d.remove();
+              });
+
+              // for (i = 0; i < scope.walls3d.length; i++) {
+              //     scope.scene.remove(scope.walls3d[i]);
+              // }
+              // scope.walls3d = [];
+
+              scope.edges3d = [];
+              var wallEdges = scope.floorplan.wallEdges();
+              var rooms = scope.floorplan.getRooms();
+
+              // draw floors
+              for (i = 0; i < rooms.length; i++) {
+                  var threeFloor = new Floor3D(scope.scene, rooms[i]);
+                  scope.floors3d.push(threeFloor);
+                  threeFloor.addToScene();
+              }
+
+              for (i = 0; i < wallEdges.length; i++) {
+                  var edge3d = new Edge3D(scope.model.scene, wallEdges[i], scope.controls);
+                  scope.edges3d.push(edge3d);
+              }
+
+              // let walls = scope.floorplan.getWalls();
+              // for (i = 0; i < walls.length; i++) {
+              //     let wall3d = new WallView3D(walls[i], scope.floorplan, scope, scope.controls);
+              //     scope.scene.add(wall3d);
+              //     scope.walls3d.push(wall3d);
+              // }
+
+              scope.shouldRender = true;
+
+              var floorplanCenter = scope.floorplan.getDimensions(true);
+              scope.controls.target = floorplanCenter.clone();
+              scope.camera.position.set(floorplanCenter.x, 300, floorplanCenter.z * 5);
+              scope.controls.update();
           }
       }, {
-          key: 'rotatePressed',
-          value: function rotatePressed() {
-              this.controller.rotatePressed();
-          }
-      }, {
-          key: 'rotateReleased',
-          value: function rotateReleased() {
-              this.controller.rotateReleased();
-          }
-      }, {
-          key: 'setCursorStyle',
-          value: function setCursorStyle(cursorStyle) {
-              this.domElement.style.cursor = cursorStyle;
+          key: 'getARenderer',
+          value: function getARenderer() {
+              var renderer = new WebGLRenderer({ antialias: true, alpha: true });
+
+              // scope.renderer.autoClear = false;
+              renderer.shadowMap.enabled = true;
+              renderer.shadowMapSoft = true;
+              renderer.shadowMap.type = PCFSoftShadowMap;
+              renderer.setClearColor(0xFFFFFF, 1);
+              renderer.localClippingEnabled = false;
+              //		renderer.setPixelRatio(window.devicePixelRatio);
+              // renderer.sortObjects = false;
+              return renderer;
           }
       }, {
           key: 'updateWindowSize',
@@ -83270,236 +81254,25 @@ vec4 envMapTexelToLinear(vec4 color) {
               } else {
                   scope.elementHeight = scope.element.innerHeight();
               }
-
-              scope.orthocamera.left = -window.innerWidth / 1.0;
-              scope.orthocamera.right = window.innerWidth / 1.0;
-              scope.orthocamera.top = window.innerHeight / 1.0;
-              scope.orthocamera.bottom = -window.innerHeight / 1.0;
-              scope.orthocamera.updateProjectionMatrix();
-
-              scope.perspectivecamera.aspect = scope.elementWidth / scope.elementHeight;
-              scope.perspectivecamera.updateProjectionMatrix();
-
-              scope.fpscamera.aspect = scope.elementWidth / scope.elementHeight;
-              scope.fpscamera.updateProjectionMatrix();
-
+              scope.camera.aspect = scope.elementWidth / scope.elementHeight;
+              scope.camera.updateProjectionMatrix();
               scope.renderer.setSize(scope.elementWidth, scope.elementHeight);
-              scope.needsUpdate = true;
+              scope.scene.needsUpdate = true;
           }
-      }, {
-          key: 'centerCamera',
-          value: function centerCamera() {
-              var scope = this;
-              var yOffset = 150.0;
-              var pan = scope.model.floorplan.getCenter();
-              pan.y = yOffset;
-              scope.controls.target = pan;
-              var distance = scope.model.floorplan.getSize().z * 1.5;
-              var offset = pan.clone().add(new Vector3(0, distance, distance));
-              // scope.controls.setOffset(offset);
-              scope.camera.position.copy(offset);
-              scope.controls.update();
-          }
-
-          // projects the object's center point into x,y screen coords
-          // x,y are relative to top left corner of viewer
-
-      }, {
-          key: 'projectVector',
-          value: function projectVector(vec3, ignoreMargin) {
-              var scope = this;
-              ignoreMargin = ignoreMargin || false;
-              var widthHalf = scope.elementWidth / 2;
-              var heightHalf = scope.elementHeight / 2;
-              var vector = new Vector3();
-              vector.copy(vec3);
-              vector.project(scope.camera);
-
-              var vec2 = new Vector2();
-              vec2.x = vector.x * widthHalf + widthHalf;
-              vec2.y = -(vector.y * heightHalf) + heightHalf;
-              if (!ignoreMargin) {
-                  vec2.x += scope.widthMargin;
-                  vec2.y += scope.heightMargin;
-              }
-              return vec2;
-          }
-      }, {
-          key: 'sceneGraph',
-          value: function sceneGraph(obj) {
-              console.group(' <%o> ' + obj.name, obj);
-              obj.children.forEach(this.sceneGraph);
-              console.groupEnd();
-          }
-      }, {
-          key: 'switchWireframe',
-          value: function switchWireframe(flag) {
-              this.model.switchWireframe(flag);
-              this.floorplan.switchWireframe(flag);
-              this.render(true);
-          }
-      }, {
-          key: 'pauseTheRendering',
-          value: function pauseTheRendering(flag) {
-              this.pauseRender = flag;
-          }
-      }, {
-          key: 'switchView',
-          value: function switchView(viewpoint) {
-              var center = this.model.floorplan.getCenter();
-              var size = this.model.floorplan.getSize();
-              var distance = this.controls.object.position.distanceTo(this.controls.target);
-              this.controls.target.copy(center);
-
-              switch (viewpoint) {
-                  case VIEW_TOP:
-                      center.y = 1000;
-                      this.dispatchEvent({ type: EVENT_CAMERA_VIEW_CHANGE, view: VIEW_TOP });
-                      break;
-                  case VIEW_FRONT:
-                      center.z = center.z - size.z * 0.5 - distance;
-                      this.dispatchEvent({ type: EVENT_CAMERA_VIEW_CHANGE, view: VIEW_FRONT });
-                      break;
-                  case VIEW_RIGHT:
-                      center.x = center.x + size.x * 0.5 + distance;
-                      this.dispatchEvent({ type: EVENT_CAMERA_VIEW_CHANGE, view: VIEW_RIGHT });
-                      break;
-                  case VIEW_LEFT:
-                      center.x = center.x - size.x * 0.5 - distance;
-                      this.dispatchEvent({ type: EVENT_CAMERA_VIEW_CHANGE, view: VIEW_LEFT });
-                      break;
-                  case VIEW_ISOMETRY:
-                  default:
-                      center.x += distance;
-                      center.y += distance;
-                      center.z += distance;
-                      this.dispatchEvent({ type: EVENT_CAMERA_VIEW_CHANGE, view: VIEW_ISOMETRY });
-              }
-              this.camera.position.copy(center);
-              this.controls.dispatchEvent({ type: EVENT_CAMERA_ACTIVE_STATUS });
-              this.controls.needsUpdate = true;
-              this.controls.update();
-              this.render(true);
-          }
-      }, {
-          key: 'lockView',
-          value: function lockView(locked) {
-              this.controls.enableRotate = locked;
-              this.render(true);
-          }
-
-          // Send in a value between -1 to 1
-
-      }, {
-          key: 'changeClippingPlanes',
-          value: function changeClippingPlanes(clipRatio, clipRatio2) {
-              var size = this.model.floorplan.getSize();
-              size.z = size.z + size.z * 0.25;
-              size.z = size.z * 0.5;
-              this.clippingPlaneActive.constant = this.model.floorplan.getSize().z * clipRatio;
-              this.clippingPlaneActive2.constant = this.model.floorplan.getSize().z * clipRatio2;
-
-              if (!this.clippingEnabled) {
-                  this.clippingEnabled = true;
-                  this.renderer.clippingPlanes = this.globalClippingPlane;
-              }
-              this.controls.dispatchEvent({ type: EVENT_CAMERA_ACTIVE_STATUS });
-              this.controls.needsUpdate = true;
-              this.controls.update();
-              this.render(true);
-          }
-      }, {
-          key: 'resetClipping',
-          value: function resetClipping() {
-              this.clippingEnabled = false;
-              this.renderer.clippingPlanes = this.clippingEmpty;
-              this.controls.needsUpdate = true;
-              this.controls.update();
-              this.render(true);
-          }
-      }, {
-          key: 'switchOrthographicMode',
-          value: function switchOrthographicMode(flag) {
-              if (flag) {
-                  this.camera = this.orthocamera;
-                  this.camera.position.copy(this.perspectivecamera.position.clone());
-                  this.controls.object = this.camera;
-                  this.controller.changeCamera(this.camera);
-                  this.controls.needsUpdate = true;
-                  this.controls.update();
-                  this.render(true);
-                  return;
-              }
-
-              this.camera = this.perspectivecamera;
-              this.camera.position.copy(this.orthocamera.position.clone());
-              this.controls.object = this.camera;
-              this.controller.changeCamera(this.camera);
-              this.controls.needsUpdate = true;
-              this.controls.update();
-              this.render(true);
-          }
-      }, {
-          key: 'switchFPSMode',
-          value: function switchFPSMode(flag) {
-              this.firstpersonmode = flag;
-              this.fpscontrols.enabled = flag;
-              this.controls.enabled = !flag;
-              this.controller.enabled = !flag;
-              this.controls.dispatchEvent({ type: EVENT_CAMERA_ACTIVE_STATUS });
-
-              if (flag) {
-                  this.skybox.toggleEnvironment(true);
-                  this.fpscontrols.lock();
-              } else {
-                  this.skybox.toggleEnvironment(false);
-                  this.fpscontrols.unlock();
-              }
-
-              this.model.switchWireframe(false);
-              this.floorplan.switchWireframe(false);
-              this.render(true);
-          }
-      }, {
-          key: 'shouldRender',
-          value: function shouldRender() {
-              var scope = this;
-              // Do we need to draw a new frame
-              if (scope.controls.needsUpdate || scope.controller.needsUpdate || scope.needsUpdate || scope.model.scene.needsUpdate) {
-                  scope.controls.needsUpdate = false;
-                  scope.controller.needsUpdate = false;
-                  scope.needsUpdate = false;
-                  scope.model.scene.needsUpdate = false;
-                  return true;
-              } else {
-                  return false;
-              }
-          }
-      }, {
-          key: 'rendervr',
-          value: function rendervr() {}
       }, {
           key: 'render',
-          value: function render(forced) {
+          value: function render() {
               var scope = this;
-              forced = forced ? forced : false;
-              if (this.pauseRender && !forced) {
+              // scope.controls.update();
+              if (!scope.scene.needsUpdate) {
                   return;
               }
-
-              scope.spin();
-              if (scope.firstpersonmode) {
-                  scope.fpscontrols.update(scope.fpsclock.getDelta());
-                  scope.renderer.render(scope.scene.getScene(), scope.fpscamera);
-              } else {
-                  if (this.shouldRender() || forced) {
-                      scope.renderer.render(scope.scene.getScene(), scope.camera);
-                  }
-              }
+              scope.renderer.render(scope.scene.getScene(), scope.camera);
               scope.lastRender = Date.now();
+              this.scene.needsUpdate = false;
           }
       }]);
-      return Main;
+      return Viewer3D;
   }(EventDispatcher);
 
   //Classes from core module
@@ -83507,56 +81280,71 @@ vec4 envMapTexelToLinear(vec4 color) {
 
 
   ///** VestaDesigner core application. */
-  var BlueprintJS =
-  /**
-   * Creates an instance of BlueprintJS. This is the entry point for the application
-   *
-   * @param {Object} - options The initialization options.
-   * @param {string} options.floorplannerElement - Id of the html element to use as canvas. Needs to exist in the html
-   * @param {string} options.threeElement - Id of the html element to use as canvas. Needs to exist in the html and should be #idofhtmlelement
-   * @param {string} options.threeCanvasElement - Id of the html element to use as threejs-canvas. This is created automatically
-   * @param {string} options.textureDir - path to texture directory. No effect
-   * @param {boolean} options.widget - If widget mode then disable the controller from interactions
-   * @example
-   * let blueprint3d = new BP3DJS.BlueprintJS(opts);
-   */
-  function BlueprintJS(options) {
-    classCallCheck(this, BlueprintJS);
-
-    Configuration.setValue(configDimUnit, dimMeter);
-
+  var BlueprintJS = function () {
     /**
-     * @property {Object} options
-     * @type {Object}
-     **/
-    this.options = options;
-    /**
-     * @property {Model} model
-     * @type {Model}
-     **/
-    this.model = new Model(options.textureDir);
-    /**
-     * @property {Main} three
-     * @type {Main}
-     **/
-    this.three = new Main(this.model, options.threeElement, options.threeCanvasElement, {});
+     * Creates an instance of BlueprintJS. This is the entry point for the application
+     *
+     * @param {Object} - options The initialization options.
+     * @param {string} options.floorplannerElement - Id of the html element to use as canvas. Needs to exist in the html
+     * @param {string} options.threeElement - Id of the html element to use as canvas. Needs to exist in the html and should be #idofhtmlelement
+     * @param {string} options.threeCanvasElement - Id of the html element to use as threejs-canvas. This is created automatically
+     * @param {string} options.textureDir - path to texture directory. No effect
+     * @param {boolean} options.widget - If widget mode then disable the controller from interactions
+     * @example
+     * let blueprint3d = new BP3DJS.BlueprintJS(opts);
+     */
+    function BlueprintJS(options) {
+      classCallCheck(this, BlueprintJS);
 
-    if (!options.widget) {
+      Configuration.setValue(configDimUnit, dimCentiMeter);
+
       /**
-       * @property {Floorplanner2D} floorplanner
-       * @type {Floorplanner2D}
+       * @property {Object} options
+       * @type {Object}
        **/
-      this.floorplanner = new Floorplanner2D(options.floorplannerElement, this.model.floorplan);
-    } else {
-      this.three.getController().enabled = false;
+      this.options = options;
+      /**
+       * @property {Model} model
+       * @type {Model}
+       **/
+      this.model = new Model(options.textureDir);
+      /**
+       * @property {Main} three
+       * @type {Main}
+       **/
+      // this.three = new Main(this.model, options.threeElement, options.threeCanvasElement, {});
+      /**
+       * @property {Main} three
+       * @type {Main}
+       **/
+      this.three = new Viewer3D(this.model, options.threeElement, options.threeCanvasElement, {});
+      this.view_now = 3;
+
+      if (!options.widget) {
+        /**
+         * @property {Floorplanner2D} floorplanner
+         * @type {Floorplanner2D}
+         **/
+        this.floorplanner = new Floorplanner2D(options.floorplannerElement, this.model.floorplan);
+      } else {
+        this.three.getController().enabled = false;
+      }
     }
-  };
+
+    createClass(BlueprintJS, [{
+      key: 'switchView',
+      value: function switchView() {
+        if (this.view_now == 3 && !this.options.widget) {
+          this.view_now = 2;
+        }
+      }
+    }]);
+    return BlueprintJS;
+  }();
 
   exports.BlueprintJS = BlueprintJS;
   exports.CarbonSheet = CarbonSheet;
   exports.Configuration = Configuration;
-  exports.Controller = Controller;
-  exports.Controls = Controls;
   exports.Corner = Corner;
   exports.Dimensioning = Dimensioning;
   exports.ELogContext = ELogContext;
@@ -83599,32 +81387,25 @@ vec4 envMapTexelToLinear(vec4 color) {
   exports.EVENT_WALL_2D_HOVER = EVENT_WALL_2D_HOVER;
   exports.EVENT_WALL_ATTRIBUTES_CHANGED = EVENT_WALL_ATTRIBUTES_CHANGED;
   exports.EVENT_WALL_CLICKED = EVENT_WALL_CLICKED;
-  exports.Edge = Edge;
+  exports.Edge3D = Edge3D;
   exports.Factory = Factory;
-  exports.FirstPersonControls = FirstPersonControls;
-  exports.Floor = Floor;
+  exports.Floor3D = Floor3D;
   exports.FloorItem = FloorItem;
   exports.Floorplan = Floorplan;
-  exports.Floorplan3D = Floorplan3D;
   exports.Floorplanner2D = Floorplanner2D;
   exports.FloorplannerView2D = FloorplannerView2D;
-  exports.HUD = HUD;
   exports.HalfEdge = HalfEdge;
   exports.InWallFloorItem = InWallFloorItem;
   exports.InWallItem = InWallItem;
   exports.Item = Item;
-  exports.Lights = Lights;
-  exports.Main = Main;
+  exports.Lights3D = Lights3D;
   exports.Metadata = Metadata;
   exports.Model = Model;
   exports.OBJExporter = OBJExporter;
   exports.OnFloorItem = OnFloorItem;
-  exports.OrbitControls = OrbitControls;
-  exports.PointerLockControls = PointerLockControls;
   exports.Region = Region;
   exports.RoofItem = RoofItem;
   exports.Room = Room;
-  exports.STATE = STATE;
   exports.Scene = Scene$1;
   exports.Skybox = Skybox;
   exports.Utils = Utils;
@@ -83634,6 +81415,7 @@ vec4 envMapTexelToLinear(vec4 color) {
   exports.VIEW_RIGHT = VIEW_RIGHT;
   exports.VIEW_TOP = VIEW_TOP;
   exports.Version = Version;
+  exports.Viewer3D = Viewer3D;
   exports.Wall = Wall;
   exports.WallFloorItem = WallFloorItem;
   exports.WallItem = WallItem;
@@ -83682,7 +81464,6 @@ vec4 envMapTexelToLinear(vec4 color) {
   exports.scale = scale;
   exports.snapToGrid = snapToGrid;
   exports.snapTolerance = snapTolerance;
-  exports.states = states;
   exports.wallColor = wallColor;
   exports.wallColorHover = wallColorHover;
   exports.wallColorSelected = wallColorSelected;

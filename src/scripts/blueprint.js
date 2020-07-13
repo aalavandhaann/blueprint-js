@@ -24,22 +24,25 @@ from './core/events.js';
 export { EVENT_ROOM_2D_CLICKED, EVENT_ROOM_2D_DOUBLE_CLICKED, EVENT_ROOM_2D_HOVER }
 from './core/events.js';
 
-
 export { Utils, Region }
 from './core/utils.js';
 export { ELogContext, ELogLevel, logContext, isLogging, log }
 from './core/log.js';
-export { dimInch, dimFeetAndInch, dimMeter, dimCentiMeter, dimMilliMeter, dimensioningOptions, decimals, Dimensioning }
+
+export { VIEW_TOP, VIEW_FRONT, VIEW_RIGHT, VIEW_LEFT, VIEW_ISOMETRY }
+from './core/constants.js';
+export { WallTypes }
+from './core/constants.js';
+export { dimInch, dimFeetAndInch, dimMeter, dimCentiMeter, dimMilliMeter }
+from './core/constants.js';
+
+export { dimensioningOptions, decimals, Dimensioning }
 from './core/dimensioning.js';
 export { cmPerFoot, pixelsPerFoot, cmPerPixel, pixelsPerCm }
 from './core/dimensioning.js';
 
 export { cornerTolerance, configDimUnit, configWallHeight, configWallThickness, configSystemUI, wallInformation, scale, snapToGrid, snapTolerance, gridSpacing, config, Configuration }
 from './core/configuration.js';
-export { VIEW_TOP, VIEW_FRONT, VIEW_RIGHT, VIEW_LEFT, VIEW_ISOMETRY }
-from './core/constants.js';
-export { WallTypes }
-from './core/constants.js';
 
 //Classes from model module
 export { HalfEdge }
@@ -99,6 +102,7 @@ from './items/in_wall_floor_item.js';
 export { RoofItem }
 from './items/roof_item.js';
 
+/*
 //Classes from three module
 export { states, Controller }
 from './three/controller.js';
@@ -124,15 +128,34 @@ export { Main }
 from './three/main.js';
 export { Skybox }
 from './three/skybox.js';
+*/
+
+export { Viewer3D }
+from './viewer3d/Viewer3d.js';
+
+export { Skybox }
+from './viewer3d/skybox.js';
+
+// export { WallView3D }
+// from './viewer3d/WallView3d.js';
+
+export { Edge3D }
+from './viewer3d/edge3d.js';
+
+export { Floor3D }
+from './viewer3d/floor3d.js';
+
+export { Lights3D }
+from './viewer3d/lights3d.js';
 
 export { OBJExporter }
 from './exporters/OBJExporter.js';
 
 import { Model } from './model/model.js';
-import { Main } from './three/main.js';
 import { Floorplanner2D } from './floorplanner/floorplanner.js';
 import { Configuration, configDimUnit } from './core/configuration.js';
-import { dimMeter } from './core/dimensioning.js';
+import { dimCentiMeter } from './core/constants.js';
+import { Viewer3D } from './viewer3d/Viewer3d.js';
 //
 
 
@@ -151,7 +174,7 @@ export class BlueprintJS {
      * let blueprint3d = new BP3DJS.BlueprintJS(opts);
      */
     constructor(options) {
-        Configuration.setValue(configDimUnit, dimMeter);
+        Configuration.setValue(configDimUnit, dimCentiMeter);
 
         /**
          * @property {Object} options
@@ -167,7 +190,13 @@ export class BlueprintJS {
          * @property {Main} three
          * @type {Main}
          **/
-        this.three = new Main(this.model, options.threeElement, options.threeCanvasElement, {});
+        // this.three = new Main(this.model, options.threeElement, options.threeCanvasElement, {});
+        /**
+         * @property {Main} three
+         * @type {Main}
+         **/
+        this.three = new Viewer3D(this.model, options.threeElement, options.threeCanvasElement, {});
+        this.view_now = 3;
 
         if (!options.widget) {
             /**
@@ -177,6 +206,13 @@ export class BlueprintJS {
             this.floorplanner = new Floorplanner2D(options.floorplannerElement, this.model.floorplan);
         } else {
             this.three.getController().enabled = false;
+        }
+    }
+
+    switchView() {
+        if (this.view_now == 3 && !this.options.widget) {
+            this.view_now = 2;
+
         }
     }
 }
