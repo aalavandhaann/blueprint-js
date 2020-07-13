@@ -10,9 +10,8 @@ var empty = '{"floorplan":{"version":"0.0.2a","units":"m", "corners":{"71d4f128-
 
 $(document).ready(function() {
     var opts = {
-        floorplannerElement: 'floorplanner-canvas',
+        floorplannerElement: '#viewer2d',
         threeElement: '#viewer',
-        threeCanvasElement: 'three-canvas',
         textureDir: "models/textures/",
         widget: false
     };

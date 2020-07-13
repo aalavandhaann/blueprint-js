@@ -14,7 +14,7 @@ import { Floor3D } from './floor3d.js';
 import { Lights3D } from './lights3d.js';
 
 export class Viewer3D extends EventDispatcher {
-    constructor(model, element, canvasElement, opts) {
+    constructor(model, element, opts) {
         super();
         var options = { resize: true, pushHref: false, spin: true, spinSpeed: .00002, clickPan: true, canMoveFixedItems: false };
         for (var opt in options) {
@@ -26,7 +26,6 @@ export class Viewer3D extends EventDispatcher {
         this.floorplan = this.model.floorplan;
         this.scene = model.scene;
         this.element = $(element);
-        this.canvasElement = canvasElement;
         this.options = options;
 
         this.domElement = null;

@@ -195,7 +195,7 @@ export class BlueprintJS {
          * @property {Main} three
          * @type {Main}
          **/
-        this.three = new Viewer3D(this.model, options.threeElement, options.threeCanvasElement, {});
+        this.three = new Viewer3D(this.model, options.threeElement, {});
         this.view_now = 3;
 
         if (!options.widget) {
