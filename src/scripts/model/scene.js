@@ -3,7 +3,6 @@ import { Geometry } from 'three';
 // import {JSONLoader} from 'three'
 // import GLTFLoader from 'three-gltf-loader';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import OBJLoader from '@calvinscofield/three-objloader';
 import { Scene as ThreeScene } from 'three';
 import { Utils } from '../core/utils.js';
 import { Factory } from '../items/factory.js';
@@ -35,12 +34,7 @@ export class Scene extends EventDispatcher {
         // this.loader.setCrossOrigin('');
 
         this.gltfloader = new GLTFLoader();
-        this.objloader = new OBJLoader();
         // this.gltfloader.setCrossOrigin('');
-
-        this.itemLoadingCallbacks = null;
-        this.itemLoadedCallbacks = null;
-        this.itemRemovedCallbacks = null;
         //		this.add(grid);
 
     }
@@ -143,9 +137,9 @@ export class Scene extends EventDispatcher {
             return [materials, materials.length - 1];
         }
 
-        var loaderCallback = function(geometry, materials, isgltf = false) {
+        var loaderCallback = function(geometry, materials, gltf_entity) {
             //			var item = new (Factory.getClass(itemType))(scope.model, metadata, geometry, new MeshFaceMaterial(materials), position, rotation, scale);
-            var item = new(Factory.getClass(itemType))(scope.model, metadata, geometry, materials, position, rotation, scale, isgltf);
+            var item = new(Factory.getClass(itemType))(scope.model, metadata, geometry, materials, position, rotation, scale, gltf_entity);
             item.fixed = fixed || false;
             scope.items.push(item);
             scope.add(item);
@@ -193,41 +187,10 @@ export class Scene extends EventDispatcher {
                     }
                 }
             });
-            loaderCallback(newGeometry, newmaterials);
+            loaderCallback(newGeometry, newmaterials, gltfModel);
             // loaderCallback(gltfModel.scene, newmaterials, true);
         };
-
-
-        var objCallback = function(object) {
-            var materials = [];
-            var newGeometry = new Geometry();
-            object.traverse(function(child) {
-                if (child.type == 'Mesh') {
-                    if (child.material.length) {
-                        materials = materials.concat(child.material);
-                    } else {
-                        materials.push(child.material);
-                    }
-                    if (child.geometry.isBufferGeometry) {
-                        var tGeometry = new Geometry().fromBufferGeometry(child.geometry);
-                        child.updateMatrix();
-                        newGeometry.merge(tGeometry, child.matrix);
-                    } else {
-                        child.updateMatrix();
-                        newGeometry.mergeMesh(child);
-                    }
-                }
-            });
-            loaderCallback(newGeometry, materials);
-        };
-
         this.dispatchEvent({ type: EVENT_ITEM_LOADING });
-        if (!metadata.format) {
-            // this.loader.load(fileName, loaderCallback, undefined); // third parameter is undefined - TODO_Ekki
-        } else if (metadata.format == 'gltf') {
-            this.gltfloader.load(fileName, gltfCallback, null, null);
-        } else if (metadata.format == 'obj') {
-            this.objloader.load(fileName, objCallback, null, null);
-        }
+        this.gltfloader.load(fileName, gltfCallback, null, null);
     }
 }

@@ -9,6 +9,8 @@ import serve from 'rollup-plugin-serve'
 import cssnano from 'cssnano';
 import commonjs from 'rollup-plugin-commonjs'
 
+import { terser } from 'rollup-plugin-terser';
+
 var isProduction = process.env.NODE_ENV === 'production';
 var cache;
 
@@ -31,13 +33,12 @@ export default {
                 'node_modules/three-gltf-loader/**',
                 'node_modules/three-gltf-exporter/**',
                 'node_modules/three-reflector2/**',
-                'node_modules/@calvinscofield/three-objloader/**',
                 'node_modules/bezier-js/**',
                 'node_modules/@thi.ng/**',
             ]
         }),
         postcss({ extensions: ['.css'], plugins: [cssnano()] }),
-        replace({ exclude: 'node_modules/**', ENV: JSON.stringify(process.env.NODE_ENV || 'development') }), (isProduction && uglify()),
+        replace({ exclude: 'node_modules/**', ENV: JSON.stringify(process.env.NODE_ENV || 'development') }), (isProduction && terser()),
     ]
 };
 

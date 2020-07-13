@@ -90,7 +90,7 @@ export class Model extends EventDispatcher {
         items.forEach((item) => {
             var matColors = (item.material_colors) ? item.material_colors : [];
             var position = new Vector3(item.xpos, item.ypos, item.zpos);
-            var metadata = { itemName: item.item_name, resizable: item.resizable, format: item.format, itemType: item.item_type, modelUrl: item.model_url, materialColors: matColors };
+            var metadata = { itemName: item.item_name, resizable: item.resizable, format: item.format, itemType: item.item_type, modelUrl: item.model_url, materialColors: matColors, frame: (item.frame) ? item.frame : '0' };
             var scale = new Vector3(item.scale_x, item.scale_y, item.scale_z);
             this.scene.addItem(item.item_type, item.model_url, metadata, position, item.rotation, scale, item.fixed);
         });
