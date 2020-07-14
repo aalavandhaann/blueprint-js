@@ -184,6 +184,11 @@ export class Edge3D extends EventDispatcher {
             return;
         }
 
+        let interiorStart = this.edge.interiorStart();
+        let interiorEnd = this.edge.interiorEnd();
+        let exteriorStart = this.edge.exteriorStart();
+        let exteriorEnd = this.edge.exteriorEnd();
+
         var color = 0xFFFFFF;
         var wallMaterial = new MeshBasicMaterial({
             color: color,
@@ -207,10 +212,10 @@ export class Edge3D extends EventDispatcher {
         //If the walls have corners that have more than one room attached
         //Then there is no need to construct an exterior wall
         if (this.edge.wall.start.getAttachedRooms().length < 2 || this.edge.wall.end.getAttachedRooms().length < 2) {
-            this.planes.push(this.makeWall(this.edge.exteriorStart(), this.edge.exteriorEnd(), this.edge.exteriorTransform, this.edge.invExteriorTransform, fillerMaterial));
+            this.planes.push(this.makeWall(exteriorStart, exteriorEnd, this.edge.exteriorTransform, this.edge.invExteriorTransform, fillerMaterial));
         }
         // interior plane
-        this.planes.push(this.makeWall(this.edge.interiorStart(), this.edge.interiorEnd(), this.edge.interiorTransform, this.edge.invInteriorTransform, wallMaterial));
+        this.planes.push(this.makeWall(interiorStart, interiorEnd, this.edge.interiorTransform, this.edge.invInteriorTransform, wallMaterial));
         // bottom
         // put into basePlanes since this is always visible
         this.basePlanes.push(this.buildFillerUniformHeight(this.edge, 0, BackSide, this.baseColor));
@@ -239,8 +244,9 @@ export class Edge3D extends EventDispatcher {
         //		v4.y = this.wall.getClosestCorner(start).elevation;
 
         var points = [v1.clone(), v2.clone(), v3.clone(), v4.clone()];
-
-        points.forEach((p) => { p.applyMatrix4(transform); });
+        points.forEach((p) => {
+            p.applyMatrix4(transform);
+        });
 
         var spoints = [new Vector2(points[0].x, points[0].y), new Vector2(points[1].x, points[1].y), new Vector2(points[2].x, points[2].y), new Vector2(points[3].x, points[3].y)];
         var shape = new Shape(spoints);

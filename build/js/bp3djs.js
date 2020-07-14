@@ -66511,6 +66511,16 @@ vec4 envMapTexelToLinear(vec4 color) {
       return Model;
   }(EventDispatcher);
 
+  /** Meta data for items. */
+  var Metadata = function Metadata() {
+  	classCallCheck(this, Metadata);
+
+  	this.itemName = '';
+  	this.itemType = -1;
+  	this.modelUrl = '';
+  	this.resizable = false;
+  };
+
   var jquery = createCommonjsModule(function (module) {
   /*!
    * jQuery JavaScript Library v3.5.1
@@ -78909,16 +78919,6 @@ vec4 envMapTexelToLinear(vec4 color) {
   	return Floorplanner2D;
   }(EventDispatcher);
 
-  /** Meta data for items. */
-  var Metadata = function Metadata() {
-  	classCallCheck(this, Metadata);
-
-  	this.itemName = '';
-  	this.itemType = -1;
-  	this.modelUrl = '';
-  	this.resizable = false;
-  };
-
   /**
    * @author qiao / https://github.com/qiao
    * @author mrdoob / http://mrdoob.com
@@ -80661,6 +80661,16 @@ vec4 envMapTexelToLinear(vec4 color) {
                   return;
               }
 
+              var interiorStart = this.edge.interiorStart();
+              var interiorEnd = this.edge.interiorEnd();
+              var exteriorStart = this.edge.exteriorStart();
+              var exteriorEnd = this.edge.exteriorEnd();
+              console.log('*******************************************');
+              console.log('CORNERS START AND END LOCATION : ', extStartCorner.location, extEndCorner.location);
+
+              console.log('EDGE: ', this.edge.name, ' IS ASKING ME TO UPDATE MYSELF AND I AM ', this.name);
+              console.log('WALLVIEW1 : ', this.name, interiorStart, interiorEnd, exteriorStart, exteriorEnd);
+
               var color = 0xFFFFFF;
               var wallMaterial = new MeshBasicMaterial({
                   color: color,
@@ -80684,10 +80694,10 @@ vec4 envMapTexelToLinear(vec4 color) {
               //If the walls have corners that have more than one room attached
               //Then there is no need to construct an exterior wall
               if (this.edge.wall.start.getAttachedRooms().length < 2 || this.edge.wall.end.getAttachedRooms().length < 2) {
-                  this.planes.push(this.makeWall(this.edge.exteriorStart(), this.edge.exteriorEnd(), this.edge.exteriorTransform, this.edge.invExteriorTransform, fillerMaterial));
+                  this.planes.push(this.makeWall(exteriorStart, exteriorEnd, this.edge.exteriorTransform, this.edge.invExteriorTransform, fillerMaterial));
               }
               // interior plane
-              this.planes.push(this.makeWall(this.edge.interiorStart(), this.edge.interiorEnd(), this.edge.interiorTransform, this.edge.invInteriorTransform, wallMaterial));
+              this.planes.push(this.makeWall(interiorStart, interiorEnd, this.edge.interiorTransform, this.edge.invInteriorTransform, wallMaterial));
               // bottom
               // put into basePlanes since this is always visible
               this.basePlanes.push(this.buildFillerUniformHeight(this.edge, 0, BackSide, this.baseColor));
@@ -80700,6 +80710,7 @@ vec4 envMapTexelToLinear(vec4 color) {
               this.planes.push(this.buildSideFillter(this.edge.interiorEnd(), this.edge.exteriorEnd(), extEndCorner.elevation, this.sideColor));
               //		this.planes.push(this.buildSideFillter(this.edge.interiorStart(), this.edge.exteriorStart(), this.wall.startElevation, this.sideColor));
               //		this.planes.push(this.buildSideFillter(this.edge.interiorEnd(), this.edge.exteriorEnd(), extEndCorner.endElevation, this.sideColor));
+              console.log('==================================================');
           }
 
           // start, end have x and y attributes (i.e. corners)
@@ -80719,9 +80730,11 @@ vec4 envMapTexelToLinear(vec4 color) {
               //		v4.y = this.wall.getClosestCorner(start).elevation;
 
               var points = [v1.clone(), v2.clone(), v3.clone(), v4.clone()];
-
+              console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
+              console.log('TRANSFORM POINTS AND FIND VALUES ');
               points.forEach(function (p) {
                   p.applyMatrix4(transform);
+                  console.log('WALLVIEW2 : ', p);
               });
 
               var spoints = [new Vector2(points[0].x, points[0].y), new Vector2(points[1].x, points[1].y), new Vector2(points[2].x, points[2].y), new Vector2(points[3].x, points[3].y)];
@@ -81062,7 +81075,7 @@ vec4 envMapTexelToLinear(vec4 color) {
   var Viewer3D = function (_EventDispatcher) {
       inherits(Viewer3D, _EventDispatcher);
 
-      function Viewer3D(model, element, canvasElement, opts) {
+      function Viewer3D(model, element, opts) {
           classCallCheck(this, Viewer3D);
 
           var _this = possibleConstructorReturn(this, (Viewer3D.__proto__ || Object.getPrototypeOf(Viewer3D)).call(this));
@@ -81077,7 +81090,6 @@ vec4 envMapTexelToLinear(vec4 color) {
           _this.floorplan = _this.model.floorplan;
           _this.scene = model.scene;
           _this.element = jquery(element);
-          _this.canvasElement = canvasElement;
           _this.options = options;
 
           _this.domElement = null;
@@ -81317,8 +81329,8 @@ vec4 envMapTexelToLinear(vec4 color) {
        * @property {Main} three
        * @type {Main}
        **/
-      this.three = new Viewer3D(this.model, options.threeElement, options.threeCanvasElement, {});
-      this.view_now = 3;
+      this.three = new Viewer3D(this.model, options.threeElement, this.options);
+      this.view_now = 2;
 
       if (!options.widget) {
         /**
@@ -81326,9 +81338,11 @@ vec4 envMapTexelToLinear(vec4 color) {
          * @type {Floorplanner2D}
          **/
         this.floorplanner = new Floorplanner2D(options.floorplannerElement, this.model.floorplan);
-      } else {
-        this.three.getController().enabled = false;
+        // this.floorplanner = new Viewer2D(options.floorplannerElement, this.model.floorplan, this.options);
       }
+      // else {
+      //     this.three.getController().enabled = false;
+      // }
     }
 
     createClass(BlueprintJS, [{
