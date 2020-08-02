@@ -67,8 +67,8 @@ export class FloorItem extends Item
 		{
 			//We do not want to check if the object is in room or not
 			//It is upto the user to place it anywhere he/she wants however
-//			return false;
-			return true;
+			return false;
+			// return true;
 		}
 
 		// check if we are outside all other objects
