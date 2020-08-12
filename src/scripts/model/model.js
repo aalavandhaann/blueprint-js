@@ -1,5 +1,5 @@
 import { EVENT_LOADED, EVENT_LOADING, EVENT_GLTF_READY } from '../core/events.js';
-import { EventDispatcher, Vector3, Mesh } from 'three';
+import { EventDispatcher, Mesh } from 'three';
 import { Floorplan } from './floorplan.js';
 import { Scene } from './scene.js';
 
@@ -84,7 +84,7 @@ export class Model extends EventDispatcher {
         return JSON.stringify(room);
     }
 
-    newRoom(floorplan, items) {
+    newRoom(floorplan) {
         this.scene.clearItems();
         this.floorplan.loadFloorplan(floorplan);
         // items.forEach((item) => {

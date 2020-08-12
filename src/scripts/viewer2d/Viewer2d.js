@@ -7,6 +7,9 @@ import { fabric } from 'fabric';
 export class Viewer2D extends EventDispatcher {
     constructor(canvasHolder, floorplan, options) {
         super();
+        this.__canvasHolder = canvasHolder;
+        this.__floorplan = floorplan;
+        this.__options = options;
         this.__canvas = new fabric.Canvas('bp3djs-viewer2d');
 
         let rect = new fabric.Rect({ left: 100, top: 100, fill: 'blue', width: 20, height: 20 });
@@ -15,7 +18,7 @@ export class Viewer2D extends EventDispatcher {
 
     __initializeViewerAndEvents() {}
 
-    _zoomViewer(e) {}
+    _zoomViewer() {}
 
     updateStageSize() {
 

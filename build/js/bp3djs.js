@@ -57498,7 +57498,7 @@ vec4 envMapTexelToLinear(vec4 color) {
               this._bezier.points[3].y = this.end.location.y;
               this._bezier.update();
               if (this.getStart() || this.getEnd()) {
-                  var _ = this.getStart() != null ? this.getStart().floorplan.update(false) : this.getEnd() != null ? this.getEnd().floorplan.update(false) : false;
+                  this.getStart() != null ? this.getStart().floorplan.update(false) : this.getEnd() != null ? this.getEnd().floorplan.update(false) : false;
               }
               //		this._a_vector = this._a.clone().sub(this.start.location);
               //		this._b_vector = this._b.clone().sub(this.start.location);
@@ -66676,7 +66676,7 @@ vec4 envMapTexelToLinear(vec4 color) {
           }
       }, {
           key: 'newRoom',
-          value: function newRoom(floorplan, items) {
+          value: function newRoom(floorplan) {
               this.scene.clearItems();
               this.floorplan.loadFloorplan(floorplan);
               // items.forEach((item) => {
@@ -109553,6 +109553,9 @@ vec4 envMapTexelToLinear(vec4 color) {
 
           var _this = possibleConstructorReturn(this, (Viewer2D.__proto__ || Object.getPrototypeOf(Viewer2D)).call(this));
 
+          _this.__canvasHolder = canvasHolder;
+          _this.__floorplan = floorplan;
+          _this.__options = options;
           _this.__canvas = new fabric_2.Canvas('bp3djs-viewer2d');
 
           var rect = new fabric_2.Rect({ left: 100, top: 100, fill: 'blue', width: 20, height: 20 });
@@ -109565,7 +109568,7 @@ vec4 envMapTexelToLinear(vec4 color) {
           value: function __initializeViewerAndEvents() {}
       }, {
           key: '_zoomViewer',
-          value: function _zoomViewer(e) {}
+          value: function _zoomViewer() {}
       }, {
           key: 'updateStageSize',
           value: function updateStageSize() {

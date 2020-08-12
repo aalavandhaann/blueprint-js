@@ -141,7 +141,7 @@ export class Wall extends EventDispatcher {
         this._bezier.points[3].y = this.end.location.y;
         this._bezier.update();
         if (this.getStart() || this.getEnd()) {
-            let _ = (this.getStart() != null) ? this.getStart().floorplan.update(false) : (this.getEnd() != null) ? this.getEnd().floorplan.update(false) : false;
+            (this.getStart() != null) ? this.getStart().floorplan.update(false): (this.getEnd() != null) ? this.getEnd().floorplan.update(false) : false;
         }
         //		this._a_vector = this._a.clone().sub(this.start.location);
         //		this._b_vector = this._b.clone().sub(this.start.location);
