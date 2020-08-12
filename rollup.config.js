@@ -3,10 +3,9 @@ import resolve from 'rollup-plugin-node-resolve';
 import eslint from 'rollup-plugin-eslint';
 import replace from 'rollup-plugin-replace';
 import postcss from 'rollup-plugin-postcss';
-import serve from 'rollup-plugin-serve'
+import serve from 'rollup-plugin-serve';
 import cssnano from 'cssnano';
-import commonjs from 'rollup-plugin-commonjs'
-
+import commonjs from 'rollup-plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
 
 var isProduction = process.env.NODE_ENV === 'production';
@@ -14,7 +13,7 @@ var cache;
 
 export default {
     input: 'src/scripts/blueprint.js',
-    output: { name: 'BP3DJS', file: (isProduction) ? 'build/js/bp3djs.min.js' : 'build/js/bp3djs.js', format: 'iife', sourceMap: true, },
+    output: { name: 'BP3DJS', file: (isProduction) ? 'build/js/bp3djs.min.js' : 'build/js/bp3djs.js', format: 'iife' }, //, sourceMap: true, },
     cache: cache,
     treeshake: true,
     plugins: [
@@ -28,6 +27,7 @@ export default {
                 'node_modules/three/**',
                 'node_modules/jquery/**',
                 'node_modules/es6-enum/**',
+                'node_modules/fabric/**',
                 'node_modules/three-gltf-loader/**',
                 'node_modules/three-gltf-exporter/**',
                 'node_modules/three-reflector2/**',

@@ -23,12 +23,15 @@
             "unix"
         ],
         "quotes": [
-            "error",
+            "error",//should be "error"
             "single"
         ],
         "semi": [
             "error",
             "always"
-        ]       
+        ],
+        "no-unused-vars": [
+            "warn"           
+        ]
     }
 }

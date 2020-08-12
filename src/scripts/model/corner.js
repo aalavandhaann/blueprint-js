@@ -127,7 +127,7 @@ export class Corner extends EventDispatcher {
     }
 
     set x(value) {
-        var oldvalue = this._x;
+        let oldvalue = this._x;
         if (Math.abs(value - this._x) > 1e-6) {
             this._hasChanged = true;
         }
@@ -145,7 +145,7 @@ export class Corner extends EventDispatcher {
     }
 
     set y(value) {
-        var oldvalue = this._y;
+        let oldvalue = this._y;
         if (Math.abs(value - this._y) > 1e-6) {
             this._hasChanged = true;
         }
@@ -160,7 +160,7 @@ export class Corner extends EventDispatcher {
 
     /** @type {Number} elevation The elevation value at this corner*/
     set elevation(value) {
-        var oldvalue = this._elevation;
+        let oldvalue = this._elevation;
         if (value - this._elevation < 1e-6) {
             this._hasChanged = true;
         }
@@ -248,8 +248,8 @@ export class Corner extends EventDispatcher {
      */
     snapToAxis(tolerance) {
         // try to snap this corner to an axis
-        var snapped = { x: false, y: false };
-        var scope = this;
+        let snapped = { x: false, y: false };
+        let scope = this;
 
         this.adjacentCorners().forEach((corner) => {
             if (Math.abs(corner.x - scope.x) < tolerance) {
@@ -327,7 +327,7 @@ export class Corner extends EventDispatcher {
      * corner.removeAll();
      **/
     removeAll() {
-        var i = 0;
+        let i = 0;
         for (i = 0; i < this.wallStarts.length; i++) {
             this.wallStarts[i].remove();
         }
@@ -339,18 +339,18 @@ export class Corner extends EventDispatcher {
 
     //Angle is in degrees 0 - 360
     closestAngle(angle) {
-        var neighbors = this.adjacentCorners();
-        var delta = 999999;
-        var closestAngle = 0;
-        var point = new Vector2();
-        for (var i = 0; i < neighbors.length; i++) {
-            var wall = this.wallToOrFrom(neighbors[i]);
-            if (wall.wallType == WallTypes.CURVED) {
+        let neighbors = this.adjacentCorners();
+        let delta = 999999;
+        let closestAngle = 0;
+        let point = new Vector2();
+        for (let i = 0; i < neighbors.length; i++) {
+            let wall = this.wallToOrFrom(neighbors[i]);
+            if (wall.wallType === WallTypes.CURVED) {
                 continue;
             }
-            var neighbourAngle = neighbors[i].location.clone().sub(this.location).angle();
+            let neighbourAngle = neighbors[i].location.clone().sub(this.location).angle();
             neighbourAngle = (neighbourAngle * 180) / Math.PI;
-            var diff = Math.abs(angle - neighbourAngle);
+            let diff = Math.abs(angle - neighbourAngle);
             if (diff < delta) {
                 delta = diff;
                 point.x = neighbors[i].location.x;
@@ -362,7 +362,7 @@ export class Corner extends EventDispatcher {
     }
 
     updateAngles() {
-        var neighbors = this.adjacentCorners();
+        let neighbors = this.adjacentCorners();
         this._angles = [];
         this._angleDirections = [];
         this._startAngles = [];
@@ -372,25 +372,25 @@ export class Corner extends EventDispatcher {
             return;
         }
 
-        var start = this.location.clone();
-        var points = [];
-        for (var i = 0; i < neighbors.length; i++) {
+        let start = this.location.clone();
+        let points = [];
+        for (let i = 0; i < neighbors.length; i++) {
             points.push(neighbors[i].location);
         }
-        var indicesAndAngles = Utils.getCyclicOrder(points, start);
-        var indices = indicesAndAngles['indices'];
-        var angles = indicesAndAngles['angles'];
-        //		var N = (indices.length%2 == 0)? (indices.length < 3) ? indices.length - 1 : indices.length : indices.length - 1;
-        var N = (indices.length < 3) ? 1 : indices.length;
-        for (i = 0; i < N; i++) {
-            var next = (i + 1) % indices.length;
-            var cindex = indices[i];
-            var nindex = indices[next];
+        let indicesAndAngles = Utils.getCyclicOrder(points, start);
+        let indices = indicesAndAngles['indices'];
+        let angles = indicesAndAngles['angles'];
+        //		var N = (indices.length%2 === 0)? (indices.length < 3) ? indices.length - 1 : indices.length : indices.length - 1;
+        let N = (indices.length < 3) ? 1 : indices.length;
+        for (let i = 0; i < N; i++) {
+            let next = (i + 1) % indices.length;
+            let cindex = indices[i];
+            let nindex = indices[next];
 
-            var cwall = this.wallToOrFrom(neighbors[cindex]);
-            var nwall = this.wallToOrFrom(neighbors[nindex]);
+            let cwall = this.wallToOrFrom(neighbors[cindex]);
+            let nwall = this.wallToOrFrom(neighbors[nindex]);
             if (cwall != null && nwall != null) {
-                if (cwall.wallType == WallTypes.CURVED || nwall.wallType == WallTypes.CURVED) {
+                if (cwall.wallType === WallTypes.CURVED || nwall.wallType === WallTypes.CURVED) {
                     //					No use in showing angle between two curved or two walls with intermixed types of straight and curved
                     //					Set everything to zero
                     this._startAngles.push(0);
@@ -402,11 +402,11 @@ export class Corner extends EventDispatcher {
                 }
             }
 
-            var vectorA = points[cindex].clone().sub(start).normalize();
-            var vectorB = points[nindex].clone().sub(start).normalize();
-            var midVector = vectorA.add(vectorB).multiplyScalar(20.0);
+            let vectorA = points[cindex].clone().sub(start).normalize();
+            let vectorB = points[nindex].clone().sub(start).normalize();
+            let midVector = vectorA.add(vectorB).multiplyScalar(20.0);
 
-            var diffAngle = Math.abs(angles[next] - angles[i]);
+            let diffAngle = Math.abs(angles[next] - angles[i]);
             diffAngle = (diffAngle > 180) ? 360 - diffAngle : diffAngle;
             diffAngle = Math.round(diffAngle * 10) / 10;
             this._startAngles.push(angles[i]);
@@ -438,8 +438,8 @@ export class Corner extends EventDispatcher {
      * @returns {Corner[]} Array of corners.
      */
     adjacentCorners() {
-        var retArray = [];
-        var i = 0;
+        let retArray = [];
+        let i = 0;
         for (i = 0; i < this.wallStarts.length; i++) {
             retArray.push(this.wallStarts[i].getEnd());
         }
@@ -454,14 +454,14 @@ export class Corner extends EventDispatcher {
      * @returns {boolean} in case of connection.
      */
     isWallConnected(wall) {
-        var i = 0;
+        let i = 0;
         for (i = 0; i < this.wallStarts.length; i++) {
-            if (this.wallStarts[i] == wall) {
+            if (this.wallStarts[i] === wall) {
                 return true;
             }
         }
         for (i = 0; i < this.wallEnds.length; i++) {
-            if (this.wallEnds[i] == wall) {
+            if (this.wallEnds[i] === wall) {
                 return true;
             }
         }
@@ -475,7 +475,7 @@ export class Corner extends EventDispatcher {
      * @return {Number} distance The distance
      **/
     distanceFrom(point) {
-        var distance = Utils.distance(point, new Vector2(this.x, this.y));
+        let distance = Utils.distance(point, new Vector2(this.x, this.y));
         //console.log('x,y ' + x + ',' + y + ' to ' + this.getX() + ',' + this.getY() + ' is ' + distance);
         return distance;
     }
@@ -485,12 +485,12 @@ export class Corner extends EventDispatcher {
      * @returns {Number} distance The distance.
      */
     distanceFromWall(wall) {
-        var cPoint = new Vector2(this.x, this.y);
-        if (wall.wallType == WallTypes.STRAIGHT) {
+        let cPoint = new Vector2(this.x, this.y);
+        if (wall.wallType === WallTypes.STRAIGHT) {
             return wall.distanceFrom(cPoint);
-        } else if (wall.wallType == WallTypes.CURVED) {
-            var p = wall.bezier.project(cPoint);
-            var projected = new Vector2(p.x, p.y);
+        } else if (wall.wallType === WallTypes.CURVED) {
+            let p = wall.bezier.project(cPoint);
+            let projected = new Vector2(p.x, p.y);
             return projected.distanceTo(cPoint);
         }
     }
@@ -510,7 +510,7 @@ export class Corner extends EventDispatcher {
         Utils.removeValue(this.wallStarts, wall);
         Utils.removeValue(this.wallEnds, wall);
 
-        if (this.wallStarts.length == 0 && this.wallEnds.length == 0) {
+        if (this.wallStarts.length === 0 && this.wallEnds.length === 0) {
             this.remove();
         }
     }
@@ -534,7 +534,7 @@ export class Corner extends EventDispatcher {
      * @return {Wall} The associated wall or null.
      */
     wallTo(corner) {
-        for (var i = 0; i < this.wallStarts.length; i++) {
+        for (let i = 0; i < this.wallStarts.length; i++) {
             if (this.wallStarts[i].getEnd() === corner) {
                 return this.wallStarts[i];
             }
@@ -547,7 +547,7 @@ export class Corner extends EventDispatcher {
      * @return {Wall} The associated wall or null.
      */
     wallFrom(corner) {
-        for (var i = 0; i < this.wallEnds.length; i++) {
+        for (let i = 0; i < this.wallEnds.length; i++) {
             if (this.wallEnds[i].getStart() === corner) {
                 return this.wallEnds[i];
             }
@@ -567,7 +567,7 @@ export class Corner extends EventDispatcher {
      * @param {Corner}  corner A corner.
      */
     combineWithCorner(corner) {
-        var i = 0;
+        let i = 0;
         // update position to other corner's
         //		this.x = corner.x;
         //		this.y = corner.y;
@@ -580,14 +580,14 @@ export class Corner extends EventDispatcher {
             corner.wallEnds[i].setEnd(this);
         }
 
-        var rooms = corner.getAttachedRooms();
+        let rooms = corner.getAttachedRooms();
         for (i = 0; i < rooms.length; i++) {
-            var room = rooms[i];
+            let room = rooms[i];
             //Below returns the roomname object
-            var roomname = this.floorplan.metaroomsdata[room.roomByCornersId];
+            let roomname = this.floorplan.metaroomsdata[room.roomByCornersId];
             if (roomname) {
-                var oldId = room.roomByCornersId;
-                var newId = oldId.replace(corner.id, this.id);
+                let oldId = room.roomByCornersId;
+                let newId = oldId.replace(corner.id, this.id);
                 this.floorplan.metaroomsdata[newId] = {};
                 this.floorplan.metaroomsdata[newId]['name'] = roomname['name'];
                 delete this.floorplan.metaroomsdata[oldId];
@@ -601,33 +601,33 @@ export class Corner extends EventDispatcher {
     }
 
     mergeWithIntersected(updateFloorPlan = true) {
-        var i = 0;
+        let i = 0;
         //console.log('mergeWithIntersected for object: ' + this.type);
         // check corners
         for (i = 0; i < this.floorplan.getCorners().length; i++) {
-            var corner = this.floorplan.getCorners()[i];
-            if (this.distanceFromCorner(corner) < cornerTolerance && corner != this) {
+            let corner = this.floorplan.getCorners()[i];
+            if (this.distanceFromCorner(corner) < cornerTolerance && corner !== this) {
                 this.combineWithCorner(corner);
                 return true;
             }
         }
         // check walls
         for (i = 0; i < this.floorplan.getWalls().length; i++) {
-            var wall = this.floorplan.getWalls()[i];
+            let wall = this.floorplan.getWalls()[i];
             if (this.distanceFromWall(wall) < cornerTolerance && !this.isWallConnected(wall)) {
                 // update position to be on wall
-                var intersection;
-                if (wall.wallType == WallTypes.STRAIGHT) {
+                let intersection;
+                if (wall.wallType === WallTypes.STRAIGHT) {
                     intersection = Utils.closestPointOnLine(new Vector2(this.x, this.y), wall.getStart(), wall.getEnd());
-                } else if (wall.wallType == WallTypes.CURVED) {
+                } else if (wall.wallType === WallTypes.CURVED) {
                     intersection = wall.bezier.project(new Vector2(this.x, this.y));
                 }
 
-                if (wall.wallType == WallTypes.STRAIGHT) {
+                if (wall.wallType === WallTypes.STRAIGHT) {
                     // merge this corner into wall by breaking wall into two parts
                     this.floorplan.newWall(this, wall.getEnd());
                     wall.setEnd(this);
-                } else if (wall.wallType == WallTypes.CURVED) {
+                } else if (wall.wallType === WallTypes.CURVED) {
                     // merge this corner into wall by breaking wall into two parts				
                     this.floorplan.newWall(this, wall.getEnd());
                     wall.setEnd(this);
@@ -649,10 +649,10 @@ export class Corner extends EventDispatcher {
 
     /** Ensure we do not have duplicate walls (i.e. same start and end points) */
     removeDuplicateWalls() {
-        var i = 0;
+        let i = 0;
         // delete the wall between these corners, if it exists
-        var wallEndpoints = {};
-        var wallStartpoints = {};
+        let wallEndpoints = {};
+        let wallStartpoints = {};
         for (i = this.wallStarts.length - 1; i >= 0; i--) {
             if (this.wallStarts[i].getEnd() === this) {
                 // remove zero length wall

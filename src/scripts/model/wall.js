@@ -1,7 +1,7 @@
 import { EventDispatcher, Vector2 } from 'three';
 import Bezier from 'bezier-js';
 import { WallTypes } from '../core/constants.js';
-import { EVENT_ACTION, EVENT_MOVED, EVENT_DELETED, EVENT_UPDATED } from '../core/events.js';
+import { EVENT_ACTION, EVENT_MOVED, EVENT_DELETED, EVENT_UPDATED, EVENT_CORNER_ATTRIBUTES_CHANGED } from '../core/events.js';
 import { Configuration, configWallThickness, configWallHeight } from '../core/configuration.js';
 import { Utils } from '../core/utils.js';
 
@@ -30,11 +30,11 @@ export class Wall extends EventDispatcher {
         } else {
             this._walltype = WallTypes.CURVED;
         }
-        var o = new Vector2(0, 0);
-        var abvector = end.location.clone().sub(start.location).multiplyScalar(0.5);
+        let o = new Vector2(0, 0);
+        let abvector = end.location.clone().sub(start.location).multiplyScalar(0.5);
 
-        var ab135plus = abvector.clone().rotateAround(o, Math.PI * 0.75);
-        var ab45plus = abvector.clone().rotateAround(o, Math.PI * 0.25);
+        let ab135plus = abvector.clone().rotateAround(o, Math.PI * 0.75);
+        let ab45plus = abvector.clone().rotateAround(o, Math.PI * 0.25);
 
         if (aa) {
             this._a = new Vector2(0, 0);
@@ -108,64 +108,23 @@ export class Wall extends EventDispatcher {
     }
 
     addCornerMoveListener(corner, remove = false) {
-        var scope = this;
+        let scope = this;
 
         function moved() {
             scope.updateControlVectors();
         }
 
+        function cornerAttributesChanged() {
+            scope.dispatchEvent({ type: EVENT_MOVED, item: scope, position: null });
+        }
+
         if (remove) {
             corner.removeEventListener(EVENT_MOVED, moved);
+            corner.removeEventListener(EVENT_CORNER_ATTRIBUTES_CHANGED, cornerAttributesChanged);
             return;
         }
         corner.addEventListener(EVENT_MOVED, moved);
-    }
-
-    get thickness() {
-        return this._thickness;
-    }
-
-    set thickness(thick) {
-        this._thickness = thick;
-        this.dispatchEvent({ type: EVENT_UPDATED }); //This is stupid. You need to say what event exactly happened
-    }
-
-    get uuid() {
-        return this.getUuid();
-    }
-
-    get a() {
-        return this._a;
-    }
-
-    set a(location) {
-        this._a.x = location.x;
-        this._a.y = location.y;
-        this._a_vector = this._a.clone().sub(this.start.location);
-        this.updateControlVectors();
-    }
-
-    get b() {
-        return this._b;
-    }
-
-    set b(location) {
-        this._b.x = location.x;
-        this._b.y = location.y;
-        this._b_vector = this._b.clone().sub(this.start.location);
-        this.updateControlVectors();
-    }
-
-    get aVector() {
-        return this._a_vector.clone();
-    }
-
-    get bVector() {
-        return this._b_vector.clone();
-    }
-
-    get bezier() {
-        return this._bezier;
+        corner.addEventListener(EVENT_CORNER_ATTRIBUTES_CHANGED, cornerAttributesChanged);
     }
 
     updateControlVectors() {
@@ -182,8 +141,7 @@ export class Wall extends EventDispatcher {
         this._bezier.points[3].y = this.end.location.y;
         this._bezier.update();
         if (this.getStart() || this.getEnd()) {
-            (this.getStart() != null) ? this.getStart().floorplan.update(false): (this.getEnd() != null) ? this.getEnd().floorplan.update(false) : false;
-
+            let _ = (this.getStart() != null) ? this.getStart().floorplan.update(false) : (this.getEnd() != null) ? this.getEnd().floorplan.update(false) : false;
         }
         //		this._a_vector = this._a.clone().sub(this.start.location);
         //		this._b_vector = this._b.clone().sub(this.start.location);
@@ -227,15 +185,18 @@ export class Wall extends EventDispatcher {
     }
 
     move(newX, newY) {
-        var dx = newX - ((this.start.location.x + this.end.location.x) * 0.5);
-        var dy = newY - ((this.start.location.y + this.end.location.y) * 0.5);
+        let dx = newX - ((this.start.location.x + this.end.location.x) * 0.5);
+        let dy = newY - ((this.start.location.y + this.end.location.y) * 0.5);
         this.relativeMove(dx, dy);
-
     }
 
-    relativeMove(dx, dy) {
-        this.start.relativeMove(dx, dy);
-        this.end.relativeMove(dx, dy);
+    relativeMove(dx, dy, corner) {
+        if (!corner) {
+            this.start.relativeMove(dx, dy);
+            this.end.relativeMove(dx, dy);
+        } else {
+            corner.relativeMove(dx, dy);
+        }
         this.updateControlVectors();
 
     }
@@ -258,15 +219,15 @@ export class Wall extends EventDispatcher {
     }
 
     set wallSize(value) {
-        if (this.wallType == WallTypes.STRAIGHT) {
-            var vector = this.getEnd().location.clone().sub(this.getStart().location);
-            var currentLength = this.wallLength();
-            var changeInLength = value / currentLength;
+        if (this.wallType === WallTypes.STRAIGHT) {
+            let vector = this.getEnd().location.clone().sub(this.getStart().location);
+            let currentLength = this.wallLength();
+            let changeInLength = value / currentLength;
 
-            var neighboursCountStart = (this.getStart().adjacentCorners().length == 1);
-            var neighboursCountEnd = (this.getEnd().adjacentCorners().length == 1);
+            let neighboursCountStart = (this.getStart().adjacentCorners().length === 1);
+            let neighboursCountEnd = (this.getEnd().adjacentCorners().length === 1);
 
-            var changeInLengthOffset, movementVector, startPoint, endPoint;
+            let changeInLengthOffset, movementVector, startPoint, endPoint;
 
             changeInLengthOffset = (changeInLength - 1);
 
@@ -292,6 +253,58 @@ export class Wall extends EventDispatcher {
             //			vector = vector.multiplyScalar(changeInLength).add(this.getStart().location);
             //			this.getEnd().move(vector.x, vector.y);
         }
+        /**
+         * No need for the below statement. Because the corners moved will trigger the event to this instance
+         * Then this instance will also trigger the move event 
+         */
+        // this.dispatchEvent({ type: EVENT_UPDATED, item: this });
+    }
+
+    get thickness() {
+        return this._thickness;
+    }
+
+    set thickness(thick) {
+        this._thickness = thick;
+        this.dispatchEvent({ type: EVENT_UPDATED, item: this }); //This is stupid. You need to say what event exactly happened
+    }
+
+    get uuid() {
+        return this.getUuid();
+    }
+
+    get a() {
+        return this._a;
+    }
+
+    set a(location) {
+        this._a.x = location.x;
+        this._a.y = location.y;
+        this._a_vector = this._a.clone().sub(this.start.location);
+        this.updateControlVectors();
+    }
+
+    get b() {
+        return this._b;
+    }
+
+    set b(location) {
+        this._b.x = location.x;
+        this._b.y = location.y;
+        this._b_vector = this._b.clone().sub(this.start.location);
+        this.updateControlVectors();
+    }
+
+    get aVector() {
+        return this._a_vector.clone();
+    }
+
+    get bVector() {
+        return this._b_vector.clone();
+    }
+
+    get bezier() {
+        return this._bezier;
     }
 
     get wallSize() {
@@ -303,7 +316,7 @@ export class Wall extends EventDispatcher {
     }
 
     set wallType(value) {
-        if (value == WallTypes.STRAIGHT || value == WallTypes.CURVED) {
+        if (value === WallTypes.STRAIGHT || value === WallTypes.CURVED) {
             this._walltype = value;
         }
         this.updateControlVectors();
@@ -349,21 +362,21 @@ export class Wall extends EventDispatcher {
     }
 
     wallLength() {
-        if (this.wallType == WallTypes.STRAIGHT) {
-            var start = this.getStart();
-            var end = this.getEnd();
+        if (this.wallType === WallTypes.STRAIGHT) {
+            let start = this.getStart();
+            let end = this.getEnd();
             return Utils.distance(start, end);
-        } else if (this.wallType == WallTypes.CURVED) {
+        } else if (this.wallType === WallTypes.CURVED) {
             return this._bezier.length();
         }
         return -1;
     }
 
     wallCenter() {
-        if (this.wallType == WallTypes.STRAIGHT) {
+        if (this.wallType === WallTypes.STRAIGHT) {
             return new Vector2((this.getStart().x + this.getEnd().x) / 2.0, (this.getStart().y + this.getEnd().y) / 2.0);
-        } else if (this.wallType == WallTypes.CURVED) {
-            var p = this._bezier.get(0.5);
+        } else if (this.wallType === WallTypes.CURVED) {
+            let p = this._bezier.get(0.5);
             return new Vector2(p.x, p.y);
         }
         return new Vector2(0, 0);
@@ -398,11 +411,11 @@ export class Wall extends EventDispatcher {
     }
 
     distanceFrom(point) {
-        if (this.wallType == WallTypes.STRAIGHT) {
+        if (this.wallType === WallTypes.STRAIGHT) {
             return Utils.pointDistanceFromLine(point, new Vector2(this.getStartX(), this.getStartY()), new Vector2(this.getEndX(), this.getEndY()));
-        } else if (this.wallType == WallTypes.CURVED) {
-            var p = this._bezier.project(point);
-            var projected = new Vector2(p.x, p.y);
+        } else if (this.wallType === WallTypes.CURVED) {
+            let p = this._bezier.project(point);
+            let projected = new Vector2(p.x, p.y);
             return projected.distanceTo(point);
         }
         return -1;
@@ -424,10 +437,10 @@ export class Wall extends EventDispatcher {
     }
 
     getClosestCorner(point) {
-        var startVector = new Vector2(this.start.x, this.start.y);
-        var endVector = new Vector2(this.end.x, this.end.y);
-        var startDistance = point.distanceTo(startVector);
-        var endDistance = point.distanceTo(endVector);
+        let startVector = new Vector2(this.start.x, this.start.y);
+        let endVector = new Vector2(this.end.x, this.end.y);
+        let startDistance = point.distanceTo(startVector);
+        let endDistance = point.distanceTo(endVector);
         if (startDistance <= (this.thickness * 2)) {
             return this.start;
         } else if (endDistance <= (this.thickness * 2)) {

@@ -10,11 +10,11 @@ var empty = '{"floorplan":{"version":"0.0.2a","units":"m", "corners":{"71d4f128-
 
 $(document).ready(function() {
     var opts = {
-        floorplannerElement: 'floorplanner-canvas',
+        floorplannerElement: 'floorplanner',
         threeElement: '#viewer',
         threeCanvasElement: 'three-canvas',
         textureDir: "models/textures/",
-        widget: true
+        widget: false
     }
     blueprint3d = new BP3DJS.BlueprintJS(opts);
     blueprint3d.model.addEventListener(BP3DJS.EVENT_LOADED, function() { console.log('LOAD SERIALIZED JSON ::: '); });

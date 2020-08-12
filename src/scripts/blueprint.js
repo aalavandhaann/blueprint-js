@@ -24,6 +24,9 @@ from './core/events.js';
 export { EVENT_ROOM_2D_CLICKED, EVENT_ROOM_2D_DOUBLE_CLICKED, EVENT_ROOM_2D_HOVER }
 from './core/events.js';
 
+export { EVENT_NEW_ROOMS_ADDED }
+from './core/events.js';
+
 export { Utils, Region }
 from './core/utils.js';
 export { ELogContext, ELogLevel, logContext, isLogging, log }
@@ -111,22 +114,22 @@ from './three/skybox.js';
 */
 
 //Classes from floorplanner module
-export { floorplannerModes, gridWidth, gridColor, deleteColor }
-from './floorplanner/floorplanner_view.js';
-export { roomColor, roomColorHover, roomColorSelected }
-from './floorplanner/floorplanner_view.js';
-export { wallWidth, wallWidthHover, wallWidthSelected, wallColor, wallColorHover, wallColorSelected }
-from './floorplanner/floorplanner_view.js';
-export { edgeColor, edgeColorHover, edgeWidth }
-from './floorplanner/floorplanner_view.js';
-export { cornerRadius, cornerRadiusHover, cornerRadiusSelected, cornerColor, cornerColorHover, cornerColorSelected }
-from './floorplanner/floorplanner_view.js';
-export { FloorplannerView2D }
-from './floorplanner/floorplanner_view.js';
-export { Floorplanner2D }
-from './floorplanner/floorplanner.js';
-export { CarbonSheet }
-from './floorplanner/carbonsheet.js';
+// export { floorplannerModes, gridWidth, gridColor, deleteColor }
+// from './floorplanner/floorplanner_view.js';
+// export { roomColor, roomColorHover, roomColorSelected }
+// from './floorplanner/floorplanner_view.js';
+// export { wallWidth, wallWidthHover, wallWidthSelected, wallColor, wallColorHover, wallColorSelected }
+// from './floorplanner/floorplanner_view.js';
+// export { edgeColor, edgeColorHover, edgeWidth }
+// from './floorplanner/floorplanner_view.js';
+// export { cornerRadius, cornerRadiusHover, cornerRadiusSelected, cornerColor, cornerColorHover, cornerColorSelected }
+// from './floorplanner/floorplanner_view.js';
+// export { FloorplannerView2D }
+// from './floorplanner/floorplanner_view.js';
+// export { Floorplanner2D }
+// from './floorplanner/floorplanner.js';
+// export { CarbonSheet }
+// from './floorplanner/carbonsheet.js';
 
 
 //Classes from Viewer2D module
@@ -152,8 +155,8 @@ from './exporters/OBJExporter.js';
 
 
 import { Model } from './model/model.js';
-// import { Viewer2D } from './viewer2d/Viewer2d.js';
-import { Floorplanner2D } from './floorplanner/floorplanner.js';
+import { Viewer2D } from './viewer2d/Viewer2d.js';
+// import { Floorplanner2D } from './floorplanner/floorplanner.js';
 import { Configuration, configDimUnit } from './core/configuration.js';
 import { dimCentiMeter } from './core/constants.js';
 import { Viewer3D } from './viewer3d/Viewer3d.js';
@@ -204,8 +207,8 @@ export class BlueprintJS {
              * @property {Floorplanner2D} floorplanner
              * @type {Floorplanner2D}
              **/
-            this.floorplanner = new Floorplanner2D(options.floorplannerElement, this.model.floorplan);
-            // this.floorplanner = new Viewer2D(options.floorplannerElement, this.model.floorplan, this.options);
+            // this.floorplanner = new Floorplanner2D(options.floorplannerElement, this.model.floorplan);
+            this.floorplanner = new Viewer2D(options.floorplannerElement, this.model.floorplan, this.options);
 
         }
         // else {
@@ -214,9 +217,11 @@ export class BlueprintJS {
     }
 
     switchView() {
-        if (this.view_now == 3 && !this.options.widget) {
+        if (this.view_now === 3 && !this.options.widget) {
             this.view_now = 2;
-
+        }
+        if (this.view_now === 2 && !this.options.widget) {
+            this.view_now = 3;
         }
     }
 }

@@ -1,51 +1,21 @@
-import $ from 'jquery';
-import { Stage } from 'konva/lib/Core';
+import { EventDispatcher } from 'three';
 
-import { Grid2D } from './Grid2d.js';
+import { fabric } from 'fabric';
 
-export class Viewer2D extends Stage {
+
+
+export class Viewer2D extends EventDispatcher {
     constructor(canvasHolder, floorplan, options) {
-        super({ container: canvasHolder, draggable: false });
-        this._floorplan = floorplan;
-        this._options = options;
-        this._scaleBy = (this._options.scaleBy) ? this._options.scaleBy : 1.5;
-        this._parent = $('#' + this.canvasHolder);
+        super();
+        this.__canvas = new fabric.Canvas('bp3djs-viewer2d');
 
-        this.__initializeViewerAndEvents();
+        let rect = new fabric.Rect({ left: 100, top: 100, fill: 'blue', width: 20, height: 20 });
+        this.__canvas.add(rect);
     }
 
-    __initializeViewerAndEvents() {
-        let scope = this;
-        this._gridElement = new Grid2D(this, this._options);
-        this.add(this._gridElement);
+    __initializeViewerAndEvents() {}
 
-        this.on('wheel', (e) => this._zoomViewer(e));
-        $(window).resize(() => scope.updateStageSize());
-        scope.updateStageSize();
-    }
-
-    _zoomViewer(e) {
-        e.evt.preventDefault();
-        let prevScaleX = this.stageX();
-        var pointer = this.getPointerPosition();
-
-        var mousePointTo = {
-            x: (pointer.x - this.x()) / prevScaleX,
-            y: (pointer.y - this.y()) / prevScaleX,
-        };
-
-        var newScale =
-            e.evt.deltaY > 0 ? prevScaleX * this._scaleBy : prevScaleX / this._scaleBy;
-
-        this.scale({ x: newScale, y: newScale });
-
-        var newPos = {
-            x: pointer.x - mousePointTo.x * newScale,
-            y: pointer.y - mousePointTo.y * newScale,
-        };
-        this.position(newPos);
-        this.batchDraw();
-    }
+    _zoomViewer(e) {}
 
     updateStageSize() {
 
@@ -56,8 +26,5 @@ export class Viewer2D extends Stage {
 
         this.height = h;
         this.width = w;
-        this._gridElement.updateGrid();
-
-        this.draw();
     }
 }

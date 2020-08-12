@@ -1,145 +1,16 @@
 html {
-  overflow: hidden;
-  height: 100%;
+    overflow: hidden;
+    height: 100%;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100%;
 }
 
 div {
-  margin: 0;
-  padding: 0;
-}
-
-.ui-toolip
-{
-	width: auto;
-	height: auto;
-}
-
-#interfaces, #interface-controls
-{
-	position: absolute; 
-/* 	width: 100%; */
-/* 	height: 100%; */
-}
-
-#interfaces
-{
-	z-index: 0;
-}
-
-#interface-controls
-{
-	margin: 0 auto;
-	width: 100%;
-	text-align: center;
-	bottom: 10px;
-	z-index: 100;
-}
-#camera-controls
-{
-	float: left;
-/* 	right: 50%; */
-/* 	bottom: 50px; */
-}
-
-#floorplanner, #viewer
-{  
-  position: absolute;
-  width: 100vw;
-  height:100vh;
-}
-
-#floorplanner-controls 
-{
-  position: absolute;
-  left: 0;
-  top: 0;
-  margin: 20px 0;
-  padding: 0 20px; 
-  width: 100%;
-}
-
-#main-controls {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  padding: 0;  
-}
-
-#walltextures
-{
-	position: absolute;
-	right: 100px;
-	top: 100px;
-}
-
-.btn-file {
-  display: inline-block;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-file input[type=file] {
-  position: absolute;
-  top: 0;
-  right: 0;
-  min-width: 100%;
-  min-height: 100%;
-  filter: alpha(opacity=0);
-  opacity: 0;
-  cursor: inherit;
-  display: block;
-}
-
-.btn-hint 
-{
-  position: absolute;
-  left: 20px;
-  bottom: 20px;
-  background-color: rgba(0, 0, 0, 0.50);
-  color: #ffffff;
-  padding: 5px 10px;
-  z-index: 10;
-  display: none;
-}
-
-
-.nav-sidebar > .active > a,
-.nav-sidebar > .active > a:hover,
-.nav-sidebar > .active > a:focus {
-  color: #fff;
-  background-color: #428bca;
-}
-
-.inventory-content
-{
-	max-height: 500px;
-	overflow-y: scroll;
-}
-
-/* .ui-dialog, .ui-dialog-content, .ui-widget-content */
-/* { */
-/* 	min-width: 50%; */
-/* 	max-height: 500px; */
-/* 	height: 500px; */
-/*     overflow: auto; */
-/*     position: relative; */
-/*     padding: 0 !important; */
-/* } */
-
-/* Enable multiple lines in bootstrap tooltips */
-.tooltip-inner {
-    white-space:pre-wrap;
-}
-
-.dg select
-{
-	color: #000000;
+    margin: 0;
+    padding: 0;
 }
