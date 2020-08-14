@@ -1,6 +1,16 @@
 # README #
 This is a javascript floorplanner tool based on the existing typescript based project [blueprint3d](https://github.com/furnishup/blueprint3d)
 
+# CURRENT RELEASE AT 2.0.1 #
+Many things have changed with this version,
+    * No more canvas for viewer2d, now using pixijs
+    * No more rollup but using parcel bundler now
+    * Refer to previous branches for older working versions
+
+## What is missing? ##
+    * The 3D items are missing ATM, (WIP, coming soon)
+    * A major overhaul is in store for viewer3d and 3D items, keep watching this page
+
 ## DEMO ##
 
 [Cick for example](https://aalavandhaann.github.io/blueprint-js/build)

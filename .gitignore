@@ -3,3 +3,4 @@ gitpush.sh~
 /.babelrc~
 *.blend1
 dist/*
+.cache/*
