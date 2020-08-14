@@ -4,9 +4,11 @@ import { dimInch, dimFeetAndInch, dimMeter, dimCentiMeter, dimMilliMeter } from 
 export const decimals = 1000;
 
 export const cmPerFoot = 30.48;
-export const pixelsPerFoot = 15.0;
-export const cmPerPixel = cmPerFoot * (1.0 / pixelsPerFoot);
-export const pixelsPerCm = 1.0 / cmPerPixel;
+export const pixelsPerFoot = 5.0;
+
+export const pixelsPerCm = 0.5;
+export const cmPerPixel = (1.0 / pixelsPerCm);
+
 
 export const dimensioningOptions = [dimInch, dimFeetAndInch, dimMeter, dimCentiMeter, dimMilliMeter];
 
@@ -105,7 +107,7 @@ export class Dimensioning {
                 var floorFeet = Math.floor(allInFeet);
                 var remainingFeet = allInFeet - floorFeet;
                 var remainingInches = Math.round(remainingFeet * 12);
-                return floorFeet + '\'' + remainingInches + '"';
+                return floorFeet + '\'' + remainingInches + '';
             case dimInch:
                 var inches = Math.round(decimals * (cm * Math.pow(0.393700, power))) / decimals;
                 return inches + '\'';

@@ -10,13 +10,26 @@ var empty = '{"floorplan":{"version":"0.0.2a","units":"m", "corners":{"71d4f128-
 
 $(document).ready(function() {
     var opts = {
-        floorplannerElement: 'floorplanner',
-        threeElement: '#viewer',
-        threeCanvasElement: 'three-canvas',
+        viewer2d: { id: 'bp3djs-viewer2d', viewer2dOptions: { 'corner-radius': 10, pannable: true, zoomable: true } },
+        viewer3d: 'bp3djs-viewer3d',
         textureDir: "models/textures/",
-        widget: false
-    }
+        widget: false,
+        resize: true,
+    };
+
     blueprint3d = new BP3DJS.BlueprintJS(opts);
     blueprint3d.model.addEventListener(BP3DJS.EVENT_LOADED, function() { console.log('LOAD SERIALIZED JSON ::: '); });
     blueprint3d.model.loadSerialized(empty);
+
+    document.getElementById('switch-viewer').onclick = function() {
+        blueprint3d.switchView();
+    };
+
+    document.getElementById('draw-viewer2d').onclick = function() {
+        blueprint3d.setViewer2DModeToDraw();
+    };
+
+    document.getElementById('move-viewer2d').onclick = function() {
+        blueprint3d.setViewer2DModeToMove();
+    };
 });

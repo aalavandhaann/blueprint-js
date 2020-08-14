@@ -1,13 +1,12 @@
-import { EVENT_UPDATED, EVENT_LOADED, EVENT_NEW, EVENT_DELETED, EVENT_ROOM_NAME_CHANGED, EVENT_NEW_ROOMS_ADDED } from '../core/events.js';
-import { EVENT_CORNER_ATTRIBUTES_CHANGED, EVENT_WALL_ATTRIBUTES_CHANGED, EVENT_ROOM_ATTRIBUTES_CHANGED, EVENT_MOVED } from '../core/events.js';
+import { EVENT_UPDATED, EVENT_LOADED, EVENT_NEW, EVENT_DELETED, EVENT_ROOM_NAME_CHANGED } from '../core/events.js';
+import { EVENT_CORNER_ATTRIBUTES_CHANGED, EVENT_WALL_ATTRIBUTES_CHANGED, EVENT_ROOM_ATTRIBUTES_CHANGED, EVENT_MOVED, EVENT_NEW_ROOMS_ADDED } from '../core/events.js';
 import { EventDispatcher, Vector2, Vector3, Matrix4 } from 'three';
 import { Utils } from '../core/utils.js';
 import { Dimensioning } from '../core/dimensioning.js';
 import { dimInch, dimFeetAndInch, dimMeter, dimCentiMeter, dimMilliMeter } from '../core/constants.js';
 import { WallTypes } from '../core/constants.js';
 import { Version } from '../core/version.js';
-import { cornerTolerance } from '../core/configuration.js';
-import { Configuration, configDimUnit } from '../core/configuration.js';
+import { cornerTolerance, Configuration, configDimUnit } from '../core/configuration.js';
 
 
 import { HalfEdge } from './half_edge.js';
@@ -114,7 +113,7 @@ export class Floorplan extends EventDispatcher {
      * @return {HalfEdge[]} edges The array of {@link HalfEdge}
      */
     wallEdges() {
-        let edges = [];
+        var edges = [];
         this.walls.forEach((wall) => {
             if (wall.frontEdge) {
                 edges.push(wall.frontEdge);
@@ -133,7 +132,7 @@ export class Floorplan extends EventDispatcher {
      * @see <https://threejs.org/docs/#api/en/objects/Mesh>
      */
     roofPlanes() {
-        let planes = [];
+        var planes = [];
         this.rooms.forEach((room) => {
             planes.push(room.roofPlane);
         });
@@ -147,7 +146,7 @@ export class Floorplan extends EventDispatcher {
      * @see <https://threejs.org/docs/#api/en/objects/Mesh>
      */
     wallEdgePlanes() {
-        let planes = [];
+        var planes = [];
         this.walls.forEach((wall) => {
             if (wall.frontEdge) {
                 planes.push(wall.frontEdge.plane);
@@ -205,23 +204,23 @@ export class Floorplan extends EventDispatcher {
      */
 
     newWallsForIntersections(start, end) {
-        let intersections = false;
+        var intersections = false;
         // This is a bug in the logic
         // When creating a new wall with a start and end
         // it needs to be checked if it is cutting other walls
         // If it cuts then all those walls have to removed and introduced as
         // new walls along with this new wall
-        let cStart = new Vector2(start.getX(), start.getY());
-        let cEnd = new Vector2(end.getX(), end.getY());
-        let line = { p1: cStart, p2: cEnd };
-        let newCorners = [];
+        var cStart = new Vector2(start.getX(), start.getY());
+        var cEnd = new Vector2(end.getX(), end.getY());
+        var line = { p1: cStart, p2: cEnd };
+        var newCorners = [];
 
-        for (let i = 0; i < this.walls.length; i++) {
-            let twall = this.walls[i];
-            let bstart = { x: twall.getStartX(), y: twall.getStartY() };
-            let bend = { x: twall.getEndX(), y: twall.getEndY() };
-            let iPoint;
-            if (twall.wallType === WallTypes.CURVED) {
+        for (var i = 0; i < this.walls.length; i++) {
+            var twall = this.walls[i];
+            var bstart = { x: twall.getStartX(), y: twall.getStartY() };
+            var bend = { x: twall.getEndX(), y: twall.getEndY() };
+            var iPoint;
+            if (twall.wallType == WallTypes.CURVED) {
                 iPoint = twall.bezier.intersects(line);
                 if (iPoint.length) {
                     iPoint = twall.bezier.get(iPoint[0]);
@@ -230,31 +229,12 @@ export class Floorplan extends EventDispatcher {
                 iPoint = Utils.lineLineIntersectPoint(cStart, cEnd, bstart, bend);
             }
             if (iPoint) {
-                let nCorner = this.newCorner(iPoint.x, iPoint.y);
+                var nCorner = this.newCorner(iPoint.x, iPoint.y);
                 newCorners.push(nCorner);
                 nCorner.mergeWithIntersected(false);
                 intersections = true;
             }
         }
-        //		for( i=0;i<this.corners.length;i++)
-        //		{
-        //			var aCorner = this.corners[i];
-        //			if(aCorner)
-        //			{
-        //				aCorner.relativeMove(0, 0);
-        //				aCorner.snapToAxis(25);
-        //			}
-        //		}
-        //		this.update();
-        //		for( i=0;i<this.corners.length;i++)
-        //		{
-        //			aCorner = this.corners[i];
-        //			if(aCorner)
-        //			{
-        //				aCorner.relativeMove(0, 0);
-        //				aCorner.snapToAxis(25);
-        //			}
-        //		}
         this.update();
 
         return intersections;
@@ -270,8 +250,9 @@ export class Floorplan extends EventDispatcher {
      * @returns {Wall} The new wall.
      */
     newWall(start, end, a, b) {
-        let scope = this;
-        let wall = new Wall(start, end, a, b);
+        var scope = this;
+        var wall = new Wall(start, end, a, b);
+
         this.walls.push(wall);
         wall.addEventListener(EVENT_DELETED, function(o) { scope.removeWall(o.item); });
         wall.addEventListener(EVENT_WALL_ATTRIBUTES_CHANGED, function(o) {
@@ -298,12 +279,13 @@ export class Floorplan extends EventDispatcher {
      * @returns {Corner} The new corner.
      */
     newCorner(x, y, id) {
-        let scope = this;
-        let corner = new Corner(this, x, y, id);
+        var scope = this;
+        var corner = new Corner(this, x, y, id);
 
-        for (let i = 0; i < this.corners.length; i++) {
-            let existingCorner = this.corners[i];
+        for (var i = 0; i < this.corners.length; i++) {
+            var existingCorner = this.corners[i];
             if (existingCorner.distanceFromCorner(corner) < cornerTolerance) {
+                this.dispatchEvent({ type: EVENT_NEW, item: this, newItem: existingCorner });
                 return existingCorner;
             }
         }
@@ -316,14 +298,14 @@ export class Floorplan extends EventDispatcher {
         });
         corner.addEventListener(EVENT_CORNER_ATTRIBUTES_CHANGED, function(o) {
             scope.dispatchEvent(o);
-            let updatecorners = o.item.adjacentCorners();
+            var updatecorners = o.item.adjacentCorners();
             updatecorners.push(o.item);
             scope.update(false, updatecorners);
             //			scope.update(false);//For debug reasons
         });
         corner.addEventListener(EVENT_MOVED, function(o) {
             scope.dispatchEvent(o);
-            let updatecorners = o.item.adjacentCorners();
+            var updatecorners = o.item.adjacentCorners();
             updatecorners.push(o.item);
             scope.update(false, updatecorners);
             //			scope.update(false);//For debug reasons
@@ -345,9 +327,9 @@ export class Floorplan extends EventDispatcher {
      *            wall The wall to be removed.
      */
     removeWall(wall) {
-        this.dispatchEvent({ type: EVENT_DELETED, item: this, deleted: wall, item_type: 'wall' });
         Utils.removeValue(this.walls, wall);
         this.update();
+        this.dispatchEvent({ type: EVENT_DELETED, item: this, deleted: wall, item_type: 'wall' });
     }
 
     /**
@@ -357,8 +339,9 @@ export class Floorplan extends EventDispatcher {
      *            corner The corner to be removed.
      */
     removeCorner(corner) {
-        this.dispatchEvent({ type: EVENT_DELETED, item: this, deleted: corner, item_type: 'corner' });
         Utils.removeValue(this.corners, corner);
+        this.update();
+        this.dispatchEvent({ type: EVENT_DELETED, item: this, deleted: corner, item_type: 'corner' });
     }
 
     /**
@@ -398,9 +381,9 @@ export class Floorplan extends EventDispatcher {
      * @return {Room}
      */
     overlappedRoom(mx, my) {
-        for (let i = 0; i < this.rooms.length; i++) {
-            let room = this.rooms[i];
-            let flag = room.pointInRoom(new Vector2(mx, my));
+        for (var i = 0; i < this.rooms.length; i++) {
+            var room = this.rooms[i];
+            var flag = room.pointInRoom(new Vector2(mx, my));
             if (flag) {
                 return room;
             }
@@ -423,9 +406,9 @@ export class Floorplan extends EventDispatcher {
      */
     overlappedControlPoint(wall, x, y, tolerance) {
         tolerance = tolerance || defaultFloorPlanTolerance * 5;
-        if (wall.a.distanceTo(new Vector2(x, y)) < tolerance && wall.wallType === WallTypes.CURVED) {
+        if (wall.a.distanceTo(new Vector2(x, y)) < tolerance && wall.wallType == WallTypes.CURVED) {
             return wall.a;
-        } else if (wall.b.distanceTo(new Vector2(x, y)) < tolerance && wall.wallType === WallTypes.CURVED) {
+        } else if (wall.b.distanceTo(new Vector2(x, y)) < tolerance && wall.wallType == WallTypes.CURVED) {
             return wall.b;
         }
 
@@ -445,7 +428,7 @@ export class Floorplan extends EventDispatcher {
      */
     overlappedCorner(x, y, tolerance) {
         tolerance = tolerance || defaultFloorPlanTolerance;
-        for (let i = 0; i < this.corners.length; i++) {
+        for (var i = 0; i < this.corners.length; i++) {
             if (this.corners[i].distanceFrom(new Vector2(x, y)) < tolerance) {
                 return this.corners[i];
             }
@@ -466,8 +449,8 @@ export class Floorplan extends EventDispatcher {
      */
     overlappedWall(x, y, tolerance) {
         tolerance = tolerance || defaultFloorPlanTolerance;
-        for (let i = 0; i < this.walls.length; i++) {
-            let newtolerance = tolerance; // (tolerance+
+        for (var i = 0; i < this.walls.length; i++) {
+            var newtolerance = tolerance; // (tolerance+
             // ((this.walls[i].wallType ==
             // WallTypes.CURVED)*tolerance*10));
             if (this.walls[i].distanceFrom(new Vector2(x, y)) < newtolerance) {
@@ -484,15 +467,15 @@ export class Floorplan extends EventDispatcher {
      *         names as values
      */
     getMetaRoomData() {
-        let metaRoomData = {};
+        var metaRoomData = {};
         this.rooms.forEach((room) => {
-            let metaroom = {};
+            var metaroom = {};
             // var cornerids = [];
             // room.corners.forEach((corner)=>{
             // cornerids.push(corner.id);
             // });
             // var ids = cornerids.join(',');
-            let ids = room.roomByCornersId;
+            var ids = room.roomByCornersId;
             metaroom['name'] = room.name;
             metaRoomData[ids] = metaroom;
         });
@@ -504,8 +487,8 @@ export class Floorplan extends EventDispatcher {
      * @return {void}
      */
     saveFloorplan() {
-        let floorplans = { version: Version.getTechnicalVersion(), corners: {}, walls: [], rooms: {}, wallTextures: [], floorTextures: {}, newFloorTextures: {}, carbonSheet: {} };
-        let cornerIds = [];
+        var floorplans = { version: Version.getTechnicalVersion(), corners: {}, walls: [], rooms: {}, wallTextures: [], floorTextures: {}, newFloorTextures: {}, carbonSheet: {} };
+        var cornerIds = [];
         // writing all the corners based on the corners array
         // is having a bug. This is because some walls have corners
         // that aren't part of the corners array anymore. This is a quick fix
@@ -557,6 +540,8 @@ export class Floorplan extends EventDispatcher {
             floorplans.carbonSheet['height'] = this.carbonSheet.height;
         }
 
+        floorplans.units = Configuration.getStringValue(configDimUnit);
+
         floorplans.newFloorTextures = this.floorTextures;
         return floorplans;
     }
@@ -570,7 +555,7 @@ export class Floorplan extends EventDispatcher {
      */
     loadFloorplan(floorplan) {
         this.reset();
-        let corners = {};
+        var corners = {};
         if (floorplan == null || !('corners' in floorplan) || !('walls' in floorplan)) {
             return;
         }
@@ -590,23 +575,22 @@ export class Floorplan extends EventDispatcher {
                     Configuration.setValue(configDimUnit, dimCentiMeter);
                     break;
                 case dimMilliMeter:
-                default:
                     Configuration.setValue(configDimUnit, dimMilliMeter);
                     break;
             }
 
         }
 
-        for (let id in floorplan.corners) {
-            let corner = floorplan.corners[id];
+        for (var id in floorplan.corners) {
+            var corner = floorplan.corners[id];
             corners[id] = this.newCorner(Dimensioning.cmFromMeasureRaw(corner.x), Dimensioning.cmFromMeasureRaw(corner.y), id);
             if (corner.elevation) {
                 corners[id].elevation = Dimensioning.cmFromMeasureRaw(corner.elevation);
             }
         }
-        let scope = this;
+        var scope = this;
         floorplan.walls.forEach((wall) => {
-            let newWall = scope.newWall(corners[wall.corner1], corners[wall.corner2]);
+            var newWall = scope.newWall(corners[wall.corner1], corners[wall.corner2]);
 
             if (wall.frontTexture) {
                 newWall.frontTexture = wall.frontTexture;
@@ -619,7 +603,7 @@ export class Floorplan extends EventDispatcher {
             if (Version.isVersionHigherThan(floorplan.version, '0.0.2a')) {
                 newWall.a = wall.a;
                 newWall.b = wall.b;
-                if (wall.wallType === 'CURVED') {
+                if (wall.wallType == 'CURVED') {
                     newWall.wallType = WallTypes.CURVED;
                 } else {
                     newWall.wallType = WallTypes.STRAIGHT;
@@ -632,8 +616,8 @@ export class Floorplan extends EventDispatcher {
         }
         this.metaroomsdata = floorplan.rooms;
         this.update();
-        this.dispatchEvent({ type: EVENT_LOADED, item: this });
         Configuration.setValue(configDimUnit, currentUnit);
+        this.dispatchEvent({ type: EVENT_LOADED, item: this });
         // this.roomLoadedCallbacks.fire();
     }
 
@@ -659,8 +643,8 @@ export class Floorplan extends EventDispatcher {
      * @deprecated
      */
     updateFloorTextures() {
-        let uuids = Utils.map(this.rooms, function(room) { return room.getUuid(); });
-        for (let uuid in this.floorTextures) {
+        var uuids = Utils.map(this.rooms, function(room) { return room.getUuid(); });
+        for (var uuid in this.floorTextures) {
             if (!Utils.hasValue(uuids, uuid)) {
                 delete this.floorTextures[uuid];
             }
@@ -673,19 +657,14 @@ export class Floorplan extends EventDispatcher {
      * @return {void}
      */
     reset() {
-        let tmpCorners = this.corners.slice(0);
-        let tmpWalls = this.walls.slice(0);
-
-        tmpWalls.forEach((wall) => {
-            wall.remove();
-            wall = null;
-        });
-
+        var tmpCorners = this.corners.slice(0);
+        var tmpWalls = this.walls.slice(0);
         tmpCorners.forEach((corner) => {
             corner.remove();
-            corner = null;
         });
-
+        tmpWalls.forEach((wall) => {
+            wall.remove();
+        });
         this.corners = [];
         this.walls = [];
     }
@@ -701,73 +680,6 @@ export class Floorplan extends EventDispatcher {
             this.metaroomsdata[e.item.roomByCornersId] = e.newname;
         }
     }
-
-    /**
-     * Update the floorplan with new rooms, remove old rooms etc.
-     */
-    update(updateroomconfiguration = true, updatecorners = null) //Should include for , updatewalls=null, updaterooms=null
-        {
-            if (updatecorners != null) {
-                //			console.log('UPDATE CORNER ANGLES ::: ', updatecorners.length);
-                updatecorners.forEach((corner) => {
-                    corner.updateAngles();
-                });
-            }
-
-            if (!updateroomconfiguration) {
-                this.dispatchEvent({ type: EVENT_UPDATED, item: this });
-                return;
-            }
-
-            //		console.log('UPDATE ROOM WITH NEW ENTRIES ::: ');
-
-            let scope = this;
-            this.walls.forEach((wall) => {
-                wall.resetFrontBack();
-            });
-
-            // this.rooms.forEach((room)=>{room.removeEventListener(EVENT_ROOM_NAME_CHANGED,
-            // scope.roomNameChanged)});
-
-            let roomCorners = this.findRooms(this.corners);
-            this.rooms = [];
-
-
-            this.corners.forEach((corner) => {
-                corner.clearAttachedRooms();
-                //			corner.updateAngles();
-            });
-
-            roomCorners.forEach((corners) => {
-                let room = new Room(scope, corners);
-                room.updateArea();
-                scope.rooms.push(room);
-
-                room.addEventListener(EVENT_ROOM_NAME_CHANGED, (e) => { scope.roomNameChanged(e); });
-                room.addEventListener(EVENT_ROOM_ATTRIBUTES_CHANGED, function(o) {
-                    let room = o.item;
-                    scope.dispatchEvent(o);
-                    if (scope.metaroomsdata[room.roomByCornersId]) {
-                        scope.metaroomsdata[room.roomByCornersId]['name'] = room.name;
-                    } else {
-                        scope.metaroomsdata[room.roomByCornersId] = {};
-                        scope.metaroomsdata[room.roomByCornersId]['name'] = room.name;
-                    }
-                });
-
-                if (scope.metaroomsdata) {
-                    if (scope.metaroomsdata[room.roomByCornersId]) {
-                        room.name = scope.metaroomsdata[room.roomByCornersId]['name'];
-                    }
-                }
-            });
-            this.assignOrphanEdges();
-            this.updateFloorTextures();
-            this.dispatchEvent({ type: EVENT_UPDATED, item: this });
-            this.dispatchEvent({ type: EVENT_NEW_ROOMS_ADDED, item: this });
-
-            // console.log('TOTAL WALLS ::: ', this.walls.length);
-        }
 
     /**
      * Returns the center of the floorplan in the y plane
@@ -825,18 +737,18 @@ export class Floorplan extends EventDispatcher {
     getDimensions(center) {
         center = center || false; // otherwise, get size
 
-        let xMin = Infinity;
-        let xMax = -Infinity;
-        let zMin = Infinity;
-        let zMax = -Infinity;
+        var xMin = Infinity;
+        var xMax = -Infinity;
+        var zMin = Infinity;
+        var zMax = -Infinity;
         this.corners.forEach((corner) => {
             if (corner.x < xMin) xMin = corner.x;
             if (corner.x > xMax) xMax = corner.x;
             if (corner.y < zMin) zMin = corner.y;
             if (corner.y > zMax) zMax = corner.y;
         });
-        let ret;
-        if (xMin === Infinity || xMax === -Infinity || zMin === Infinity || zMax === -Infinity) {
+        var ret;
+        if (xMin == Infinity || xMax == -Infinity || zMin == Infinity || zMax == -Infinity) {
             ret = new Vector3();
         } else {
             if (center) {
@@ -857,12 +769,12 @@ export class Floorplan extends EventDispatcher {
         // kinda hacky
         // find orphaned wall segments (i.e. not part of rooms) and
         // give them edges
-        let orphanWalls = [];
+        var orphanWalls = [];
         this.walls.forEach((wall) => {
             if (!wall.backEdge && !wall.frontEdge) {
                 wall.orphan = true;
-                let back = new HalfEdge(null, wall, false);
-                let front = new HalfEdge(null, wall, true);
+                var back = new HalfEdge(null, wall, false);
+                var front = new HalfEdge(null, wall, true);
                 back.generatePlane();
                 front.generatePlane();
                 orphanWalls.push(wall);
@@ -871,7 +783,71 @@ export class Floorplan extends EventDispatcher {
     }
 
     /**
-     * Find the 'rooms' in our planar straight-line graph. Rooms are set of the
+     * Update the floorplan with new rooms, remove old rooms etc.
+     * //Should include for , updatewalls=null, updaterooms=null
+     */
+    update(updateroomconfiguration = true, updatecorners = null) {
+        if (updatecorners != null) {
+            //			console.log('UPDATE CORNER ANGLES ::: ', updatecorners.length);
+            updatecorners.forEach((corner) => {
+                corner.updateAngles();
+            });
+        }
+        if (!updateroomconfiguration) {
+            this.dispatchEvent({ type: EVENT_UPDATED, item: this });
+            return;
+        }
+
+        var scope = this;
+        this.walls.forEach((wall) => {
+            wall.resetFrontBack();
+        });
+
+
+        // this.rooms.forEach((room)=>{room.removeEventListener(EVENT_ROOM_NAME_CHANGED,
+        // scope.roomNameChanged)});
+
+        var roomCorners = this.findRooms(this.corners);
+        this.rooms = [];
+
+
+        this.corners.forEach((corner) => {
+            corner.clearAttachedRooms();
+            //			corner.updateAngles();
+        });
+
+        roomCorners.forEach((corners) => {
+            var room = new Room(scope, corners);
+            room.updateArea();
+            scope.rooms.push(room);
+
+            room.addEventListener(EVENT_ROOM_NAME_CHANGED, (e) => { scope.roomNameChanged(e); });
+            room.addEventListener(EVENT_ROOM_ATTRIBUTES_CHANGED, function(o) {
+                var room = o.item;
+                scope.dispatchEvent(o);
+                if (scope.metaroomsdata[room.roomByCornersId]) {
+                    scope.metaroomsdata[room.roomByCornersId]['name'] = room.name;
+                } else {
+                    scope.metaroomsdata[room.roomByCornersId] = {};
+                    scope.metaroomsdata[room.roomByCornersId]['name'] = room.name;
+                }
+            });
+
+            if (scope.metaroomsdata) {
+                if (scope.metaroomsdata[room.roomByCornersId]) {
+                    room.name = scope.metaroomsdata[room.roomByCornersId]['name'];
+                }
+            }
+        });
+
+        this.assignOrphanEdges();
+        this.updateFloorTextures();
+        this.dispatchEvent({ type: EVENT_UPDATED, item: this });
+        this.dispatchEvent({ type: EVENT_NEW_ROOMS_ADDED, item: this });
+    }
+
+    /**
+     * Find the "rooms" in our planar straight-line graph. Rooms are set of the
      * smallest (by area) possible cycles in this graph.
      * 
      * @param corners
@@ -884,25 +860,24 @@ export class Floorplan extends EventDispatcher {
     findRooms(corners) {
 
         function _calculateTheta(previousCorner, currentCorner, nextCorner) {
-            let theta = Utils.angle2pi(new Vector2(previousCorner.x - currentCorner.x, previousCorner.y - currentCorner.y), new Vector2(nextCorner.x - currentCorner.x, nextCorner.y - currentCorner.y));
+            var theta = Utils.angle2pi(new Vector2(previousCorner.x - currentCorner.x, previousCorner.y - currentCorner.y), new Vector2(nextCorner.x - currentCorner.x, nextCorner.y - currentCorner.y));
             return theta;
         }
 
         function _removeDuplicateRooms(roomArray) {
-            let results = [];
-            let lookup = {};
-            let hashFunc = function(corner) {
+            var results = [];
+            var lookup = {};
+            var hashFunc = function(corner) {
                 return corner.id;
             };
-            let sep = '-';
-            for (let i = 0; i < roomArray.length; i++) {
+            var sep = '-';
+            for (var i = 0; i < roomArray.length; i++) {
                 // rooms are cycles, shift it around to check uniqueness
-                let add = true;
-                let room = roomArray[i];
-                let str;
-                for (let j = 0; j < room.length; j++) {
-                    let roomShift = Utils.cycle(room, j);
-                    str = Utils.map(roomShift, hashFunc).join(sep);
+                var add = true;
+                var room = roomArray[i];
+                for (var j = 0; j < room.length; j++) {
+                    var roomShift = Utils.cycle(room, j);
+                    var str = Utils.map(roomShift, hashFunc).join(sep);
                     if (lookup.hasOwnProperty(str)) {
                         add = false;
                     }
@@ -920,14 +895,14 @@ export class Floorplan extends EventDispatcher {
          * connectivities
          */
         function _findTightestCycle(firstCorner, secondCorner) {
-            let stack = [];
-            let next = { corner: secondCorner, previousCorners: [firstCorner] };
-            let visited = {};
+            var stack = [];
+            var next = { corner: secondCorner, previousCorners: [firstCorner] };
+            var visited = {};
             visited[firstCorner.id] = true;
 
             while (next) {
                 // update previous corners, current corner, and visited corners
-                let currentCorner = next.corner;
+                var currentCorner = next.corner;
                 visited[currentCorner.id] = true;
 
                 // did we make it back to the startCorner?
@@ -935,10 +910,10 @@ export class Floorplan extends EventDispatcher {
                     return next.previousCorners;
                 }
 
-                let addToStack = [];
-                let adjacentCorners = next.corner.adjacentCorners();
-                for (let i = 0; i < adjacentCorners.length; i++) {
-                    let nextCorner = adjacentCorners[i];
+                var addToStack = [];
+                var adjacentCorners = next.corner.adjacentCorners();
+                for (var i = 0; i < adjacentCorners.length; i++) {
+                    var nextCorner = adjacentCorners[i];
 
                     // is this where we came from?
                     // give an exception if its the first corner and we aren't
@@ -951,11 +926,11 @@ export class Floorplan extends EventDispatcher {
                     addToStack.push(nextCorner);
                 }
 
-                let previousCorners = next.previousCorners.slice(0);
+                var previousCorners = next.previousCorners.slice(0);
                 previousCorners.push(currentCorner);
                 if (addToStack.length > 1) {
                     // visit the ones with smallest theta first
-                    let previousCorner = next.previousCorners[next.previousCorners.length - 1];
+                    var previousCorner = next.previousCorners[next.previousCorners.length - 1];
                     addToStack.sort(function(a, b) { return (_calculateTheta(previousCorner, currentCorner, b) - _calculateTheta(previousCorner, currentCorner, a)); });
                 }
 
@@ -975,7 +950,7 @@ export class Floorplan extends EventDispatcher {
         // find tightest loops, for each corner, for each adjacent
         // TODO: optimize this, only check corners with > 2 adjacents, or
         // isolated cycles
-        let loops = [];
+        var loops = [];
 
         corners.forEach((firstCorner) => {
             firstCorner.adjacentCorners().forEach((secondCorner) => {
@@ -984,9 +959,9 @@ export class Floorplan extends EventDispatcher {
         });
 
         // remove duplicates
-        let uniqueLoops = _removeDuplicateRooms(loops);
+        var uniqueLoops = _removeDuplicateRooms(loops);
         // remove CW loops
-        let uniqueCCWLoops = Utils.removeIf(uniqueLoops, Utils.isClockwise);
+        var uniqueCCWLoops = Utils.removeIf(uniqueLoops, Utils.isClockwise);
         return uniqueCCWLoops;
     }
 }

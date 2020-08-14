@@ -7,15 +7,21 @@
     <link href="css/app.css" rel="stylesheet">
     <!--- <link href="css/app.css" rel="stylesheet"> -->
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <script src="js/bp3djs.js"></script>
+    <!-- <script src="js/bp3djs.js"></script> -->
+    <script src="js/blueprint.js"></script>
     <script src="js/app.js"></script>
 </head>
 
 <body>
-    <div id="floorplanner" class='front'>
-        <canvas id="bp3djs-viewer2d"></canvas>
+    <div id="bp3d-js-app">
+        <div id="bp3djs-controls">
+            <input type='button' id='switch-viewer' value='2d/3d'>
+            <input type="button" id='draw-viewer2d' value='Draw'>
+            <input type="button" id='move-viewer2d' value='Move'>
+        </div>
+        <div id="bp3djs-viewer2d"></div>
+        <div id="bp3djs-viewer3d"></div>
     </div>
-    <div id="viewer" class='back'></div>
 </body>
 
 </html>

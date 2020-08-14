@@ -1,4 +1,4 @@
-import { EventDispatcher, Vector2 } from 'three';
+import { EventDispatcher, Vector2, Vector3 } from 'three';
 import Bezier from 'bezier-js';
 import { WallTypes } from '../core/constants.js';
 import { EVENT_ACTION, EVENT_MOVED, EVENT_DELETED, EVENT_UPDATED, EVENT_CORNER_ATTRIBUTES_CHANGED } from '../core/events.js';
@@ -66,6 +66,8 @@ export class Wall extends EventDispatcher {
 
         /** Back is the plane from end to start. */
         this.backEdge = null;
+
+        this.__attachedRooms = [];
 
         /** */
         this.orphan = false;
@@ -155,6 +157,7 @@ export class Wall extends EventDispatcher {
         this.frontEdge = null;
         this.backEdge = null;
         this.orphan = false;
+        this.__attachedRooms = [];
     }
 
     snapToAxis(tolerance) {
@@ -198,7 +201,6 @@ export class Wall extends EventDispatcher {
             corner.relativeMove(dx, dy);
         }
         this.updateControlVectors();
-
     }
 
     fireMoved() {
@@ -258,6 +260,10 @@ export class Wall extends EventDispatcher {
          * Then this instance will also trigger the move event 
          */
         // this.dispatchEvent({ type: EVENT_UPDATED, item: this });
+    }
+
+    get attachedRooms() {
+        return this.__attachedRooms;
     }
 
     get thickness() {
@@ -361,6 +367,25 @@ export class Wall extends EventDispatcher {
         return this.end.getY();
     }
 
+    wallDirection() {
+        let vector = this.end.location.clone().sub(this.start.location);
+        return vector;
+    }
+
+    wallDirectionNormalized() {
+        return this.wallDirection().normalize();
+    }
+
+    wallDirection3() {
+        let wd = this.wallDirection();
+        return new Vector3(wd.x, wd.y, 0);
+    }
+
+    wallDirectionNormalized3() {
+        let wd3 = this.wallDirection3();
+        return wd3.normalize();
+    }
+
     wallLength() {
         if (this.wallType === WallTypes.STRAIGHT) {
             let start = this.getStart();
@@ -456,6 +481,14 @@ export class Wall extends EventDispatcher {
         if (this.end) {
             this.end.updateAttachedRooms(explicit);
         }
+    }
+
+    addRoom(room) {
+        this.__attachedRooms.push(room);
+    }
+
+    clearAttachedRooms() {
+        this.__attachedRooms = [];
     }
 }
 

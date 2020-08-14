@@ -54,6 +54,7 @@ export class Room extends EventDispatcher {
         let scope = this;
         for (i = 0; i < this.__walls.length; i++) {
             let wall = this.__walls[i];
+            // wall.addRoom(this);
             wall.addEventListener(EVENT_UPDATED, () => {
                 scope.updateInteriorCorners();
                 scope.dispatchEvent({ type: EVENT_CHANGED, item: scope });
@@ -506,9 +507,11 @@ export class Room extends EventDispatcher {
              */
             if (!this.__walls.includes(wallTo) && wallTo) {
                 this.__walls.push(wallTo);
+                wallTo.addRoom(this);
             }
             if (!this.__walls.includes(wallFrom) && wallFrom) {
                 this.__walls.push(wallFrom);
+                wallFrom.addRoom(this);
             }
 
             if (i === 0) {

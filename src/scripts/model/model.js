@@ -3,8 +3,6 @@ import { EventDispatcher, Mesh } from 'three';
 import { Floorplan } from './floorplan.js';
 import { Scene } from './scene.js';
 
-import { OBJExporter } from '../exporters/OBJExporter.js';
-
 import GLTFExporter from 'three-gltf-exporter';
 
 /**
@@ -40,11 +38,6 @@ export class Model extends EventDispatcher {
 
         this.dispatchEvent({ type: EVENT_LOADED, item: this });
         //      this.roomLoadedCallbacks.fire();
-    }
-
-    exportMeshAsObj() {
-        var exporter = new OBJExporter();
-        return exporter.parse(this.scene.getScene());
     }
 
     exportForBlender() {

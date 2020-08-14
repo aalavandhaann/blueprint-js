@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { EventDispatcher, WebGLRenderer, ImageUtils, PerspectiveCamera, AxesHelper } from 'three';
 import { PCFSoftShadowMap } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -25,10 +24,10 @@ export class Viewer3D extends EventDispatcher {
         this.model = model;
         this.floorplan = this.model.floorplan;
         this.scene = model.scene;
-        this.element = $(element);
         this.options = options;
 
-        this.domElement = null;
+        this.domElement = document.getElementById(element);
+        console.log('QUERY DOM ELEMENT : ', element, this.domElement, element);
         this.perspectivecamera = null;
         this.camera = null;
 
@@ -61,7 +60,6 @@ export class Viewer3D extends EventDispatcher {
     init() {
         var scope = this;
         ImageUtils.crossOrigin = '';
-        scope.domElement = scope.element.get(0);
 
         scope.camera = new PerspectiveCamera(45, 10, scope.cameraNear, scope.cameraFar);
 
@@ -94,7 +92,8 @@ export class Viewer3D extends EventDispatcher {
         scope.updateWindowSize();
 
         if (scope.options.resize) {
-            $(window).resize(() => { scope.updateWindowSize(); });
+            window.addEventListener('resize', () => { scope.updateWindowSize(); });
+            window.addEventListener('orientationchange', () => { scope.updateWindowSize(); });
         }
 
         function animate() {
@@ -173,14 +172,14 @@ export class Viewer3D extends EventDispatcher {
     updateWindowSize() {
         var scope = this;
 
-        scope.heightMargin = scope.element.offset().top;
-        scope.widthMargin = scope.element.offset().left;
-        scope.elementWidth = scope.element.innerWidth();
+        scope.heightMargin = scope.domElement.offsetTop;
+        scope.widthMargin = scope.domElement.offsetLeft;
+        scope.elementWidth = scope.domElement.clientWidth;
 
         if (scope.options.resize) {
             scope.elementHeight = window.innerHeight - scope.heightMargin;
         } else {
-            scope.elementHeight = scope.element.innerHeight();
+            scope.elementHeight = scope.domElement.clientHeight;
         }
         scope.camera.aspect = scope.elementWidth / scope.elementHeight;
         scope.camera.updateProjectionMatrix();

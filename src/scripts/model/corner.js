@@ -625,21 +625,23 @@ export class Corner extends EventDispatcher {
 
                 if (wall.wallType === WallTypes.STRAIGHT) {
                     // merge this corner into wall by breaking wall into two parts
-                    this.floorplan.newWall(this, wall.getEnd());
+                    let newWall = this.floorplan.newWall(this, wall.getEnd());
                     wall.setEnd(this);
+                    newWall.clearAttachedRooms();
+                    wall.clearAttachedRooms();
                 } else if (wall.wallType === WallTypes.CURVED) {
                     // merge this corner into wall by breaking wall into two parts				
-                    this.floorplan.newWall(this, wall.getEnd());
+                    let newWall = this.floorplan.newWall(this, wall.getEnd());
                     wall.setEnd(this);
+                    newWall.clearAttachedRooms();
+                    wall.clearAttachedRooms();
                 }
-
                 //The below line is crashing because of recursive. This function mergeWithIntersected is called 
                 //From move(newX, newY) method. Now if we call move(newX, newY) from inside this method
                 //It will lead to recursion. So ensure in the move(newX, newY) method mergeWithIntersected is not called
                 //Hence added a third parameter to move(newX, newY, mergeWithIntersections) that is a boolean value
                 //Send this boolean value as false to avoid recursion crashing of the application
                 this.move(intersection.x, intersection.y, false, updateFloorPlan); //Causes Recursion if third parameter is true
-
                 this.floorplan.update();
                 return true;
             }

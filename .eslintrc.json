@@ -3,19 +3,25 @@
         "browser": true,
         "es6": true
     },
+    "settings": {
+        "import/resolver": {
+          "parcel": {
+            "rootDir": "./src/scripts/"
+          }
+        }
+      },
     "extends": "eslint:recommended",
     "parserOptions": {
         "sourceType": "module"
     },
     "rules": {
-    	"no-console": "off",
+        "no-console": "off",
         "indent": [
             "off",
             "tab"
         ],
-        "no-mixed-spaces-and-tabs": 
-        [
-            0, 
+        "no-mixed-spaces-and-tabs": [
+            0,
             "smart-tabs"
         ],
         "linebreak-style": [
@@ -23,15 +29,23 @@
             "unix"
         ],
         "quotes": [
-            "error",//should be "error"
-            "single"
+            "error",
+            "single",
+            {
+                "avoidEscape": true,
+                "allowTemplateLiterals": true
+            }
         ],
         "semi": [
             "error",
             "always"
         ],
         "no-unused-vars": [
-            "warn"           
+            "warn"
         ]
-    }
+    },
+    "overrides": [{
+        "files": ["./scripts/styles/*.css"],
+        "excludedFiles": "*.css"
+    }]
 }
