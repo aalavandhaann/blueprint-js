@@ -6,8 +6,8 @@
     "scripts": {
         "app-dev": "parcel src/index.html -d app/",
         "app-production": "parcel build src/index.html -d app/ --no-source-maps",
-        "git-dev": "parcel src/index.html -d app/ --public-url https://aalavandhaann.github.io/blueprint-js/app/",
-        "git-production": "parcel build src/index.html -d app/ --no-source-maps --public-url https://aalavandhaann.github.io/blueprint-js/app/",
+        "for-git-demo-dev": "parcel src/index.html -d demo/ --public-url https://aalavandhaann.github.io/blueprint-js/app/",
+        "for-git-demo-production": "parcel build src/index.html -d demo/ --no-source-maps --public-url https://aalavandhaann.github.io/blueprint-js/app/",
         "frameworkonly-dev": "parcel build src/scripts/blueprint.js --global BP3DJS --no-source-maps -d bin/ --target browser --out-file bp3djs.js  --no-minify",
         "frameworkonly-production": "parcel build src/scripts/blueprint.js  --global BP3DJS --no-source-maps -d bin/ --target browser --out-file bp3djs.js",
         "docs": "esdoc"
