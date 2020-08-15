@@ -4,8 +4,8 @@
     "description": "This is the core framework of Blueprint-js for creating floorplans in 2d and 3d",
     "main": "src/scripts/blueprint.js",
     "scripts": {
-        "app-dev": "parcel src/app.html -d app/",
-        "app-production": "parcel build src/app.html -d app/ --no-source-maps",
+        "app-dev": "parcel src/index.html -d app/",
+        "app-production": "parcel build src/index.html -d app/ --no-source-maps",
         "frameworkonly-dev": "parcel build src/scripts/blueprint.js --global BP3DJS --no-source-maps -d bin/ --target browser --out-file bp3djs.js  --no-minify",
         "frameworkonly-production": "parcel build src/scripts/blueprint.js  --global BP3DJS --no-source-maps -d bin/ --target browser --out-file bp3djs.js",
         "docs": "esdoc"
