@@ -22,7 +22,7 @@ export class Edge3D extends EventDispatcher {
 
         this.texture = new TextureLoader();
 
-        // this.lightMap = new TextureLoader().load('rooms/textures/walllightmap.png');
+        this.lightMap = new TextureLoader().load('rooms/textures/walllightmap.png');
         this.fillerColor = 0x000000; //0xdddddd;
         this.sideColor = 0x333333; //0xcccccc;
         this.baseColor = 0x666666; //0xdddddd;
@@ -157,18 +157,18 @@ export class Edge3D extends EventDispatcher {
         if (this.edge == null) {
             return;
         }
-        var scope = this;
+        let scope = this;
         // callback is fired when texture loads
         callback = callback || function() { scope.scene.needsUpdate = true; };
-        var textureData = this.edge.getTexture();
-        var stretch = textureData.stretch;
-        var url = textureData.url; //this is a hack temperory
-        var scale = textureData.scale;
+        let textureData = this.edge.getTexture();
+        let stretch = textureData.stretch;
+        let url = textureData.url; //this is a hack temperory
+        let scale = textureData.scale;
         this.texture = new TextureLoader().load(url, callback);
 
         if (!stretch) {
-            var height = this.wall.height;
-            var width = this.edge.interiorDistance();
+            let height = this.wall.height;
+            let width = this.edge.interiorDistance();
             this.texture.wrapT = RepeatWrapping;
             this.texture.wrapS = RepeatWrapping;
             this.texture.repeat.set(width / scale, height / scale);
