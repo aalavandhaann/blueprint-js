@@ -22,7 +22,7 @@ export class Edge3D extends EventDispatcher {
 
         this.texture = new TextureLoader();
 
-        this.lightMap = new TextureLoader().load('rooms/textures/walllightmap.png');
+        // this.lightMap = new TextureLoader().load('rooms/textures/walllightmap.png');
         this.fillerColor = 0x000000; //0xdddddd;
         this.sideColor = 0x333333; //0xcccccc;
         this.baseColor = 0x666666; //0xdddddd;
