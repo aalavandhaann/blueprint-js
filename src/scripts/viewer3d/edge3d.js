@@ -219,9 +219,9 @@ export class Edge3D extends EventDispatcher {
         // bottom
         // put into basePlanes since this is always visible
         this.basePlanes.push(this.buildFillerUniformHeight(this.edge, 0, BackSide, this.baseColor));
-        if (this.edge.wall.start.getAttachedRooms().length < 2 || this.edge.wall.end.getAttachedRooms().length < 2) {
-            this.planes.push(this.buildFillerVaryingHeights(this.edge, DoubleSide, this.fillerColor));
-        }
+        // if (this.edge.wall.start.getAttachedRooms().length < 2 || this.edge.wall.end.getAttachedRooms().length < 2) {
+        this.planes.push(this.buildFillerVaryingHeights(this.edge, DoubleSide, this.fillerColor));
+        // }
 
         // sides
         this.planes.push(this.buildSideFillter(this.edge.interiorStart(), this.edge.exteriorStart(), extStartCorner.elevation, this.sideColor));

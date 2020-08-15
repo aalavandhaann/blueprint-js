@@ -9,11 +9,11 @@ Many things have changed with this version,
 
 ## What is missing? ##
     * The 3D items are missing ATM, (WIP, coming soon)
-    * A major overhaul is in store for viewer3d and 3D items, keep watching this page
+    * A major overhaul is in store for viewer3d and 3D items, stay tuned
 
 ## DEMO ##
 
-[Cick for example](https://aalavandhaann.github.io/blueprint-js/build)
+[Cick for example](https://aalavandhaann.github.io/blueprint-js/app)
 
 ## DOCS ##
 Yes, the initiative has begun for the documentation. Of late I have been getting inquiries on using this framework. It is time to have the documentation rolling
@@ -45,23 +45,15 @@ This is a customizable application built on three.js that allows users to design
 
 ## Developing and Running Locally
 
-To get started, clone the repository and ensure you npm >= 3 and rollup installed, then run:
 
-    npm install
-    rollup -c
+### Scripts and their purpose
 
-The latter command generates `build/js/bp3djs.js` from `src`. 
+- `npm run-script app-dev`: Generates the application and serves the app folder with unminified code
+- `npm run-script app-production`: Generates the application and serves the app folder with minified code
+- `npm run-script frameworkonly-dev`: Builds and generates only bp3djs.js (unminified) that can be used in your project with custom design. However ensure you know how to use the framework and its api. The generated framework can be found inside `bin` folder.
+- `npm run-script app-dev`: Builds and generates only bp3djs.js (minified) that can be used in your project with custom design. However ensure you know how to use the framework and its api. The generated framework can be found inside `bin` folder.
 
-```
-NODE_ENV=production rollup -c
-```
-
-The above command will generate `build/js/bp3djs.min.js` a minified and uglified version of the js. The easiest way to run locally is by
-
-```
-     rollup -c -w
-```
-Then, visit `http://localhost:10001` in your browser.
+Then, visit `http://localhost:1234` (most probably) in your browser.
 
 ## Contribute!
 
