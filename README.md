@@ -15,7 +15,7 @@ Many things have changed with this version,
 
 ## DEMO ##
 
-[Cick for example](https://aalavandhaann.github.io/blueprint-js/demo)
+[Cick for example](https://aalavandhaann.github.io/blueprint-js/demo/)
 
 ## DOCS ##
 Yes, the initiative has begun for the documentation. Of late I have been getting inquiries on using this framework. It is time to have the documentation rolling
