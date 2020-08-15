@@ -29,7 +29,6 @@ export class Item extends EventDispatcher {
         this.__id = id || Utils.guide();
         this.__metadata = metadata;
         this.__model = model;
-
         this.__position = new Vector3();
         this.__rotation = new Vector3();
         this.__scale = new Vector3(1, 1, 1);
@@ -61,11 +60,12 @@ export class Item extends EventDispatcher {
         if (this.__metadata.rotation.length) {
             this.__rotation = new Vector3().fromArray(this.__metadata.rotation).clone();
         }
-
         if (this.__metadata.scale.length) {
             this.__scale = new Vector3().fromArray(this.__metadata.scale).clone();
         }
-        this.__metadata = this.__getMetaData();
+        if (this.__metadata.size.length) {
+            this.__size = new Vector3().fromArray(this.__metadata.size).clone();
+        }
     }
 
     /** */

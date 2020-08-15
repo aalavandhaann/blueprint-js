@@ -26,7 +26,7 @@ export class Lights3D extends EventDispatcher {
         this.dirLight.color.setHSL(1, 1, 0.1);
 
         this.ambLight = new AmbientLight(0x404040); // soft white light
-        this.ambLight.intensity = 1.25;
+        this.ambLight.intensity = 0.25;
 
         this.dirLight.castShadow = true;
 

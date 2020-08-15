@@ -3,7 +3,7 @@ import { PCFSoftShadowMap } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
 
-import { EVENT_UPDATED } from '../core/events.js';
+import { EVENT_UPDATED, EVENT_LOADED } from '../core/events.js';
 // import { EVENT_NEW, EVENT_DELETED } from '../core/events.js';
 
 import { Skybox } from './skybox.js';
@@ -11,6 +11,7 @@ import { Skybox } from './skybox.js';
 import { Edge3D } from './edge3d.js';
 import { Floor3D } from './floor3d.js';
 import { Lights3D } from './lights3d.js';
+import { Physical3DItem } from './Physical3DItem.js';
 
 export class Viewer3D extends Scene {
     constructor(model, element, opts) {
@@ -99,9 +100,19 @@ export class Viewer3D extends Scene {
             scope.renderer.setAnimationLoop(function() { scope.render(); });
             scope.render();
         }
+        scope.model.addEventListener(EVENT_LOADED, (evt) => scope.addRoomItems(evt));
         scope.floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.addWalls(evt));
         this.controls.addEventListener('change', () => { scope.needsUpdate = true; });
         animate();
+    }
+
+    addRoomItems(evt) {
+        let roomItems = this.model.roomItems;
+        for (let i = 0; i < roomItems.length; i++) {
+            let physicalRoomItem = new Physical3DItem(roomItems[i]);
+            this.add(physicalRoomItem);
+        }
+
     }
 
     addWalls() {
