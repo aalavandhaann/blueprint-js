@@ -1,4 +1,4 @@
-import { EventDispatcher, WebGLRenderer, ImageUtils, PerspectiveCamera, AxesHelper } from 'three';
+import { WebGLRenderer, ImageUtils, PerspectiveCamera, AxesHelper, Scene } from 'three';
 import { PCFSoftShadowMap } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
@@ -12,7 +12,7 @@ import { Edge3D } from './edge3d.js';
 import { Floor3D } from './floor3d.js';
 import { Lights3D } from './lights3d.js';
 
-export class Viewer3D extends EventDispatcher {
+export class Viewer3D extends Scene {
     constructor(model, element, opts) {
         super();
         var options = { resize: true, pushHref: false, spin: true, spinSpeed: .00002, clickPan: true, canMoveFixedItems: false };
@@ -21,13 +21,13 @@ export class Viewer3D extends EventDispatcher {
                 options[opt] = opts[opt];
             }
         }
+        this.__physicalRoomItems = [];
         this.model = model;
         this.floorplan = this.model.floorplan;
-        this.scene = model.scene;
         this.options = options;
 
         this.domElement = document.getElementById(element);
-        console.log('QUERY DOM ELEMENT : ', element, this.domElement, element);
+
         this.perspectivecamera = null;
         this.camera = null;
 
@@ -52,13 +52,13 @@ export class Viewer3D extends EventDispatcher {
         // this.walls3d = [];
         this.draggables = [];
 
-        this.scene.needsUpdate = true;
+        this.needsUpdate = true;
 
         this.init();
     }
 
     init() {
-        var scope = this;
+        let scope = this;
         ImageUtils.crossOrigin = '';
 
         scope.camera = new PerspectiveCamera(45, 10, scope.cameraNear, scope.cameraFar);
@@ -66,8 +66,8 @@ export class Viewer3D extends EventDispatcher {
         scope.renderer = scope.getARenderer();
         scope.domElement.appendChild(scope.renderer.domElement);
 
-        scope.lights = new Lights3D(scope.scene, scope.floorplan);
-        scope.dragcontrols = new DragControls(scope.scene.items, scope.camera, scope.renderer.domElement);
+        scope.lights = new Lights3D(this, scope.floorplan);
+        scope.dragcontrols = new DragControls(this.physicalRoomItems, scope.camera, scope.renderer.domElement);
         scope.controls = new OrbitControls(scope.camera, scope.domElement);
         // scope.controls.autoRotate = this.options['spin'];
         scope.controls.enableDamping = false;
@@ -77,15 +77,14 @@ export class Viewer3D extends EventDispatcher {
         scope.controls.minDistance = 10; //1000; //1000
         scope.controls.screenSpacePanning = true;
 
-        scope.skybox = new Skybox(scope.scene, scope.renderer);
+        scope.skybox = new Skybox(this, scope.renderer);
         scope.camera.position.set(0, 600, 1500);
         scope.controls.update();
 
         scope.axes = new AxesHelper(500);
-        // scope.scene.add(scope.axes);
 
         scope.dragcontrols.addEventListener('dragstart', () => { scope.controls.enabled = false; });
-        scope.dragcontrols.addEventListener('drag', () => { scope.scene.needsUpdate = true; });
+        scope.dragcontrols.addEventListener('drag', () => { scope.needsUpdate = true; });
         scope.dragcontrols.addEventListener('dragend', () => { scope.controls.enabled = true; });
 
         // handle window resizing
@@ -101,13 +100,12 @@ export class Viewer3D extends EventDispatcher {
             scope.render();
         }
         scope.floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.addWalls(evt));
-        // scope.addWalls();
-        this.controls.addEventListener('change', () => { scope.scene.needsUpdate = true; });
+        this.controls.addEventListener('change', () => { scope.needsUpdate = true; });
         animate();
     }
 
     addWalls() {
-        var scope = this;
+        let scope = this;
         let i = 0;
 
         // clear scene
@@ -130,13 +128,13 @@ export class Viewer3D extends EventDispatcher {
 
         // draw floors
         for (i = 0; i < rooms.length; i++) {
-            var threeFloor = new Floor3D(scope.scene, rooms[i]);
+            var threeFloor = new Floor3D(scope, rooms[i]);
             scope.floors3d.push(threeFloor);
             threeFloor.addToScene();
         }
 
         for (i = 0; i < wallEdges.length; i++) {
-            let edge3d = new Edge3D(scope.model.scene, wallEdges[i], scope.controls);
+            let edge3d = new Edge3D(scope, wallEdges[i], scope.controls);
             scope.edges3d.push(edge3d);
         }
 
@@ -184,18 +182,22 @@ export class Viewer3D extends EventDispatcher {
         scope.camera.aspect = scope.elementWidth / scope.elementHeight;
         scope.camera.updateProjectionMatrix();
         scope.renderer.setSize(scope.elementWidth, scope.elementHeight);
-        scope.scene.needsUpdate = true;
+        scope.needsUpdate = true;
     }
 
     render() {
-        var scope = this;
+        let scope = this;
         // scope.controls.update();
-        if (!scope.scene.needsUpdate) {
+        if (!scope.needsUpdate) {
             return;
         }
-        scope.renderer.render(scope.scene.getScene(), scope.camera);
+        scope.renderer.render(scope, scope.camera);
         scope.lastRender = Date.now();
-        this.scene.needsUpdate = false;
+        this.needsUpdate = false;
+    }
+
+    get physicalRoomItems() {
+        return this.__physicalRoomItems;
     }
 
 }

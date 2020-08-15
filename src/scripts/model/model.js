@@ -1,9 +1,8 @@
-import { EVENT_LOADED, EVENT_LOADING, EVENT_GLTF_READY } from '../core/events.js';
-import { EventDispatcher, Mesh } from 'three';
+import { EVENT_LOADED, EVENT_LOADING, EVENT_ITEM_REMOVED } from '../core/events.js';
+import { EventDispatcher } from 'three';
 import { Floorplan } from './floorplan.js';
-import { Scene } from './scene.js';
-
-import GLTFExporter from 'three-gltf-exporter';
+import { Utils } from '../core/utils.js';
+import { Factory } from '../items/factory.js';
 
 /**
  * A Model is an abstract concept the has the data structuring a floorplan. It connects a {@link Floorplan} and a {@link Scene}
@@ -12,15 +11,10 @@ export class Model extends EventDispatcher {
     /** Constructs a new model.
      * @param textureDir The directory containing the textures.
      */
-    constructor(textureDir) {
+    constructor() {
         super();
-        this.floorplan = new Floorplan();
-        this.scene = new Scene(this, textureDir);
-        this.roomLoadingCallbacks = null;
-        this.roomLoadedCallbacks = null;
-        this.roomSavedCallbacks = null;
-        this.roomDeletedCallbacks = null;
-
+        this.__floorplan = new Floorplan();
+        this.__roomItems = [];
     }
 
     switchWireframe(flag) {
@@ -34,58 +28,97 @@ export class Model extends EventDispatcher {
         //      this.roomLoadingCallbacks.fire();
 
         var data = JSON.parse(json);
-        this.newRoom(data.floorplan, data.items);
-
-        this.dispatchEvent({ type: EVENT_LOADED, item: this });
-        //      this.roomLoadedCallbacks.fire();
-    }
-
-    exportForBlender() {
-        var scope = this;
-        var gltfexporter = new GLTFExporter();
-        var meshes = [];
-        this.scene.getScene().traverse(function(child) {
-            if (child instanceof Mesh) {
-                if (child.material) {
-                    if (child.material.length || child.material.visible) {
-                        var op = (child.material.transparent) ? child.material.opacity : undefined;
-                        meshes.push(child);
-                        if (op) {
-                            child.material.opacity = op;
-                        }
-                    }
-                }
-            }
-        });
-
-        gltfexporter.parse(meshes, function(result) {
-            var output = JSON.stringify(result, null, 2);
-            scope.dispatchEvent({ type: EVENT_GLTF_READY, item: this, gltf: output });
-        });
+        this.newDesign(data.floorplan, data.items);
+        this.dispatchEvent({ type: EVENT_LOADED, item: this, });
     }
 
     exportSerialized() {
-        var items_arr = [];
-        var objects = this.scene.getItems();
-        for (var i = 0; i < objects.length; i++) {
-            var obj = objects[i];
-            //			items_arr[i] = {item_name: obj.metadata.itemName,item_type: obj.metadata.itemType,model_url: obj.metadata.modelUrl,xpos: obj.position.x,ypos: obj.position.y,zpos: obj.position.z,rotation: obj.rotation.y,scale_x: obj.scale.x,scale_y: obj.scale.y,scale_z: obj.scale.z,fixed: obj.fixed};
-            items_arr[i] = obj.getMetaData();
-        }
-
-        var room = { floorplan: (this.floorplan.saveFloorplan()), items: items_arr };
+        let floorplanJSON = this.floorplan.saveFloorplan();
+        let roomItemsJSON = [];
+        this.__roomItems.forEach((item) => {
+            item.updateMetadataExplicit();
+            roomItemsJSON.push(item.metadata);
+        });
+        var room = { floorplan: floorplanJSON, items: roomItemsJSON };
         return JSON.stringify(room);
     }
 
-    newRoom(floorplan) {
-        this.scene.clearItems();
+    newDesign(floorplan, items) {
+        this.__roomItems = [];
         this.floorplan.loadFloorplan(floorplan);
-        // items.forEach((item) => {
-        //     var matColors = (item.material_colors) ? item.material_colors : [];
-        //     var position = new Vector3(item.xpos, item.ypos, item.zpos);
-        //     var metadata = { itemName: item.item_name, resizable: item.resizable, format: item.format, itemType: item.item_type, modelUrl: item.model_url, materialColors: matColors, frame: (item.frame) ? item.frame : '0' };
-        //     var scale = new Vector3(item.scale_x, item.scale_y, item.scale_z);
-        //     this.scene.addItem(item.item_type, item.model_url, metadata, position, item.rotation, scale, item.fixed);
-        // });
+        for (let i = 0; i < items.length; i++) {
+            let itemMetaData = items[i];
+            let itemType = itemMetaData.itemType;
+            let item = new(Factory.getClass(itemType))(itemMetaData, this, itemMetaData.id);
+            this.__roomItems.push(item);
+        }
+    }
+
+    /** Gets the items.
+     * @returns The items.
+     */
+    getItems() {
+        return this.__roomItems;
+    }
+
+    /** Gets the count of items.
+     * @returns The count.
+     */
+    itemCount() {
+        return this.__roomItems.length;
+    }
+
+    /** Removes all items. */
+    clearItems() {
+        let scope = this;
+        this.__roomItems.forEach((item) => {
+            scope.removeItem(item, false);
+        });
+        this.__roomItems = [];
+    }
+
+    /**
+     * Removes an item.
+     * @param item The item to be removed.
+     * @param dontRemove If not set, also remove the item from the items list.
+     */
+    removeItem(item, keepInList) {
+        // use this for item meshes
+        this.remove(item, keepInList);
+        this.dispatchEvent({ type: EVENT_ITEM_REMOVED, item: item });
+    }
+
+    /** Removes a non-item, basically a mesh, from the scene.
+     * @param mesh The mesh to be removed.
+     */
+    remove(roomItem, keepInList) {
+        keepInList = keepInList || false;
+        if (!keepInList) {
+            roomItem.destroy();
+            Utils.removeValue(this.__roomItems, roomItem);
+        }
+    }
+
+    /**
+     * Creates an item and adds it to the scene.
+     * @param itemType The type of the item given by an enumerator.
+     * @param fileName The name of the file to load.
+     * @param metadata TODO
+     * @param position The initial position.
+     * @param rotation The initial rotation around the y axis.
+     * @param scale The initial scaling.
+     * @param fixed True if fixed.
+     * @param newItemDefinitions - Object with position and 'edge' attribute if it is a wall item
+     */
+    addItem(metadata) {
+
+    }
+
+    get roomItems() {
+        return this.__roomItems;
+    }
+
+    get floorplan() {
+        return this.__floorplan;
     }
 }
