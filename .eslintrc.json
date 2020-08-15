@@ -3,13 +3,6 @@
         "browser": true,
         "es6": true
     },
-    "settings": {
-        "import/resolver": {
-          "parcel": {
-            "rootDir": "./src/scripts/"
-          }
-        }
-      },
     "extends": "eslint:recommended",
     "parserOptions": {
         "sourceType": "module"
@@ -43,9 +36,5 @@
         "no-unused-vars": [
             "warn"
         ]
-    },
-    "overrides": [{
-        "files": ["./scripts/styles/*.css"],
-        "excludedFiles": "*.css"
-    }]
+    }
 }
