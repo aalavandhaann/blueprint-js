@@ -14,7 +14,7 @@ Many things have changed with this version,
     * Refer to previous branches for older working versions
 
 ## What is missing? ##
-    * ~~The 3D items are missing ATM, (WIP, coming soon)~~
+    * <s>~~The 3D items are missing ATM, (WIP, coming soon)~~</s>
     * ~~A major overhaul is in store for viewer3d and 3D items, stay tuned~~
     * Implementation of an application like interface to make the demo more complete (WIP, TODO)
 
