@@ -2,6 +2,7 @@ import { EventDispatcher, Vector2, Vector3, Matrix4, Face3, Mesh, Geometry, Mesh
 import { EVENT_REDRAW, EVENT_MOVED, EVENT_UPDATED } from '../core/events.js';
 import { Utils } from '../core/utils.js';
 import { WallTypes } from '../core/constants.js';
+import { BufferGeometry } from 'three/build/three.module';
 
 /**
  * Half Edges are created by Room.
@@ -236,13 +237,21 @@ export class HalfEdge extends EventDispatcher {
         geometry.computeFaceNormals();
         geometry.computeBoundingBox();
 
+        if (!this.plane) {
+            this.plane = new Mesh(new BufferGeometry().fromGeometry(geometry), new MeshBasicMaterial({ visible: true }));
+        } else {
+            this.plane.geometry = this.plane.geometry.fromGeometry(geometry);
+        }
 
-        this.plane = new Mesh(geometry, new MeshBasicMaterial({ visible: true }));
         //The below line was originally setting the plane visibility to false
         //Now its setting visibility to true. This is necessary to be detected
         //with the raycaster objects to click walls and floors.
         this.plane.visible = true;
         this.plane.edge = this; // js monkey patch
+        this.plane.wall = this.wall;
+
+        this.plane.geometry.computeBoundingBox();
+        this.plane.geometry.computeFaceNormals();
 
 
         this.computeTransforms(this.interiorTransform, this.invInteriorTransform, this.interiorStart(), this.interiorEnd());

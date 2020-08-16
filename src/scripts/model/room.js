@@ -5,6 +5,7 @@ import { Region } from '../core/utils.js';
 import { WallTypes } from '../core/constants.js';
 import { Utils } from '../core/utils.js';
 import { HalfEdge } from './half_edge.js';
+import { BufferGeometry } from 'three/build/three.module';
 
 /** Default texture to be used if nothing is provided. */
 export const defaultRoomTexture = { url: 'rooms/textures/hardwood.png', scale: 400 };
@@ -40,7 +41,7 @@ export class Room extends EventDispatcher {
 
         this.updateWalls();
         this.updateInteriorCorners();
-        this.generatePlane();
+        this.generateFloorPlane();
         this.generateRoofPlane();
 
         let cornerids = [];
@@ -232,23 +233,41 @@ export class Room extends EventDispatcher {
             let face = new Face3(0, i - 1, i);
             geometry.faces.push(face);
         }
-        this.roofPlane = new Mesh(geometry, new MeshBasicMaterial({ side: DoubleSide, visible: false }));
+        geometry.computeBoundingBox();
+        geometry.computeFaceNormals();
+
+        if (!this.roofPlane) {
+            let buffGeometry = new BufferGeometry().fromGeometry(geometry);
+            this.roofPlane = new Mesh(buffGeometry, new MeshBasicMaterial({ side: DoubleSide, visible: false }));
+        } else {
+            this.roofPlane.geometry = this.roofPlane.geometry.fromGeometry(geometry);
+        }
+
         this.roofPlane.room = this;
     }
 
-    generatePlane() {
+    generateFloorPlane() {
         let points = [];
         this.interiorCorners.forEach((corner) => {
             points.push(new Vector2(corner.x, corner.y));
         });
         let shape = new Shape(points);
         let geometry = new ShapeGeometry(shape);
-        this.floorPlane = new Mesh(geometry, new MeshBasicMaterial({ side: DoubleSide, visible: false }));
+
+        if (!this.floorPlane) {
+            let buffGeometry = new BufferGeometry().fromGeometry(geometry);
+            this.floorPlane = new Mesh(buffGeometry, new MeshBasicMaterial({ side: DoubleSide, visible: false }));
+        } else {
+            this.floorPlane.geometry = this.floorPlane.geometry.fromGeometry(geometry);
+        }
+
         //The below line was originally setting the plane visibility to false
         //Now its setting visibility to true. This is necessary to be detected
         //with the raycaster objects to click walls and floors.
         this.floorPlane.visible = true;
         this.floorPlane.rotation.set(Math.PI / 2, 0, 0);
+        this.floorPlane.geometry.computeBoundingBox();
+        this.floorPlane.geometry.computeFaceNormals();
         this.floorPlane.room = this; // js monkey patch
 
         let b3 = new Box3();
@@ -347,6 +366,11 @@ export class Room extends EventDispatcher {
         this.area = Math.abs(region.area());
         this.areaCenter = region.centroid();
         this._polygonPoints = points;
+
+        //Update the planes for intersection purposes
+        this.generateFloorPlane();
+        this.generateRoofPlane();
+
         this.dispatchEvent({ type: EVENT_ROOM_ATTRIBUTES_CHANGED, item: this, info: { from: oldarea, to: this.area } });
     }
 
@@ -363,7 +387,7 @@ export class Room extends EventDispatcher {
         //The below makes this routine too slow
         //		this.updateWalls();
         //		this.updateInteriorCorners();
-        //		this.generatePlane();
+        //		this.generateFloorPlane();
         //		this.generateRoofPlane();
 
 

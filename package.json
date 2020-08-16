@@ -41,6 +41,7 @@
         "@calvinscofield/three-objloader": "^1.0.4",
         "braces": "^2.3.2",
         "es6-enum": "^1.1.0",
+        "gsap": "^3.5.0",
         "jquery": "^3.4.1",
         "line-intersect": "^2.2.1",
         "nodeclipse": "^0.17.2",

@@ -30,12 +30,24 @@ export class Edge3D extends EventDispatcher {
 
         var scope = this;
 
-        this.redrawevent = () => { scope.redraw(); };
-        this.visibilityevent = () => { scope.updateVisibility(); };
-        this.showallevent = () => { scope.showAll(); };
+        this.redrawevent = this.__redraw.bind(this); //() => { scope.redraw(); };
+        this.visibilityevent = this.__visibility.bind(this); //() => { scope.updateVisibility(); };
+        this.showallevent = this.__showAll.bind(this); //() => { scope.showAll(); };
 
         this.visibilityfactor = true;
         this.init();
+    }
+
+    __redraw() {
+        this.redraw();
+    }
+
+    __visibility() {
+        this.updateVisibility();
+    }
+
+    __showAll() {
+        this.__showAll();
     }
 
     remove() {

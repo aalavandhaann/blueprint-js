@@ -5,13 +5,18 @@ This is a javascript floorplanner tool based on the existing typescript based pr
 
 Many things have changed with this version,
 
+    * Now the library is a pure MVC framework
+    * The models contain only about the data
+    * The viewers are respective viewers for the respective dimensions (2d, 3d, 4d? (maybe))
+    * Overall improvement towards the performance
     * No more canvas for viewer2d, now using pixijs
     * No more rollup but using parcel bundler now
     * Refer to previous branches for older working versions
 
 ## What is missing? ##
-    * The 3D items are missing ATM, (WIP, coming soon)
-    * A major overhaul is in store for viewer3d and 3D items, stay tuned
+    * ~~The 3D items are missing ATM, (WIP, coming soon)~~
+    * ~~A major overhaul is in store for viewer3d and 3D items, stay tuned~~
+    * Implementation of an application like interface to make the demo more complete (WIP, TODO)
 
 ## DEMO ##
 

@@ -48,6 +48,10 @@ export class Floorplan extends EventDispatcher {
          */
         this.rooms = [];
 
+        this.__roofPlanesForIntersection = [];
+        this.__floorPlanesForIntersection = [];
+        this.__wallPlanesForIntersection = [];
+
         /**
          * An {@link Object} that stores the metadata of rooms like name
          * 
@@ -131,29 +135,10 @@ export class Floorplan extends EventDispatcher {
      * @return {Mesh[]} planes
      * @see <https://threejs.org/docs/#api/en/objects/Mesh>
      */
-    roofPlanes() {
+    createRoofPlanes() {
         var planes = [];
         this.rooms.forEach((room) => {
             planes.push(room.roofPlane);
-        });
-        return planes;
-    }
-
-    /**
-     * Returns all the planes for intersection for the walls
-     * 
-     * @return {Mesh[]} planes
-     * @see <https://threejs.org/docs/#api/en/objects/Mesh>
-     */
-    wallEdgePlanes() {
-        var planes = [];
-        this.walls.forEach((wall) => {
-            if (wall.frontEdge) {
-                planes.push(wall.frontEdge.plane);
-            }
-            if (wall.backEdge) {
-                planes.push(wall.backEdge.plane);
-            }
         });
         return planes;
     }
@@ -164,10 +149,29 @@ export class Floorplan extends EventDispatcher {
      * @return {Mesh[]} planes
      * @see <https://threejs.org/docs/#api/en/objects/Mesh>
      */
-    floorPlanes() {
+    createFloorPlanes() {
         return Utils.map(this.rooms, (room) => {
             return room.floorPlane;
         });
+    }
+
+    /**
+     * Returns all the planes for intersection for the walls
+     * 
+     * @return {Mesh[]} planes
+     * @see <https://threejs.org/docs/#api/en/objects/Mesh>
+     */
+    createWallEdgePlanes() {
+        var planes = [];
+        this.walls.forEach((wall) => {
+            if (wall.frontEdge) {
+                planes.push(wall.frontEdge.plane);
+            }
+            if (wall.backEdge) {
+                planes.push(wall.backEdge.plane);
+            }
+        });
+        return planes;
     }
 
     fireOnNewWall(callback) {
@@ -782,6 +786,18 @@ export class Floorplan extends EventDispatcher {
         });
     }
 
+    get roofPlanesForIntersection() {
+        return this.__roofPlanesForIntersection;
+    }
+
+    get floorPlanesForIntersection() {
+        return this.__floorPlanesForIntersection;
+    }
+
+    get wallPlanesForIntersection() {
+        return this.__wallPlanesForIntersection;
+    }
+
     /**
      * Update the floorplan with new rooms, remove old rooms etc.
      * //Should include for , updatewalls=null, updaterooms=null
@@ -839,6 +855,15 @@ export class Floorplan extends EventDispatcher {
                 }
             }
         });
+
+        this.__roofPlanesForIntersection.length = 0;
+        this.__floorPlanesForIntersection.length = 0;
+        this.__wallPlanesForIntersection.length = 0;
+
+        this.__roofPlanesForIntersection.push.apply(this.__roofPlanesForIntersection, this.createRoofPlanes());
+        this.__floorPlanesForIntersection.push.apply(this.__floorPlanesForIntersection, this.createFloorPlanes());
+        this.__wallPlanesForIntersection.push.apply(this.__wallPlanesForIntersection, this.createWallEdgePlanes());
+
 
         this.assignOrphanEdges();
         this.updateFloorTextures();

@@ -3,7 +3,7 @@ import { PCFSoftShadowMap } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
 
-import { EVENT_UPDATED, EVENT_LOADED } from '../core/events.js';
+import { EVENT_UPDATED, EVENT_LOADED, EVENT_ITEM_SELECTED, EVENT_ITEM_MOVE, EVENT_ITEM_MOVE_FINISH, EVENT_NO_ITEM_SELECTED } from '../core/events.js';
 // import { EVENT_NEW, EVENT_DELETED } from '../core/events.js';
 
 import { Skybox } from './skybox.js';
@@ -12,6 +12,7 @@ import { Edge3D } from './edge3d.js';
 import { Floor3D } from './floor3d.js';
 import { Lights3D } from './lights3d.js';
 import { Physical3DItem } from './Physical3DItem.js';
+import { DragRoomItemsControl3D } from './DragRoomItemsControl3D.js';
 
 export class Viewer3D extends Scene {
     constructor(model, element, opts) {
@@ -50,10 +51,14 @@ export class Viewer3D extends Scene {
         this.pauseRender = false;
         this.edges3d = [];
         this.floors3d = [];
-        // this.walls3d = [];
-        this.draggables = [];
+        this.__currentItemSelected = null;
 
         this.needsUpdate = true;
+
+        this.__roomItemSelectedEvent = this.__roomItemSelected.bind(this);
+        this.__roomItemUnselectedEvent = this.__roomItemUnselected.bind(this);
+        this.__roomItemDraggedEvent = this.__roomItemDragged.bind(this);
+        this.__roomItemDragFinishEvent = this.__roomItemDragFinish.bind(this);
 
         this.init();
     }
@@ -68,7 +73,8 @@ export class Viewer3D extends Scene {
         scope.domElement.appendChild(scope.renderer.domElement);
 
         scope.lights = new Lights3D(this, scope.floorplan);
-        scope.dragcontrols = new DragControls(this.physicalRoomItems, scope.camera, scope.renderer.domElement);
+        // scope.dragcontrols = new DragControls(this.physicalRoomItems, scope.camera, scope.renderer.domElement);
+        scope.dragcontrols = new DragRoomItemsControl3D(this.physicalRoomItems, scope.camera, scope.renderer.domElement);
         scope.controls = new OrbitControls(scope.camera, scope.domElement);
         // scope.controls.autoRotate = this.options['spin'];
         scope.controls.enableDamping = false;
@@ -84,9 +90,6 @@ export class Viewer3D extends Scene {
 
         scope.axes = new AxesHelper(500);
 
-        scope.dragcontrols.addEventListener('dragstart', () => { scope.controls.enabled = false; });
-        scope.dragcontrols.addEventListener('drag', () => { scope.needsUpdate = true; });
-        scope.dragcontrols.addEventListener('dragend', () => { scope.controls.enabled = true; });
 
         // handle window resizing
         scope.updateWindowSize();
@@ -103,14 +106,51 @@ export class Viewer3D extends Scene {
         scope.model.addEventListener(EVENT_LOADED, (evt) => scope.addRoomItems(evt));
         scope.floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.addWalls(evt));
         this.controls.addEventListener('change', () => { scope.needsUpdate = true; });
+        scope.dragcontrols.addEventListener(EVENT_ITEM_SELECTED, this.__roomItemSelectedEvent);
+        scope.dragcontrols.addEventListener(EVENT_ITEM_MOVE, this.__roomItemDraggedEvent);
+        scope.dragcontrols.addEventListener(EVENT_ITEM_MOVE_FINISH, this.__roomItemDragFinishEvent);
+        scope.dragcontrols.addEventListener(EVENT_NO_ITEM_SELECTED, this.__roomItemUnselectedEvent);
+        // scope.controls.enabled = false;//To test the drag controls
+
         animate();
     }
 
+    __roomItemSelected(evt) {
+        this.__currentItemSelected = evt.item;
+        this.__currentItemSelected.selected = true;
+        this.needsUpdate = true;
+    }
+
+    __roomItemDragged(evt) {
+        this.controls.enabled = false;
+        this.needsUpdate = true;
+    }
+
+    __roomItemDragFinish(evt) {
+        this.controls.enabled = true;
+    }
+
+    __roomItemUnselected(evt) {
+        this.controls.enabled = true;
+        if (this.__currentItemSelected) {
+            this.__currentItemSelected.selected = false;
+            this.__currentItemSelected = null;
+            this.needsUpdate = true;
+        }
+    }
+
     addRoomItems(evt) {
+        let i = 0;
+        for (; i < this.__physicalRoomItems.length; i++) {
+            this.__physicalRoomItems[i].dispose();
+            this.remove(this.__physicalRoomItems[i]);
+        }
+        this.__physicalRoomItems.length = 0; //A cool way to clear an array in javascript
         let roomItems = this.model.roomItems;
-        for (let i = 0; i < roomItems.length; i++) {
+        for (i = 0; i < roomItems.length; i++) {
             let physicalRoomItem = new Physical3DItem(roomItems[i]);
             this.add(physicalRoomItem);
+            this.__physicalRoomItems.push(physicalRoomItem);
         }
 
     }
@@ -127,11 +167,6 @@ export class Viewer3D extends Scene {
         scope.edges3d.forEach((edge3d) => {
             edge3d.remove();
         });
-
-        // for (i = 0; i < scope.walls3d.length; i++) {
-        //     scope.scene.remove(scope.walls3d[i]);
-        // }
-        // scope.walls3d = [];
 
         scope.edges3d = [];
         let wallEdges = scope.floorplan.wallEdges();

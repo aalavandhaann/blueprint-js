@@ -2,6 +2,7 @@ import { EventDispatcher, Vector3 } from 'three';
 import { EVENT_UPDATED } from '../core/events';
 import { Utils } from '../core/utils';
 
+export const UP_VECTOR = new Vector3(0, 1, 0);
 /**
  * An Item is an abstract entity for all things placed in the scene, e.g. at
  * walls or on the floor.
@@ -34,6 +35,9 @@ export class Item extends EventDispatcher {
         this.__scale = new Vector3(1, 1, 1);
 
         this.__size = new Vector3(1, 1, 1);
+        this.__halfSize = new Vector3(1, 1, 1);
+
+        this.__customIntersectionPlanes = [];
 
         /** */
         this.__hover = false; //This is part of application logic only
@@ -65,6 +69,7 @@ export class Item extends EventDispatcher {
         }
         if (this.__metadata.size.length) {
             this.__size = new Vector3().fromArray(this.__metadata.size).clone();
+            this.__halfSize = this.__size.clone().multiplyScalar(0.5);
         }
     }
 
@@ -92,6 +97,10 @@ export class Item extends EventDispatcher {
 
     updateMetadataExplicit() {
         this.__metadata = this.__getMetaData();
+    }
+
+    snapToPoint(point, normal, intersectingPlane) {
+        this.position = point;
     }
 
     get id() {
@@ -122,6 +131,11 @@ export class Item extends EventDispatcher {
     }
 
     set rotation(r) {
+        let old = this.__rotation.clone();
+        let current = r.clone();
+        if (old.sub(current).length() < 1e-4) {
+            return;
+        }
         this.__rotation.copy(r);
         this.__metadata.rotation = this.__rotation.toArray();
         this.__metaDataUpdate('rotation');
@@ -171,5 +185,13 @@ export class Item extends EventDispatcher {
 
     get itemType() {
         return this.__metadata.itemType;
+    }
+
+    get halfSize() {
+        return this.__halfSize.clone();
+    }
+
+    get intersectionPlanes() {
+        return this.__customIntersectionPlanes;
     }
 }
