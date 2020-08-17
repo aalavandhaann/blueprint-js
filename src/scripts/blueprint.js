@@ -84,5 +84,9 @@ class BlueprintJS {
         }
         this.floorplanner.switchMode(floorplannerModes.MOVE);
     }
+
+    get currentView() {
+        return this.view_now;
+    }
 }
 export { BlueprintJS };

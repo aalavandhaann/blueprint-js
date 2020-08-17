@@ -144,6 +144,7 @@ export class Viewer3D extends Scene {
     }
 
     addRoomItems(evt) {
+        console.log('ADD ROOM ITEMS :: ', this.model.roomItems.length);
         let i = 0;
         for (; i < this.__physicalRoomItems.length; i++) {
             this.__physicalRoomItems[i].dispose();

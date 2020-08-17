@@ -14,9 +14,29 @@ Many things have changed with this version,
     * Refer to previous branches for older working versions
 
 ## What is missing? ##
-    * <s>~~The 3D items are missing ATM, (WIP, coming soon)~~</s>
-    * ~~A major overhaul is in store for viewer3d and 3D items, stay tuned~~
-    * Implementation of an application like interface to make the demo more complete (WIP, TODO)
+~~The 3D items are missing ATM, (WIP, coming soon)~~
+
+~~A major overhaul is in store for viewer3d and 3D items, stay tuned~~
+
+~~Implementation of an application like interface to make the demo more complete (WIP, TODO)~~
+
+## My sincere thanks to the following libraries and their contributors ##
+
+[**threejs - Superheroes from the 3 dimension**](https://www.threejs.com/)
+
+[**pixijs - Superheroes from the 2 dimension**](https://www.pixijs.com/)
+
+[**pixijs-viewport - Hero who saved the 2D day**](https://github.com/davidfig/pixi-viewport)
+
+[**thi.ng/geom-hull - Geometry hero from 'n' dimension**](https://github.com/thi-ng/umbrella)
+
+[**bezier-js - This one curves (like Mr. Fantastic)**](https://pomax.github.io/bezierjs/)
+
+[**gsap - tweening superheros**](https://greensock.com/gsap/)
+
+And of course to [**parcel**](https://parceljs.org/) and [**npm**](https://www.npmjs.com/) for their ever awesomeness. And also to the tons of other libraries to make this project possible
+
+
 
 ## DEMO ##
 

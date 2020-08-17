@@ -82,18 +82,27 @@ export class Configuration extends EventDispatcher {
             case configWallHeight:
             case configWallThickness:
             case scale:
-            case snapToGrid:
-            case directionalDrag:
-            case dragOnlyX:
-            case dragOnlyY:
-            case boundsX:
-            case boundsY:
             case snapTolerance:
             case gridSpacing:
+            case boundsX:
+            case boundsY:
                 //			return Number(this.data[key]);
                 return Number(Configuration.getData()[key]);
             default:
                 throw new Error('Invalid numeric configuration parameter: ' + key);
+        }
+    }
+
+    /** Get a numeric configuration parameter. */
+    static getBooleanValue(key) {
+        switch (key) {
+            case snapToGrid:
+            case directionalDrag:
+            case dragOnlyX:
+            case dragOnlyY:
+                return Boolean(Configuration.getData()[key]);
+            default:
+                throw new Error('Invalid Boolean configuration parameter: ' + key);
         }
     }
 }

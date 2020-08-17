@@ -28,6 +28,7 @@ export class Physical3DItem extends Mesh {
         this.add(this.__boxhelper);
         this.__boxhelper.material.linewidth = 5;
         this.selected = false;
+        this.position.copy(this.__itemModel.position);
         this.__loadItemModel();
     }
 
@@ -87,6 +88,13 @@ export class Physical3DItem extends Mesh {
         this.geometry.computeBoundingBox();
 
         this.material.visible = false;
+        this.__loadedItem.rotation.x = this.__itemModel.rotation.x;
+        this.__loadedItem.rotation.y = this.__itemModel.rotation.y;
+        this.__loadedItem.rotation.z = this.__itemModel.rotation.z;
+        this.__boxhelper.rotation.x = this.__itemModel.rotation.x;
+        this.__boxhelper.rotation.y = this.__itemModel.rotation.y;
+        this.__boxhelper.rotation.z = this.__itemModel.rotation.z;
+
         this.dispatchEvent({ type: EVENT_ITEM_LOADED });
     }
 

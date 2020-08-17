@@ -1,9 +1,9 @@
 import { BaseFloorplanViewElement2D } from './BaseFloorplanViewElement2D.js';
 import { EVENT_MOVED, EVENT_UPDATED, EVENT_DELETED } from '../core/events.js';
 import { Dimensioning } from '../core/dimensioning.js';
-import { Point, Graphics, Text } from 'pixi.js';
+import { Graphics, Text } from 'pixi.js';
 import { Vector3, Vector2, Color } from 'three';
-import { Configuration, snapToGrid, snapTolerance } from '../core/configuration.js';
+import { Configuration, snapToGrid, snapTolerance, dragOnlyX, dragOnlyY, directionalDrag } from '../core/configuration.js';
 
 export class WallDimensions2D extends Graphics {
     constructor(floorplan, options, wall) {
@@ -151,13 +151,6 @@ export class WallView2D extends BaseFloorplanViewElement2D {
         this.__mouseOut();
     }
 
-    // set selected(flag) {
-    //     super.selected = flag;
-    //     if (!this.__isSelected) {
-    //         this.viewDimensions = false;
-    //     }
-    // }
-
     get viewDimensions() {
         return (this.__info.alpha > 0.9);
     }
@@ -236,14 +229,36 @@ export class WallView2D extends BaseFloorplanViewElement2D {
         super.__dragMove(evt);
         if (this.__isDragging) {
             let co = evt.data.getLocalPosition(this.parent);
-            let cmCo = new Point(co.x, co.y);
+            let cmCo = new Vector2(co.x, co.y);
             cmCo.x = Dimensioning.pixelToCm(cmCo.x);
             cmCo.y = Dimensioning.pixelToCm(cmCo.y);
-            if (Configuration.getNumericValue(snapToGrid) || this.__snapToGrid) {
+            if (Configuration.getBooleanValue(snapToGrid) || this.__snapToGrid) {
                 cmCo.x = Math.floor(cmCo.x / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
                 cmCo.y = Math.floor(cmCo.y / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
             }
-            this.__wall.move(cmCo.x, cmCo.y);
+
+            if (Configuration.getBooleanValue(directionalDrag)) {
+                let projected = this.__wall.projectOnWallPlane(cmCo);
+                let vectorToProjected = cmCo.clone().sub(projected);
+
+                if (Configuration.getBooleanValue(snapToGrid) || this.__snapToGrid) {
+                    let snappedLength = Math.floor(vectorToProjected.length() / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
+                    vectorToProjected = vectorToProjected.normalize().multiplyScalar(snappedLength);
+                }
+                let finalCo = this.__wall.location.clone().add(vectorToProjected);
+                cmCo = finalCo;
+            }
+
+            if (Configuration.getBooleanValue(dragOnlyX) && !Configuration.getBooleanValue(dragOnlyY)) {
+                cmCo.y = this.__wall.location.y;
+            }
+
+            if (!Configuration.getBooleanValue(dragOnlyX) && Configuration.getBooleanValue(dragOnlyY)) {
+                cmCo.x = this.__wall.location.x;
+            }
+
+            // this.__wall.move(cmCo.x, cmCo.y);
+            this.__wall.location = cmCo; //new Vector2(cmCo.x, cmCo.y);
             evt.stopPropagation();
         }
     }

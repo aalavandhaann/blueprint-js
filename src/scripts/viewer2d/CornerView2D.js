@@ -2,7 +2,7 @@ import { BaseFloorplanViewElement2D } from './BaseFloorplanViewElement2D.js';
 import { Dimensioning } from '../core/dimensioning.js';
 import { EVENT_MOVED } from '../core/events.js';
 import { Point } from 'pixi.js';
-import { Configuration, snapTolerance, snapToGrid } from '../core/configuration.js';
+import { Configuration, snapTolerance, snapToGrid, dragOnlyX, dragOnlyY } from '../core/configuration.js';
 
 
 export class CornerView2D extends BaseFloorplanViewElement2D {
@@ -59,9 +59,17 @@ export class CornerView2D extends BaseFloorplanViewElement2D {
             cmCo.x = Dimensioning.pixelToCm(cmCo.x);
             cmCo.y = Dimensioning.pixelToCm(cmCo.y);
 
-            if (Configuration.getNumericValue(snapToGrid) || this.__snapToGrid) {
+            if (Configuration.getBooleanValue(snapToGrid) || this.__snapToGrid) {
                 cmCo.x = Math.floor(cmCo.x / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
                 cmCo.y = Math.floor(cmCo.y / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
+            }
+
+            if (Configuration.getBooleanValue(dragOnlyX) && !Configuration.getBooleanValue(dragOnlyY)) {
+                cmCo.y = this.__corner.location.y;
+            }
+
+            if (!Configuration.getBooleanValue(dragOnlyX) && Configuration.getBooleanValue(dragOnlyY)) {
+                cmCo.x = this.__corner.location.x;
             }
 
 

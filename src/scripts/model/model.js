@@ -36,7 +36,7 @@ export class Model extends EventDispatcher {
         let floorplanJSON = this.floorplan.saveFloorplan();
         let roomItemsJSON = [];
         this.__roomItems.forEach((item) => {
-            item.updateMetadataExplicit();
+            // item.updateMetadataExplicit();
             roomItemsJSON.push(item.metadata);
         });
         var room = { floorplan: floorplanJSON, items: roomItemsJSON };

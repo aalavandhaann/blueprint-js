@@ -1,4 +1,4 @@
-import { EventDispatcher, Vector2, Vector3 } from 'three';
+import { EventDispatcher, Vector2, Vector3, Plane } from 'three';
 import Bezier from 'bezier-js';
 import { WallTypes } from '../core/constants.js';
 import { EVENT_ACTION, EVENT_MOVED, EVENT_DELETED, EVENT_UPDATED, EVENT_CORNER_ATTRIBUTES_CHANGED } from '../core/events.js';
@@ -8,7 +8,7 @@ import { Utils } from '../core/utils.js';
 
 /** The default wall texture. */
 export const defaultWallTexture = { url: 'rooms/textures/wallmap.png', stretch: true, scale: 0 };
-
+const UP_VECTOR = new Vector3(0, 0, 1);
 /**
  * A Wall is the basic element to create Rooms.
  *
@@ -99,6 +99,10 @@ export class Wall extends EventDispatcher {
         /** Actions to be applied explicitly. */
         this.action_callbacks = null;
 
+        this.__location = new Vector2();
+        this.__wallPlane2D = new Plane();
+        this.__wallNormal2D = new Vector2();
+
         //		this.start.addEventListener(EVENT_MOVED, ()=>{
         //			scope.updateControlVectors();
         //		});
@@ -129,7 +133,30 @@ export class Wall extends EventDispatcher {
         corner.addEventListener(EVENT_CORNER_ATTRIBUTES_CHANGED, cornerAttributesChanged);
     }
 
+    projectOnWallPlane(pt2d) {
+        let projected3D = new Vector3();
+        projected3D = this.__wallPlane2D.projectPoint(new Vector3(pt2d.x, pt2d.y, 0), projected3D);
+        return new Vector2(projected3D.x, projected3D.y);
+    }
+
     updateControlVectors() {
+        //Update the location as a mid point between two corners
+        let s = this.start.location.clone();
+        let e = this.end.location.clone();
+        let vect = e.clone().sub(s.clone());
+        let halfVect = vect.clone().multiplyScalar(0.5);
+        let midPoint = s.clone().add(halfVect);
+        this.__location = midPoint.clone();
+
+        //Update the wall plane in a 2D sense
+        let vect3d = new Vector3(vect.x, vect.y, 0);
+        let normal = vect3d.clone().normalize().cross(UP_VECTOR);
+        this.__wallPlane2D = this.__wallPlane2D.setFromNormalAndCoplanarPoint(normal, new Vector3(midPoint.x, midPoint.y, 0));
+        this.__wallNormal2D.x = vect3d.x;
+        this.__wallNormal2D.y = vect3d.y;
+
+        // console.log(this.__wallPlane2D.normal, this.__wallPlane2D.constant);
+
         this._bezier.points[0].x = this.start.location.x;
         this._bezier.points[0].y = this.start.location.y;
 
@@ -341,6 +368,24 @@ export class Wall extends EventDispatcher {
             return this.end.elevation;
         }
         return 0.0;
+    }
+
+    get location() {
+        return this.__location;
+    }
+
+    set location(vec2) {
+        let s = this.start.location.clone();
+        let e = this.end.location.clone();
+        let vect = e.clone().sub(s);
+        let midPoint = s.clone().add(vect.clone().multiplyScalar(0.5));
+        let vectorSToMid = s.clone().sub(midPoint);
+        let vectorEToMid = e.clone().sub(midPoint);
+        let sNewLocation = vec2.clone().add(vectorSToMid);
+        let eNewLocation = vec2.clone().add(vectorEToMid);
+        this.start.move(sNewLocation.x, sNewLocation.y);
+        this.end.move(eNewLocation.x, eNewLocation.y);
+        this.__location = vec2;
     }
 
     getStart() {

@@ -22,11 +22,9 @@
         "url": "https://github.com/aalavandhaann/blueprint-js/issues"
     },
     "devDependencies": {
-        "@thi.ng/geom-hull": "0.0.27",
         "babel-core": "^6.26.3",
         "babel-plugin-external-helpers": "^6.22.0",
         "babel-preset-latest": "^6.24.1",
-        "bezier-js": "^2.4.0",
         "cssnano": "^4.1.10",
         "esdoc": "^1.1.0",
         "esdoc-standard-plugin": "^1.0.0",
@@ -38,15 +36,15 @@
         "parcel-bundler": "^1.12.4"
     },
     "dependencies": {
-        "@calvinscofield/three-objloader": "^1.0.4",
+        "bezier-js": "^2.4.0",
+        "@thi.ng/geom-hull": "0.0.27",
         "braces": "^2.3.2",
         "es6-enum": "^1.1.0",
         "gsap": "^3.5.0",
-        "jquery": "^3.4.1",
         "line-intersect": "^2.2.1",
-        "nodeclipse": "^0.17.2",
         "pixi-viewport": "^4.13.2",
         "pixi.js": "^5.3.3",
+        "quicksettings": "^3.0.1",
         "three": "^0.118.3",
         "three-gltf-exporter": "0.0.1",
         "three-reflector": "^1.0.2",
