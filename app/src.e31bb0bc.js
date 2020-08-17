@@ -110752,7 +110752,7 @@ blueprint3d.model.loadSerialized(empty);
 uxInterface = _quicksettings.default.create(0, 0, 'BlueprintJS');
 settingsViewer2d = _quicksettings.default.create(0, 0, 'Viewer 2D');
 settingsViewer3d = _quicksettings.default.create(0, 0, 'Viewer 3D');
-uxInterface.addButton('Switch Viewer To: 3D', switchViewer);
+uxInterface.addButton('Switch Viewer', switchViewer);
 uxInterface.addHTML('Current View', 'Floorplanning');
 uxInterface.addFileChooser("Load Design", "Load Design", ".blueprint3d", loadBlueprint3DDesign);
 uxInterface.addButton('Save Design', saveBlueprint3DDesign);
@@ -110803,7 +110803,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "33163" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "41779" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

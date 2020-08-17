@@ -88,7 +88,7 @@ blueprint3d.model.loadSerialized(empty);
 uxInterface = QuickSettings.create(0, 0, 'BlueprintJS');
 settingsViewer2d = QuickSettings.create(0, 0, 'Viewer 2D');
 settingsViewer3d = QuickSettings.create(0, 0, 'Viewer 3D');
-uxInterface.addButton('Switch Viewer To: 3D', switchViewer);
+uxInterface.addButton('Switch Viewer', switchViewer);
 uxInterface.addHTML('Current View', 'Floorplanning');
 
 uxInterface.addFileChooser("Load Design", "Load Design", ".blueprint3d", loadBlueprint3DDesign);
