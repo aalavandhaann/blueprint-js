@@ -27,12 +27,13 @@ export class Physical3DItem extends Mesh {
         this.__itemModel.addEventListener(EVENT_UPDATED, this.__itemUpdatedEvent);
         this.add(this.__boxhelper);
         this.__boxhelper.material.linewidth = 5;
+        this.selected = false;
         this.__loadItemModel();
     }
 
     __itemUpdated(evt) {
         let scope = this;
-        let duration = 0.35;
+        let duration = 0.15;
 
         function __tinyUpdate() {
             scope.parent.needsUpdate = true;

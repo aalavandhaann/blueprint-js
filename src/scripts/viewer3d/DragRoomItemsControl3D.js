@@ -1,6 +1,7 @@
 import { EventDispatcher, Vector2 } from 'three';
 import { Plane, Raycaster, Vector3, Matrix4 } from 'three/build/three.module';
 import { EVENT_ITEM_SELECTED, EVENT_ITEM_MOVE, EVENT_ITEM_HOVERON, EVENT_ITEM_HOVEROFF, EVENT_ITEM_MOVE_FINISH, EVENT_NO_ITEM_SELECTED } from '../core/events';
+import { IS_TOUCH_DEVICE } from '../../DeviceInfo';
 
 /**
  * This is a custom implementation of the DragControls class
@@ -66,7 +67,7 @@ export class DragRoomItemsControl3D extends EventDispatcher {
             this.dispatchEvent({ type: EVENT_ITEM_SELECTED, item: this.__selected });
             return;
         }
-        if (deltaTime < 1000) {
+        if (deltaTime < 300) {
             this.dispatchEvent({ type: EVENT_NO_ITEM_SELECTED, item: this.__selected });
         }
     }
@@ -112,6 +113,10 @@ export class DragRoomItemsControl3D extends EventDispatcher {
 
             }
             this.dispatchEvent({ type: EVENT_ITEM_MOVE, item: this.__selected });
+            return;
+        }
+
+        if (IS_TOUCH_DEVICE) {
             return;
         }
 

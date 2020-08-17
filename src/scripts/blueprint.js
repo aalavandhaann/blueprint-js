@@ -62,10 +62,12 @@ class BlueprintJS {
             this.view_now = 2;
             document.getElementById(this.options.viewer2d.id).style.visibility = "visible";
             document.getElementById(this.options.viewer3d).style.visibility = "hidden";
+            this.three.enabled = false;
         } else if (this.view_now === 2 && !this.options.widget) {
             this.view_now = 3;
             document.getElementById(this.options.viewer2d.id).style.visibility = "hidden";
             document.getElementById(this.options.viewer3d).style.visibility = "visible";
+            this.three.enabled = true;
         }
     }
 

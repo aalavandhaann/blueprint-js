@@ -24,6 +24,7 @@ export class Viewer3D extends Scene {
             }
         }
         this.__physicalRoomItems = [];
+        this.__enabled = true;
         this.model = model;
         this.floorplan = this.model.floorplan;
         this.options = options;
@@ -116,6 +117,9 @@ export class Viewer3D extends Scene {
     }
 
     __roomItemSelected(evt) {
+        if (this.__currentItemSelected) {
+            this.__currentItemSelected.selected = false;
+        }
         this.__currentItemSelected = evt.item;
         this.__currentItemSelected.selected = true;
         this.needsUpdate = true;
@@ -232,6 +236,9 @@ export class Viewer3D extends Scene {
     }
 
     render() {
+        if (!this.enabled) {
+            return;
+        }
         let scope = this;
         // scope.controls.update();
         if (!scope.needsUpdate) {
@@ -244,6 +251,20 @@ export class Viewer3D extends Scene {
 
     get physicalRoomItems() {
         return this.__physicalRoomItems;
+    }
+
+    get enabled() {
+        return this.__enabled;
+    }
+
+    set enabled(flag) {
+        this.__enabled = flag;
+        this.controls.enabled = flag;
+        if (!flag) {
+            this.dragcontrols.deactivate();
+        } else {
+            this.dragcontrols.activate();
+        }
     }
 
 }

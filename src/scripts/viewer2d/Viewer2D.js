@@ -9,6 +9,7 @@ import { RoomView2D } from './RoomView2D';
 import { Dimensioning } from '../core/dimensioning';
 import { KeyboardListener2D } from './KeyboardManager2D';
 import { Configuration, snapToGrid, snapTolerance } from '../core/configuration';
+import { IS_TOUCH_DEVICE } from '../../DeviceInfo';
 
 export const floorplannerModes = { MOVE: 0, DRAW: 1 };
 
@@ -146,6 +147,14 @@ export class Viewer2D extends Application {
         this.__floorplanContainer.on('mouseup', this.__drawModeMouseUpEvent);
         this.__floorplanContainer.on('mousemove', this.__drawModeMouseMoveEvent);
 
+        //User touches the screen then emulate the Mouseup event creating a corner
+        this.__floorplanContainer.on('touchstart', this.__drawModeMouseUpEvent);
+        //User then touch moves and lifts the finger away from the screen. Now create the next corner
+        this.__floorplanContainer.on('touchend', this.__drawModeMouseUpEvent);
+
+        //Use touches and drags across the screen then emulate drawing the temporary wall
+        this.__floorplanContainer.on('touchmove', this.__drawModeMouseMoveEvent);
+
         // this.__floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.__redrawFloorplan(evt));
         this.__floorplan.addEventListener(EVENT_NEW, this.__redrawFloorplanEvent);
         this.__floorplan.addEventListener(EVENT_DELETED, this.__redrawFloorplanEvent);
@@ -203,7 +212,9 @@ export class Viewer2D extends Application {
     }
 
     __drawModeMouseDown(evt) {
-
+        if (IS_TOUCH_DEVICE) {
+            this.__drawModeMouseUp(evt);
+        }
     }
 
     __drawModeMouseUp(evt) {
@@ -239,7 +250,14 @@ export class Viewer2D extends Application {
                 this.__tempWall.visible = true;
             }
 
-            this.__lastNode = corner;
+            if (IS_TOUCH_DEVICE && corner && this.__lastNode !== null) {
+                this.__tempWall.visible = false;
+                this.__lastNode = null;
+            } else {
+                this.__lastNode = corner;
+            }
+
+
         }
     }
 

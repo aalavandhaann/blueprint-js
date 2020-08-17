@@ -28,8 +28,6 @@ export class Edge3D extends EventDispatcher {
         this.baseColor = 0x666666; //0xdddddd;
         this.visible = false;
 
-        var scope = this;
-
         this.redrawevent = this.__redraw.bind(this); //() => { scope.redraw(); };
         this.visibilityevent = this.__visibility.bind(this); //() => { scope.updateVisibility(); };
         this.showallevent = this.__showAll.bind(this); //() => { scope.showAll(); };
@@ -149,7 +147,7 @@ export class Edge3D extends EventDispatcher {
         // show or hide planes
         scope.planes.forEach((plane) => {
             // plane.material.transparent = !scope.visible;
-            // plane.material.opacity = (scope.visible) ? 1.0 : 0.3;
+            // plane.material.opacity = (scope.visible) ? 1.0 : 0.1;
             plane.visible = scope.visible;
         });
         scope.updateObjectVisibility();

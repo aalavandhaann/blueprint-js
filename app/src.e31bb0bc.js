@@ -46327,9 +46327,6 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
     _this.baseColor = 0x666666; //0xdddddd;
 
     _this.visible = false;
-
-    var scope = _assertThisInitialized(_this);
-
     _this.redrawevent = _this.__redraw.bind(_assertThisInitialized(_this)); //() => { scope.redraw(); };
 
     _this.visibilityevent = _this.__visibility.bind(_assertThisInitialized(_this)); //() => { scope.updateVisibility(); };
@@ -46462,7 +46459,7 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
 
       scope.planes.forEach(function (plane) {
         // plane.material.transparent = !scope.visible;
-        // plane.material.opacity = (scope.visible) ? 1.0 : 0.3;
+        // plane.material.opacity = (scope.visible) ? 1.0 : 0.1;
         plane.visible = scope.visible;
       });
       scope.updateObjectVisibility();
@@ -54954,6 +54951,7 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
     _this.add(_this.__boxhelper);
 
     _this.__boxhelper.material.linewidth = 5;
+    _this.selected = false;
 
     _this.__loadItemModel();
 
@@ -54964,7 +54962,7 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
     key: "__itemUpdated",
     value: function __itemUpdated(evt) {
       var scope = this;
-      var duration = 0.35;
+      var duration = 0.15;
 
       function __tinyUpdate() {
         scope.parent.needsUpdate = true;
@@ -55108,7 +55106,44 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
 }(_three.Mesh);
 
 exports.Physical3DItem = Physical3DItem;
-},{"three":"../node_modules/three/build/three.module.js","three/examples/jsm/loaders/GLTFLoader":"../node_modules/three/examples/jsm/loaders/GLTFLoader.js","../core/events":"scripts/core/events.js","three/build/three.module":"../node_modules/three/build/three.module.js","gsap":"../node_modules/gsap/index.js"}],"scripts/viewer3d/DragRoomItemsControl3D.js":[function(require,module,exports) {
+},{"three":"../node_modules/three/build/three.module.js","three/examples/jsm/loaders/GLTFLoader":"../node_modules/three/examples/jsm/loaders/GLTFLoader.js","../core/events":"scripts/core/events.js","three/build/three.module":"../node_modules/three/build/three.module.js","gsap":"../node_modules/gsap/index.js"}],"DeviceInfo.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.IS_TOUCH_DEVICE = exports.DeviceInfo = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var DeviceInfo = /*#__PURE__*/function () {
+  function DeviceInfo() {
+    _classCallCheck(this, DeviceInfo);
+  }
+
+  _createClass(DeviceInfo, null, [{
+    key: "isTouchDevice",
+    value: function isTouchDevice() {
+      try {
+        document.createEvent('TouchEvent');
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+  }]);
+
+  return DeviceInfo;
+}();
+
+exports.DeviceInfo = DeviceInfo;
+var IS_TOUCH_DEVICE = DeviceInfo.isTouchDevice();
+exports.IS_TOUCH_DEVICE = IS_TOUCH_DEVICE;
+},{}],"scripts/viewer3d/DragRoomItemsControl3D.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55121,6 +55156,8 @@ var _three = require("three");
 var _three2 = require("three/build/three.module");
 
 var _events = require("../core/events");
+
+var _DeviceInfo = require("../../DeviceInfo");
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -55223,7 +55260,7 @@ var DragRoomItemsControl3D = /*#__PURE__*/function (_EventDispatcher) {
         return;
       }
 
-      if (deltaTime < 1000) {
+      if (deltaTime < 300) {
         this.dispatchEvent({
           type: _events.EVENT_NO_ITEM_SELECTED,
           item: this.__selected
@@ -55285,6 +55322,10 @@ var DragRoomItemsControl3D = /*#__PURE__*/function (_EventDispatcher) {
           type: _events.EVENT_ITEM_MOVE,
           item: this.__selected
         });
+        return;
+      }
+
+      if (_DeviceInfo.IS_TOUCH_DEVICE) {
         return;
       }
 
@@ -55381,7 +55422,7 @@ var DragRoomItemsControl3D = /*#__PURE__*/function (_EventDispatcher) {
 }(_three.EventDispatcher);
 
 exports.DragRoomItemsControl3D = DragRoomItemsControl3D;
-},{"three":"../node_modules/three/build/three.module.js","three/build/three.module":"../node_modules/three/build/three.module.js","../core/events":"scripts/core/events.js"}],"scripts/viewer3d/Viewer3d.js":[function(require,module,exports) {
+},{"three":"../node_modules/three/build/three.module.js","three/build/three.module":"../node_modules/three/build/three.module.js","../core/events":"scripts/core/events.js","../../DeviceInfo":"DeviceInfo.js"}],"scripts/viewer3d/Viewer3d.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55458,6 +55499,7 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
     }
 
     _this.__physicalRoomItems = [];
+    _this.__enabled = true;
     _this.model = model;
     _this.floorplan = _this.model.floorplan;
     _this.options = options;
@@ -55554,6 +55596,10 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
   }, {
     key: "__roomItemSelected",
     value: function __roomItemSelected(evt) {
+      if (this.__currentItemSelected) {
+        this.__currentItemSelected.selected = false;
+      }
+
       this.__currentItemSelected = evt.item;
       this.__currentItemSelected.selected = true;
       this.needsUpdate = true;
@@ -55680,6 +55726,10 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
   }, {
     key: "render",
     value: function render() {
+      if (!this.enabled) {
+        return;
+      }
+
       var scope = this; // scope.controls.update();
 
       if (!scope.needsUpdate) {
@@ -55694,6 +55744,21 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
     key: "physicalRoomItems",
     get: function get() {
       return this.__physicalRoomItems;
+    }
+  }, {
+    key: "enabled",
+    get: function get() {
+      return this.__enabled;
+    },
+    set: function set(flag) {
+      this.__enabled = flag;
+      this.controls.enabled = flag;
+
+      if (!flag) {
+        this.dragcontrols.deactivate();
+      } else {
+        this.dragcontrols.activate();
+      }
     }
   }]);
 
@@ -109736,6 +109801,8 @@ var _KeyboardManager2D = require("./KeyboardManager2D");
 
 var _configuration = require("../core/configuration");
 
+var _DeviceInfo = require("../../DeviceInfo");
+
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -109941,7 +110008,16 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
 
     _this2.__floorplanContainer.on('mouseup', _this2.__drawModeMouseUpEvent);
 
-    _this2.__floorplanContainer.on('mousemove', _this2.__drawModeMouseMoveEvent); // this.__floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.__redrawFloorplan(evt));
+    _this2.__floorplanContainer.on('mousemove', _this2.__drawModeMouseMoveEvent); //User touches the screen then emulate the Mouseup event creating a corner
+
+
+    _this2.__floorplanContainer.on('touchstart', _this2.__drawModeMouseUpEvent); //User then touch moves and lifts the finger away from the screen. Now create the next corner
+
+
+    _this2.__floorplanContainer.on('touchend', _this2.__drawModeMouseUpEvent); //Use touches and drags across the screen then emulate drawing the temporary wall
+
+
+    _this2.__floorplanContainer.on('touchmove', _this2.__drawModeMouseMoveEvent); // this.__floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.__redrawFloorplan(evt));
 
 
     _this2.__floorplan.addEventListener(_events.EVENT_NEW, _this2.__redrawFloorplanEvent);
@@ -110022,7 +110098,11 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
     }
   }, {
     key: "__drawModeMouseDown",
-    value: function __drawModeMouseDown(evt) {}
+    value: function __drawModeMouseDown(evt) {
+      if (_DeviceInfo.IS_TOUCH_DEVICE) {
+        this.__drawModeMouseUp(evt);
+      }
+    }
   }, {
     key: "__drawModeMouseUp",
     value: function __drawModeMouseUp(evt) {
@@ -110061,7 +110141,12 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
           this.__tempWall.visible = true;
         }
 
-        this.__lastNode = corner;
+        if (_DeviceInfo.IS_TOUCH_DEVICE && corner && this.__lastNode !== null) {
+          this.__tempWall.visible = false;
+          this.__lastNode = null;
+        } else {
+          this.__lastNode = corner;
+        }
       }
     }
   }, {
@@ -110226,7 +110311,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
 }(_pixi.Application);
 
 exports.Viewer2D = Viewer2D;
-},{"pixi.js":"../node_modules/pixi.js/lib/pixi.es.js","pixi-viewport":"../node_modules/pixi-viewport/dist/viewport.es.js","three":"../node_modules/three/build/three.module.js","../core/events":"scripts/core/events.js","./Grid2d":"scripts/viewer2d/Grid2d.js","./CornerView2D":"scripts/viewer2d/CornerView2D.js","./WallView2D":"scripts/viewer2d/WallView2D.js","./RoomView2D":"scripts/viewer2d/RoomView2D.js","../core/dimensioning":"scripts/core/dimensioning.js","./KeyboardManager2D":"scripts/viewer2d/KeyboardManager2D.js","../core/configuration":"scripts/core/configuration.js"}],"scripts/blueprint.js":[function(require,module,exports) {
+},{"pixi.js":"../node_modules/pixi.js/lib/pixi.es.js","pixi-viewport":"../node_modules/pixi-viewport/dist/viewport.es.js","three":"../node_modules/three/build/three.module.js","../core/events":"scripts/core/events.js","./Grid2d":"scripts/viewer2d/Grid2d.js","./CornerView2D":"scripts/viewer2d/CornerView2D.js","./WallView2D":"scripts/viewer2d/WallView2D.js","./RoomView2D":"scripts/viewer2d/RoomView2D.js","../core/dimensioning":"scripts/core/dimensioning.js","./KeyboardManager2D":"scripts/viewer2d/KeyboardManager2D.js","../core/configuration":"scripts/core/configuration.js","../../DeviceInfo":"DeviceInfo.js"}],"scripts/blueprint.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -110318,10 +110403,12 @@ var BlueprintJS = /*#__PURE__*/function () {
         this.view_now = 2;
         document.getElementById(this.options.viewer2d.id).style.visibility = "visible";
         document.getElementById(this.options.viewer3d).style.visibility = "hidden";
+        this.three.enabled = false;
       } else if (this.view_now === 2 && !this.options.widget) {
         this.view_now = 3;
         document.getElementById(this.options.viewer2d.id).style.visibility = "hidden";
         document.getElementById(this.options.viewer3d).style.visibility = "visible";
+        this.three.enabled = true;
       }
     }
   }, {
@@ -110360,7 +110447,7 @@ var _configuration = require("./scripts/core/configuration.js");
 var _constants = require("./scripts/core/constants.js");
 
 var blueprint3d = null;
-var empty = '{"floorplan":{"version":"0.0.2a","units":"m", "corners":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2":{"x":0,"y":0,"elevation":2.5},"f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"x":0,"y":5,"elevation":2.5},"da026c08-d76a-a944-8e7b-096b752da9ed":{"x":5,"y":5,"elevation":2.5},"4e3d65cb-54c0-0681-28bf-bddcc7bdb571":{"x":5,"y":0,"elevation":2.5}},"walls":[{"corner1":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","corner2":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":-176.77669529663686,"y":176.7766952966369},"b":{"x":-176.7766952966369,"y":323.22330470336317}},{"corner1":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","corner2":"da026c08-d76a-a944-8e7b-096b752da9ed","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":176.7766952966369,"y":676.7766952966368},"b":{"x":323.22330470336317,"y":676.776695296637}},{"corner1":"da026c08-d76a-a944-8e7b-096b752da9ed","corner2":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":676.7766952966368,"y":323.2233047033631},"b":{"x":676.776695296637,"y":176.77669529663686}},{"corner1":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","corner2":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":323.2233047033631,"y":-176.77669529663686},"b":{"x":176.77669529663686,"y":-176.7766952966369}}],"rooms":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,4e3d65cb-54c0-0681-28bf-bddcc7bdb571,da026c08-d76a-a944-8e7b-096b752da9ed,f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"name":"Ashok\'s Room"}},"wallTextures":[],"floorTextures":{},"newFloorTextures":{},"carbonSheet":{"url":"","transparency":1,"x":0,"y":0,"anchorX":0,"anchorY":0,"width":0.01,"height":0.01}},"items":[{"id":"7d0b3e90-c315-e7a5-a6d9-594757d5b7e4","itemName":"An Item","itemType":2,"position":[0,0,0],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":true,"resizable":true, "modelURL":"models/Cube.glb"}, {"itemName":"Lantern","itemType":1,"position":[10,0,0],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false, "modelURL":"models/Cube.glb"}]}';
+var empty = '{"floorplan":{"version":"0.0.2a","units":"m", "corners":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2":{"x":0,"y":0,"elevation":2.5},"f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"x":0,"y":5,"elevation":2.5},"da026c08-d76a-a944-8e7b-096b752da9ed":{"x":5,"y":5,"elevation":2.5},"4e3d65cb-54c0-0681-28bf-bddcc7bdb571":{"x":5,"y":0,"elevation":2.5}},"walls":[{"corner1":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","corner2":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":-176.77669529663686,"y":176.7766952966369},"b":{"x":-176.7766952966369,"y":323.22330470336317}},{"corner1":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","corner2":"da026c08-d76a-a944-8e7b-096b752da9ed","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":176.7766952966369,"y":676.7766952966368},"b":{"x":323.22330470336317,"y":676.776695296637}},{"corner1":"da026c08-d76a-a944-8e7b-096b752da9ed","corner2":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":676.7766952966368,"y":323.2233047033631},"b":{"x":676.776695296637,"y":176.77669529663686}},{"corner1":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","corner2":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":323.2233047033631,"y":-176.77669529663686},"b":{"x":176.77669529663686,"y":-176.7766952966369}}],"rooms":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,4e3d65cb-54c0-0681-28bf-bddcc7bdb571,da026c08-d76a-a944-8e7b-096b752da9ed,f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"name":"Ashok\'s Room"}},"wallTextures":[],"floorTextures":{},"newFloorTextures":{},"carbonSheet":{"url":"","transparency":1,"x":0,"y":0,"anchorX":0,"anchorY":0,"width":0.01,"height":0.01}},"items":[{"id":"7d0b3e90-c315-e7a5-a6d9-594757d5b7e4","itemName":"An Item","itemType":2,"position":[0,0,0],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":true,"resizable":true, "modelURL":"models/Cube.glb"}, {"itemName":"Lantern","itemType":9,"position":[10,0,0],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false, "modelURL":"models/Cube.glb"}, {"itemName":"Lantern","itemType":4,"position":[10,0,0],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false, "modelURL":"models/Cube.glb"}]}';
 var opts = {
   viewer2d: {
     id: 'bp3djs-viewer2d',
@@ -110428,7 +110515,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "45601" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "43069" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
