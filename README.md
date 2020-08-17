@@ -34,6 +34,9 @@ Many things have changed with this version,
 
 [**gsap - tweening superheros**](https://greensock.com/gsap/)
 
+[**quicksettings - Superhero to mechanize the project**](https://github.com/bit101/quicksettings)
+
+
 And of course to [**parcel**](https://parceljs.org/) and [**npm**](https://www.npmjs.com/) for their ever awesomeness. And also to the tons of other libraries to make this project possible
 
 
