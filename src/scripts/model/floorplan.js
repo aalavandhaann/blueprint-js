@@ -3,7 +3,7 @@ import { EVENT_CORNER_ATTRIBUTES_CHANGED, EVENT_WALL_ATTRIBUTES_CHANGED, EVENT_R
 import { EventDispatcher, Vector2, Vector3, Matrix4 } from 'three';
 import { Utils } from '../core/utils.js';
 import { Dimensioning } from '../core/dimensioning.js';
-import { dimInch, dimFeetAndInch, dimMeter, dimCentiMeter, dimMilliMeter, defaultWallTexture } from '../core/constants.js';
+import { dimInch, dimFeetAndInch, dimMeter, dimCentiMeter, dimMilliMeter, defaultWallTexture, defaultFloorTexture } from '../core/constants.js';
 import { WallTypes } from '../core/constants.js';
 import { Version } from '../core/version.js';
 import { cornerTolerance, Configuration, configDimUnit } from '../core/configuration.js';
@@ -644,7 +644,11 @@ export class Floorplan extends EventDispatcher {
      */
     getFloorTexture(uuid) {
         if (uuid in this.floorTextures) {
-            return this.floorTextures[uuid];
+            let floorTexture = this.floorTextures[uuid];
+            if (floorTexture.colormap) {
+                return floorTexture;
+            }
+
         }
         return null;
     }
@@ -652,8 +656,8 @@ export class Floorplan extends EventDispatcher {
     /**
      * @deprecated
      */
-    setFloorTexture(uuid, url, scale) {
-        this.floorTextures[uuid] = { url: url, scale: scale };
+    setFloorTexture(uuid, texturePack) {
+        this.floorTextures[uuid] = texturePack;
     }
 
     /** clear out obsolete floor textures */
@@ -831,6 +835,12 @@ export class Floorplan extends EventDispatcher {
         var scope = this;
         this.walls.forEach((wall) => {
             wall.resetFrontBack();
+        });
+
+
+        //Destroy current room objects
+        this.rooms.forEach((room) => {
+            room.destroy();
         });
 
 

@@ -2,6 +2,7 @@ import { EventDispatcher, TextureLoader, RepeatWrapping, Vector2, Vector3, MeshB
 import { Utils } from '../core/utils.js';
 import { EVENT_REDRAW, EVENT_UPDATE_TEXTURES } from '../core/events.js';
 import { Material3D } from '../materials/Material3D.js';
+import { WallMaterial3D } from '../materials/WallMaterial3D.js';
 
 export class Edge3D extends EventDispatcher {
     constructor(scene, edge, controls) {
@@ -21,9 +22,6 @@ export class Edge3D extends EventDispatcher {
         //Debug wall intersection planes. Edge.plane is the plane used for intersection
         //		this.phantomPlanes.push(this.edge.plane);//Enable this line to see the wall planes
 
-        this.texture = new TextureLoader();
-
-        this.lightMap = new TextureLoader().load('rooms/textures/walllightmap.png');
         this.fillerColor = 0x000000; //0xdddddd;
         this.sideColor = 0x333333; //0xcccccc;
         this.baseColor = 0x666666; //0xdddddd;
@@ -35,19 +33,22 @@ export class Edge3D extends EventDispatcher {
         this.__updateTexturePackEvent = this.__updateTexturePack.bind(this);
 
         this.visibilityfactor = true;
+        this.__wallMaterial3D = null;
 
-        let texturePack = this.edge.getTexture();
-        this.__wallMaterial3D = new Material3D({ color: texturePack.color, side: FrontSide }, texturePack, this.scene);;
+        this.__updateTexturePack();
         this.init();
     }
 
     __updateTexturePack() {
-        let height = this.wall.height;
+        let height = Math.max(this.wall.startElevation, this.wall.endElevation);
         let width = this.edge.interiorDistance();
         let texturePack = this.edge.getTexture();
-        this.__wallMaterial3D = new Material3D({ color: texturePack.color, side: FrontSide }, texturePack, this.scene);
-        // this.__wallMaterial3D.textureMapPack = texturePack;
-        // this.__wallMaterial3D.updateDimensions(width, height);
+
+        if (!this.__wallMaterial3D) {
+            this.__wallMaterial3D = new WallMaterial3D({ color: texturePack.color, side: FrontSide }, texturePack, this.scene);
+        }
+        this.__wallMaterial3D.textureMapPack = texturePack;
+        this.__wallMaterial3D.updateDimensions(width, height);
         this.redraw();
         this.scene.needsUpdate = true;
     }
@@ -185,28 +186,9 @@ export class Edge3D extends EventDispatcher {
         if (this.edge == null) {
             return;
         }
-
-        let height = this.wall.height;
+        let height = Math.max(this.wall.startElevation, this.wall.endElevation);
         let width = this.edge.interiorDistance();
-        // this.__wallMaterial3D.textureMapPack = texturePack;
         this.__wallMaterial3D.updateDimensions(width, height);
-
-        // let scope = this;
-        // // callback is fired when texture loads
-        // callback = callback || function() { scope.scene.needsUpdate = true; };
-        // let textureData = this.edge.getTexture();
-        // let stretch = textureData.stretch;
-        // let url = textureData.url; //this is a hack temperory
-        // let scale = textureData.scale;
-        // this.texture = new TextureLoader().load(url, callback);
-
-        // if (!stretch) {
-
-        //     this.texture.wrapT = RepeatWrapping;
-        //     this.texture.wrapS = RepeatWrapping;
-        //     this.texture.repeat.set(width / scale, height / scale);
-        //     this.texture.needsUpdate = true;
-        // }
     }
 
     updatePlanes() {
@@ -305,7 +287,8 @@ export class Edge3D extends EventDispatcher {
         });
 
         // make UVs
-        var totalDistance = Utils.distance(new Vector2(v1.x, v1.z), new Vector2(v2.x, v2.z));
+        var totalDistance = this.edge.interiorDistance(); //Utils.distance(new Vector2(v1.x, v1.z), new Vector2(v2.x, v2.z));
+
         var height = this.wall.height;
         geometry.faceVertexUvs[0] = [];
 

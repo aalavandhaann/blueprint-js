@@ -23,4 +23,5 @@
 [Stone Wall 012](https://3dtextures.me/2019/11/20/stone-wall-012/)
 [Concrete Wall 002](https://3dtextures.me/2019/10/16/concrete-wall-002/)
 [Concrete Column 001](https://3dtextures.me/2019/07/15/concrete-column-001/)
+[Brick Wall 017](https://3dtextures.me/2019/11/21/brick-wall-017/)
 

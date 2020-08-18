@@ -87,7 +87,6 @@ export class RoomPlannerHelper {
         this.__wallTexturePack = tpack;
         if (this.__selectedWall) {
             this.__selectedWall.setTextureMaps(tpack);
-            console.log('SET ROOM TEXTURE PACK ', tpack);
         }
     }
 
@@ -97,7 +96,9 @@ export class RoomPlannerHelper {
 
     set roomTexturePack(tpack) {
         this.__roomTexturePack = tpack;
-        console.log('SET ROOM TEXTURE PACK ', tpack);
+        if (this.__selectedRoom) {
+            this.__selectedRoom.setTextureMaps(tpack);
+        }
     }
 
 }

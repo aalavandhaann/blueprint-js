@@ -7,7 +7,7 @@ export class Lights3D extends EventDispatcher {
         this.scene = scene;
         this.floorplan = floorplan;
         this.tol = 1;
-        this.height = 300; // TODO: share with Blueprint.Wall
+        this.height = 1000; // TODO: share with Blueprint.Wall
         this.dirLight = null;
         this.updatedroomsevent = () => { this.updateShadowCamera(); };
         this.init();
@@ -18,14 +18,14 @@ export class Lights3D extends EventDispatcher {
     }
 
     init() {
-        var light = new HemisphereLight(0xffffff, 0x888888, 1.1);
-        light.position.set(300, this.height, 500);
+        var light = new HemisphereLight(0xffffff, 0x888888, 0.75);
+        light.position.set(0, this.height, 0);
 
-        this.dirLight = new DirectionalLight(0xffffff, 0.5);
-        this.dirLight.color.setHSL(1, 1, 0.1);
+        this.dirLight = new DirectionalLight(0xffffff, 1.5);
+        // this.dirLight.color.setHSL(1, 1, 0.1);
 
         this.ambLight = new AmbientLight(0x404040); // soft white light
-        this.ambLight.intensity = 1.25;
+        this.ambLight.intensity = 0.5;
 
         this.dirLight.castShadow = true;
 
@@ -39,7 +39,7 @@ export class Lights3D extends EventDispatcher {
         this.scene.add(light);
         // this.scene.add(this.dirLight);
         // this.scene.add(this.dirLight.target);
-        // this.scene.add(this.ambLight);
+        this.scene.add(this.ambLight);
 
         this.floorplan.addEventListener(EVENT_UPDATED, this.updatedroomsevent);
 

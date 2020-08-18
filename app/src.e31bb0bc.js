@@ -136,7 +136,7 @@ module.exports = Enum;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.defaultWallTexture = exports.WallTypes = exports.VIEW_ISOMETRY = exports.VIEW_LEFT = exports.VIEW_RIGHT = exports.VIEW_FRONT = exports.VIEW_TOP = exports.dimMilliMeter = exports.dimCentiMeter = exports.dimMeter = exports.dimFeetAndInch = exports.dimInch = void 0;
+exports.defaultFloorTexture = exports.defaultWallTexture = exports.TEXTURE_DEFAULT_REPEAT = exports.WallTypes = exports.VIEW_ISOMETRY = exports.VIEW_LEFT = exports.VIEW_RIGHT = exports.VIEW_FRONT = exports.VIEW_TOP = exports.dimMilliMeter = exports.dimCentiMeter = exports.dimMeter = exports.dimFeetAndInch = exports.dimInch = void 0;
 
 var _es6Enum = _interopRequireDefault(require("es6-enum"));
 
@@ -173,15 +173,27 @@ var VIEW_ISOMETRY = 'isometryview';
 exports.VIEW_ISOMETRY = VIEW_ISOMETRY;
 var WallTypes = (0, _es6Enum.default)('STRAIGHT', 'CURVED');
 exports.WallTypes = WallTypes;
+var TEXTURE_DEFAULT_REPEAT = 300;
+exports.TEXTURE_DEFAULT_REPEAT = TEXTURE_DEFAULT_REPEAT;
 var defaultWallTexture = {
   color: '#FFFFFF',
-  repeat: 50,
-  normalmap: 'textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_normal.jpg',
-  ambientmap: 'textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_ambientOcclusion.jpg',
-  colormap: 'textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_basecolor.jpg',
-  roughnessmap: 'textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_roughness.jpg'
+  repeat: TEXTURE_DEFAULT_REPEAT,
+  colormap: 'textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_BaseColor.jpg',
+  normalmap: 'textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Normal.jpg',
+  bumpmap: 'textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Height.png',
+  ambientmap: 'textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_AmbientOcclusion.jpg',
+  roughnessmap: 'textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Roughness.jpg'
 };
 exports.defaultWallTexture = defaultWallTexture;
+var defaultFloorTexture = {
+  color: '#FFFFFF',
+  repeat: TEXTURE_DEFAULT_REPEAT,
+  ambientmap: 'textures/Floor/Marble_Tiles_001/Marble_Tiles_001_ambientOcclusion.jpg',
+  colormap: 'textures/Floor/Marble_Tiles_001/Marble_Tiles_001_basecolor.jpg',
+  roughnessmap: 'textures/Floor/Marble_Tiles_001/Marble_Tiles_001_roughness.jpg',
+  normalmap: 'textures/Floor/Marble_Tiles_001/Marble_Tiles_001_normal.jpg'
+};
+exports.defaultFloorTexture = defaultFloorTexture;
 },{"es6-enum":"../node_modules/es6-enum/dist/enum.js"}],"../node_modules/three/build/three.module.js":[function(require,module,exports) {
 "use strict";
 
@@ -37897,7 +37909,7 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
       }
 
       if (!texturePack.repeat) {
-        texturePack.repeat = 200; //For every 50 cms
+        texturePack.repeat = _constants.TEXTURE_DEFAULT_REPEAT; //For every TEXTURE_DEFAULT_REPEAT cms
       }
 
       if (this.front) {
@@ -42161,6 +42173,7 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
     _this.roofPlane = null;
     _this.customTexture = false;
     _this.floorChangeCallbacks = null;
+    _this.__destroyed = false;
 
     _this.updateWalls();
 
@@ -42172,28 +42185,20 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
 
     var cornerids = [];
     var i = 0;
+    _this.__roomUpdatedEvent = _this._roomUpdated.bind(_assertThisInitialized(_this));
+    _this.__wallsChangedEvent = _this.__wallsChanged.bind(_assertThisInitialized(_this));
 
     for (; i < _this.corners.length; i++) {
       var c = _this.corners[i];
       c.attachRoom(_assertThisInitialized(_this));
       cornerids.push(c.id);
-      c.addEventListener(_events.EVENT_MOVED, function () {
-        return _this._roomUpdated();
-      });
+      c.addEventListener(_events.EVENT_MOVED, _this.__roomUpdatedEvent);
     }
-
-    var scope = _assertThisInitialized(_this);
 
     for (i = 0; i < _this.__walls.length; i++) {
       var wall = _this.__walls[i]; // wall.addRoom(this);
 
-      wall.addEventListener(_events.EVENT_UPDATED, function () {
-        scope.updateInteriorCorners();
-        scope.dispatchEvent({
-          type: _events.EVENT_CHANGED,
-          item: scope
-        });
-      });
+      wall.addEventListener(_events.EVENT_UPDATED, _this.__wallsChangedEvent);
     }
 
     _this._roomByCornersId = cornerids.join(',');
@@ -42201,6 +42206,36 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
   }
 
   _createClass(Room, [{
+    key: "__wallsChanged",
+    value: function __wallsChanged(evt) {
+      this.updateInteriorCorners();
+      this.dispatchEvent({
+        type: _events.EVENT_CHANGED,
+        item: this
+      });
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      var i = 0;
+
+      for (; i < this.corners.length; i++) {
+        var c = this.corners[i];
+        c.removeEventListener(_events.EVENT_MOVED, this.__roomUpdatedEvent);
+      }
+
+      for (i = 0; i < this.__walls.length; i++) {
+        var wall = this.__walls[i];
+        wall.removeEventListener(_events.EVENT_UPDATED, this.__wallsChangedEvent);
+      }
+
+      this.__destroyed = true;
+      this.dispatchEvent({
+        type: _events.EVENT_CHANGED,
+        item: this
+      });
+    }
+  }, {
     key: "_roomUpdated",
     value: function _roomUpdated() {
       this.updateInteriorCorners();
@@ -42324,13 +42359,6 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
       this.floorChangeCallbacks.add(callback);
     }
   }, {
-    key: "getTexture",
-    value: function getTexture() {
-      var uuid = this.getUuid();
-      var tex = this.floorplan.getFloorTexture(uuid);
-      return tex || defaultRoomTexture;
-    }
-  }, {
     key: "setRoomWallsTexture",
     value: function setRoomWallsTexture(textureUrl, textureStretch, textureScale) {
       var edge = this.edgePointer;
@@ -42347,6 +42375,13 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
         edge.setTexture(textureUrl, textureStretch, textureScale);
       }
     }
+  }, {
+    key: "getTexture",
+    value: function getTexture() {
+      var uuid = this.getUuid();
+      var tex = this.floorplan.getFloorTexture(uuid);
+      return tex || _constants.defaultFloorTexture;
+    }
     /**
      * textureStretch always true, just an argument for consistency with walls
      */
@@ -42360,6 +42395,25 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
         type: _events.EVENT_CHANGED,
         item: this
       }); //		this.floorChangeCallbacks.fire();
+    }
+  }, {
+    key: "setTextureMaps",
+    value: function setTextureMaps(texturePack) {
+      var uuid = this.getUuid();
+
+      if (!texturePack.color) {
+        texturePack.color = '#FFFFFF';
+      }
+
+      if (!texturePack.repeat) {
+        texturePack.repeat = _constants.TEXTURE_DEFAULT_REPEAT; //For every TEXTURE_DEFAULT_REPEAT cms
+      }
+
+      this.floorplan.setFloorTexture(uuid, texturePack);
+      this.dispatchEvent({
+        type: _events.EVENT_UPDATE_TEXTURES,
+        item: this
+      });
     }
   }, {
     key: "generateRoofPlane",
@@ -43611,7 +43665,11 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
     key: "getFloorTexture",
     value: function getFloorTexture(uuid) {
       if (uuid in this.floorTextures) {
-        return this.floorTextures[uuid];
+        var floorTexture = this.floorTextures[uuid];
+
+        if (floorTexture.colormap) {
+          return floorTexture;
+        }
       }
 
       return null;
@@ -43622,11 +43680,8 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
 
   }, {
     key: "setFloorTexture",
-    value: function setFloorTexture(uuid, url, scale) {
-      this.floorTextures[uuid] = {
-        url: url,
-        scale: scale
-      };
+    value: function setFloorTexture(uuid, texturePack) {
+      this.floorTextures[uuid] = texturePack;
     }
     /** clear out obsolete floor textures */
 
@@ -43826,6 +43881,10 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
       var scope = this;
       this.walls.forEach(function (wall) {
         wall.resetFrontBack();
+      }); //Destroy current room objects
+
+      this.rooms.forEach(function (room) {
+        room.destroy();
       }); // this.rooms.forEach((room)=>{room.removeEventListener(EVENT_ROOM_NAME_CHANGED,
       // scope.roomNameChanged)});
 
@@ -46388,29 +46447,49 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-var Material3D = /*#__PURE__*/function (_MeshPhysicalMaterial) {
-  _inherits(Material3D, _MeshPhysicalMaterial);
+var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
+  _inherits(Material3D, _MeshStandardMaterial);
 
   var _super = _createSuper(Material3D);
 
   function Material3D(parameters, textureMapPack, scene) {
     var _this;
 
+    var reflectsScene = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
     _classCallCheck(this, Material3D);
 
     _this = _super.call(this, parameters);
     _this.__scene = scene;
+    _this.__reflectsScene = reflectsScene;
+    _this.__mirrorCamera = null;
+
+    if (!textureMapPack.reflective) {
+      _this.roughness = 0.5;
+    } else {
+      _this.roughness = textureMapPack.reflective;
+    }
+
+    if (_this.__reflectsScene) {
+      console.log('CREATE REFLECTING MATERIAL');
+      _this.__mirrorCamera = _this.__scene.environmentCamera;
+      _this.envMap = _this.__mirrorCamera.renderTarget.texture;
+    }
+
     _this.__textureMapPack = textureMapPack;
     _this.__uRatio = 1.0;
     _this.__vRatio = 1.0;
-    _this.__repeatPerCentimeter = 1.0 / _this.__textureMapPack.repeat; //Repeat for every 50 centimeters
+    _this.__repeatPerCentimeter = 1.0 / _this.__textureMapPack.repeat; //Repeat for every 'x' centimeters
 
     _this.__colorTexture = null;
     _this.__normalTexture = null;
     _this.__roughnessTexture = null;
     _this.__ambientTexture = null;
+    _this.__bumpTexture = null;
 
     _this.__applyNewTextures();
+
+    _this.normalScale.set(100, 100);
 
     return _this;
   }
@@ -46418,7 +46497,7 @@ var Material3D = /*#__PURE__*/function (_MeshPhysicalMaterial) {
   _createClass(Material3D, [{
     key: "__updateTextures",
     value: function __updateTextures() {
-      if (this.colorTexture) {
+      if (this.__colorTexture) {
         this.__colorTexture.wrapS = this.__colorTexture.wrapT = _three.RepeatWrapping;
 
         this.__colorTexture.repeat.set(this.__uRatio, this.__vRatio);
@@ -46450,91 +46529,56 @@ var Material3D = /*#__PURE__*/function (_MeshPhysicalMaterial) {
         this.__ambientTexture.needsUpdate = true;
       }
 
+      if (this.__bumpTexture) {
+        this.__bumpTexture.wrapS = this.__bumpTexture.wrapT = _three.RepeatWrapping;
+
+        this.__bumpTexture.repeat.set(this.__uRatio, this.__vRatio);
+
+        this.__bumpTexture.needsUpdate = true;
+      }
+
       this.needsUpdate = true;
-      this.__scene.needsUpdate = true;
-    }
-  }, {
-    key: "__colorTextureLoaded",
-    value: function __colorTextureLoaded(texture) {
-      if (this.__colorTexture) {
-        this.__colorTexture.dispose();
-      }
-
-      this.__colorTexture = texture;
-      this.__colorTexture.wrapS = this.__colorTexture.wrapT = _three.RepeatWrapping;
-
-      this.__colorTexture.repeat.set(this.__uRatio, this.__vRatio);
-
-      this.__colorTexture.needsUpdate = true;
-      this.map = this.__colorTexture;
-      this.__scene.needsUpdate = true;
-    }
-  }, {
-    key: "__normalTextureLoaded",
-    value: function __normalTextureLoaded(texture) {
-      if (this.__normalTexture) {
-        this.__normalTexture.dispose();
-      }
-
-      this.__normalTexture = texture;
-      this.__normalTexture.wrapS = this.__normalTexture.wrapT = _three.RepeatWrapping;
-
-      this.__normalTexture.repeat.set(this.__uRatio, this.__vRatio);
-
-      this.__normalTexture.needsUpdate = true;
-      this.normalMap = this.__normalTexture;
-      this.__scene.needsUpdate = true;
-    }
-  }, {
-    key: "__roughnessTextureLoaded",
-    value: function __roughnessTextureLoaded(texture) {
-      if (this.__roughnessTexture) {
-        this.__roughnessTexture.dispose();
-      }
-
-      this.__roughnessTexture = texture;
-      this.__roughnessTexture.wrapS = this.__roughnessTexture.wrapT = _three.RepeatWrapping;
-
-      this.__roughnessTexture.repeat.set(this.__uRatio, this.__vRatio);
-
-      this.__roughnessTexture.needsUpdate = true;
-      this.roughnessMap = this.__roughnessTexture;
-      this.__scene.needsUpdate = true;
-    }
-  }, {
-    key: "__ambientTextureLoaded",
-    value: function __ambientTextureLoaded(texture) {
-      if (this.__ambientTexture) {
-        this.__ambientTexture.dispose();
-      }
-
-      this.__ambientTexture = texture;
-      this.__ambientTexture.wrapS = this.__ambientTexture.wrapT = _three.RepeatWrapping;
-
-      this.__ambientTexture.repeat.set(this.__uRatio, this.__vRatio);
-
-      this.__ambientTexture.needsUpdate = true;
-      this.aoMap = this.__ambientTexture;
       this.__scene.needsUpdate = true;
     }
   }, {
     key: "__applyNewTextures",
     value: function __applyNewTextures() {
       if (this.__textureMapPack.colormap) {
-        var colorTexture = new _three.TextureLoader().load(this.__textureMapPack.colormap, this.__colorTextureLoaded.bind(this));
+        this.__colorTexture = new _three.TextureLoader().load(this.__textureMapPack.colormap, this.__updateTextures.bind(this));
+        this.map = this.__colorTexture;
       }
 
       if (this.__textureMapPack.normalmap) {
-        var normalTexture = new _three.TextureLoader().load(this.__textureMapPack.normalmap, this.__normalTextureLoaded.bind(this));
+        this.__normalTexture = new _three.TextureLoader().load(this.__textureMapPack.normalmap, this.__updateTextures.bind(this));
+        this.normalMap = this.__normalTexture;
       }
 
       if (this.__textureMapPack.roughnessmap) {
-        var roughnessTexture = new _three.TextureLoader().load(this.__textureMapPack.roughnessmap, this.__roughnessTextureLoaded.bind(this));
+        this.__roughnessTexture = new _three.TextureLoader().load(this.__textureMapPack.roughnessmap, this.__updateTextures.bind(this));
+        this.roughnessMap = this.__roughnessTexture;
       }
 
       if (this.__textureMapPack.ambientmap) {
-        var ambientTexture = new _three.TextureLoader().load(this.__textureMapPack.ambientmap, this.__ambientTextureLoaded.bind(this));
+        this.__ambientTexture = new _three.TextureLoader().load(this.__textureMapPack.ambientmap, this.__updateTextures.bind(this));
+        this.aoMap = this.__ambientTexture;
       }
+
+      if (this.__textureMapPack.bumpmap) {
+        this.__bumpTexture = new _three.TextureLoader().load(this.__textureMapPack.bumpmap, this.__updateTextures.bind(this));
+        this.displacementMap = this.__bumpTexture;
+        this.displacementBias = 1;
+      }
+    }
+  }, {
+    key: "__scaleUV",
+    value: function __scaleUV(uRatio, vRatio) {
+      this.__uRatio = uRatio;
+      this.__vRatio = vRatio;
+
+      this.__updateTextures();
+
+      this.needsUpdate = true;
+      this.__scene.needsUpdate = true;
     }
     /**
      * 
@@ -46544,11 +46588,16 @@ var Material3D = /*#__PURE__*/function (_MeshPhysicalMaterial) {
 
   }, {
     key: "updateDimensions",
-    value: function updateDimensions(width, lengthOrHeight) {
-      this.__uRatio = Math.max(width * this.__repeatPerCentimeter, 1.0);
-      this.__vRatio = Math.max(lengthOrHeight * this.__repeatPerCentimeter, 1.0);
+    value: function updateDimensions(width, height) {
+      var ur = Math.max(width * this.__repeatPerCentimeter, 1.0);
+      var vr = Math.max(height * this.__repeatPerCentimeter, 1.0);
 
-      this.__updateTextures();
+      this.__scaleUV(ur, vr);
+    }
+  }, {
+    key: "envMapCamera",
+    get: function get() {
+      return this.__mirrorCamera;
     }
   }, {
     key: "textureMapPack",
@@ -46557,7 +46606,14 @@ var Material3D = /*#__PURE__*/function (_MeshPhysicalMaterial) {
     },
     set: function set(tpack) {
       this.__textureMapPack = tpack;
-      this.color = tpack.color;
+      this.color = new _three.Color(tpack.color);
+
+      if (tpack.reflective) {
+        this.roughness = tpack.reflective;
+      } else {
+        this.roughness = 0.5;
+      }
+
       this.__repeatPerCentimeter = 1.0 / tpack.repeat;
 
       this.__applyNewTextures();
@@ -46565,10 +46621,53 @@ var Material3D = /*#__PURE__*/function (_MeshPhysicalMaterial) {
   }]);
 
   return Material3D;
-}(_three.MeshPhysicalMaterial);
+}(_three.MeshStandardMaterial);
 
 exports.Material3D = Material3D;
-},{"three":"../node_modules/three/build/three.module.js"}],"scripts/viewer3d/edge3d.js":[function(require,module,exports) {
+},{"three":"../node_modules/three/build/three.module.js"}],"scripts/materials/WallMaterial3D.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.WallMaterial3D = void 0;
+
+var _Material3D2 = require("./Material3D");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var WallMaterial3D = /*#__PURE__*/function (_Material3D) {
+  _inherits(WallMaterial3D, _Material3D);
+
+  var _super = _createSuper(WallMaterial3D);
+
+  function WallMaterial3D(parameters, textureMapPack, scene) {
+    _classCallCheck(this, WallMaterial3D);
+
+    return _super.call(this, parameters, textureMapPack, scene);
+  }
+
+  return WallMaterial3D;
+}(_Material3D2.Material3D);
+
+exports.WallMaterial3D = WallMaterial3D;
+},{"./Material3D":"scripts/materials/Material3D.js"}],"scripts/viewer3d/edge3d.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -46583,6 +46682,8 @@ var _utils = require("../core/utils.js");
 var _events = require("../core/events.js");
 
 var _Material3D = require("../materials/Material3D.js");
+
+var _WallMaterial3D = require("../materials/WallMaterial3D.js");
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -46629,8 +46730,6 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
     //Debug wall intersection planes. Edge.plane is the plane used for intersection
     //		this.phantomPlanes.push(this.edge.plane);//Enable this line to see the wall planes
 
-    _this.texture = new _three.TextureLoader();
-    _this.lightMap = new _three.TextureLoader().load('rooms/textures/walllightmap.png');
     _this.fillerColor = 0x000000; //0xdddddd;
 
     _this.sideColor = 0x333333; //0xcccccc;
@@ -46646,14 +46745,9 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
 
     _this.__updateTexturePackEvent = _this.__updateTexturePack.bind(_assertThisInitialized(_this));
     _this.visibilityfactor = true;
+    _this.__wallMaterial3D = null;
 
-    var texturePack = _this.edge.getTexture();
-
-    _this.__wallMaterial3D = new _Material3D.Material3D({
-      color: texturePack.color,
-      side: _three.FrontSide
-    }, texturePack, _this.scene);
-    ;
+    _this.__updateTexturePack();
 
     _this.init();
 
@@ -46663,14 +46757,20 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
   _createClass(Edge3D, [{
     key: "__updateTexturePack",
     value: function __updateTexturePack() {
-      var height = this.wall.height;
+      var height = Math.max(this.wall.startElevation, this.wall.endElevation);
       var width = this.edge.interiorDistance();
       var texturePack = this.edge.getTexture();
-      this.__wallMaterial3D = new _Material3D.Material3D({
-        color: texturePack.color,
-        side: _three.FrontSide
-      }, texturePack, this.scene); // this.__wallMaterial3D.textureMapPack = texturePack;
-      // this.__wallMaterial3D.updateDimensions(width, height);
+
+      if (!this.__wallMaterial3D) {
+        this.__wallMaterial3D = new _WallMaterial3D.WallMaterial3D({
+          color: texturePack.color,
+          side: _three.FrontSide
+        }, texturePack, this.scene);
+      }
+
+      this.__wallMaterial3D.textureMapPack = texturePack;
+
+      this.__wallMaterial3D.updateDimensions(width, height);
 
       this.redraw();
       this.scene.needsUpdate = true;
@@ -46818,24 +46918,10 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
         return;
       }
 
-      var height = this.wall.height;
-      var width = this.edge.interiorDistance(); // this.__wallMaterial3D.textureMapPack = texturePack;
+      var height = Math.max(this.wall.startElevation, this.wall.endElevation);
+      var width = this.edge.interiorDistance();
 
-      this.__wallMaterial3D.updateDimensions(width, height); // let scope = this;
-      // // callback is fired when texture loads
-      // callback = callback || function() { scope.scene.needsUpdate = true; };
-      // let textureData = this.edge.getTexture();
-      // let stretch = textureData.stretch;
-      // let url = textureData.url; //this is a hack temperory
-      // let scale = textureData.scale;
-      // this.texture = new TextureLoader().load(url, callback);
-      // if (!stretch) {
-      //     this.texture.wrapT = RepeatWrapping;
-      //     this.texture.wrapS = RepeatWrapping;
-      //     this.texture.repeat.set(width / scale, height / scale);
-      //     this.texture.needsUpdate = true;
-      // }
-
+      this.__wallMaterial3D.updateDimensions(width, height);
     }
   }, {
     key: "updatePlanes",
@@ -46925,7 +47011,7 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
         v.applyMatrix4(invTransform);
       }); // make UVs
 
-      var totalDistance = _utils.Utils.distance(new _three.Vector2(v1.x, v1.z), new _three.Vector2(v2.x, v2.z));
+      var totalDistance = this.edge.interiorDistance(); //Utils.distance(new Vector2(v1.x, v1.z), new Vector2(v2.x, v2.z));
 
       var height = this.wall.height;
       geometry.faceVertexUvs[0] = [];
@@ -47020,7 +47106,56 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
 }(_three.EventDispatcher);
 
 exports.Edge3D = Edge3D;
-},{"three":"../node_modules/three/build/three.module.js","../core/utils.js":"scripts/core/utils.js","../core/events.js":"scripts/core/events.js","../materials/Material3D.js":"scripts/materials/Material3D.js"}],"scripts/viewer3d/floor3d.js":[function(require,module,exports) {
+},{"three":"../node_modules/three/build/three.module.js","../core/utils.js":"scripts/core/utils.js","../core/events.js":"scripts/core/events.js","../materials/Material3D.js":"scripts/materials/Material3D.js","../materials/WallMaterial3D.js":"scripts/materials/WallMaterial3D.js"}],"scripts/materials/FloorMaterial3D.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.FloorMaterial3D = void 0;
+
+var _Material3D2 = require("./Material3D");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var FloorMaterial3D = /*#__PURE__*/function (_Material3D) {
+  _inherits(FloorMaterial3D, _Material3D);
+
+  var _super = _createSuper(FloorMaterial3D);
+
+  function FloorMaterial3D(parameters, textureMapPack, scene) {
+    var _this;
+
+    _classCallCheck(this, FloorMaterial3D);
+
+    _this = _super.call(this, parameters, textureMapPack, scene, true); // this.metalness = 1.0;
+
+    _this.normalScale.set(1, 1);
+
+    return _this;
+  }
+
+  return FloorMaterial3D;
+}(_Material3D2.Material3D);
+
+exports.FloorMaterial3D = FloorMaterial3D;
+},{"./Material3D":"scripts/materials/Material3D.js"}],"scripts/viewer3d/floor3d.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -47033,6 +47168,10 @@ var _three = require("three");
 var _events = require("../core/events.js");
 
 var _configuration = require("../core/configuration.js");
+
+var _three2 = require("three/build/three.module");
+
+var _FloorMaterial3D = require("../materials/FloorMaterial3D.js");
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -47061,7 +47200,7 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
 
   var _super = _createSuper(Floor3D);
 
-  function Floor3D(scene, room) {
+  function Floor3D(scene, room, controls) {
     var _this;
 
     _classCallCheck(this, Floor3D);
@@ -47069,19 +47208,62 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
     _this = _super.call(this);
     _this.scene = scene;
     _this.room = room;
+    _this.controls = controls;
     _this.floorPlane = null;
     _this.roofPlane = null;
-
-    _this.changedevent = function () {
-      _this.redraw();
-    };
+    _this.changedevent = _this.redraw.bind(_assertThisInitialized(_this));
+    _this.__materialChangedEvent = _this.__updateTexturePack.bind(_assertThisInitialized(_this));
+    _this.__updateReflectionsEvent = _this.__updateReflections.bind(_assertThisInitialized(_this));
+    _this.__floorMaterial3D = null;
 
     _this.init();
+
+    _this.room.addEventListener(_events.EVENT_CHANGED, _this.changedevent);
+
+    _this.room.addEventListener(_events.EVENT_UPDATE_TEXTURES, _this.__materialChangedEvent);
+
+    _this.controls.addEventListener('change', _this.__updateReflectionsEvent);
 
     return _this;
   }
 
   _createClass(Floor3D, [{
+    key: "__updateReflections",
+    value: function __updateReflections() {
+      if (this.__floorMaterial3D) {
+        var floorSize = this.room.floorRectangleSize.clone();
+        this.floorPlane.visible = false;
+
+        this.__floorMaterial3D.envMapCamera.position.set(floorSize.x, 0, floorSize.y);
+
+        this.__floorMaterial3D.envMapCamera.update(this.scene.renderer, this.scene);
+
+        this.floorPlane.visible = true; // this.scene.renderToACamera(this.__floorMaterial3D.envMapCamera);
+
+        this.__floorMaterial3D.needsUpdate = true;
+      }
+    }
+  }, {
+    key: "__updateTexturePack",
+    value: function __updateTexturePack() {
+      var floorSize = this.room.floorRectangleSize.clone();
+      var texturePack = this.room.getTexture();
+
+      if (!this.__floorMaterial3D) {
+        this.__floorMaterial3D = new _FloorMaterial3D.FloorMaterial3D({
+          color: texturePack.color,
+          side: _three.DoubleSide
+        }, texturePack, this.scene);
+      }
+
+      this.__floorMaterial3D.textureMapPack = texturePack;
+
+      this.__floorMaterial3D.updateDimensions(floorSize.x, floorSize.y); // this.redraw();
+
+
+      this.scene.needsUpdate = true;
+    }
+  }, {
     key: "switchWireframe",
     value: function switchWireframe(flag) {
       this.floorPlane.visible = !flag;
@@ -47090,11 +47272,9 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "init",
     value: function init() {
-      this.room.addEventListener(_events.EVENT_CHANGED, this.changedevent);
-      this.floorPlane = this.buildFloor(); // roofs look weird, so commented out
-      // this.roofPlane = this.buildRoofUniformHeight();
+      this.__updateTexturePack();
 
-      this.roofPlane = this.buildRoofVaryingHeight();
+      this.redraw();
     }
   }, {
     key: "redraw",
@@ -47107,30 +47287,39 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "buildFloor",
     value: function buildFloor() {
-      var textureSettings = this.room.getTexture(); // setup texture
-
-      var floorTexture = new _three.TextureLoader().load(textureSettings.url);
-      floorTexture.wrapS = _three.RepeatWrapping;
-      floorTexture.wrapT = _three.RepeatWrapping;
-      floorTexture.repeat.set(1, 1);
-      var textureScale = textureSettings.scale; // http://stackoverflow.com/questions/19182298/how-to-texture-a-three-js-mesh-created-with-shapegeometry
-      // scale down coords to fit 0 -> 1, then rescale
-
       var points = [];
       this.room.interiorCorners.forEach(function (corner) {
-        points.push(new _three.Vector2(corner.x / textureScale, corner.y / textureScale));
+        points.push(new _three.Vector2(corner.x, corner.y));
       });
+      var floorSize = this.room.floorRectangleSize.clone();
       var shape = new _three.Shape(points);
-      var geometry = new _three.ShapeGeometry(shape); // var floor = new Mesh(geometry, floorMaterialTop);
+      var geometry = new _three.ShapeGeometry(shape);
+      geometry.faceVertexUvs[0] = [];
+      geometry.faces.forEach(function (face) {
+        var vertA = geometry.vertices[face.a];
+        var vertB = geometry.vertices[face.b];
+        var vertC = geometry.vertices[face.c];
+        geometry.faceVertexUvs[0].push([vertexToUv(vertA), vertexToUv(vertB), vertexToUv(vertC)]);
+      });
 
-      var floor = new _three.Mesh(geometry, new _three.MeshBasicMaterial({
-        color: 0xC00C0C0,
-        side: _three.DoubleSide
-      }));
-      floor.rotation.set(Math.PI / 2, 0, 0);
-      floor.scale.set(textureScale, textureScale, textureScale); // floor.receiveShadow = true;
+      function vertexToUv(vertex) {
+        var x = vertex.x / floorSize.x;
+        var y = vertex.y / floorSize.y;
+        return new _three.Vector2(x, y);
+      }
 
-      floor.castShadow = false;
+      geometry.faceVertexUvs[1] = geometry.faceVertexUvs[0];
+      geometry.computeFaceNormals();
+      geometry.computeVertexNormals();
+      geometry.uvsNeedUpdate = true;
+      var useGeometry = new _three2.BufferGeometry().fromGeometry(geometry);
+
+      this.__floorMaterial3D.updateDimensions(floorSize.x, floorSize.y);
+
+      this.__floorMaterial3D.envMapCamera.position.copy(new _three.Vector3(floorSize.x, 0, floorSize.y));
+
+      var floor = new _three.Mesh(useGeometry, this.__floorMaterial3D);
+      floor.rotation.set(Math.PI * 0.5, 0, 0);
       return floor;
     }
   }, {
@@ -47182,22 +47371,28 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
       this.scene.add(this.floorPlane);
       this.scene.add(this.roofPlane); //scene.add(roofPlane);
       // hack so we can do intersect testing
-
-      this.scene.add(this.room.floorPlane);
-      this.scene.add(this.room.roofPlane);
+      // this.scene.add(this.room.floorPlane);
+      // this.scene.add(this.room.roofPlane);
     }
   }, {
     key: "removeFromScene",
     value: function removeFromScene() {
       this.scene.remove(this.floorPlane);
-      this.scene.remove(this.roofPlane);
-      this.scene.remove(this.room.floorPlane);
-      this.scene.remove(this.room.roofPlane);
+      this.scene.remove(this.roofPlane); // this.scene.remove(this.room.floorPlane);
+      // this.scene.remove(this.room.roofPlane);
     }
   }, {
     key: "showRoof",
     value: function showRoof(flag) {
       console.log(flag); // this.roofPlane.visible = flag;
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      this.room.removeEventListener(_events.EVENT_CHANGED, this.changedevent);
+      this.room.removeEventListener(_events.EVENT_UPDATE_TEXTURES, this.__materialChangedEvent);
+      this.controls.removeEventListener('change', this.__updateReflectionsEvent);
+      this.removeFromScene();
     }
   }]);
 
@@ -47205,7 +47400,7 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
 }(_three.EventDispatcher);
 
 exports.Floor3D = Floor3D;
-},{"three":"../node_modules/three/build/three.module.js","../core/events.js":"scripts/core/events.js","../core/configuration.js":"scripts/core/configuration.js"}],"scripts/viewer3d/lights3d.js":[function(require,module,exports) {
+},{"three":"../node_modules/three/build/three.module.js","../core/events.js":"scripts/core/events.js","../core/configuration.js":"scripts/core/configuration.js","three/build/three.module":"../node_modules/three/build/three.module.js","../materials/FloorMaterial3D.js":"scripts/materials/FloorMaterial3D.js"}],"scripts/viewer3d/lights3d.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -47253,7 +47448,7 @@ var Lights3D = /*#__PURE__*/function (_EventDispatcher) {
     _this.scene = scene;
     _this.floorplan = floorplan;
     _this.tol = 1;
-    _this.height = 300; // TODO: share with Blueprint.Wall
+    _this.height = 1000; // TODO: share with Blueprint.Wall
 
     _this.dirLight = null;
 
@@ -47274,13 +47469,13 @@ var Lights3D = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "init",
     value: function init() {
-      var light = new _three.HemisphereLight(0xffffff, 0x888888, 1.1);
-      light.position.set(300, this.height, 500);
-      this.dirLight = new _three.DirectionalLight(0xffffff, 0.5);
-      this.dirLight.color.setHSL(1, 1, 0.1);
+      var light = new _three.HemisphereLight(0xffffff, 0x888888, 0.75);
+      light.position.set(0, this.height, 0);
+      this.dirLight = new _three.DirectionalLight(0xffffff, 1.5); // this.dirLight.color.setHSL(1, 1, 0.1);
+
       this.ambLight = new _three.AmbientLight(0x404040); // soft white light
 
-      this.ambLight.intensity = 1.25;
+      this.ambLight.intensity = 0.5;
       this.dirLight.castShadow = true;
       this.dirLight.shadow.mapSize.width = 1024;
       this.dirLight.shadow.mapSize.height = 1024;
@@ -47289,8 +47484,8 @@ var Lights3D = /*#__PURE__*/function (_EventDispatcher) {
       this.dirLight.visible = true;
       this.scene.add(light); // this.scene.add(this.dirLight);
       // this.scene.add(this.dirLight.target);
-      // this.scene.add(this.ambLight);
 
+      this.scene.add(this.ambLight);
       this.floorplan.addEventListener(_events.EVENT_UPDATED, this.updatedroomsevent);
     }
   }, {
@@ -55810,6 +56005,8 @@ var _Physical3DItem = require("./Physical3DItem.js");
 
 var _DragRoomItemsControl3D = require("./DragRoomItemsControl3D.js");
 
+var _three2 = require("three/build/three.module");
+
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -55866,6 +56063,7 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
     _this.domElement = document.getElementById(element);
     _this.perspectivecamera = null;
     _this.camera = null;
+    _this.__environmentCamera = null;
     _this.cameraNear = 10;
     _this.cameraFar = 10000;
     _this.controls = null;
@@ -55900,6 +56098,12 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
       var scope = this;
       _three.ImageUtils.crossOrigin = '';
       scope.camera = new _three.PerspectiveCamera(45, 10, scope.cameraNear, scope.cameraFar);
+      var cubeRenderTarget = new _three2.WebGLCubeRenderTarget(128, {
+        format: _three.RGBFormat,
+        generateMipmaps: true,
+        minFilter: _three.LinearMipmapLinearFilter
+      });
+      scope.__environmentCamera = new _three2.CubeCamera(1, 100000, cubeRenderTarget);
       scope.renderer = scope.getARenderer();
       scope.domElement.appendChild(scope.renderer.domElement);
       scope.lights = new _lights3d.Lights3D(this, scope.floorplan); // scope.dragcontrols = new DragControls(this.physicalRoomItems, scope.camera, scope.renderer.domElement);
@@ -56032,19 +56236,21 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
       var i = 0; // clear scene
 
       scope.floors3d.forEach(function (floor) {
-        floor.removeFromScene();
+        floor.destroy();
+        floor = null;
       });
       scope.edges3d.forEach(function (edge3d) {
         edge3d.remove();
+        edge3d = null;
       });
       scope.edges3d = [];
+      scope.floors3d = [];
       var wallEdges = scope.floorplan.wallEdges();
       var rooms = scope.floorplan.getRooms(); // draw floors
 
       for (i = 0; i < rooms.length; i++) {
-        var threeFloor = new _floor3d.Floor3D(scope, rooms[i]);
+        var threeFloor = new _floor3d.Floor3D(scope, rooms[i], scope.controls);
         scope.floors3d.push(threeFloor);
-        threeFloor.addToScene();
       }
 
       for (i = 0; i < wallEdges.length; i++) {
@@ -56128,6 +56334,11 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
       this.removeEventListener(type, listener);
     }
   }, {
+    key: "environmentCamera",
+    get: function get() {
+      return this.__environmentCamera;
+    }
+  }, {
     key: "physicalRoomItems",
     get: function get() {
       return this.__physicalRoomItems;
@@ -56153,7 +56364,7 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
 }(_three.Scene);
 
 exports.Viewer3D = Viewer3D;
-},{"three":"../node_modules/three/build/three.module.js","three/examples/jsm/controls/OrbitControls.js":"../node_modules/three/examples/jsm/controls/OrbitControls.js","three/examples/jsm/controls/DragControls.js":"../node_modules/three/examples/jsm/controls/DragControls.js","../core/events.js":"scripts/core/events.js","./skybox.js":"scripts/viewer3d/skybox.js","./edge3d.js":"scripts/viewer3d/edge3d.js","./floor3d.js":"scripts/viewer3d/floor3d.js","./lights3d.js":"scripts/viewer3d/lights3d.js","./Physical3DItem.js":"scripts/viewer3d/Physical3DItem.js","./DragRoomItemsControl3D.js":"scripts/viewer3d/DragRoomItemsControl3D.js"}],"../node_modules/es6-promise-polyfill/promise.js":[function(require,module,exports) {
+},{"three":"../node_modules/three/build/three.module.js","three/examples/jsm/controls/OrbitControls.js":"../node_modules/three/examples/jsm/controls/OrbitControls.js","three/examples/jsm/controls/DragControls.js":"../node_modules/three/examples/jsm/controls/DragControls.js","../core/events.js":"scripts/core/events.js","./skybox.js":"scripts/viewer3d/skybox.js","./edge3d.js":"scripts/viewer3d/edge3d.js","./floor3d.js":"scripts/viewer3d/floor3d.js","./lights3d.js":"scripts/viewer3d/lights3d.js","./Physical3DItem.js":"scripts/viewer3d/Physical3DItem.js","./DragRoomItemsControl3D.js":"scripts/viewer3d/DragRoomItemsControl3D.js","three/build/three.module":"../node_modules/three/build/three.module.js"}],"../node_modules/es6-promise-polyfill/promise.js":[function(require,module,exports) {
 var global = arguments[3];
 var define;
 (function(global){
@@ -111117,8 +111328,6 @@ var RoomPlannerHelper = /*#__PURE__*/function () {
 
       if (this.__selectedWall) {
         this.__selectedWall.setTextureMaps(tpack);
-
-        console.log('SET ROOM TEXTURE PACK ', tpack);
       }
     }
   }, {
@@ -111128,7 +111337,10 @@ var RoomPlannerHelper = /*#__PURE__*/function () {
     },
     set: function set(tpack) {
       this.__roomTexturePack = tpack;
-      console.log('SET ROOM TEXTURE PACK ', tpack);
+
+      if (this.__selectedRoom) {
+        this.__selectedRoom.setTextureMaps(tpack);
+      }
     }
   }]);
 
@@ -111287,6 +111499,7 @@ module.exports = {
     "roughnessmap": "textures/Floor/Stylized_Stone_Floor_001/Stylized_Stone_Floor_001_roughness.jpg"
   },
   "Rubber_Floor_001": {
+    "reflective": 1.0,
     "roughnessmap": "textures/Floor/Rubber_Floor_001/Rubber_Floor_001_roughness.jpg",
     "colormap": "textures/Floor/Rubber_Floor_001/Rubber_Floor_001_basecolor.jpg",
     "ambientmap": "textures/Floor/Rubber_Floor_001/Rubber_Floor_001_ambientOcclusion.jpg",
@@ -111305,6 +111518,7 @@ module.exports = {
     "colormap": "textures/Floor/Stone_Tiles_004/Stone_Tiles_004_basecolor.jpg"
   },
   "Terracotta_Tiles_003": {
+    "reflective": 1.0,
     "normalmap": "textures/Floor/Terracotta_Tiles_003/Terracota_Tiles_003_normal.jpg",
     "ambientmap": "textures/Floor/Terracotta_Tiles_003/Terracota_Tiles_003_ambientOcclusion.jpg",
     "colormap": "textures/Floor/Terracotta_Tiles_003/Terracota_Tiles_003_basecolor.jpg",
@@ -111328,22 +111542,26 @@ module.exports = {
   "Concrete_Wall_005_SD": {
     "colormap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_BaseColor.jpg",
     "normalmap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Normal.jpg",
+    "bumpmap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Height.png",
     "ambientmap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_AmbientOcclusion.jpg",
     "roughnessmap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Roughness.jpg"
   },
   "Terracotta_Bricks_002": {
     "normalmap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_normal.jpg",
     "ambientmap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_ambientOcclusion.jpg",
+    "bumpmap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_height.png",
     "roughnessmap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_roughness.jpg",
     "colormap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_basecolor.jpg"
   },
   "Concrete-Wall-002": {
     "colormap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_basecolor.jpg",
+    "bumpmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_height.png",
     "normalmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_normal.jpg",
     "roughnessmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_roughness.jpg",
     "ambientmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_ambientocclusion.jpg"
   },
   "Concrete_016_SD": {
+    "bumpmap": "textures/Wall/Concrete_016_SD/Concrete_016_height.png",
     "ambientmap": "textures/Wall/Concrete_016_SD/Concrete_016_ambientOcclusion.jpg",
     "normalmap": "textures/Wall/Concrete_016_SD/Concrete_016_normal.jpg",
     "roughnessmap": "textures/Wall/Concrete_016_SD/Concrete_016_roughness.jpg",
@@ -111352,26 +111570,37 @@ module.exports = {
   "Concrete_Column_001_SD": {
     "ambientmap": "textures/Wall/Concrete_Column_001_SD/Concrete_Column_001_ambientOcclusion.jpg",
     "normalmap": "textures/Wall/Concrete_Column_001_SD/Concrete_Column_001_normal.jpg",
+    "bumpmap": "textures/Wall/Concrete_Column_001_SD/Concrete_Column_001_height.png",
     "roughnessmap": "textures/Wall/Concrete_Column_001_SD/Concrete_Column_001_roughness.jpg",
     "colormap": "textures/Wall/Concrete_Column_001_SD/Concrete_Column_001_basecolor.jpg"
+  },
+  "Brick_Wall_017_SD": {
+    "normalmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_normal.jpg",
+    "roughnessmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_roughness.jpg",
+    "colormap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_basecolor.jpg",
+    "ambientmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_ambientOcclusion.jpg",
+    "bumpmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_height.png"
   },
   "Stone-Wall-015": {
     "normalmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_normal.jpg",
     "colormap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_basecolor.jpg",
     "ambientmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_ambientOcclusion.jpg",
+    "bumpmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_height.png",
     "roughnessmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_roughness.jpg"
   },
   "Stone_Wall_012_SD": {
     "ambientmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_ambientOcclusion.jpg",
     "colormap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_basecolor.jpg",
     "normalmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_normal.jpg",
+    "bumpmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_height.png",
     "roughnessmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_roughness.jpg"
   },
   "Stylized-Sci-fi Wall-001": {
     "normalmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_normal.jpg",
     "ambientmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_ambientOcclusion.jpg",
     "colormap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_basecolor.jpg",
-    "roughnessmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_roughness.jpg"
+    "roughnessmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_roughness.jpg",
+    "bumpmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_height.png"
   }
 };
 },{}],"index.js":[function(require,module,exports) {
@@ -111438,12 +111667,20 @@ var opts = {
 };
 
 function selectFloorTexture(data) {
+  if (!data.index) {
+    data = settingsViewer3d.getValue('Floor Textures');
+  }
+
   var floor_texture_pack = floor_textures[data.value];
   settingsViewer3d.setValue('Floor Texture:', floor_texture_pack.colormap);
   roomplanningHelper.roomTexturePack = floor_texture_pack;
 }
 
 function selectWallTexture(data) {
+  if (!data.index) {
+    data = settingsViewer3d.getValue('Wall Textures');
+  }
+
   var wall_texture_pack = wall_textures[data.value];
   settingsViewer3d.setValue('Wall Texture:', wall_texture_pack.colormap);
   roomplanningHelper.wallTexturePack = wall_texture_pack;
@@ -111558,8 +111795,10 @@ if (!opts.widget) {
   settingsSelectedRoom.bindText('roomName', floorplanningHelper.roomName, floorplanningHelper);
   settingsViewer3d.addDropDown('Floor Textures', floor_texture_keys, selectFloorTexture);
   settingsViewer3d.addImage('Floor Texture:', floor_textures[floor_texture_keys[0]].colormap, null);
+  settingsViewer3d.addButton('Apply', selectFloorTexture);
   settingsViewer3d.addDropDown('Wall Textures', wall_texture_keys, selectWallTexture);
   settingsViewer3d.addImage('Wall Texture:', wall_textures[wall_texture_keys[0]].colormap, null);
+  settingsViewer3d.addButton('Apply', selectWallTexture);
   settingsViewer3d.addHTML('Tips:', '<p>Click and drag to rotate the room in 360\xB0</p><p>Add room items (Coming soon)</p><p>Drag and Place items(pink boxes) in the room</p><p>There are 8 different types of items <ul><li>1: FloorItem</li> <li>2: WallItem</li> <li>3: InWallItem</li> <li>7: InWallFloorItem</li> <li>8: OnFloorItem</li> <li>9: WallFloorItem</li><li>0: Item</li> <li>4: RoofItem</li></ul></p>');
   uxInterface.setWidth(panelWidths);
   uxInterface.setHeight(uxInterfaceHeight);
@@ -111603,7 +111842,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "38413" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "35755" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

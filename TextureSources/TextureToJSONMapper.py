@@ -8,8 +8,8 @@ USE_RELATIVE_PATH_FROM  = os.getcwd();
 INPUT_TEXTURES_DIRECTORY = read_write_walls_data[0];
 OUTPUT_JSON_FILE = read_write_walls_data[1];
 
-TEXTURE_SUB_TYPES = ['basecolor', 'normal', 'roughness', 'ambientOcclusion'];
-TEXTURE_SUB_KEY_NAMES = ['colormap', 'normalmap', 'roughnessmap', 'ambientmap'];
+TEXTURE_SUB_TYPES = ['basecolor', 'normal', 'roughness', 'ambientOcclusion', 'height'];
+TEXTURE_SUB_KEY_NAMES = ['colormap', 'normalmap', 'roughnessmap', 'ambientmap', 'bumpmap'];
 def getFilesFromDirectory(directorypath, extension=['.obj'], *, exclusions=[], recursive=False):
     found_files = [];
     for root, directories, files in os.walk(os.path.abspath(directorypath)):

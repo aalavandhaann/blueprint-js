@@ -23,4 +23,6 @@ export const VIEW_ISOMETRY = 'isometryview';
 
 export const WallTypes = Enum('STRAIGHT', 'CURVED');
 
-export const defaultWallTexture = { color: '#FFFFFF', repeat: 50, normalmap: 'textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_normal.jpg', ambientmap: 'textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_ambientOcclusion.jpg', colormap: 'textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_basecolor.jpg', roughnessmap: 'textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_roughness.jpg' };
+export const TEXTURE_DEFAULT_REPEAT = 300;
+export const defaultWallTexture = { color: '#FFFFFF', repeat: TEXTURE_DEFAULT_REPEAT, colormap: 'textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_BaseColor.jpg', normalmap: 'textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Normal.jpg', bumpmap: 'textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Height.png', ambientmap: 'textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_AmbientOcclusion.jpg', roughnessmap: 'textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Roughness.jpg' };
+export const defaultFloorTexture = { color: '#FFFFFF', repeat: TEXTURE_DEFAULT_REPEAT, ambientmap: 'textures/Floor/Marble_Tiles_001/Marble_Tiles_001_ambientOcclusion.jpg', colormap: 'textures/Floor/Marble_Tiles_001/Marble_Tiles_001_basecolor.jpg', roughnessmap: 'textures/Floor/Marble_Tiles_001/Marble_Tiles_001_roughness.jpg', normalmap: 'textures/Floor/Marble_Tiles_001/Marble_Tiles_001_normal.jpg' };

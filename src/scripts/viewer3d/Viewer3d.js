@@ -1,4 +1,4 @@
-import { WebGLRenderer, ImageUtils, PerspectiveCamera, AxesHelper, Scene } from 'three';
+import { WebGLRenderer, ImageUtils, PerspectiveCamera, AxesHelper, Scene, RGBFormat, LinearMipmapLinearFilter } from 'three';
 import { PCFSoftShadowMap } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
@@ -13,6 +13,7 @@ import { Floor3D } from './floor3d.js';
 import { Lights3D } from './lights3d.js';
 import { Physical3DItem } from './Physical3DItem.js';
 import { DragRoomItemsControl3D } from './DragRoomItemsControl3D.js';
+import { WebGLCubeRenderTarget, CubeCamera } from 'three/build/three.module';
 
 export class Viewer3D extends Scene {
     constructor(model, element, opts) {
@@ -33,6 +34,7 @@ export class Viewer3D extends Scene {
 
         this.perspectivecamera = null;
         this.camera = null;
+        this.__environmentCamera = null;
 
         this.cameraNear = 10;
         this.cameraFar = 10000;
@@ -68,9 +70,13 @@ export class Viewer3D extends Scene {
 
     init() {
         let scope = this;
+
         ImageUtils.crossOrigin = '';
 
         scope.camera = new PerspectiveCamera(45, 10, scope.cameraNear, scope.cameraFar);
+
+        let cubeRenderTarget = new WebGLCubeRenderTarget(128, { format: RGBFormat, generateMipmaps: true, minFilter: LinearMipmapLinearFilter });
+        scope.__environmentCamera = new CubeCamera(1, 100000, cubeRenderTarget);
 
         scope.renderer = scope.getARenderer();
         scope.domElement.appendChild(scope.renderer.domElement);
@@ -182,22 +188,24 @@ export class Viewer3D extends Scene {
 
         // clear scene
         scope.floors3d.forEach((floor) => {
-            floor.removeFromScene();
+            floor.destroy();
+            floor = null;
         });
 
         scope.edges3d.forEach((edge3d) => {
             edge3d.remove();
+            edge3d = null;
         });
 
         scope.edges3d = [];
+        scope.floors3d = [];
         let wallEdges = scope.floorplan.wallEdges();
         let rooms = scope.floorplan.getRooms();
 
         // draw floors
         for (i = 0; i < rooms.length; i++) {
-            var threeFloor = new Floor3D(scope, rooms[i]);
+            var threeFloor = new Floor3D(scope, rooms[i], scope.controls);
             scope.floors3d.push(threeFloor);
-            threeFloor.addToScene();
         }
 
         for (i = 0; i < wallEdges.length; i++) {
@@ -272,6 +280,10 @@ export class Viewer3D extends Scene {
 
     removeRoomplanListener(type, listener) {
         this.removeEventListener(type, listener);
+    }
+
+    get environmentCamera() {
+        return this.__environmentCamera;
     }
 
     get physicalRoomItems() {

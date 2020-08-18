@@ -57,12 +57,18 @@ let opts = {
 };
 
 function selectFloorTexture(data) {
+    if (!data.index) {
+        data = settingsViewer3d.getValue('Floor Textures');
+    }
     let floor_texture_pack = floor_textures[data.value];
     settingsViewer3d.setValue('Floor Texture:', floor_texture_pack.colormap);
     roomplanningHelper.roomTexturePack = floor_texture_pack;
 }
 
 function selectWallTexture(data) {
+    if (!data.index) {
+        data = settingsViewer3d.getValue('Wall Textures');
+    }
     let wall_texture_pack = wall_textures[data.value];
     settingsViewer3d.setValue('Wall Texture:', wall_texture_pack.colormap);
     roomplanningHelper.wallTexturePack = wall_texture_pack;
@@ -182,9 +188,11 @@ if (!opts.widget) {
 
     settingsViewer3d.addDropDown('Floor Textures', floor_texture_keys, selectFloorTexture);
     settingsViewer3d.addImage('Floor Texture:', floor_textures[floor_texture_keys[0]].colormap, null);
+    settingsViewer3d.addButton('Apply', selectFloorTexture);
 
     settingsViewer3d.addDropDown('Wall Textures', wall_texture_keys, selectWallTexture);
     settingsViewer3d.addImage('Wall Texture:', wall_textures[wall_texture_keys[0]].colormap, null);
+    settingsViewer3d.addButton('Apply', selectWallTexture);
 
     settingsViewer3d.addHTML('Tips:', '<p>Click and drag to rotate the room in 360\xB0</p><p>Add room items (Coming soon)</p><p>Drag and Place items(pink boxes) in the room</p><p>There are 8 different types of items <ul><li>1: FloorItem</li> <li>2: WallItem</li> <li>3: InWallItem</li> <li>7: InWallFloorItem</li> <li>8: OnFloorItem</li> <li>9: WallFloorItem</li><li>0: Item</li> <li>4: RoofItem</li></ul></p>');
 

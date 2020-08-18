@@ -1,12 +1,11 @@
 import { EventDispatcher, Vector2, Vector3, Face3, Geometry, Shape, ShapeGeometry, Mesh, MeshBasicMaterial, DoubleSide, Box3 } from 'three';
 import { Plane, Matrix4 } from 'three';
-import { EVENT_CHANGED, EVENT_ROOM_ATTRIBUTES_CHANGED, EVENT_MOVED, EVENT_UPDATED } from '../core/events.js';
+import { EVENT_CHANGED, EVENT_ROOM_ATTRIBUTES_CHANGED, EVENT_MOVED, EVENT_UPDATED, EVENT_UPDATE_TEXTURES } from '../core/events.js';
 import { Region } from '../core/utils.js';
-import { WallTypes } from '../core/constants.js';
+import { WallTypes, TEXTURE_DEFAULT_REPEAT, defaultFloorTexture } from '../core/constants.js';
 import { Utils } from '../core/utils.js';
 import { HalfEdge } from './half_edge.js';
 import { BufferGeometry } from 'three/build/three.module';
-
 /** Default texture to be used if nothing is provided. */
 export const defaultRoomTexture = { url: 'rooms/textures/hardwood.png', scale: 400 };
 
@@ -39,6 +38,10 @@ export class Room extends EventDispatcher {
         this.customTexture = false;
         this.floorChangeCallbacks = null;
 
+        this.__destroyed = false;
+
+
+
         this.updateWalls();
         this.updateInteriorCorners();
         this.generateFloorPlane();
@@ -46,23 +49,44 @@ export class Room extends EventDispatcher {
 
         let cornerids = [];
         let i = 0;
+
+        this.__roomUpdatedEvent = this._roomUpdated.bind(this);
+        this.__wallsChangedEvent = this.__wallsChanged.bind(this);
+
         for (; i < this.corners.length; i++) {
             let c = this.corners[i];
             c.attachRoom(this);
             cornerids.push(c.id);
-            c.addEventListener(EVENT_MOVED, () => this._roomUpdated());
+            c.addEventListener(EVENT_MOVED, this.__roomUpdatedEvent);
         }
-        let scope = this;
+
         for (i = 0; i < this.__walls.length; i++) {
             let wall = this.__walls[i];
             // wall.addRoom(this);
-            wall.addEventListener(EVENT_UPDATED, () => {
-                scope.updateInteriorCorners();
-                scope.dispatchEvent({ type: EVENT_CHANGED, item: scope });
-            });
+            wall.addEventListener(EVENT_UPDATED, this.__wallsChangedEvent);
         }
         this._roomByCornersId = cornerids.join(',');
     }
+
+    __wallsChanged(evt) {
+        this.updateInteriorCorners();
+        this.dispatchEvent({ type: EVENT_CHANGED, item: this });
+    }
+
+    destroy() {
+        let i = 0;
+        for (; i < this.corners.length; i++) {
+            let c = this.corners[i];
+            c.removeEventListener(EVENT_MOVED, this.__roomUpdatedEvent);
+        }
+        for (i = 0; i < this.__walls.length; i++) {
+            let wall = this.__walls[i];
+            wall.removeEventListener(EVENT_UPDATED, this.__wallsChangedEvent);
+        }
+        this.__destroyed = true;
+        this.dispatchEvent({ type: EVENT_CHANGED, item: this });
+    }
+
 
     get uuid() {
         return this.getUuid();
@@ -186,12 +210,6 @@ export class Room extends EventDispatcher {
         this.floorChangeCallbacks.add(callback);
     }
 
-    getTexture() {
-        let uuid = this.getUuid();
-        let tex = this.floorplan.getFloorTexture(uuid);
-        return tex || defaultRoomTexture;
-    }
-
     setRoomWallsTexture(textureUrl, textureStretch, textureScale) {
         let edge = this.edgePointer;
         let iterateWhile = true;
@@ -206,6 +224,12 @@ export class Room extends EventDispatcher {
         }
     }
 
+    getTexture() {
+        let uuid = this.getUuid();
+        let tex = this.floorplan.getFloorTexture(uuid);
+        return tex || defaultFloorTexture;
+    }
+
     /**
      * textureStretch always true, just an argument for consistency with walls
      */
@@ -214,6 +238,18 @@ export class Room extends EventDispatcher {
         this.floorplan.setFloorTexture(uuid, textureUrl, textureScale);
         this.dispatchEvent({ type: EVENT_CHANGED, item: this });
         //		this.floorChangeCallbacks.fire();
+    }
+
+    setTextureMaps(texturePack) {
+        let uuid = this.getUuid();
+        if (!texturePack.color) {
+            texturePack.color = '#FFFFFF';
+        }
+        if (!texturePack.repeat) {
+            texturePack.repeat = TEXTURE_DEFAULT_REPEAT; //For every TEXTURE_DEFAULT_REPEAT cms
+        }
+        this.floorplan.setFloorTexture(uuid, texturePack);
+        this.dispatchEvent({ type: EVENT_UPDATE_TEXTURES, item: this });
     }
 
     generateRoofPlane() {
