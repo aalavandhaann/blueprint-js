@@ -3,7 +3,7 @@ import { PCFSoftShadowMap } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
 
-import { EVENT_UPDATED, EVENT_LOADED, EVENT_ITEM_SELECTED, EVENT_ITEM_MOVE, EVENT_ITEM_MOVE_FINISH, EVENT_NO_ITEM_SELECTED } from '../core/events.js';
+import { EVENT_UPDATED, EVENT_LOADED, EVENT_ITEM_SELECTED, EVENT_ITEM_MOVE, EVENT_ITEM_MOVE_FINISH, EVENT_NO_ITEM_SELECTED, EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED } from '../core/events.js';
 // import { EVENT_NEW, EVENT_DELETED } from '../core/events.js';
 
 import { Skybox } from './skybox.js';
@@ -56,6 +56,8 @@ export class Viewer3D extends Scene {
 
         this.needsUpdate = true;
 
+        this.__wallSelectedEvent = this.__wallSelected.bind(this);
+        this.__roomSelectedEvent = this.__roomSelected.bind(this);
         this.__roomItemSelectedEvent = this.__roomItemSelected.bind(this);
         this.__roomItemUnselectedEvent = this.__roomItemUnselected.bind(this);
         this.__roomItemDraggedEvent = this.__roomItemDragged.bind(this);
@@ -75,7 +77,7 @@ export class Viewer3D extends Scene {
 
         scope.lights = new Lights3D(this, scope.floorplan);
         // scope.dragcontrols = new DragControls(this.physicalRoomItems, scope.camera, scope.renderer.domElement);
-        scope.dragcontrols = new DragRoomItemsControl3D(this.physicalRoomItems, scope.camera, scope.renderer.domElement);
+        scope.dragcontrols = new DragRoomItemsControl3D(this.floorplan.wallPlanesForIntersection, this.floorplan.floorPlanesForIntersection, this.physicalRoomItems, scope.camera, scope.renderer.domElement);
         scope.controls = new OrbitControls(scope.camera, scope.domElement);
         // scope.controls.autoRotate = this.options['spin'];
         scope.controls.enableDamping = false;
@@ -107,13 +109,26 @@ export class Viewer3D extends Scene {
         scope.model.addEventListener(EVENT_LOADED, (evt) => scope.addRoomItems(evt));
         scope.floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.addWalls(evt));
         this.controls.addEventListener('change', () => { scope.needsUpdate = true; });
+
+
         scope.dragcontrols.addEventListener(EVENT_ITEM_SELECTED, this.__roomItemSelectedEvent);
         scope.dragcontrols.addEventListener(EVENT_ITEM_MOVE, this.__roomItemDraggedEvent);
         scope.dragcontrols.addEventListener(EVENT_ITEM_MOVE_FINISH, this.__roomItemDragFinishEvent);
         scope.dragcontrols.addEventListener(EVENT_NO_ITEM_SELECTED, this.__roomItemUnselectedEvent);
+
+        scope.dragcontrols.addEventListener(EVENT_WALL_CLICKED, this.__wallSelectedEvent);
+        scope.dragcontrols.addEventListener(EVENT_ROOM_CLICKED, this.__roomSelectedEvent);
         // scope.controls.enabled = false;//To test the drag controls
 
         animate();
+    }
+
+    __wallSelected(evt) {
+        this.dispatchEvent(evt);
+    }
+
+    __roomSelected(evt) {
+        this.dispatchEvent(evt);
     }
 
     __roomItemSelected(evt) {
@@ -123,6 +138,7 @@ export class Viewer3D extends Scene {
         this.__currentItemSelected = evt.item;
         this.__currentItemSelected.selected = true;
         this.needsUpdate = true;
+        this.dispatchEvent(evt);
     }
 
     __roomItemDragged(evt) {
@@ -141,10 +157,10 @@ export class Viewer3D extends Scene {
             this.__currentItemSelected = null;
             this.needsUpdate = true;
         }
+        this.dispatchEvent(evt);
     }
 
     addRoomItems(evt) {
-        console.log('ADD ROOM ITEMS :: ', this.model.roomItems.length);
         let i = 0;
         for (; i < this.__physicalRoomItems.length; i++) {
             this.__physicalRoomItems[i].dispose();
@@ -248,6 +264,14 @@ export class Viewer3D extends Scene {
         scope.renderer.render(scope, scope.camera);
         scope.lastRender = Date.now();
         this.needsUpdate = false;
+    }
+
+    addRoomplanListener(type, listener) {
+        this.addEventListener(type, listener);
+    }
+
+    removeRoomplanListener(type, listener) {
+        this.removeEventListener(type, listener);
     }
 
     get physicalRoomItems() {

@@ -1,7 +1,7 @@
 import { Application, Graphics, Text } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
-import { Vector2 } from 'three';
-import { EVENT_NEW, EVENT_DELETED, EVENT_LOADED, EVENT_2D_SELECTED, EVENT_NEW_ROOMS_ADDED, EVENT_UPDATED, EVENT_KEY_RELEASED, EVENT_KEY_PRESSED } from '../core/events';
+import { Vector2, EventDispatcher } from 'three';
+import { EVENT_NEW, EVENT_DELETED, EVENT_LOADED, EVENT_2D_SELECTED, EVENT_NEW_ROOMS_ADDED, EVENT_KEY_RELEASED, EVENT_KEY_PRESSED, EVENT_WALL_2D_CLICKED, EVENT_CORNER_2D_CLICKED, EVENT_ROOM_2D_CLICKED, EVENT_NOTHING_2D_SELECTED } from '../core/events';
 import { Grid2D } from './Grid2d';
 import { CornerView2D } from './CornerView2D';
 import { WallView2D } from './WallView2D';
@@ -59,7 +59,7 @@ class TemporaryWall extends Graphics {
 export class Viewer2D extends Application {
     constructor(canvasHolder, floorplan, options) {
         super({ width: 512, height: 512, });
-        let scope = this;
+        this.__eventDispatcher = new EventDispatcher();
 
         var opts = { 'corner-radius': 20, pannable: true, zoomable: true, dimlinecolor: '#3EDEDE', dimarrowcolor: '#000000', dimtextcolor: '#000000', };
         for (var opt in opts) {
@@ -280,11 +280,8 @@ export class Viewer2D extends Application {
         }
     }
 
-    __getSnappedCoordinateCMS(cms) {
-
-    }
-
     __selectionMonitor(evt) {
+        this.__eventDispatcher.dispatchEvent({ type: EVENT_NOTHING_2D_SELECTED });
         for (let i = 0; i < this.__entities2D.length; i++) {
             let entity = this.__entities2D[i];
             if (evt.item !== undefined) {
@@ -293,6 +290,15 @@ export class Viewer2D extends Application {
                 }
             }
             entity.selected = false;
+        }
+        if (evt.item) {
+            if (evt.item instanceof WallView2D) {
+                this.__eventDispatcher.dispatchEvent({ type: EVENT_WALL_2D_CLICKED, item: evt.item.wall });
+            } else if (evt.item instanceof CornerView2D) {
+                this.__eventDispatcher.dispatchEvent({ type: EVENT_CORNER_2D_CLICKED, item: evt.item.corner });
+            } else if (evt.item instanceof RoomView2D) {
+                this.__eventDispatcher.dispatchEvent({ type: EVENT_ROOM_2D_CLICKED, item: evt.item.room });
+            }
         }
     }
 
@@ -369,6 +375,14 @@ export class Viewer2D extends Application {
         this.renderer.resize(w, h);
         this.__floorplanContainer.resize(w, h, this.__worldWidth, this.__worldHeight);
         this.renderer.render(this.stage);
+    }
+
+    addFloorplanListener(type, listener) {
+        this.__eventDispatcher.addEventListener(type, listener);
+    }
+
+    removeFloorplanListener(type, listener) {
+        this.__eventDispatcher.removeEventListener(type, listener);
     }
 
     dispose() {

@@ -189,7 +189,8 @@ export class WallView2D extends BaseFloorplanViewElement2D {
     __drawPolygon(color = 0xDDDDDD, alpha = 1.0) {
         let points = this.__getPolygonCoordinates();
         this.clear();
-        this.beginFill(color, alpha);
+        // this.beginFill(color, alpha);
+        this.beginFill(color, 0.1);
         for (let i = 0; i < points.length; i++) {
             let pt = points[i];
             if (i === 0) {
@@ -201,18 +202,13 @@ export class WallView2D extends BaseFloorplanViewElement2D {
         this.endFill();
 
         let cornerLine = this.__getCornerCoordinates();
+        this.lineStyle(Dimensioning.cmToPixel(this.__wall.thickness), color);
+        this.moveTo(cornerLine[0].x, cornerLine[0].y);
+        this.lineTo(cornerLine[1].x, cornerLine[1].y);
+
         this.lineStyle(1, 0xFFFFFF);
         this.moveTo(cornerLine[0].x, cornerLine[0].y);
         this.lineTo(cornerLine[1].x, cornerLine[1].y);
-    }
-
-    get selected() {
-        return super.selected;
-    }
-
-    set selected(flag) {
-        super.selected = flag;
-        this.viewDimensions = flag;
     }
 
     __drawSelectedState() {
@@ -286,5 +282,18 @@ export class WallView2D extends BaseFloorplanViewElement2D {
         this.remove();
         this.__wall.remove();
         this.__wall = null;
+    }
+
+    get wall() {
+        return this.__wall;
+    }
+
+    get selected() {
+        return super.selected;
+    }
+
+    set selected(flag) {
+        super.selected = flag;
+        this.viewDimensions = flag;
     }
 }

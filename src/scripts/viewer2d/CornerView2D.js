@@ -87,4 +87,8 @@ export class CornerView2D extends BaseFloorplanViewElement2D {
         this.remove();
         this.__corner.removeAll();
     }
+
+    get corner() {
+        return this.__corner;
+    }
 }

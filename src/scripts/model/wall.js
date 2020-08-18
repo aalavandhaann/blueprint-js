@@ -1,13 +1,14 @@
 import { EventDispatcher, Vector2, Vector3, Plane } from 'three';
 import Bezier from 'bezier-js';
-import { WallTypes } from '../core/constants.js';
+import { WallTypes, defaultWallTexture } from '../core/constants.js';
 import { EVENT_ACTION, EVENT_MOVED, EVENT_DELETED, EVENT_UPDATED, EVENT_CORNER_ATTRIBUTES_CHANGED } from '../core/events.js';
 import { Configuration, configWallThickness, configWallHeight } from '../core/configuration.js';
 import { Utils } from '../core/utils.js';
 
 
 /** The default wall texture. */
-export const defaultWallTexture = { url: 'rooms/textures/wallmap.png', stretch: true, scale: 0 };
+// export const defaultWallTexture = { url: 'rooms/textures/wallmap.png', stretch: true, scale: 0 };
+
 const UP_VECTOR = new Vector3(0, 0, 1);
 /**
  * A Wall is the basic element to create Rooms.

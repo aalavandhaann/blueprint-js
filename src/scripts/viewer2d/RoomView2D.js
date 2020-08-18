@@ -84,4 +84,8 @@ export class RoomView2D extends BaseFloorplanViewElement2D {
         Configuration.getInstance().removeEventListener(EVENT_CHANGED, this.__updatedRoomEvent);
         super.remove();
     }
+
+    get room() {
+        return this.__room;
+    }
 }

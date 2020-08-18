@@ -36,7 +36,6 @@ export class Floor3D extends EventDispatcher {
     buildFloor() {
         var textureSettings = this.room.getTexture();
         // setup texture
-        //		var floorTexture = ImageUtils.loadTexture(textureSettings.url);
         var floorTexture = new TextureLoader().load(textureSettings.url);
         floorTexture.wrapS = RepeatWrapping;
         floorTexture.wrapT = RepeatWrapping;

@@ -136,7 +136,7 @@ module.exports = Enum;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.WallTypes = exports.VIEW_ISOMETRY = exports.VIEW_LEFT = exports.VIEW_RIGHT = exports.VIEW_FRONT = exports.VIEW_TOP = exports.dimMilliMeter = exports.dimCentiMeter = exports.dimMeter = exports.dimFeetAndInch = exports.dimInch = void 0;
+exports.defaultWallTexture = exports.WallTypes = exports.VIEW_ISOMETRY = exports.VIEW_LEFT = exports.VIEW_RIGHT = exports.VIEW_FRONT = exports.VIEW_TOP = exports.dimMilliMeter = exports.dimCentiMeter = exports.dimMeter = exports.dimFeetAndInch = exports.dimInch = void 0;
 
 var _es6Enum = _interopRequireDefault(require("es6-enum"));
 
@@ -173,6 +173,15 @@ var VIEW_ISOMETRY = 'isometryview';
 exports.VIEW_ISOMETRY = VIEW_ISOMETRY;
 var WallTypes = (0, _es6Enum.default)('STRAIGHT', 'CURVED');
 exports.WallTypes = WallTypes;
+var defaultWallTexture = {
+  color: '#FFFFFF',
+  repeat: 50,
+  normalmap: 'textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_normal.jpg',
+  ambientmap: 'textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_ambientOcclusion.jpg',
+  colormap: 'textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_basecolor.jpg',
+  roughnessmap: 'textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_roughness.jpg'
+};
+exports.defaultWallTexture = defaultWallTexture;
 },{"es6-enum":"../node_modules/es6-enum/dist/enum.js"}],"../node_modules/three/build/three.module.js":[function(require,module,exports) {
 "use strict";
 
@@ -36389,7 +36398,7 @@ if (typeof __THREE_DEVTOOLS__ !== 'undefined') {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.EVENT_KEY_RELEASED = exports.EVENT_KEY_PRESSED = exports.EVENT_ROOM_2D_HOVER = exports.EVENT_WALL_2D_HOVER = exports.EVENT_CORNER_2D_HOVER = exports.EVENT_ROOM_2D_DOUBLE_CLICKED = exports.EVENT_WALL_2D_DOUBLE_CLICKED = exports.EVENT_CORNER_2D_DOUBLE_CLICKED = exports.EVENT_2D_SELECTED = exports.EVENT_2D_UNSELECTED = exports.EVENT_ROOM_2D_CLICKED = exports.EVENT_WALL_2D_CLICKED = exports.EVENT_CORNER_2D_CLICKED = exports.EVENT_ROOM_ATTRIBUTES_CHANGED = exports.EVENT_WALL_ATTRIBUTES_CHANGED = exports.EVENT_CORNER_ATTRIBUTES_CHANGED = exports.EVENT_NEW_ROOMS_ADDED = exports.EVENT_ROOM_NAME_CHANGED = exports.EVENT_NOTHING_CLICKED = exports.EVENT_FLOOR_CLICKED = exports.EVENT_ROOM_CLICKED = exports.EVENT_WALL_CLICKED = exports.EVENT_FPS_EXIT = exports.EVENT_CAMERA_VIEW_CHANGE = exports.EVENT_CAMERA_ACTIVE_STATUS = exports.EVENT_CAMERA_MOVED = exports.EVENT_MODE_RESET = exports.EVENT_NO_ITEM_SELECTED = exports.EVENT_ITEM_HOVEROFF = exports.EVENT_ITEM_HOVERON = exports.EVENT_ITEM_MOVE_FINISH = exports.EVENT_ITEM_MOVE = exports.EVENT_ITEM_SELECTED = exports.EVENT_ITEM_REMOVED = exports.EVENT_ITEM_LOADED = exports.EVENT_ITEM_LOADING = exports.EVENT_GLTF_READY = exports.EVENT_CHANGED = exports.EVENT_SAVED = exports.EVENT_UPDATED = exports.EVENT_LOADING = exports.EVENT_LOADED = exports.EVENT_NEW = exports.EVENT_REDRAW = exports.EVENT_MOVED = exports.EVENT_DELETED = exports.EVENT_ACTION = void 0;
+exports.EVENT_UPDATE_TEXTURES = exports.EVENT_KEY_RELEASED = exports.EVENT_KEY_PRESSED = exports.EVENT_ROOM_2D_HOVER = exports.EVENT_WALL_2D_HOVER = exports.EVENT_CORNER_2D_HOVER = exports.EVENT_ROOM_2D_DOUBLE_CLICKED = exports.EVENT_WALL_2D_DOUBLE_CLICKED = exports.EVENT_CORNER_2D_DOUBLE_CLICKED = exports.EVENT_NOTHING_2D_SELECTED = exports.EVENT_2D_SELECTED = exports.EVENT_2D_UNSELECTED = exports.EVENT_ROOM_2D_CLICKED = exports.EVENT_WALL_2D_CLICKED = exports.EVENT_CORNER_2D_CLICKED = exports.EVENT_ROOM_ATTRIBUTES_CHANGED = exports.EVENT_WALL_ATTRIBUTES_CHANGED = exports.EVENT_CORNER_ATTRIBUTES_CHANGED = exports.EVENT_NEW_ROOMS_ADDED = exports.EVENT_ROOM_NAME_CHANGED = exports.EVENT_NOTHING_CLICKED = exports.EVENT_FLOOR_CLICKED = exports.EVENT_ROOM_CLICKED = exports.EVENT_WALL_CLICKED = exports.EVENT_FPS_EXIT = exports.EVENT_CAMERA_VIEW_CHANGE = exports.EVENT_CAMERA_ACTIVE_STATUS = exports.EVENT_CAMERA_MOVED = exports.EVENT_MODE_RESET = exports.EVENT_NO_ITEM_SELECTED = exports.EVENT_ITEM_HOVEROFF = exports.EVENT_ITEM_HOVERON = exports.EVENT_ITEM_MOVE_FINISH = exports.EVENT_ITEM_MOVE = exports.EVENT_ITEM_SELECTED = exports.EVENT_ITEM_REMOVED = exports.EVENT_ITEM_LOADED = exports.EVENT_ITEM_LOADING = exports.EVENT_GLTF_READY = exports.EVENT_CHANGED = exports.EVENT_SAVED = exports.EVENT_UPDATED = exports.EVENT_LOADING = exports.EVENT_LOADED = exports.EVENT_NEW = exports.EVENT_REDRAW = exports.EVENT_MOVED = exports.EVENT_DELETED = exports.EVENT_ACTION = void 0;
 var EVENT_ACTION = 'ACTION_EVENT';
 exports.EVENT_ACTION = EVENT_ACTION;
 var EVENT_DELETED = 'DELETED_EVENT';
@@ -36468,6 +36477,8 @@ var EVENT_2D_UNSELECTED = 'UNSELECTED_2D_EVENT';
 exports.EVENT_2D_UNSELECTED = EVENT_2D_UNSELECTED;
 var EVENT_2D_SELECTED = 'SELECTED_2D_EVENT';
 exports.EVENT_2D_SELECTED = EVENT_2D_SELECTED;
+var EVENT_NOTHING_2D_SELECTED = 'NOTHING_2D_SELECTED_EVENT';
+exports.EVENT_NOTHING_2D_SELECTED = EVENT_NOTHING_2D_SELECTED;
 var EVENT_CORNER_2D_DOUBLE_CLICKED = 'CORNER_DOUBLE_CLICKED_2D_EVENT';
 exports.EVENT_CORNER_2D_DOUBLE_CLICKED = EVENT_CORNER_2D_DOUBLE_CLICKED;
 var EVENT_WALL_2D_DOUBLE_CLICKED = 'WALL_DOUBLE_CLICKED_2D_EVENT';
@@ -36484,6 +36495,8 @@ var EVENT_KEY_PRESSED = 'KEY_PRESSED_EVENT';
 exports.EVENT_KEY_PRESSED = EVENT_KEY_PRESSED;
 var EVENT_KEY_RELEASED = 'KEY_RELEASED_EVENT';
 exports.EVENT_KEY_RELEASED = EVENT_KEY_RELEASED;
+var EVENT_UPDATE_TEXTURES = 'UPDATE_TEXTURES_EVENT';
+exports.EVENT_UPDATE_TEXTURES = EVENT_UPDATE_TEXTURES;
 },{}],"scripts/core/configuration.js":[function(require,module,exports) {
 "use strict";
 
@@ -37875,6 +37888,28 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
       } else {
         return this.wall.backTexture;
       }
+    }
+  }, {
+    key: "setTextureMaps",
+    value: function setTextureMaps(texturePack) {
+      if (!texturePack.color) {
+        texturePack.color = '#FFFFFF';
+      }
+
+      if (!texturePack.repeat) {
+        texturePack.repeat = 200; //For every 50 cms
+      }
+
+      if (this.front) {
+        this.wall.frontTexture = texturePack;
+      } else {
+        this.wall.backTexture = texturePack;
+      }
+
+      this.dispatchEvent({
+        type: _events.EVENT_UPDATE_TEXTURES,
+        item: this
+      });
     }
     /**
      * Set a Texture to the wall. Based on the edge side as front or back the texture is applied appropriately to the wall
@@ -41391,7 +41426,7 @@ module.exports = require('./lib/bezier');
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = exports.Wall = exports.defaultWallTexture = void 0;
+exports.default = exports.Wall = void 0;
 
 var _three = require("three");
 
@@ -41430,12 +41465,7 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 /** The default wall texture. */
-var defaultWallTexture = {
-  url: 'rooms/textures/wallmap.png',
-  stretch: true,
-  scale: 0
-};
-exports.defaultWallTexture = defaultWallTexture;
+// export const defaultWallTexture = { url: 'rooms/textures/wallmap.png', stretch: true, scale: 0 };
 var UP_VECTOR = new _three.Vector3(0, 0, 1);
 /**
  * A Wall is the basic element to create Rooms.
@@ -41517,10 +41547,10 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
     _this.onItems = [];
     /** The front-side texture. */
 
-    _this.frontTexture = defaultWallTexture;
+    _this.frontTexture = _constants.defaultWallTexture;
     /** The back-side texture. */
 
-    _this.backTexture = defaultWallTexture;
+    _this.backTexture = _constants.defaultWallTexture;
     /** Wall thickness. */
 
     _this._thickness = _configuration.Configuration.getNumericValue(_configuration.configWallThickness);
@@ -43422,7 +43452,8 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
             'b': {
               x: wall.b.x,
               y: wall.b.y
-            }
+            },
+            'thickness': _dimensioning.Dimensioning.cmToMeasureRaw(wall.thickness)
           });
           cornerIds.push(wall.getStart());
           cornerIds.push(wall.getEnd());
@@ -43525,11 +43556,23 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
         var newWall = scope.newWall(corners[wall.corner1], corners[wall.corner2]);
 
         if (wall.frontTexture) {
-          newWall.frontTexture = wall.frontTexture;
+          if (wall.frontTexture.colormap) {
+            newWall.frontTexture = wall.frontTexture;
+          } else {
+            newWall.frontTexture = _constants.defaultWallTexture;
+          }
         }
 
         if (wall.backTexture) {
-          newWall.backTexture = wall.backTexture;
+          if (wall.backTexture.colormap) {
+            newWall.backTexture = wall.backTexture;
+          } else {
+            newWall.backTexture = _constants.defaultWallTexture;
+          }
+        }
+
+        if (wall.thickness) {
+          newWall.thickness = _dimensioning.Dimensioning.cmFromMeasureRaw(wall.thickness);
         } // Adding of a, b, wallType (straight, curved) for walls happened
         // with introduction of 0.0.2a
 
@@ -46313,6 +46356,218 @@ var Skybox = /*#__PURE__*/function (_EventDispatcher) {
 }(_three.EventDispatcher);
 
 exports.Skybox = Skybox;
+},{"three":"../node_modules/three/build/three.module.js"}],"scripts/materials/Material3D.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Material3D = void 0;
+
+var _three = require("three");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var Material3D = /*#__PURE__*/function (_MeshPhysicalMaterial) {
+  _inherits(Material3D, _MeshPhysicalMaterial);
+
+  var _super = _createSuper(Material3D);
+
+  function Material3D(parameters, textureMapPack, scene) {
+    var _this;
+
+    _classCallCheck(this, Material3D);
+
+    _this = _super.call(this, parameters);
+    _this.__scene = scene;
+    _this.__textureMapPack = textureMapPack;
+    _this.__uRatio = 1.0;
+    _this.__vRatio = 1.0;
+    _this.__repeatPerCentimeter = 1.0 / _this.__textureMapPack.repeat; //Repeat for every 50 centimeters
+
+    _this.__colorTexture = null;
+    _this.__normalTexture = null;
+    _this.__roughnessTexture = null;
+    _this.__ambientTexture = null;
+
+    _this.__applyNewTextures();
+
+    return _this;
+  }
+
+  _createClass(Material3D, [{
+    key: "__updateTextures",
+    value: function __updateTextures() {
+      if (this.colorTexture) {
+        this.__colorTexture.wrapS = this.__colorTexture.wrapT = _three.RepeatWrapping;
+
+        this.__colorTexture.repeat.set(this.__uRatio, this.__vRatio);
+
+        this.__colorTexture.needsUpdate = true;
+      }
+
+      if (this.__normalTexture) {
+        this.__normalTexture.wrapS = this.__normalTexture.wrapT = _three.RepeatWrapping;
+
+        this.__normalTexture.repeat.set(this.__uRatio, this.__vRatio);
+
+        this.__normalTexture.needsUpdate = true;
+      }
+
+      if (this.__roughnessTexture) {
+        this.__roughnessTexture.wrapS = this.__roughnessTexture.wrapT = _three.RepeatWrapping;
+
+        this.__roughnessTexture.repeat.set(this.__uRatio, this.__vRatio);
+
+        this.__roughnessTexture.needsUpdate = true;
+      }
+
+      if (this.__ambientTexture) {
+        this.__ambientTexture.wrapS = this.__ambientTexture.wrapT = _three.RepeatWrapping;
+
+        this.__ambientTexture.repeat.set(this.__uRatio, this.__vRatio);
+
+        this.__ambientTexture.needsUpdate = true;
+      }
+
+      this.needsUpdate = true;
+      this.__scene.needsUpdate = true;
+    }
+  }, {
+    key: "__colorTextureLoaded",
+    value: function __colorTextureLoaded(texture) {
+      if (this.__colorTexture) {
+        this.__colorTexture.dispose();
+      }
+
+      this.__colorTexture = texture;
+      this.__colorTexture.wrapS = this.__colorTexture.wrapT = _three.RepeatWrapping;
+
+      this.__colorTexture.repeat.set(this.__uRatio, this.__vRatio);
+
+      this.__colorTexture.needsUpdate = true;
+      this.map = this.__colorTexture;
+      this.__scene.needsUpdate = true;
+    }
+  }, {
+    key: "__normalTextureLoaded",
+    value: function __normalTextureLoaded(texture) {
+      if (this.__normalTexture) {
+        this.__normalTexture.dispose();
+      }
+
+      this.__normalTexture = texture;
+      this.__normalTexture.wrapS = this.__normalTexture.wrapT = _three.RepeatWrapping;
+
+      this.__normalTexture.repeat.set(this.__uRatio, this.__vRatio);
+
+      this.__normalTexture.needsUpdate = true;
+      this.normalMap = this.__normalTexture;
+      this.__scene.needsUpdate = true;
+    }
+  }, {
+    key: "__roughnessTextureLoaded",
+    value: function __roughnessTextureLoaded(texture) {
+      if (this.__roughnessTexture) {
+        this.__roughnessTexture.dispose();
+      }
+
+      this.__roughnessTexture = texture;
+      this.__roughnessTexture.wrapS = this.__roughnessTexture.wrapT = _three.RepeatWrapping;
+
+      this.__roughnessTexture.repeat.set(this.__uRatio, this.__vRatio);
+
+      this.__roughnessTexture.needsUpdate = true;
+      this.roughnessMap = this.__roughnessTexture;
+      this.__scene.needsUpdate = true;
+    }
+  }, {
+    key: "__ambientTextureLoaded",
+    value: function __ambientTextureLoaded(texture) {
+      if (this.__ambientTexture) {
+        this.__ambientTexture.dispose();
+      }
+
+      this.__ambientTexture = texture;
+      this.__ambientTexture.wrapS = this.__ambientTexture.wrapT = _three.RepeatWrapping;
+
+      this.__ambientTexture.repeat.set(this.__uRatio, this.__vRatio);
+
+      this.__ambientTexture.needsUpdate = true;
+      this.aoMap = this.__ambientTexture;
+      this.__scene.needsUpdate = true;
+    }
+  }, {
+    key: "__applyNewTextures",
+    value: function __applyNewTextures() {
+      if (this.__textureMapPack.colormap) {
+        var colorTexture = new _three.TextureLoader().load(this.__textureMapPack.colormap, this.__colorTextureLoaded.bind(this));
+      }
+
+      if (this.__textureMapPack.normalmap) {
+        var normalTexture = new _three.TextureLoader().load(this.__textureMapPack.normalmap, this.__normalTextureLoaded.bind(this));
+      }
+
+      if (this.__textureMapPack.roughnessmap) {
+        var roughnessTexture = new _three.TextureLoader().load(this.__textureMapPack.roughnessmap, this.__roughnessTextureLoaded.bind(this));
+      }
+
+      if (this.__textureMapPack.ambientmap) {
+        var ambientTexture = new _three.TextureLoader().load(this.__textureMapPack.ambientmap, this.__ambientTextureLoaded.bind(this));
+      }
+    }
+    /**
+     * 
+     * @param {Number} x - Always implies the direction of the width 
+     * @param {Number} y - Can be either length or height depending if wall or floor using this texture
+     */
+
+  }, {
+    key: "updateDimensions",
+    value: function updateDimensions(width, lengthOrHeight) {
+      this.__uRatio = Math.max(width * this.__repeatPerCentimeter, 1.0);
+      this.__vRatio = Math.max(lengthOrHeight * this.__repeatPerCentimeter, 1.0);
+
+      this.__updateTextures();
+    }
+  }, {
+    key: "textureMapPack",
+    get: function get() {
+      return this.__textureMapPack;
+    },
+    set: function set(tpack) {
+      this.__textureMapPack = tpack;
+      this.color = tpack.color;
+      this.__repeatPerCentimeter = 1.0 / tpack.repeat;
+
+      this.__applyNewTextures();
+    }
+  }]);
+
+  return Material3D;
+}(_three.MeshPhysicalMaterial);
+
+exports.Material3D = Material3D;
 },{"three":"../node_modules/three/build/three.module.js"}],"scripts/viewer3d/edge3d.js":[function(require,module,exports) {
 "use strict";
 
@@ -46326,6 +46581,8 @@ var _three = require("three");
 var _utils = require("../core/utils.js");
 
 var _events = require("../core/events.js");
+
+var _Material3D = require("../materials/Material3D.js");
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -46387,7 +46644,16 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
 
     _this.showallevent = _this.__showAll.bind(_assertThisInitialized(_this)); //() => { scope.showAll(); };
 
+    _this.__updateTexturePackEvent = _this.__updateTexturePack.bind(_assertThisInitialized(_this));
     _this.visibilityfactor = true;
+
+    var texturePack = _this.edge.getTexture();
+
+    _this.__wallMaterial3D = new _Material3D.Material3D({
+      color: texturePack.color,
+      side: _three.FrontSide
+    }, texturePack, _this.scene);
+    ;
 
     _this.init();
 
@@ -46395,6 +46661,21 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
   }
 
   _createClass(Edge3D, [{
+    key: "__updateTexturePack",
+    value: function __updateTexturePack() {
+      var height = this.wall.height;
+      var width = this.edge.interiorDistance();
+      var texturePack = this.edge.getTexture();
+      this.__wallMaterial3D = new _Material3D.Material3D({
+        color: texturePack.color,
+        side: _three.FrontSide
+      }, texturePack, this.scene); // this.__wallMaterial3D.textureMapPack = texturePack;
+      // this.__wallMaterial3D.updateDimensions(width, height);
+
+      this.redraw();
+      this.scene.needsUpdate = true;
+    }
+  }, {
     key: "__redraw",
     value: function __redraw() {
       this.redraw();
@@ -46412,6 +46693,7 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "remove",
     value: function remove() {
+      this.edge.removeEventListener(_events.EVENT_UPDATE_TEXTURES, this.__updateTexturePackEvent);
       this.edge.removeEventListener(_events.EVENT_REDRAW, this.redrawevent);
       this.controls.removeEventListener('change', this.visibilityevent);
       this.removeFromScene();
@@ -46419,6 +46701,7 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "init",
     value: function init() {
+      this.edge.addEventListener(_events.EVENT_UPDATE_TEXTURES, this.__updateTexturePackEvent);
       this.edge.addEventListener(_events.EVENT_REDRAW, this.redrawevent);
       this.controls.addEventListener('change', this.visibilityevent);
       this.updateTexture();
@@ -46535,27 +46818,24 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
         return;
       }
 
-      var scope = this; // callback is fired when texture loads
+      var height = this.wall.height;
+      var width = this.edge.interiorDistance(); // this.__wallMaterial3D.textureMapPack = texturePack;
 
-      callback = callback || function () {
-        scope.scene.needsUpdate = true;
-      };
+      this.__wallMaterial3D.updateDimensions(width, height); // let scope = this;
+      // // callback is fired when texture loads
+      // callback = callback || function() { scope.scene.needsUpdate = true; };
+      // let textureData = this.edge.getTexture();
+      // let stretch = textureData.stretch;
+      // let url = textureData.url; //this is a hack temperory
+      // let scale = textureData.scale;
+      // this.texture = new TextureLoader().load(url, callback);
+      // if (!stretch) {
+      //     this.texture.wrapT = RepeatWrapping;
+      //     this.texture.wrapS = RepeatWrapping;
+      //     this.texture.repeat.set(width / scale, height / scale);
+      //     this.texture.needsUpdate = true;
+      // }
 
-      var textureData = this.edge.getTexture();
-      var stretch = textureData.stretch;
-      var url = textureData.url; //this is a hack temperory
-
-      var scale = textureData.scale;
-      this.texture = new _three.TextureLoader().load(url, callback);
-
-      if (!stretch) {
-        var height = this.wall.height;
-        var width = this.edge.interiorDistance();
-        this.texture.wrapT = _three.RepeatWrapping;
-        this.texture.wrapS = _three.RepeatWrapping;
-        this.texture.repeat.set(width / scale, height / scale);
-        this.texture.needsUpdate = true;
-      }
     }
   }, {
     key: "updatePlanes",
@@ -46575,16 +46855,16 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
       var wallMaterial = new _three.MeshBasicMaterial({
         color: color,
         side: _three.FrontSide,
-        map: this.texture,
+        // map: this.texture,
         transparent: true,
-        lightMap: this.lightMap,
+        // lightMap: this.lightMap,
         opacity: 1.0,
         wireframe: false
       });
       var fillerMaterial = new _three.MeshBasicMaterial({
         color: this.fillerColor,
         side: _three.DoubleSide,
-        map: this.texture,
+        // map: this.texture,
         transparent: true,
         opacity: 1.0,
         wireframe: false
@@ -46595,9 +46875,10 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
       if (this.edge.wall.start.getAttachedRooms().length < 2 || this.edge.wall.end.getAttachedRooms().length < 2) {
         this.planes.push(this.makeWall(exteriorStart, exteriorEnd, this.edge.exteriorTransform, this.edge.invExteriorTransform, fillerMaterial));
       } // interior plane
+      // this.planes.push(this.makeWall(interiorStart, interiorEnd, this.edge.interiorTransform, this.edge.invInteriorTransform, wallMaterial));
 
 
-      this.planes.push(this.makeWall(interiorStart, interiorEnd, this.edge.interiorTransform, this.edge.invInteriorTransform, wallMaterial)); // bottom
+      this.planes.push(this.makeWall(interiorStart, interiorEnd, this.edge.interiorTransform, this.edge.invInteriorTransform, this.__wallMaterial3D)); // bottom
       // put into basePlanes since this is always visible
 
       this.basePlanes.push(this.buildFillerUniformHeight(this.edge, 0, _three.BackSide, this.baseColor)); // if (this.edge.wall.start.getAttachedRooms().length < 2 || this.edge.wall.end.getAttachedRooms().length < 2) {
@@ -46739,7 +47020,7 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
 }(_three.EventDispatcher);
 
 exports.Edge3D = Edge3D;
-},{"three":"../node_modules/three/build/three.module.js","../core/utils.js":"scripts/core/utils.js","../core/events.js":"scripts/core/events.js"}],"scripts/viewer3d/floor3d.js":[function(require,module,exports) {
+},{"three":"../node_modules/three/build/three.module.js","../core/utils.js":"scripts/core/utils.js","../core/events.js":"scripts/core/events.js","../materials/Material3D.js":"scripts/materials/Material3D.js"}],"scripts/viewer3d/floor3d.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -46827,7 +47108,6 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
     key: "buildFloor",
     value: function buildFloor() {
       var textureSettings = this.room.getTexture(); // setup texture
-      //		var floorTexture = ImageUtils.loadTexture(textureSettings.url);
 
       var floorTexture = new _three.TextureLoader().load(textureSettings.url);
       floorTexture.wrapS = _three.RepeatWrapping;
@@ -46996,23 +47276,21 @@ var Lights3D = /*#__PURE__*/function (_EventDispatcher) {
     value: function init() {
       var light = new _three.HemisphereLight(0xffffff, 0x888888, 1.1);
       light.position.set(300, this.height, 500);
-      this.scene.add(light);
       this.dirLight = new _three.DirectionalLight(0xffffff, 0.5);
       this.dirLight.color.setHSL(1, 1, 0.1);
       this.ambLight = new _three.AmbientLight(0x404040); // soft white light
 
-      this.ambLight.intensity = 0.25;
+      this.ambLight.intensity = 1.25;
       this.dirLight.castShadow = true;
       this.dirLight.shadow.mapSize.width = 1024;
       this.dirLight.shadow.mapSize.height = 1024;
       this.dirLight.shadow.camera.far = this.height + this.tol;
       this.dirLight.shadow.bias = -0.0001;
-      this.dirLight.shadowDarkness = 0.2;
       this.dirLight.visible = true;
-      this.dirLight.shadowCameraVisible = false;
-      this.scene.add(this.dirLight);
-      this.scene.add(this.dirLight.target);
-      this.scene.add(this.ambLight);
+      this.scene.add(light); // this.scene.add(this.dirLight);
+      // this.scene.add(this.dirLight.target);
+      // this.scene.add(this.ambLight);
+
       this.floorplan.addEventListener(_events.EVENT_UPDATED, this.updatedroomsevent);
     }
   }, {
@@ -55254,12 +55532,14 @@ var DragRoomItemsControl3D = /*#__PURE__*/function (_EventDispatcher) {
 
   var _super = _createSuper(DragRoomItemsControl3D);
 
-  function DragRoomItemsControl3D(items, camera, domElement) {
+  function DragRoomItemsControl3D(walls, floors, items, camera, domElement) {
     var _this;
 
     _classCallCheck(this, DragRoomItemsControl3D);
 
     _this = _super.call(this);
+    _this.__walls = walls;
+    _this.__floors = floors;
     _this.__draggableItems = items;
     _this.__camera = camera;
     _this.__domElement = domElement;
@@ -55340,6 +55620,26 @@ var DragRoomItemsControl3D = /*#__PURE__*/function (_EventDispatcher) {
           item: this.__selected
         });
         this.__selected = null;
+      } else {
+        evt = evt.changedTouches !== undefined ? evt.changedTouches[0] : evt;
+
+        this.__raycaster.setFromCamera(this.__mouse, this.__camera);
+
+        var wallPlanesThatIntersect = this.__raycaster.intersectObjects(this.__walls, false);
+
+        var floorPlanesThatIntersect = this.__raycaster.intersectObjects(this.__floors, false);
+
+        if (wallPlanesThatIntersect.length) {
+          this.dispatchEvent({
+            type: _events.EVENT_WALL_CLICKED,
+            item: wallPlanesThatIntersect[0].object.edge
+          });
+        } else if (floorPlanesThatIntersect.length) {
+          this.dispatchEvent({
+            type: _events.EVENT_ROOM_CLICKED,
+            item: floorPlanesThatIntersect[0].object.room
+          });
+        }
       }
 
       this.__domElement.style.cursor = this.__hovered ? 'pointer' : 'auto';
@@ -55437,9 +55737,8 @@ var DragRoomItemsControl3D = /*#__PURE__*/function (_EventDispatcher) {
 
       this.__domElement.addEventListener('touchmove', this.__moveListenerEvent, false);
 
-      this.__domElement.addEventListener('mouseup', this.__releaseListenerEvent, false);
+      this.__domElement.addEventListener('mouseup', this.__releaseListenerEvent, false); // this.__domElement.addEventListener('mouseleave', this.__releaseListenerEvent, false);//Not necessary
 
-      this.__domElement.addEventListener('mouseleave', this.__releaseListenerEvent, false);
 
       this.__domElement.addEventListener('touchend', this.__releaseListenerEvent, false);
     }
@@ -55454,9 +55753,8 @@ var DragRoomItemsControl3D = /*#__PURE__*/function (_EventDispatcher) {
 
       this.__domElement.removeEventListener('touchmove', this.__moveListenerEvent, false);
 
-      this.__domElement.removeEventListener('mouseup', this.__releaseListenerEvent, false);
+      this.__domElement.removeEventListener('mouseup', this.__releaseListenerEvent, false); // this.__domElement.removeEventListener('mouseleave', this.__releaseListenerEvent, false);//Not necessary
 
-      this.__domElement.removeEventListener('mouseleave', this.__releaseListenerEvent, false);
 
       this.__domElement.removeEventListener('touchend', this.__releaseListenerEvent, false);
 
@@ -55584,6 +55882,8 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
     _this.floors3d = [];
     _this.__currentItemSelected = null;
     _this.needsUpdate = true;
+    _this.__wallSelectedEvent = _this.__wallSelected.bind(_assertThisInitialized(_this));
+    _this.__roomSelectedEvent = _this.__roomSelected.bind(_assertThisInitialized(_this));
     _this.__roomItemSelectedEvent = _this.__roomItemSelected.bind(_assertThisInitialized(_this));
     _this.__roomItemUnselectedEvent = _this.__roomItemUnselected.bind(_assertThisInitialized(_this));
     _this.__roomItemDraggedEvent = _this.__roomItemDragged.bind(_assertThisInitialized(_this));
@@ -55604,7 +55904,7 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
       scope.domElement.appendChild(scope.renderer.domElement);
       scope.lights = new _lights3d.Lights3D(this, scope.floorplan); // scope.dragcontrols = new DragControls(this.physicalRoomItems, scope.camera, scope.renderer.domElement);
 
-      scope.dragcontrols = new _DragRoomItemsControl3D.DragRoomItemsControl3D(this.physicalRoomItems, scope.camera, scope.renderer.domElement);
+      scope.dragcontrols = new _DragRoomItemsControl3D.DragRoomItemsControl3D(this.floorplan.wallPlanesForIntersection, this.floorplan.floorPlanesForIntersection, this.physicalRoomItems, scope.camera, scope.renderer.domElement);
       scope.controls = new _OrbitControls.OrbitControls(scope.camera, scope.domElement); // scope.controls.autoRotate = this.options['spin'];
 
       scope.controls.enableDamping = false;
@@ -55651,9 +55951,21 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
       scope.dragcontrols.addEventListener(_events.EVENT_ITEM_SELECTED, this.__roomItemSelectedEvent);
       scope.dragcontrols.addEventListener(_events.EVENT_ITEM_MOVE, this.__roomItemDraggedEvent);
       scope.dragcontrols.addEventListener(_events.EVENT_ITEM_MOVE_FINISH, this.__roomItemDragFinishEvent);
-      scope.dragcontrols.addEventListener(_events.EVENT_NO_ITEM_SELECTED, this.__roomItemUnselectedEvent); // scope.controls.enabled = false;//To test the drag controls
+      scope.dragcontrols.addEventListener(_events.EVENT_NO_ITEM_SELECTED, this.__roomItemUnselectedEvent);
+      scope.dragcontrols.addEventListener(_events.EVENT_WALL_CLICKED, this.__wallSelectedEvent);
+      scope.dragcontrols.addEventListener(_events.EVENT_ROOM_CLICKED, this.__roomSelectedEvent); // scope.controls.enabled = false;//To test the drag controls
 
       animate();
+    }
+  }, {
+    key: "__wallSelected",
+    value: function __wallSelected(evt) {
+      this.dispatchEvent(evt);
+    }
+  }, {
+    key: "__roomSelected",
+    value: function __roomSelected(evt) {
+      this.dispatchEvent(evt);
     }
   }, {
     key: "__roomItemSelected",
@@ -55665,6 +55977,7 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
       this.__currentItemSelected = evt.item;
       this.__currentItemSelected.selected = true;
       this.needsUpdate = true;
+      this.dispatchEvent(evt);
     }
   }, {
     key: "__roomItemDragged",
@@ -55687,11 +56000,12 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
         this.__currentItemSelected = null;
         this.needsUpdate = true;
       }
+
+      this.dispatchEvent(evt);
     }
   }, {
     key: "addRoomItems",
     value: function addRoomItems(evt) {
-      console.log('ADD ROOM ITEMS :: ', this.model.roomItems.length);
       var i = 0;
 
       for (; i < this.__physicalRoomItems.length; i++) {
@@ -55802,6 +56116,16 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
       scope.renderer.render(scope, scope.camera);
       scope.lastRender = Date.now();
       this.needsUpdate = false;
+    }
+  }, {
+    key: "addRoomplanListener",
+    value: function addRoomplanListener(type, listener) {
+      this.addEventListener(type, listener);
+    }
+  }, {
+    key: "removeRoomplanListener",
+    value: function removeRoomplanListener(type, listener) {
+      this.removeEventListener(type, listener);
     }
   }, {
     key: "physicalRoomItems",
@@ -109225,6 +109549,11 @@ var CornerView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
 
       this.__corner.removeAll();
     }
+  }, {
+    key: "corner",
+    get: function get() {
+      return this.__corner;
+    }
   }]);
 
   return CornerView2D;
@@ -109538,8 +109867,9 @@ var WallView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
 
       var points = this.__getPolygonCoordinates();
 
-      this.clear();
-      this.beginFill(color, alpha);
+      this.clear(); // this.beginFill(color, alpha);
+
+      this.beginFill(color, 0.1);
 
       for (var i = 0; i < points.length; i++) {
         var pt = points[i];
@@ -109555,6 +109885,9 @@ var WallView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
 
       var cornerLine = this.__getCornerCoordinates();
 
+      this.lineStyle(_dimensioning.Dimensioning.cmToPixel(this.__wall.thickness), color);
+      this.moveTo(cornerLine[0].x, cornerLine[0].y);
+      this.lineTo(cornerLine[1].x, cornerLine[1].y);
       this.lineStyle(1, 0xFFFFFF);
       this.moveTo(cornerLine[0].x, cornerLine[0].y);
       this.lineTo(cornerLine[1].x, cornerLine[1].y);
@@ -109669,6 +110002,11 @@ var WallView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
       }
 
       this.__info.alpha = 0.15;
+    }
+  }, {
+    key: "wall",
+    get: function get() {
+      return this.__wall;
     }
   }, {
     key: "selected",
@@ -109855,6 +110193,11 @@ var RoomView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
 
       _get(_getPrototypeOf(RoomView2D.prototype), "remove", this).call(this);
     }
+  }, {
+    key: "room",
+    get: function get() {
+      return this.__room;
+    }
   }]);
 
   return RoomView2D;
@@ -110002,9 +110345,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
       width: 512,
       height: 512
     });
-
-    var scope = _assertThisInitialized(_this2);
-
+    _this2.__eventDispatcher = new _three.EventDispatcher();
     var opts = {
       'corner-radius': 20,
       pannable: true,
@@ -110262,11 +110603,12 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
       }
     }
   }, {
-    key: "__getSnappedCoordinateCMS",
-    value: function __getSnappedCoordinateCMS(cms) {}
-  }, {
     key: "__selectionMonitor",
     value: function __selectionMonitor(evt) {
+      this.__eventDispatcher.dispatchEvent({
+        type: _events.EVENT_NOTHING_2D_SELECTED
+      });
+
       for (var i = 0; i < this.__entities2D.length; i++) {
         var entity = this.__entities2D[i];
 
@@ -110277,6 +110619,25 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
         }
 
         entity.selected = false;
+      }
+
+      if (evt.item) {
+        if (evt.item instanceof _WallView2D.WallView2D) {
+          this.__eventDispatcher.dispatchEvent({
+            type: _events.EVENT_WALL_2D_CLICKED,
+            item: evt.item.wall
+          });
+        } else if (evt.item instanceof _CornerView2D.CornerView2D) {
+          this.__eventDispatcher.dispatchEvent({
+            type: _events.EVENT_CORNER_2D_CLICKED,
+            item: evt.item.corner
+          });
+        } else if (evt.item instanceof _RoomView2D.RoomView2D) {
+          this.__eventDispatcher.dispatchEvent({
+            type: _events.EVENT_ROOM_2D_CLICKED,
+            item: evt.item.room
+          });
+        }
       }
     }
   }, {
@@ -110377,6 +110738,16 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
       this.renderer.render(this.stage);
     }
   }, {
+    key: "addFloorplanListener",
+    value: function addFloorplanListener(type, listener) {
+      this.__eventDispatcher.addEventListener(type, listener);
+    }
+  }, {
+    key: "removeFloorplanListener",
+    value: function removeFloorplanListener(type, listener) {
+      this.__eventDispatcher.removeEventListener(type, listener);
+    }
+  }, {
     key: "dispose",
     value: function dispose() {
       this.__floorplanContainer.off('zoomed', this.__zoomedEvent);
@@ -110401,139 +110772,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
 }(_pixi.Application);
 
 exports.Viewer2D = Viewer2D;
-},{"pixi.js":"../node_modules/pixi.js/lib/pixi.es.js","pixi-viewport":"../node_modules/pixi-viewport/dist/viewport.es.js","three":"../node_modules/three/build/three.module.js","../core/events":"scripts/core/events.js","./Grid2d":"scripts/viewer2d/Grid2d.js","./CornerView2D":"scripts/viewer2d/CornerView2D.js","./WallView2D":"scripts/viewer2d/WallView2D.js","./RoomView2D":"scripts/viewer2d/RoomView2D.js","../core/dimensioning":"scripts/core/dimensioning.js","./KeyboardManager2D":"scripts/viewer2d/KeyboardManager2D.js","../core/configuration":"scripts/core/configuration.js","../../DeviceInfo":"DeviceInfo.js"}],"scripts/blueprint.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.BlueprintJS = void 0;
-
-var _configuration = require("./core/configuration");
-
-var _constants = require("./core/constants");
-
-var _model = require("./model/model");
-
-var _Viewer3d = require("./viewer3d/Viewer3d");
-
-var _Viewer2D = require("./viewer2d/Viewer2D");
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-///** BlueprintJS core application. */
-var BlueprintJS = /*#__PURE__*/function () {
-  /**
-   * Creates an instance of BlueprintJS. This is the entry point for the application
-   *
-   * @param {Object} - options The initialization options.
-   * @param {string} options.floorplannerElement - Id of the html element to use as canvas. Needs to exist in the html
-   * @param {string} options.threeElement - Id of the html element to use as canvas. Needs to exist in the html and should be #idofhtmlelement
-   * @param {string} options.threeCanvasElement - Id of the html element to use as threejs-canvas. This is created automatically
-   * @param {string} options.textureDir - path to texture directory. No effect
-   * @param {boolean} options.widget - If widget mode then disable the controller from interactions
-   * @example
-   * let blueprint3d = new BP3DJS.BlueprintJS(opts);
-   */
-  function BlueprintJS(options) {
-    _classCallCheck(this, BlueprintJS);
-
-    _configuration.Configuration.setValue(_configuration.configDimUnit, _constants.dimCentiMeter);
-    /**
-     * @property {Object} options
-     * @type {Object}
-     **/
-
-
-    this.options = options;
-    /**
-     * @property {Model} model
-     * @type {Model}
-     **/
-
-    this.model = new _model.Model(options.textureDir);
-    /**
-     * @property {Main} three
-     * @type {Main}
-     **/
-    // this.three = new Main(this.model, options.threeElement, options.threeCanvasElement, {});
-
-    /**
-     * @property {Main} three
-     * @type {Main}
-     **/
-
-    this.three = new _Viewer3d.Viewer3D(this.model, options.viewer3d, this.options);
-
-    if (!options.widget) {
-      /**
-       * @property {Floorplanner2D} floorplanner
-       * @type {Floorplanner2D}
-       **/
-      // this.floorplanner = new Floorplanner2D(options.floorplannerElement, this.model.floorplan);
-      this.floorplanner = new _Viewer2D.Viewer2D(options.viewer2d.id, this.model.floorplan, this.options.viewer2d.viewer2dOptions);
-    }
-
-    this.view_now = 3;
-    this.switchView();
-  }
-
-  _createClass(BlueprintJS, [{
-    key: "switchView",
-    value: function switchView() {
-      if (this.options.widget) {
-        return;
-      }
-
-      if (this.view_now === 3 && !this.options.widget) {
-        this.view_now = 2;
-        document.getElementById(this.options.viewer2d.id).style.visibility = "visible";
-        document.getElementById(this.options.viewer3d).style.visibility = "hidden";
-        this.three.enabled = false;
-      } else if (this.view_now === 2 && !this.options.widget) {
-        this.view_now = 3;
-        document.getElementById(this.options.viewer2d.id).style.visibility = "hidden";
-        document.getElementById(this.options.viewer3d).style.visibility = "visible";
-        this.three.enabled = true;
-      }
-    }
-  }, {
-    key: "setViewer2DModeToDraw",
-    value: function setViewer2DModeToDraw(mode) {
-      if (this.options.widget) {
-        return;
-      }
-
-      this.floorplanner.switchMode(_Viewer2D.floorplannerModes.DRAW);
-    }
-  }, {
-    key: "setViewer2DModeToMove",
-    value: function setViewer2DModeToMove(mode) {
-      if (this.options.widget) {
-        return;
-      }
-
-      this.floorplanner.switchMode(_Viewer2D.floorplannerModes.MOVE);
-    }
-  }, {
-    key: "currentView",
-    get: function get() {
-      return this.view_now;
-    }
-  }]);
-
-  return BlueprintJS;
-}();
-
-exports.BlueprintJS = BlueprintJS;
-},{"./core/configuration":"scripts/core/configuration.js","./core/constants":"scripts/core/constants.js","./model/model":"scripts/model/model.js","./viewer3d/Viewer3d":"scripts/viewer3d/Viewer3d.js","./viewer2d/Viewer2D":"scripts/viewer2d/Viewer2D.js"}],"../node_modules/quicksettings/quicksettings.min.js":[function(require,module,exports) {
-var define;
-!function(){function a(a,b){var d=c("div",null,"qs_label",b);return d.innerHTML=a,d}function b(a,b,d,e){var f=c("input",b,d,e);return f.type=a,f}function c(a,b,c,d){var e=document.createElement(a);if(e)return e.id=b,c&&(e.className=c),d&&d.appendChild(e),e}function d(){return navigator.userAgent.indexOf("rv:11")!=-1||navigator.userAgent.indexOf("MSIE")!=-1}function e(){var a=navigator.userAgent.toLowerCase();return!(a.indexOf("chrome")>-1||a.indexOf("firefox")>-1||a.indexOf("epiphany")>-1)&&a.indexOf("safari/")>-1}function f(){var a=navigator.userAgent.toLowerCase();return a.indexOf("edge")>-1}function g(){var a=document.createElement("style");a.innerText=i,document.head.appendChild(a),h=!0}var h=!1,i=".qs_main{background-color:#dddddd;text-align:left;position:absolute;width:200px;font:12px sans-serif;box-shadow:5px 5px 8px rgba(0,0,0,0.35);user-select:none;-webkit-user-select:none;color:#000000;border:none}.qs_content{background-color:#cccccc;overflow-y:auto}.qs_title_bar{background-color:#eeeeee;user-select:none;-webkit-user-select:none;cursor:pointer;padding:5px;font-weight:bold;border:none;color:#000000}.qs_container{margin:5px;padding:5px;background-color:#eeeeee;border:none;position:relative}.qs_container_selected{border:none;background-color:#ffffff}.qs_range{-webkit-appearance:none;-moz-appearance:none;width:100%;height:17px;padding:0;margin:0;background-color:transparent;border:none;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}.qs_range:focus{outline:none;border:none}.qs_range::-webkit-slider-runnable-track{width:100%;height:15px;cursor:pointer;background:#cccccc;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0}.qs_range:focus::-webkit-slider-runnable-track{background:#cccccc}.qs_range::-webkit-slider-thumb{-webkit-appearance:none;height:15px;width:15px;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0;background:#999999;cursor:pointer;margin-top:0}.qs_range::-moz-range-track{width:100%;height:15px;cursor:pointer;background:#cccccc;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0}.qs_range::-moz-range-thumb{height:15px;width:15px;border:none;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0;background:#999999;cursor:pointer}.qs_range::-ms-track{width:100%;height:15px;cursor:pointer;visibility:hidden;background:transparent}.qs_range::-ms-thumb{height:15px;width:15px;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0;background:#999999;cursor:pointer;border:none}.qs_range::-ms-fill-lower{background:#cccccc;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0}.qs_range:focus::-ms-fill-lower{background:#cccccc}.qs_range::-ms-fill-upper{background:#cccccc;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0}.qs_range:focus::-ms-fill-upper{background:#cccccc}.qs_button{background-color:#f6f6f6;color:#000000;height:30px;border:1px solid #aaaaaa;font:12px sans-serif}.qs_button:active{background-color:#ffffff;border:1px solid #aaaaaa}.qs_button:focus{border:1px solid #aaaaaa;outline:none}.qs_checkbox{cursor:pointer}.qs_checkbox input{position:absolute;left:-99999px}.qs_checkbox span{height:16px;width:100%;display:block;text-indent:20px;background:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAALklEQVQ4T2OcOXPmfwYKACPIgLS0NLKMmDVrFsOoAaNhMJoOGBioFwZkZUWoJgApdFaxjUM1YwAAAABJRU5ErkJggg==') no-repeat}.qs_checkbox input:checked+span{background:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAvElEQVQ4T63Tyw2EIBAA0OFKBxBL40wDRovAUACcKc1IB1zZDAkG18GYZTmSmafzgTnnMgwchoDWGlJKheGcP3JtnPceCqCUAmttSZznuYtgchsXQrgC+77DNE0kUpPbmBOoJaBOIVQylnqWgAAeKhDve/AN+EaklJBzhhgjWRoJVGTbNjiOowAIret6a+4jYIwpX8aDwLIs74C2D0IIYIyVP6Gm898m9kbVm85ljHUTf16k4VUefkwDrxk+zoUEwCt0GbUAAAAASUVORK5CYII=') no-repeat}.qs_checkbox_label{position:absolute;top:7px;left:30px}.qs_label{margin-bottom:3px;user-select:none;-webkit-user-select:none;cursor:default;font:12px sans-serif}.qs_text_input{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;width:100%;padding:0 0 0 5px;height:24px;border:1px inset #ffffff;background-color:#ffffff;color:#000000;font-size:12px}.qs_text_input:focus{outline:none;background:#ffffff;border:1px inset #ffffff}.qs_select{background:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAp0lEQVRIS+2SsQ3FIAwF7RVYhA5mgQFhFuhYhJKWL0eKxI8SGylKZ0p4+OBsHGNM+HChAiS7qkgyBKrovaLeOxhjbgtxZ+cFtgelFMg5QwgBvPd/EO5sDbKAlBLUWo/8CjmL075zDmKMj6rEKbpCqBL9aqc4ZUQAhVbInBMQUXz5Vg/WfxOktXZsWWtZLds9uIqlqaH1NFV3jdhSJA47E1CAaE8ViYp+wGiWMZ/T+cgAAAAASUVORK5CYII=') no-repeat right #f6f6f6;-webkit-appearance:none;-moz-appearance:none;appearance:none;color:#000000;width:100%;height:24px;border:1px solid #aaaaaa;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0;padding:0 5px;-moz-outline:none;font-size:14px}.qs_select option{font-size:14px}.qs_select::-ms-expand{display:none}.qs_select:focus{outline:none}.qs_number{height:24px}.qs_image{width:100%}.qs_progress{width:100%;height:15px;background-color:#cccccc;border:none;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}.qs_progress_value{height:100%;background-color:#999999}.qs_textarea{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;resize:vertical;width:100%;padding:3px 5px;border:1px inset #ffffff;background-color:#ffffff;color:#000000;font-size:12px}.qs_textarea:focus{outline:none;background:#ffffff;border:1px inset #ffffff}.qs_color{position:absolute;left:-999999px}.qs_color_label{width:100%;height:20px;display:block;border:1px solid #aaaaaa;cursor:pointer;padding:0 0 0 5px;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}.qs_file_chooser{position:absolute;left:-999999px}.qs_file_chooser_label{background-color:#f6f6f6;color:#000000;height:30px;border:1px solid #aaaaaa;font:12px sans-serif;width:100%;display:block;cursor:pointer;padding:7px;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",j={_version:"2.1",_topZ:1,_panel:null,_titleBar:null,_content:null,_startX:0,_startY:0,_hidden:!1,_collapsed:!1,_controls:null,_keyCode:-1,_draggable:!0,_collapsible:!0,_globalChangeHandler:null,useExtStyleSheet:function(){h=!0},create:function(a,b,c,d){var e=Object.create(this);return e._init(a,b,c,d),e},destroy:function(){this._panel.parentElement&&this._panel.parentElement.removeChild(this._panel);for(var a in this)this[a]=null},_init:function(a,b,c,d){h||g(),this._bindHandlers(),this._createPanel(a,b,d),this._createTitleBar(c||"QuickSettings"),this._createContent()},_bindHandlers:function(){this._startDrag=this._startDrag.bind(this),this._drag=this._drag.bind(this),this._endDrag=this._endDrag.bind(this),this._doubleClickTitle=this._doubleClickTitle.bind(this),this._onKeyUp=this._onKeyUp.bind(this)},getValuesAsJSON:function(a){var b={};for(var c in this._controls)this._controls[c].getValue&&(b[c]=this._controls[c].getValue());return a&&(b=JSON.stringify(b)),b},setValuesFromJSON:function(a){"string"==typeof a&&(a=JSON.parse(a));for(var b in a)this._controls[b].setValue&&this._controls[b].setValue(a[b]);return this},saveInLocalStorage:function(a){return this._localStorageName=a,this._readFromLocalStorage(a),this},clearLocalStorage:function(a){return localStorage.removeItem(a),this},_saveInLocalStorage:function(a){localStorage.setItem(a,this.getValuesAsJSON(!0))},_readFromLocalStorage:function(a){var b=localStorage.getItem(a);b&&this.setValuesFromJSON(b)},_createPanel:function(a,b,d){this._panel=c("div",null,"qs_main",d||document.body),this._panel.style.zIndex=++j._topZ,this.setPosition(a||0,b||0),this._controls={}},_createTitleBar:function(a){this._titleBar=c("div",null,"qs_title_bar",this._panel),this._titleBar.textContent=a,this._titleBar.addEventListener("mousedown",this._startDrag),this._titleBar.addEventListener("dblclick",this._doubleClickTitle)},_createContent:function(){this._content=c("div",null,"qs_content",this._panel)},_createContainer:function(){var a=c("div",null,"qs_container");return a.addEventListener("focus",function(){this.className+=" qs_container_selected"},!0),a.addEventListener("blur",function(){var a=this.className.indexOf(" qs_container_selected");a>-1&&(this.className=this.className.substr(0,a))},!0),this._content.appendChild(a),a},setPosition:function(a,b){return this._panel.style.left=a+"px",this._panel.style.top=Math.max(b,0)+"px",this},setSize:function(a,b){return this._panel.style.width=a+"px",this._content.style.width=a+"px",this._content.style.height=b-this._titleBar.offsetHeight+"px",this},setWidth:function(a){return this._panel.style.width=a+"px",this._content.style.width=a+"px",this},setHeight:function(a){return this._content.style.height=a-this._titleBar.offsetHeight+"px",this},setDraggable:function(a){return this._draggable=a,this._draggable||this._collapsible?this._titleBar.style.cursor="pointer":this._titleBar.style.cursor="default",this},_startDrag:function(a){this._draggable&&(this._panel.style.zIndex=++j._topZ,document.addEventListener("mousemove",this._drag),document.addEventListener("mouseup",this._endDrag),this._startX=a.clientX,this._startY=a.clientY),a.preventDefault()},_drag:function(a){var b=parseInt(this._panel.style.left),c=parseInt(this._panel.style.top),d=a.clientX,e=a.clientY;this.setPosition(b+d-this._startX,c+e-this._startY),this._startX=d,this._startY=e,a.preventDefault()},_endDrag:function(a){document.removeEventListener("mousemove",this._drag),document.removeEventListener("mouseup",this._endDrag),a.preventDefault()},setGlobalChangeHandler:function(a){return this._globalChangeHandler=a,this},_callGCH:function(){this._localStorageName&&this._saveInLocalStorage(this._localStorageName),this._globalChangeHandler&&this._globalChangeHandler()},hide:function(){return this._panel.style.visibility="hidden",this._hidden=!0,this},show:function(){return this._panel.style.visibility="visible",this._panel.style.zIndex=++j._topZ,this._hidden=!1,this},toggleVisibility:function(){return this._hidden?this.show():this.hide(),this},setCollapsible:function(a){return this._collapsible=a,this._draggable||this._collapsible?this._titleBar.style.cursor="pointer":this._titleBar.style.cursor="default",this},collapse:function(){return this._panel.removeChild(this._content),this._collapsed=!0,this},expand:function(){return this._panel.appendChild(this._content),this._collapsed=!1,this},toggleCollapsed:function(){return this._collapsed?this.expand():this.collapse(),this},setKey:function(a){return this._keyCode=a.toUpperCase().charCodeAt(0),document.body.addEventListener("keyup",this.onKeyUp),this},_onKeyUp:function(a){a.keyCode===this._keyCode&&this.toggleVisibility()},_doubleClickTitle:function(){this._collapsible&&this.toggleCollapsed()},removeControl:function(a){if(this._controls[a])var b=this._controls[a].container;return b&&b.parentElement&&b.parentElement.removeChild(b),this._controls[a]=null,this},enableControl:function(a){return this._controls[a]&&(this._controls[a].control.disabled=!1),this},disableControl:function(a){return this._controls[a]&&(this._controls[a].control.disabled=!0),this},hideControl:function(a){return this._controls[a]&&(this._controls[a].container.style.display="none"),this},showControl:function(a){return this._controls[a]&&(this._controls[a].container.style.display="block"),this},overrideStyle:function(a,b,c){return this._controls[a]&&(this._controls[a].control.style[b]=c),this},hideTitle:function(a){var b=this._controls[a].label;return b&&(b.style.display="none"),this},showTitle:function(a){var b=this._controls[a].label;return b&&(b.style.display="block"),this},hideAllTitles:function(){for(var a in this._controls){var b=this._controls[a].label;b&&(b.style.display="none")}return this},showAllTitles:function(){for(var a in this._controls){var b=this._controls[a].label;b&&(b.style.display="block")}return this},getValue:function(a){return this._controls[a].getValue()},setValue:function(a,b){return this._controls[a].setValue(b),this._callGCH(),this},addBoolean:function(a,d,e){var f=this._createContainer(),g=c("label",null,"qs_checkbox_label",f);g.textContent=a,g.setAttribute("for",a);var h=c("label",null,"qs_checkbox",f);h.setAttribute("for",a);var i=b("checkbox",a,null,h);i.checked=d;c("span",null,null,h);this._controls[a]={container:f,control:i,getValue:function(){return this.control.checked},setValue:function(a){this.control.checked=a,e&&e(a)}};var j=this;return i.addEventListener("change",function(){e&&e(i.checked),j._callGCH()}),this},bindBoolean:function(a,b,c){return this.addBoolean(a,b,function(b){c[a]=b})},addButton:function(a,c){var d=this._createContainer(),e=b("button",a,"qs_button",d);e.value=a,this._controls[a]={container:d,control:e};var f=this;return e.addEventListener("click",function(){c&&c(e),f._callGCH()}),this},addColor:function(g,h,i){if(e()||f()||d())return this.addText(g,h,i);var j=this._createContainer(),k=a("<b>"+g+":</b> "+h,j),l=b("color",g,"qs_color",j);l.value=h||"#ff0000";var m=c("label",null,"qs_color_label",j);m.setAttribute("for",g),m.style.backgroundColor=l.value,this._controls[g]={container:j,control:l,colorLabel:m,label:k,title:g,getValue:function(){return this.control.value},setValue:function(a){this.control.value=a,this.colorLabel.style.backgroundColor=l.value,this.label.innerHTML="<b>"+this.title+":</b> "+this.control.value,i&&i(a)}};var n=this;return l.addEventListener("input",function(){k.innerHTML="<b>"+g+":</b> "+l.value,m.style.backgroundColor=l.value,i&&i(l.value),n._callGCH()}),this},bindColor:function(a,b,c){return this.addColor(a,b,function(b){c[a]=b})},addDate:function(c,e,f){var g;if(e instanceof Date){var h=e.getFullYear(),i=e.getMonth()+1;i<10&&(i="0"+i);var j=e.getDate();g=h+"-"+i+"-"+j}else g=e;if(d())return this.addText(c,g,f);var k=this._createContainer(),l=a("<b>"+c+"</b>",k),m=b("date",c,"qs_text_input",k);m.value=g||"",this._controls[c]={container:k,control:m,label:l,getValue:function(){return this.control.value},setValue:function(a){var b;if(a instanceof Date){var c=a.getFullYear(),d=a.getMonth()+1;d<10&&(d="0"+d);var e=a.getDate();e<10&&(e="0"+e),b=c+"-"+d+"-"+e}else b=a;this.control.value=b||"",f&&f(b)}};var n=this;return m.addEventListener("input",function(){f&&f(m.value),n._callGCH()}),this},bindDate:function(a,b,c){return this.addDate(a,b,function(b){c[a]=b})},addDropDown:function(b,d,e){for(var f=this._createContainer(),g=a("<b>"+b+"</b>",f),h=c("select",null,"qs_select",f),i=0;i<d.length;i++){var j=c("option");j.label=d[i],j.innerText=d[i],h.add(j)}var k=this;return h.addEventListener("change",function(){var a=h.selectedIndex,b=h.options;e&&e({index:a,value:b[a].label}),k._callGCH()}),this._controls[b]={container:f,control:h,label:g,getValue:function(){var a=this.control.selectedIndex;return{index:a,value:this.control.options[a].label}},setValue:function(a){var b;b=null!=a.index?a.index:a;var c=this.control.options;this.control.selectedIndex=b,e&&e({index:b,value:c[b].label})}},this},bindDropDown:function(a,b,c){return this.addDropDown(a,b,function(b){c[a]=b.value})},addElement:function(b,c){var d=this._createContainer(),e=a("<b>"+b+"</b>",d);return d.appendChild(c),this._controls[b]={container:d,label:e},this},addFileChooser:function(d,e,f,g){var h=this._createContainer(),i=a("<b>"+d+"</b>",h),j=b("file",d,"qs_file_chooser",h);f&&(j.accept=f);var k=c("label",null,"qs_file_chooser_label",h);k.setAttribute("for",d),k.textContent=e||"Choose a file...",this._controls[d]={container:h,control:j,label:i,getValue:function(){return this.control.files[0]}};var l=this;return j.addEventListener("change",function(){j.files&&j.files.length&&(k.textContent=j.files[0].name,g&&g(j.files[0]),l._callGCH())}),this},addHTML:function(b,d){var e=this._createContainer(),f=a("<b>"+b+":</b> ",e),g=c("div",null,null,e);return g.innerHTML=d,this._controls[b]={label:f,control:g,getValue:function(){return this.control.innerHTML},setValue:function(a){this.control.innerHTML=a}},this},addImage:function(b,d){var e=this._createContainer(),f=a("<b>"+b+"</b>",e);return img=c("img",null,"qs_image",e),img.src=d,this._controls[b]={container:e,control:img,label:f,getValue:function(){return this.control.src},setValue:function(a){this.control.src=a}},this},addRange:function(a,b,c,d,e,f){return this._addNumber("range",a,b,c,d,e,f)},addNumber:function(a,b,c,d,e,f){return this._addNumber("number",a,b,c,d,e,f)},_addNumber:function(c,e,f,g,h,i,j){var k=this._createContainer(),l=a("",k),m="range"===c?"qs_range":"qs_text_input qs_number",n=b(c,e,m,k);n.min=f||0,n.max=g||100,n.step=i||1,n.value=h||0,l.innerHTML="<b>"+e+":</b> "+n.value,this._controls[e]={container:k,control:n,label:l,title:e,callback:j,getValue:function(){return parseFloat(this.control.value)},setValue:function(a){this.control.value=a,this.label.innerHTML="<b>"+this.title+":</b> "+this.control.value,j&&j(parseFloat(a))}};var o="input";"range"===c&&d()&&(o="change");var p=this;return n.addEventListener(o,function(){l.innerHTML="<b>"+e+":</b> "+n.value,j&&j(parseFloat(n.value)),p._callGCH()}),this},bindRange:function(a,b,c,d,e,f){return this.addRange(a,b,c,d,e,function(b){f[a]=b})},bindNumber:function(a,b,c,d,e,f){return this.addNumber(a,b,c,d,e,function(b){f[a]=b})},setRangeParameters:function(a,b,c,d){return this.setNumberParameters(a,b,c,d)},setNumberParameters:function(a,b,c,d){var e=this._controls[a],f=e.control.value;return e.control.min=b,e.control.max=c,e.control.step=d,e.control.value!==f&&e.callback&&e.callback(e.control.value),this},addPassword:function(a,b,c){return this._addText("password",a,b,c)},bindPassword:function(a,b,c){return this.addPassword(a,b,function(b){c[a]=b})},addProgressBar:function(b,d,e,f){var g=this._createContainer(),h=a("",g),i=c("div",null,"qs_progress",g),j=c("div",null,"qs_progress_value",i);return j.style.width=e/d*100+"%","numbers"===f?h.innerHTML="<b>"+b+":</b> "+e+" / "+d:"percent"===f?h.innerHTML="<b>"+b+":</b> "+Math.round(e/d*100)+"%":h.innerHTML="<b>"+b+"</b>",this._controls[b]={container:g,control:i,valueDiv:j,valueDisplay:f,label:h,value:e,max:d,title:b,getValue:function(){return this.value},setValue:function(a){this.value=Math.max(0,Math.min(a,this.max)),this.valueDiv.style.width=this.value/this.max*100+"%","numbers"===this.valueDisplay?this.label.innerHTML="<b>"+this.title+":</b> "+this.value+" / "+this.max:"percent"===this.valueDisplay&&(this.label.innerHTML="<b>"+this.title+":</b> "+Math.round(this.value/this.max*100)+"%")}},this},setProgressMax:function(a,b){var c=this._controls[a];return c.max=b,c.value=Math.min(c.value,c.max),c.valueDiv.style.width=c.value/c.max*100+"%","numbers"===c.valueDisplay?c.label.innerHTML="<b>"+c.title+":</b> "+c.value+" / "+c.max:"percent"===c.valueDisplay?c.label.innerHTML="<b>"+c.title+":</b> "+Math.round(c.value/c.max*100)+"%":c.label.innerHTML="<b>"+c.title+"</b>",this},addText:function(a,b,c){return this._addText("text",a,b,c)},_addText:function(d,e,f,g){var h,i=this._createContainer(),j=a("<b>"+e+"</b>",i);"textarea"===d?(h=c("textarea",e,"qs_textarea",i),h.rows=5):h=b(d,e,"qs_text_input",i),h.value=f||"",this._controls[e]={container:i,control:h,label:j,getValue:function(){return this.control.value},setValue:function(a){this.control.value=a,g&&g(a)}};var k=this;return h.addEventListener("input",function(){g&&g(h.value),k._callGCH()}),this},bindText:function(a,b,c){return this.addText(a,b,function(b){c[a]=b})},addTextArea:function(a,b,c){return this._addText("textarea",a,b,c)},setTextAreaRows:function(a,b){return this._controls[a].control.rows=b,this},bindTextArea:function(a,b,c){return this.addTextArea(a,b,function(b){c[a]=b})},addTime:function(c,e,f){var g;if(e instanceof Date){var h=e.getHours();h<10&&(h="0"+h);var i=e.getMinutes();i<10&&(i="0"+i);var j=e.getSeconds();j<10&&(j="0"+j),g=h+":"+i+":"+j}else g=e;if(d())return this.addText(c,g,f);var k=this._createContainer(),l=a("<b>"+c+"</b>",k),m=b("time",c,"qs_text_input",k);m.value=g||"",this._controls[c]={container:k,control:m,label:l,getValue:function(){return this.control.value},setValue:function(a){var b;if(a instanceof Date){var c=a.getHours();c<10&&(c="0"+c);var d=a.getMinutes();d<10&&(d="0"+d);var e=a.getSeconds();e<10&&(e="0"+e),b=c+":"+d+":"+e}else b=a;this.control.value=b||"",f&&f(b)}};var n=this;return m.addEventListener("input",function(){f&&f(m.value),n._callGCH()}),this},bindTime:function(a,b,c){return this.addTime(a,b,function(b){c[a]=b})}};"object"==typeof exports&&"object"==typeof module?module.exports=j:"function"==typeof define&&define.amd?define(j):window.QuickSettings=j}();
-},{}],"scripts/helpers/ConfigurationHelper.js":[function(require,module,exports) {
+},{"pixi.js":"../node_modules/pixi.js/lib/pixi.es.js","pixi-viewport":"../node_modules/pixi-viewport/dist/viewport.es.js","three":"../node_modules/three/build/three.module.js","../core/events":"scripts/core/events.js","./Grid2d":"scripts/viewer2d/Grid2d.js","./CornerView2D":"scripts/viewer2d/CornerView2D.js","./WallView2D":"scripts/viewer2d/WallView2D.js","./RoomView2D":"scripts/viewer2d/RoomView2D.js","../core/dimensioning":"scripts/core/dimensioning.js","./KeyboardManager2D":"scripts/viewer2d/KeyboardManager2D.js","../core/configuration":"scripts/core/configuration.js","../../DeviceInfo":"DeviceInfo.js"}],"scripts/helpers/ConfigurationHelper.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -110650,7 +110889,492 @@ var ConfigurationHelper = /*#__PURE__*/function () {
 }();
 
 exports.ConfigurationHelper = ConfigurationHelper;
-},{"../core/configuration":"scripts/core/configuration.js"}],"index.js":[function(require,module,exports) {
+},{"../core/configuration":"scripts/core/configuration.js"}],"scripts/helpers/FloorplannerHelper.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.FloorPlannerHelper = void 0;
+
+var _dimensioning = require("../core/dimensioning");
+
+var _events = require("../core/events");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var FloorPlannerHelper = /*#__PURE__*/function () {
+  function FloorPlannerHelper(floorplan, floorplanner) {
+    _classCallCheck(this, FloorPlannerHelper);
+
+    this.__floorplan = floorplan;
+    this.__floorplanner = floorplanner;
+    this.__wallThickness = _dimensioning.Dimensioning.cmToMeasureRaw(20);
+    this.__cornerElevation = _dimensioning.Dimensioning.cmToMeasureRaw(250);
+    this.__roomName = 'A New Room';
+    this.__selectedWall = null;
+    this.__selectedCorner = null;
+    this.__selectedRoom = null;
+    this.__nothingSelectedEvent = this.__nothingSelected.bind(this);
+    this.__cornerSelectedEvent = this.__cornerSelected.bind(this);
+    this.__wallSelectedEvent = this.__wallSelected.bind(this);
+    this.__roomSelectedEvent = this.__roomSelected.bind(this);
+
+    this.__floorplanner.addFloorplanListener(_events.EVENT_NOTHING_2D_SELECTED, this.__nothingSelectedEvent);
+
+    this.__floorplanner.addFloorplanListener(_events.EVENT_CORNER_2D_CLICKED, this.__cornerSelectedEvent);
+
+    this.__floorplanner.addFloorplanListener(_events.EVENT_WALL_2D_CLICKED, this.__wallSelectedEvent);
+
+    this.__floorplanner.addFloorplanListener(_events.EVENT_ROOM_2D_CLICKED, this.__roomSelectedEvent);
+  }
+
+  _createClass(FloorPlannerHelper, [{
+    key: "__cornerSelected",
+    value: function __cornerSelected(evt) {
+      this.__selectedCorner = evt.item;
+      this.__cornerElevation = _dimensioning.Dimensioning.cmToMeasureRaw(this.__selectedCorner.elevation);
+    }
+  }, {
+    key: "__wallSelected",
+    value: function __wallSelected(evt) {
+      this.__selectedWall = evt.item;
+      this.__wallThickness = _dimensioning.Dimensioning.cmToMeasureRaw(evt.item.thickness);
+    }
+  }, {
+    key: "__roomSelected",
+    value: function __roomSelected(evt) {
+      this.__selectedRoom = evt.item;
+      this.__roomName = evt.item.name;
+    }
+  }, {
+    key: "__nothingSelected",
+    value: function __nothingSelected() {
+      this.__selectedWall = null;
+      this.__selectedRoom = null;
+      this.__selectedCorner = null;
+    }
+  }, {
+    key: "wallThickness",
+    set: function set(value) {
+      if (this.__selectedWall) {
+        var cms = _dimensioning.Dimensioning.cmFromMeasureRaw(value);
+
+        this.__selectedWall.thickness = cms;
+        this.__wallThickness = value;
+      }
+    },
+    get: function get() {
+      return _dimensioning.Dimensioning.cmToMeasureRaw(this.__wallThickness);
+    }
+  }, {
+    key: "cornerElevation",
+    set: function set(value) {
+      if (this.__selectedCorner) {
+        var cms = _dimensioning.Dimensioning.cmFromMeasureRaw(value);
+
+        this.__selectedCorner.elevation = cms;
+        this.__cornerElevation = value;
+      }
+    },
+    get: function get() {
+      return _dimensioning.Dimensioning.cmToMeasureRaw(this.__cornerElevation);
+    }
+  }, {
+    key: "roomName",
+    set: function set(value) {
+      if (this.__selectedRoom) {
+        this.__selectedRoom.name = value;
+        this.__roomName = value;
+      }
+    },
+    get: function get() {
+      return this.__roomName;
+    }
+  }]);
+
+  return FloorPlannerHelper;
+}();
+
+exports.FloorPlannerHelper = FloorPlannerHelper;
+},{"../core/dimensioning":"scripts/core/dimensioning.js","../core/events":"scripts/core/events.js"}],"scripts/helpers/RoomplannerHelper.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.RoomPlannerHelper = void 0;
+
+var _dimensioning = require("../core/dimensioning");
+
+var _events = require("../core/events");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var RoomPlannerHelper = /*#__PURE__*/function () {
+  function RoomPlannerHelper(floorplan, roomplanner) {
+    _classCallCheck(this, RoomPlannerHelper);
+
+    this.__floorplan = floorplan;
+    this.__roomplanner = roomplanner;
+    this.__wallThickness = _dimensioning.Dimensioning.cmToMeasureRaw(20);
+    this.__cornerElevation = _dimensioning.Dimensioning.cmToMeasureRaw(250);
+    this.__roomName = 'A New Room';
+    this.__selectedWall = null;
+    this.__selectedItem = null;
+    this.__selectedRoom = null;
+    this.__wallTexturePack = null;
+    this.__floorTexturePack = null;
+    this.__nothingSelectedEvent = this.__nothingSelected.bind(this);
+    this.__itemSelectedEvent = this.__itemSelected.bind(this);
+    this.__wallSelectedEvent = this.__wallSelected.bind(this);
+    this.__roomSelectedEvent = this.__roomSelected.bind(this);
+
+    this.__roomplanner.addRoomplanListener(_events.EVENT_NO_ITEM_SELECTED, this.__nothingSelectedEvent);
+
+    this.__roomplanner.addRoomplanListener(_events.EVENT_ITEM_SELECTED, this.__itemSelectedEvent);
+
+    this.__roomplanner.addRoomplanListener(_events.EVENT_WALL_CLICKED, this.__wallSelectedEvent);
+
+    this.__roomplanner.addRoomplanListener(_events.EVENT_ROOM_CLICKED, this.__roomSelectedEvent);
+  }
+
+  _createClass(RoomPlannerHelper, [{
+    key: "__itemSelected",
+    value: function __itemSelected(evt) {
+      this.__selectedItem = evt.item;
+    }
+  }, {
+    key: "__wallSelected",
+    value: function __wallSelected(evt) {
+      this.__selectedWall = evt.item;
+      this.__wallThickness = _dimensioning.Dimensioning.cmToMeasureRaw(evt.item.thickness);
+    }
+  }, {
+    key: "__roomSelected",
+    value: function __roomSelected(evt) {
+      this.__selectedRoom = evt.item;
+      this.__roomName = evt.item.name;
+    }
+  }, {
+    key: "__nothingSelected",
+    value: function __nothingSelected() {// this.__selectedWall = null;
+      // this.__selectedRoom = null;
+      // this.__selectedItem = null;
+    }
+  }, {
+    key: "wallThickness",
+    set: function set(value) {
+      if (this.__selectedWall) {
+        var cms = _dimensioning.Dimensioning.cmFromMeasureRaw(value);
+
+        this.__selectedWall.thickness = cms;
+        this.__wallThickness = value;
+      }
+    },
+    get: function get() {
+      return _dimensioning.Dimensioning.cmToMeasureRaw(this.__wallThickness);
+    }
+  }, {
+    key: "cornerElevation",
+    set: function set(value) {
+      if (this.__selectedCorner) {
+        var cms = _dimensioning.Dimensioning.cmFromMeasureRaw(value);
+
+        this.__selectedCorner.elevation = cms;
+        this.__cornerElevation = value;
+      }
+    },
+    get: function get() {
+      return _dimensioning.Dimensioning.cmToMeasureRaw(this.__cornerElevation);
+    }
+  }, {
+    key: "roomName",
+    set: function set(value) {
+      if (this.__selectedRoom) {
+        this.__selectedRoom.name = value;
+        this.__roomName = value;
+      }
+    },
+    get: function get() {
+      return this.__roomName;
+    }
+  }, {
+    key: "wallTexturePack",
+    get: function get() {
+      return this.__wallTexturePack;
+    },
+    set: function set(tpack) {
+      this.__wallTexturePack = tpack;
+
+      if (this.__selectedWall) {
+        this.__selectedWall.setTextureMaps(tpack);
+
+        console.log('SET ROOM TEXTURE PACK ', tpack);
+      }
+    }
+  }, {
+    key: "roomTexturePack",
+    get: function get() {
+      return this.__roomTexturePack;
+    },
+    set: function set(tpack) {
+      this.__roomTexturePack = tpack;
+      console.log('SET ROOM TEXTURE PACK ', tpack);
+    }
+  }]);
+
+  return RoomPlannerHelper;
+}();
+
+exports.RoomPlannerHelper = RoomPlannerHelper;
+},{"../core/dimensioning":"scripts/core/dimensioning.js","../core/events":"scripts/core/events.js"}],"scripts/blueprint.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.BlueprintJS = void 0;
+
+var _configuration = require("./core/configuration");
+
+var _constants = require("./core/constants");
+
+var _model = require("./model/model");
+
+var _Viewer3d = require("./viewer3d/Viewer3d");
+
+var _Viewer2D = require("./viewer2d/Viewer2D");
+
+var _ConfigurationHelper = require("./helpers/ConfigurationHelper");
+
+var _FloorplannerHelper = require("./helpers/FloorplannerHelper");
+
+var _RoomplannerHelper = require("./helpers/RoomplannerHelper");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+///** BlueprintJS core application. */
+var BlueprintJS = /*#__PURE__*/function () {
+  /**
+   * Creates an instance of BlueprintJS. This is the entry point for the application
+   *
+   * @param {Object} - options The initialization options.
+   * @param {string} options.floorplannerElement - Id of the html element to use as canvas. Needs to exist in the html
+   * @param {string} options.threeElement - Id of the html element to use as canvas. Needs to exist in the html and should be #idofhtmlelement
+   * @param {string} options.threeCanvasElement - Id of the html element to use as threejs-canvas. This is created automatically
+   * @param {string} options.textureDir - path to texture directory. No effect
+   * @param {boolean} options.widget - If widget mode then disable the controller from interactions
+   * @example
+   * let blueprint3d = new BP3DJS.BlueprintJS(opts);
+   */
+  function BlueprintJS(options) {
+    _classCallCheck(this, BlueprintJS);
+
+    _configuration.Configuration.setValue(_configuration.configDimUnit, _constants.dimCentiMeter);
+    /**
+     * @property {Object} options
+     * @type {Object}
+     **/
+
+
+    this.options = options;
+    /**
+     * @property {Model} model
+     * @type {Model}
+     **/
+
+    this.model = new _model.Model(options.textureDir);
+    /**
+     * @property {Main} three
+     * @type {Main}
+     **/
+    // this.three = new Main(this.model, options.threeElement, options.threeCanvasElement, {});
+
+    /**
+     * @property {Main} three
+     * @type {Main}
+     **/
+
+    this.roomplanner = new _Viewer3d.Viewer3D(this.model, options.viewer3d, this.options);
+    this.configurationHelper = new _ConfigurationHelper.ConfigurationHelper();
+    this.floorplanningHelper = null;
+    this.roomplanningHelper = new _RoomplannerHelper.RoomPlannerHelper(this.model.floorplan, this.roomplanner);
+
+    if (!options.widget) {
+      /**
+       * @property {Floorplanner2D} floorplanner
+       * @type {Floorplanner2D}
+       **/
+      // this.floorplanner = new Floorplanner2D(options.floorplannerElement, this.model.floorplan);
+      this.floorplanner = new _Viewer2D.Viewer2D(options.viewer2d.id, this.model.floorplan, this.options.viewer2d.viewer2dOptions);
+      this.floorplanningHelper = new _FloorplannerHelper.FloorPlannerHelper(this.model.floorplan, this.floorplanner);
+    }
+
+    this.view_now = 3;
+    this.switchView();
+  }
+
+  _createClass(BlueprintJS, [{
+    key: "switchView",
+    value: function switchView() {
+      if (this.options.widget) {
+        return;
+      }
+
+      if (this.view_now === 3 && !this.options.widget) {
+        this.view_now = 2;
+        document.getElementById(this.options.viewer2d.id).style.visibility = "visible";
+        document.getElementById(this.options.viewer3d).style.visibility = "hidden";
+        this.roomplanner.enabled = false;
+      } else if (this.view_now === 2 && !this.options.widget) {
+        this.view_now = 3;
+        document.getElementById(this.options.viewer2d.id).style.visibility = "hidden";
+        document.getElementById(this.options.viewer3d).style.visibility = "visible";
+        this.roomplanner.enabled = true;
+      }
+    }
+  }, {
+    key: "setViewer2DModeToDraw",
+    value: function setViewer2DModeToDraw(mode) {
+      if (this.options.widget) {
+        return;
+      }
+
+      this.floorplanner.switchMode(_Viewer2D.floorplannerModes.DRAW);
+    }
+  }, {
+    key: "setViewer2DModeToMove",
+    value: function setViewer2DModeToMove(mode) {
+      if (this.options.widget) {
+        return;
+      }
+
+      this.floorplanner.switchMode(_Viewer2D.floorplannerModes.MOVE);
+    }
+  }, {
+    key: "currentView",
+    get: function get() {
+      return this.view_now;
+    }
+  }]);
+
+  return BlueprintJS;
+}();
+
+exports.BlueprintJS = BlueprintJS;
+},{"./core/configuration":"scripts/core/configuration.js","./core/constants":"scripts/core/constants.js","./model/model":"scripts/model/model.js","./viewer3d/Viewer3d":"scripts/viewer3d/Viewer3d.js","./viewer2d/Viewer2D":"scripts/viewer2d/Viewer2D.js","./helpers/ConfigurationHelper":"scripts/helpers/ConfigurationHelper.js","./helpers/FloorplannerHelper":"scripts/helpers/FloorplannerHelper.js","./helpers/RoomplannerHelper":"scripts/helpers/RoomplannerHelper.js"}],"../node_modules/quicksettings/quicksettings.min.js":[function(require,module,exports) {
+var define;
+!function(){function a(a,b){var d=c("div",null,"qs_label",b);return d.innerHTML=a,d}function b(a,b,d,e){var f=c("input",b,d,e);return f.type=a,f}function c(a,b,c,d){var e=document.createElement(a);if(e)return e.id=b,c&&(e.className=c),d&&d.appendChild(e),e}function d(){return navigator.userAgent.indexOf("rv:11")!=-1||navigator.userAgent.indexOf("MSIE")!=-1}function e(){var a=navigator.userAgent.toLowerCase();return!(a.indexOf("chrome")>-1||a.indexOf("firefox")>-1||a.indexOf("epiphany")>-1)&&a.indexOf("safari/")>-1}function f(){var a=navigator.userAgent.toLowerCase();return a.indexOf("edge")>-1}function g(){var a=document.createElement("style");a.innerText=i,document.head.appendChild(a),h=!0}var h=!1,i=".qs_main{background-color:#dddddd;text-align:left;position:absolute;width:200px;font:12px sans-serif;box-shadow:5px 5px 8px rgba(0,0,0,0.35);user-select:none;-webkit-user-select:none;color:#000000;border:none}.qs_content{background-color:#cccccc;overflow-y:auto}.qs_title_bar{background-color:#eeeeee;user-select:none;-webkit-user-select:none;cursor:pointer;padding:5px;font-weight:bold;border:none;color:#000000}.qs_container{margin:5px;padding:5px;background-color:#eeeeee;border:none;position:relative}.qs_container_selected{border:none;background-color:#ffffff}.qs_range{-webkit-appearance:none;-moz-appearance:none;width:100%;height:17px;padding:0;margin:0;background-color:transparent;border:none;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}.qs_range:focus{outline:none;border:none}.qs_range::-webkit-slider-runnable-track{width:100%;height:15px;cursor:pointer;background:#cccccc;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0}.qs_range:focus::-webkit-slider-runnable-track{background:#cccccc}.qs_range::-webkit-slider-thumb{-webkit-appearance:none;height:15px;width:15px;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0;background:#999999;cursor:pointer;margin-top:0}.qs_range::-moz-range-track{width:100%;height:15px;cursor:pointer;background:#cccccc;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0}.qs_range::-moz-range-thumb{height:15px;width:15px;border:none;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0;background:#999999;cursor:pointer}.qs_range::-ms-track{width:100%;height:15px;cursor:pointer;visibility:hidden;background:transparent}.qs_range::-ms-thumb{height:15px;width:15px;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0;background:#999999;cursor:pointer;border:none}.qs_range::-ms-fill-lower{background:#cccccc;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0}.qs_range:focus::-ms-fill-lower{background:#cccccc}.qs_range::-ms-fill-upper{background:#cccccc;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0}.qs_range:focus::-ms-fill-upper{background:#cccccc}.qs_button{background-color:#f6f6f6;color:#000000;height:30px;border:1px solid #aaaaaa;font:12px sans-serif}.qs_button:active{background-color:#ffffff;border:1px solid #aaaaaa}.qs_button:focus{border:1px solid #aaaaaa;outline:none}.qs_checkbox{cursor:pointer}.qs_checkbox input{position:absolute;left:-99999px}.qs_checkbox span{height:16px;width:100%;display:block;text-indent:20px;background:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAALklEQVQ4T2OcOXPmfwYKACPIgLS0NLKMmDVrFsOoAaNhMJoOGBioFwZkZUWoJgApdFaxjUM1YwAAAABJRU5ErkJggg==') no-repeat}.qs_checkbox input:checked+span{background:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAvElEQVQ4T63Tyw2EIBAA0OFKBxBL40wDRovAUACcKc1IB1zZDAkG18GYZTmSmafzgTnnMgwchoDWGlJKheGcP3JtnPceCqCUAmttSZznuYtgchsXQrgC+77DNE0kUpPbmBOoJaBOIVQylnqWgAAeKhDve/AN+EaklJBzhhgjWRoJVGTbNjiOowAIret6a+4jYIwpX8aDwLIs74C2D0IIYIyVP6Gm898m9kbVm85ljHUTf16k4VUefkwDrxk+zoUEwCt0GbUAAAAASUVORK5CYII=') no-repeat}.qs_checkbox_label{position:absolute;top:7px;left:30px}.qs_label{margin-bottom:3px;user-select:none;-webkit-user-select:none;cursor:default;font:12px sans-serif}.qs_text_input{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;width:100%;padding:0 0 0 5px;height:24px;border:1px inset #ffffff;background-color:#ffffff;color:#000000;font-size:12px}.qs_text_input:focus{outline:none;background:#ffffff;border:1px inset #ffffff}.qs_select{background:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAp0lEQVRIS+2SsQ3FIAwF7RVYhA5mgQFhFuhYhJKWL0eKxI8SGylKZ0p4+OBsHGNM+HChAiS7qkgyBKrovaLeOxhjbgtxZ+cFtgelFMg5QwgBvPd/EO5sDbKAlBLUWo/8CjmL075zDmKMj6rEKbpCqBL9aqc4ZUQAhVbInBMQUXz5Vg/WfxOktXZsWWtZLds9uIqlqaH1NFV3jdhSJA47E1CAaE8ViYp+wGiWMZ/T+cgAAAAASUVORK5CYII=') no-repeat right #f6f6f6;-webkit-appearance:none;-moz-appearance:none;appearance:none;color:#000000;width:100%;height:24px;border:1px solid #aaaaaa;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0;padding:0 5px;-moz-outline:none;font-size:14px}.qs_select option{font-size:14px}.qs_select::-ms-expand{display:none}.qs_select:focus{outline:none}.qs_number{height:24px}.qs_image{width:100%}.qs_progress{width:100%;height:15px;background-color:#cccccc;border:none;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}.qs_progress_value{height:100%;background-color:#999999}.qs_textarea{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;resize:vertical;width:100%;padding:3px 5px;border:1px inset #ffffff;background-color:#ffffff;color:#000000;font-size:12px}.qs_textarea:focus{outline:none;background:#ffffff;border:1px inset #ffffff}.qs_color{position:absolute;left:-999999px}.qs_color_label{width:100%;height:20px;display:block;border:1px solid #aaaaaa;cursor:pointer;padding:0 0 0 5px;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}.qs_file_chooser{position:absolute;left:-999999px}.qs_file_chooser_label{background-color:#f6f6f6;color:#000000;height:30px;border:1px solid #aaaaaa;font:12px sans-serif;width:100%;display:block;cursor:pointer;padding:7px;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",j={_version:"2.1",_topZ:1,_panel:null,_titleBar:null,_content:null,_startX:0,_startY:0,_hidden:!1,_collapsed:!1,_controls:null,_keyCode:-1,_draggable:!0,_collapsible:!0,_globalChangeHandler:null,useExtStyleSheet:function(){h=!0},create:function(a,b,c,d){var e=Object.create(this);return e._init(a,b,c,d),e},destroy:function(){this._panel.parentElement&&this._panel.parentElement.removeChild(this._panel);for(var a in this)this[a]=null},_init:function(a,b,c,d){h||g(),this._bindHandlers(),this._createPanel(a,b,d),this._createTitleBar(c||"QuickSettings"),this._createContent()},_bindHandlers:function(){this._startDrag=this._startDrag.bind(this),this._drag=this._drag.bind(this),this._endDrag=this._endDrag.bind(this),this._doubleClickTitle=this._doubleClickTitle.bind(this),this._onKeyUp=this._onKeyUp.bind(this)},getValuesAsJSON:function(a){var b={};for(var c in this._controls)this._controls[c].getValue&&(b[c]=this._controls[c].getValue());return a&&(b=JSON.stringify(b)),b},setValuesFromJSON:function(a){"string"==typeof a&&(a=JSON.parse(a));for(var b in a)this._controls[b].setValue&&this._controls[b].setValue(a[b]);return this},saveInLocalStorage:function(a){return this._localStorageName=a,this._readFromLocalStorage(a),this},clearLocalStorage:function(a){return localStorage.removeItem(a),this},_saveInLocalStorage:function(a){localStorage.setItem(a,this.getValuesAsJSON(!0))},_readFromLocalStorage:function(a){var b=localStorage.getItem(a);b&&this.setValuesFromJSON(b)},_createPanel:function(a,b,d){this._panel=c("div",null,"qs_main",d||document.body),this._panel.style.zIndex=++j._topZ,this.setPosition(a||0,b||0),this._controls={}},_createTitleBar:function(a){this._titleBar=c("div",null,"qs_title_bar",this._panel),this._titleBar.textContent=a,this._titleBar.addEventListener("mousedown",this._startDrag),this._titleBar.addEventListener("dblclick",this._doubleClickTitle)},_createContent:function(){this._content=c("div",null,"qs_content",this._panel)},_createContainer:function(){var a=c("div",null,"qs_container");return a.addEventListener("focus",function(){this.className+=" qs_container_selected"},!0),a.addEventListener("blur",function(){var a=this.className.indexOf(" qs_container_selected");a>-1&&(this.className=this.className.substr(0,a))},!0),this._content.appendChild(a),a},setPosition:function(a,b){return this._panel.style.left=a+"px",this._panel.style.top=Math.max(b,0)+"px",this},setSize:function(a,b){return this._panel.style.width=a+"px",this._content.style.width=a+"px",this._content.style.height=b-this._titleBar.offsetHeight+"px",this},setWidth:function(a){return this._panel.style.width=a+"px",this._content.style.width=a+"px",this},setHeight:function(a){return this._content.style.height=a-this._titleBar.offsetHeight+"px",this},setDraggable:function(a){return this._draggable=a,this._draggable||this._collapsible?this._titleBar.style.cursor="pointer":this._titleBar.style.cursor="default",this},_startDrag:function(a){this._draggable&&(this._panel.style.zIndex=++j._topZ,document.addEventListener("mousemove",this._drag),document.addEventListener("mouseup",this._endDrag),this._startX=a.clientX,this._startY=a.clientY),a.preventDefault()},_drag:function(a){var b=parseInt(this._panel.style.left),c=parseInt(this._panel.style.top),d=a.clientX,e=a.clientY;this.setPosition(b+d-this._startX,c+e-this._startY),this._startX=d,this._startY=e,a.preventDefault()},_endDrag:function(a){document.removeEventListener("mousemove",this._drag),document.removeEventListener("mouseup",this._endDrag),a.preventDefault()},setGlobalChangeHandler:function(a){return this._globalChangeHandler=a,this},_callGCH:function(){this._localStorageName&&this._saveInLocalStorage(this._localStorageName),this._globalChangeHandler&&this._globalChangeHandler()},hide:function(){return this._panel.style.visibility="hidden",this._hidden=!0,this},show:function(){return this._panel.style.visibility="visible",this._panel.style.zIndex=++j._topZ,this._hidden=!1,this},toggleVisibility:function(){return this._hidden?this.show():this.hide(),this},setCollapsible:function(a){return this._collapsible=a,this._draggable||this._collapsible?this._titleBar.style.cursor="pointer":this._titleBar.style.cursor="default",this},collapse:function(){return this._panel.removeChild(this._content),this._collapsed=!0,this},expand:function(){return this._panel.appendChild(this._content),this._collapsed=!1,this},toggleCollapsed:function(){return this._collapsed?this.expand():this.collapse(),this},setKey:function(a){return this._keyCode=a.toUpperCase().charCodeAt(0),document.body.addEventListener("keyup",this.onKeyUp),this},_onKeyUp:function(a){a.keyCode===this._keyCode&&this.toggleVisibility()},_doubleClickTitle:function(){this._collapsible&&this.toggleCollapsed()},removeControl:function(a){if(this._controls[a])var b=this._controls[a].container;return b&&b.parentElement&&b.parentElement.removeChild(b),this._controls[a]=null,this},enableControl:function(a){return this._controls[a]&&(this._controls[a].control.disabled=!1),this},disableControl:function(a){return this._controls[a]&&(this._controls[a].control.disabled=!0),this},hideControl:function(a){return this._controls[a]&&(this._controls[a].container.style.display="none"),this},showControl:function(a){return this._controls[a]&&(this._controls[a].container.style.display="block"),this},overrideStyle:function(a,b,c){return this._controls[a]&&(this._controls[a].control.style[b]=c),this},hideTitle:function(a){var b=this._controls[a].label;return b&&(b.style.display="none"),this},showTitle:function(a){var b=this._controls[a].label;return b&&(b.style.display="block"),this},hideAllTitles:function(){for(var a in this._controls){var b=this._controls[a].label;b&&(b.style.display="none")}return this},showAllTitles:function(){for(var a in this._controls){var b=this._controls[a].label;b&&(b.style.display="block")}return this},getValue:function(a){return this._controls[a].getValue()},setValue:function(a,b){return this._controls[a].setValue(b),this._callGCH(),this},addBoolean:function(a,d,e){var f=this._createContainer(),g=c("label",null,"qs_checkbox_label",f);g.textContent=a,g.setAttribute("for",a);var h=c("label",null,"qs_checkbox",f);h.setAttribute("for",a);var i=b("checkbox",a,null,h);i.checked=d;c("span",null,null,h);this._controls[a]={container:f,control:i,getValue:function(){return this.control.checked},setValue:function(a){this.control.checked=a,e&&e(a)}};var j=this;return i.addEventListener("change",function(){e&&e(i.checked),j._callGCH()}),this},bindBoolean:function(a,b,c){return this.addBoolean(a,b,function(b){c[a]=b})},addButton:function(a,c){var d=this._createContainer(),e=b("button",a,"qs_button",d);e.value=a,this._controls[a]={container:d,control:e};var f=this;return e.addEventListener("click",function(){c&&c(e),f._callGCH()}),this},addColor:function(g,h,i){if(e()||f()||d())return this.addText(g,h,i);var j=this._createContainer(),k=a("<b>"+g+":</b> "+h,j),l=b("color",g,"qs_color",j);l.value=h||"#ff0000";var m=c("label",null,"qs_color_label",j);m.setAttribute("for",g),m.style.backgroundColor=l.value,this._controls[g]={container:j,control:l,colorLabel:m,label:k,title:g,getValue:function(){return this.control.value},setValue:function(a){this.control.value=a,this.colorLabel.style.backgroundColor=l.value,this.label.innerHTML="<b>"+this.title+":</b> "+this.control.value,i&&i(a)}};var n=this;return l.addEventListener("input",function(){k.innerHTML="<b>"+g+":</b> "+l.value,m.style.backgroundColor=l.value,i&&i(l.value),n._callGCH()}),this},bindColor:function(a,b,c){return this.addColor(a,b,function(b){c[a]=b})},addDate:function(c,e,f){var g;if(e instanceof Date){var h=e.getFullYear(),i=e.getMonth()+1;i<10&&(i="0"+i);var j=e.getDate();g=h+"-"+i+"-"+j}else g=e;if(d())return this.addText(c,g,f);var k=this._createContainer(),l=a("<b>"+c+"</b>",k),m=b("date",c,"qs_text_input",k);m.value=g||"",this._controls[c]={container:k,control:m,label:l,getValue:function(){return this.control.value},setValue:function(a){var b;if(a instanceof Date){var c=a.getFullYear(),d=a.getMonth()+1;d<10&&(d="0"+d);var e=a.getDate();e<10&&(e="0"+e),b=c+"-"+d+"-"+e}else b=a;this.control.value=b||"",f&&f(b)}};var n=this;return m.addEventListener("input",function(){f&&f(m.value),n._callGCH()}),this},bindDate:function(a,b,c){return this.addDate(a,b,function(b){c[a]=b})},addDropDown:function(b,d,e){for(var f=this._createContainer(),g=a("<b>"+b+"</b>",f),h=c("select",null,"qs_select",f),i=0;i<d.length;i++){var j=c("option");j.label=d[i],j.innerText=d[i],h.add(j)}var k=this;return h.addEventListener("change",function(){var a=h.selectedIndex,b=h.options;e&&e({index:a,value:b[a].label}),k._callGCH()}),this._controls[b]={container:f,control:h,label:g,getValue:function(){var a=this.control.selectedIndex;return{index:a,value:this.control.options[a].label}},setValue:function(a){var b;b=null!=a.index?a.index:a;var c=this.control.options;this.control.selectedIndex=b,e&&e({index:b,value:c[b].label})}},this},bindDropDown:function(a,b,c){return this.addDropDown(a,b,function(b){c[a]=b.value})},addElement:function(b,c){var d=this._createContainer(),e=a("<b>"+b+"</b>",d);return d.appendChild(c),this._controls[b]={container:d,label:e},this},addFileChooser:function(d,e,f,g){var h=this._createContainer(),i=a("<b>"+d+"</b>",h),j=b("file",d,"qs_file_chooser",h);f&&(j.accept=f);var k=c("label",null,"qs_file_chooser_label",h);k.setAttribute("for",d),k.textContent=e||"Choose a file...",this._controls[d]={container:h,control:j,label:i,getValue:function(){return this.control.files[0]}};var l=this;return j.addEventListener("change",function(){j.files&&j.files.length&&(k.textContent=j.files[0].name,g&&g(j.files[0]),l._callGCH())}),this},addHTML:function(b,d){var e=this._createContainer(),f=a("<b>"+b+":</b> ",e),g=c("div",null,null,e);return g.innerHTML=d,this._controls[b]={label:f,control:g,getValue:function(){return this.control.innerHTML},setValue:function(a){this.control.innerHTML=a}},this},addImage:function(b,d){var e=this._createContainer(),f=a("<b>"+b+"</b>",e);return img=c("img",null,"qs_image",e),img.src=d,this._controls[b]={container:e,control:img,label:f,getValue:function(){return this.control.src},setValue:function(a){this.control.src=a}},this},addRange:function(a,b,c,d,e,f){return this._addNumber("range",a,b,c,d,e,f)},addNumber:function(a,b,c,d,e,f){return this._addNumber("number",a,b,c,d,e,f)},_addNumber:function(c,e,f,g,h,i,j){var k=this._createContainer(),l=a("",k),m="range"===c?"qs_range":"qs_text_input qs_number",n=b(c,e,m,k);n.min=f||0,n.max=g||100,n.step=i||1,n.value=h||0,l.innerHTML="<b>"+e+":</b> "+n.value,this._controls[e]={container:k,control:n,label:l,title:e,callback:j,getValue:function(){return parseFloat(this.control.value)},setValue:function(a){this.control.value=a,this.label.innerHTML="<b>"+this.title+":</b> "+this.control.value,j&&j(parseFloat(a))}};var o="input";"range"===c&&d()&&(o="change");var p=this;return n.addEventListener(o,function(){l.innerHTML="<b>"+e+":</b> "+n.value,j&&j(parseFloat(n.value)),p._callGCH()}),this},bindRange:function(a,b,c,d,e,f){return this.addRange(a,b,c,d,e,function(b){f[a]=b})},bindNumber:function(a,b,c,d,e,f){return this.addNumber(a,b,c,d,e,function(b){f[a]=b})},setRangeParameters:function(a,b,c,d){return this.setNumberParameters(a,b,c,d)},setNumberParameters:function(a,b,c,d){var e=this._controls[a],f=e.control.value;return e.control.min=b,e.control.max=c,e.control.step=d,e.control.value!==f&&e.callback&&e.callback(e.control.value),this},addPassword:function(a,b,c){return this._addText("password",a,b,c)},bindPassword:function(a,b,c){return this.addPassword(a,b,function(b){c[a]=b})},addProgressBar:function(b,d,e,f){var g=this._createContainer(),h=a("",g),i=c("div",null,"qs_progress",g),j=c("div",null,"qs_progress_value",i);return j.style.width=e/d*100+"%","numbers"===f?h.innerHTML="<b>"+b+":</b> "+e+" / "+d:"percent"===f?h.innerHTML="<b>"+b+":</b> "+Math.round(e/d*100)+"%":h.innerHTML="<b>"+b+"</b>",this._controls[b]={container:g,control:i,valueDiv:j,valueDisplay:f,label:h,value:e,max:d,title:b,getValue:function(){return this.value},setValue:function(a){this.value=Math.max(0,Math.min(a,this.max)),this.valueDiv.style.width=this.value/this.max*100+"%","numbers"===this.valueDisplay?this.label.innerHTML="<b>"+this.title+":</b> "+this.value+" / "+this.max:"percent"===this.valueDisplay&&(this.label.innerHTML="<b>"+this.title+":</b> "+Math.round(this.value/this.max*100)+"%")}},this},setProgressMax:function(a,b){var c=this._controls[a];return c.max=b,c.value=Math.min(c.value,c.max),c.valueDiv.style.width=c.value/c.max*100+"%","numbers"===c.valueDisplay?c.label.innerHTML="<b>"+c.title+":</b> "+c.value+" / "+c.max:"percent"===c.valueDisplay?c.label.innerHTML="<b>"+c.title+":</b> "+Math.round(c.value/c.max*100)+"%":c.label.innerHTML="<b>"+c.title+"</b>",this},addText:function(a,b,c){return this._addText("text",a,b,c)},_addText:function(d,e,f,g){var h,i=this._createContainer(),j=a("<b>"+e+"</b>",i);"textarea"===d?(h=c("textarea",e,"qs_textarea",i),h.rows=5):h=b(d,e,"qs_text_input",i),h.value=f||"",this._controls[e]={container:i,control:h,label:j,getValue:function(){return this.control.value},setValue:function(a){this.control.value=a,g&&g(a)}};var k=this;return h.addEventListener("input",function(){g&&g(h.value),k._callGCH()}),this},bindText:function(a,b,c){return this.addText(a,b,function(b){c[a]=b})},addTextArea:function(a,b,c){return this._addText("textarea",a,b,c)},setTextAreaRows:function(a,b){return this._controls[a].control.rows=b,this},bindTextArea:function(a,b,c){return this.addTextArea(a,b,function(b){c[a]=b})},addTime:function(c,e,f){var g;if(e instanceof Date){var h=e.getHours();h<10&&(h="0"+h);var i=e.getMinutes();i<10&&(i="0"+i);var j=e.getSeconds();j<10&&(j="0"+j),g=h+":"+i+":"+j}else g=e;if(d())return this.addText(c,g,f);var k=this._createContainer(),l=a("<b>"+c+"</b>",k),m=b("time",c,"qs_text_input",k);m.value=g||"",this._controls[c]={container:k,control:m,label:l,getValue:function(){return this.control.value},setValue:function(a){var b;if(a instanceof Date){var c=a.getHours();c<10&&(c="0"+c);var d=a.getMinutes();d<10&&(d="0"+d);var e=a.getSeconds();e<10&&(e="0"+e),b=c+":"+d+":"+e}else b=a;this.control.value=b||"",f&&f(b)}};var n=this;return m.addEventListener("input",function(){f&&f(m.value),n._callGCH()}),this},bindTime:function(a,b,c){return this.addTime(a,b,function(b){c[a]=b})}};"object"==typeof exports&&"object"==typeof module?module.exports=j:"function"==typeof define&&define.amd?define(j):window.QuickSettings=j}();
+},{}],"floor_textures.json":[function(require,module,exports) {
+module.exports = {
+  "Stylized_Stone_Floor_001": {
+    "ambientmap": "textures/Floor/Stylized_Stone_Floor_001/Stylized_Stone_Floor_001_ambientOcclusion.jpg",
+    "normalmap": "textures/Floor/Stylized_Stone_Floor_001/Stylized_Stone_Floor_001_normal.jpg",
+    "colormap": "textures/Floor/Stylized_Stone_Floor_001/Stylized_Stone_Floor_001_basecolor.jpg",
+    "roughnessmap": "textures/Floor/Stylized_Stone_Floor_001/Stylized_Stone_Floor_001_roughness.jpg"
+  },
+  "Rubber_Floor_001": {
+    "roughnessmap": "textures/Floor/Rubber_Floor_001/Rubber_Floor_001_roughness.jpg",
+    "colormap": "textures/Floor/Rubber_Floor_001/Rubber_Floor_001_basecolor.jpg",
+    "ambientmap": "textures/Floor/Rubber_Floor_001/Rubber_Floor_001_ambientOcclusion.jpg",
+    "normalmap": "textures/Floor/Rubber_Floor_001/Rubber_Floor_001_normal.jpg"
+  },
+  "Wood_Herringbone_Tiles_001": {
+    "ambientmap": "textures/Floor/Wood_Herringbone_Tiles_001/Wood_Herringbone_Tiles_001_ambientOcclusion.jpg",
+    "colormap": "textures/Floor/Wood_Herringbone_Tiles_001/Wood_Herringbone_Tiles_001_basecolor.jpg",
+    "normalmap": "textures/Floor/Wood_Herringbone_Tiles_001/Wood_Herringbone_Tiles_001_normal.jpg",
+    "roughnessmap": "textures/Floor/Wood_Herringbone_Tiles_001/Wood_Herringbone_Tiles_001_roughness.jpg"
+  },
+  "Stone_Tiles_004": {
+    "ambientmap": "textures/Floor/Stone_Tiles_004/Stone_Tiles_004_ambientOcclusion.jpg",
+    "roughnessmap": "textures/Floor/Stone_Tiles_004/Stone_Tiles_004_roughness.jpg",
+    "normalmap": "textures/Floor/Stone_Tiles_004/Stone_Tiles_004_normal.jpg",
+    "colormap": "textures/Floor/Stone_Tiles_004/Stone_Tiles_004_basecolor.jpg"
+  },
+  "Terracotta_Tiles_003": {
+    "normalmap": "textures/Floor/Terracotta_Tiles_003/Terracota_Tiles_003_normal.jpg",
+    "ambientmap": "textures/Floor/Terracotta_Tiles_003/Terracota_Tiles_003_ambientOcclusion.jpg",
+    "colormap": "textures/Floor/Terracotta_Tiles_003/Terracota_Tiles_003_basecolor.jpg",
+    "roughnessmap": "textures/Floor/Terracotta_Tiles_003/Terracota_Tiles_003_roughness.jpg"
+  },
+  "Marble_Tiles_001": {
+    "ambientmap": "textures/Floor/Marble_Tiles_001/Marble_Tiles_001_ambientOcclusion.jpg",
+    "colormap": "textures/Floor/Marble_Tiles_001/Marble_Tiles_001_basecolor.jpg",
+    "roughnessmap": "textures/Floor/Marble_Tiles_001/Marble_Tiles_001_roughness.jpg",
+    "normalmap": "textures/Floor/Marble_Tiles_001/Marble_Tiles_001_normal.jpg"
+  },
+  "Terrazzo_Tiles_001": {
+    "roughnessmap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_roughness.jpg",
+    "ambientmap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_ambientOcclusion.jpg",
+    "normalmap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_normal.jpg",
+    "colormap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_basecolor.jpg"
+  }
+};
+},{}],"wall_textures.json":[function(require,module,exports) {
+module.exports = {
+  "Concrete_Wall_005_SD": {
+    "colormap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_BaseColor.jpg",
+    "normalmap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Normal.jpg",
+    "ambientmap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_AmbientOcclusion.jpg",
+    "roughnessmap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Roughness.jpg"
+  },
+  "Terracotta_Bricks_002": {
+    "normalmap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_normal.jpg",
+    "ambientmap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_ambientOcclusion.jpg",
+    "roughnessmap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_roughness.jpg",
+    "colormap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_basecolor.jpg"
+  },
+  "Concrete-Wall-002": {
+    "colormap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_basecolor.jpg",
+    "normalmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_normal.jpg",
+    "roughnessmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_roughness.jpg",
+    "ambientmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_ambientocclusion.jpg"
+  },
+  "Concrete_016_SD": {
+    "ambientmap": "textures/Wall/Concrete_016_SD/Concrete_016_ambientOcclusion.jpg",
+    "normalmap": "textures/Wall/Concrete_016_SD/Concrete_016_normal.jpg",
+    "roughnessmap": "textures/Wall/Concrete_016_SD/Concrete_016_roughness.jpg",
+    "colormap": "textures/Wall/Concrete_016_SD/Concrete_016_baseColor.jpg"
+  },
+  "Concrete_Column_001_SD": {
+    "ambientmap": "textures/Wall/Concrete_Column_001_SD/Concrete_Column_001_ambientOcclusion.jpg",
+    "normalmap": "textures/Wall/Concrete_Column_001_SD/Concrete_Column_001_normal.jpg",
+    "roughnessmap": "textures/Wall/Concrete_Column_001_SD/Concrete_Column_001_roughness.jpg",
+    "colormap": "textures/Wall/Concrete_Column_001_SD/Concrete_Column_001_basecolor.jpg"
+  },
+  "Stone-Wall-015": {
+    "normalmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_normal.jpg",
+    "colormap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_basecolor.jpg",
+    "ambientmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_ambientOcclusion.jpg",
+    "roughnessmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_roughness.jpg"
+  },
+  "Stone_Wall_012_SD": {
+    "ambientmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_ambientOcclusion.jpg",
+    "colormap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_basecolor.jpg",
+    "normalmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_normal.jpg",
+    "roughnessmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_roughness.jpg"
+  },
+  "Stylized-Sci-fi Wall-001": {
+    "normalmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_normal.jpg",
+    "ambientmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_ambientOcclusion.jpg",
+    "colormap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_basecolor.jpg",
+    "roughnessmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_roughness.jpg"
+  }
+};
+},{}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _blueprint = require("./scripts/blueprint.js");
@@ -110663,16 +111387,36 @@ var _constants = require("./scripts/core/constants.js");
 
 var _quicksettings = _interopRequireDefault(require("quicksettings"));
 
-var _ConfigurationHelper = require("./scripts/helpers/ConfigurationHelper.js");
+var floor_textures_json = _interopRequireWildcard(require("./floor_textures.json"));
+
+var wall_textures_json = _interopRequireWildcard(require("./wall_textures.json"));
+
+var _dimensioning = require("./scripts/core/dimensioning.js");
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var startY = 0;
 var panelWidths = 200;
-var uxInterfaceHeight = 225;
-var empty = '{"floorplan":{"version":"0.0.2a","units":"m", "corners":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2":{"x":0,"y":0,"elevation":2.5},"f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"x":0,"y":5,"elevation":2.5},"da026c08-d76a-a944-8e7b-096b752da9ed":{"x":5,"y":5,"elevation":2.5},"4e3d65cb-54c0-0681-28bf-bddcc7bdb571":{"x":5,"y":0,"elevation":2.5}},"walls":[{"corner1":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","corner2":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":-176.77669529663686,"y":176.7766952966369},"b":{"x":-176.7766952966369,"y":323.22330470336317}},{"corner1":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","corner2":"da026c08-d76a-a944-8e7b-096b752da9ed","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":176.7766952966369,"y":676.7766952966368},"b":{"x":323.22330470336317,"y":676.776695296637}},{"corner1":"da026c08-d76a-a944-8e7b-096b752da9ed","corner2":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":676.7766952966368,"y":323.2233047033631},"b":{"x":676.776695296637,"y":176.77669529663686}},{"corner1":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","corner2":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":323.2233047033631,"y":-176.77669529663686},"b":{"x":176.77669529663686,"y":-176.7766952966369}}],"rooms":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,4e3d65cb-54c0-0681-28bf-bddcc7bdb571,da026c08-d76a-a944-8e7b-096b752da9ed,f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"name":"Ashok\'s Room"}},"wallTextures":[],"floorTextures":{},"newFloorTextures":{},"carbonSheet":{"url":"","transparency":1,"x":0,"y":0,"anchorX":0,"anchorY":0,"width":0.01,"height":0.01}},"items":[{"id":"7d0b3e90-c315-e7a5-a6d9-594757d5b7e4","itemName":"An Item","itemType":2,"position":[0,0,0],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":true,"resizable":true, "modelURL":"models/Cube.glb"}, {"itemName":"Lantern","itemType":9,"position":[10,0,0],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false, "modelURL":"models/Cube.glb"}, {"itemName":"Lantern","itemType":4,"position":[10,0,0],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false, "modelURL":"models/Cube.glb"}]}';
+var uxInterfaceHeight = 230;
+var subPanelsHeight = 460;
+var empty = '{"floorplan":{"version":"2.0.1a","corners":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2":{"x":0,"y":0,"elevation":2.5},"f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"x":0,"y":5,"elevation":2.5},"da026c08-d76a-a944-8e7b-096b752da9ed":{"x":5,"y":5,"elevation":2.5},"4e3d65cb-54c0-0681-28bf-bddcc7bdb571":{"x":5,"y":0,"elevation":2.5}},"walls":[{"corner1":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","corner2":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":-176.77669529663686,"y":176.7766952966369},"b":{"x":-176.7766952966369,"y":323.22330470336317}},{"corner1":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","corner2":"da026c08-d76a-a944-8e7b-096b752da9ed","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":176.7766952966369,"y":676.7766952966368},"b":{"x":323.22330470336317,"y":676.776695296637}},{"corner1":"da026c08-d76a-a944-8e7b-096b752da9ed","corner2":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":676.7766952966368,"y":323.2233047033631},"b":{"x":676.776695296637,"y":176.77669529663686}},{"corner1":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","corner2":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":323.2233047033631,"y":-176.77669529663686},"b":{"x":176.77669529663686,"y":-176.7766952966369}}],"rooms":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,4e3d65cb-54c0-0681-28bf-bddcc7bdb571,da026c08-d76a-a944-8e7b-096b752da9ed,f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"name":"Ashok\'s Room"}},"wallTextures":[],"floorTextures":{},"newFloorTextures":{},"carbonSheet":{},"units":"m"},"items":[{"id":"7d0b3e90-c315-e7a5-a6d9-594757d5b7e4","itemName":"An Item","itemType":2,"position":[65.00000000000006,88.19608972775876,292.4379793118495],"rotation":[0,1.5707963267948966,0],"scale":[1,1,1],"size":[240,50,100],"fixed":true,"resizable":true,"modelURL":"models/Cube.glb"},{"itemName":"Lantern","itemType":9,"position":[435,30,265.8727998642687],"rotation":[0,-1.5707963267948966,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"},{"itemName":"Lantern","itemType":4,"position":[260.0256835276736,220,244.4952575168973],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"}]}';
+var floor_textures = floor_textures_json['default'];
+var floor_texture_keys = Object.keys(floor_textures);
+var wall_textures = wall_textures_json['default'];
+var wall_texture_keys = Object.keys(wall_textures);
 var blueprint3d = null;
-var configurationHelper = new _ConfigurationHelper.ConfigurationHelper();
+var app_parent = document.getElementById('bp3d-js-app');
+var configurationHelper = null;
+var floorplanningHelper = null;
+var roomplanningHelper = null;
 var settingsViewer2d = null;
+var settingsSelectedCorner = null;
+var settingsSelectedWall = null;
+var settingsSelectedRoom = null;
 var settingsViewer3d = null;
 var uxInterface = null;
 var opts = {
@@ -110692,6 +111436,18 @@ var opts = {
   widget: false,
   resize: true
 };
+
+function selectFloorTexture(data) {
+  var floor_texture_pack = floor_textures[data.value];
+  settingsViewer3d.setValue('Floor Texture:', floor_texture_pack.colormap);
+  roomplanningHelper.roomTexturePack = floor_texture_pack;
+}
+
+function selectWallTexture(data) {
+  var wall_texture_pack = wall_textures[data.value];
+  settingsViewer3d.setValue('Wall Texture:', wall_texture_pack.colormap);
+  roomplanningHelper.wallTexturePack = wall_texture_pack;
+}
 
 function switchViewer() {
   blueprint3d.switchView();
@@ -110745,37 +111501,81 @@ blueprint3d = new _blueprint.BlueprintJS(opts);
 
 _configuration.Configuration.setValue(_configuration.configDimUnit, _constants.dimMeter);
 
+configurationHelper = blueprint3d.configurationHelper;
+floorplanningHelper = blueprint3d.floorplanningHelper;
+roomplanningHelper = blueprint3d.roomplanningHelper;
 blueprint3d.model.addEventListener(_events.EVENT_LOADED, function () {
   console.log('LOAD SERIALIZED JSON ::: ');
 });
+blueprint3d.floorplanner.addFloorplanListener(_events.EVENT_NOTHING_2D_SELECTED, function () {
+  settingsSelectedCorner.hide();
+  settingsSelectedWall.hide();
+  settingsSelectedRoom.hide();
+});
+blueprint3d.floorplanner.addFloorplanListener(_events.EVENT_CORNER_2D_CLICKED, function (evt) {
+  settingsSelectedCorner.show();
+  settingsSelectedWall.hide();
+  settingsSelectedRoom.hide();
+  settingsSelectedCorner.setValue('cornerElevation', _dimensioning.Dimensioning.cmToMeasureRaw(evt.item.elevation));
+});
+blueprint3d.floorplanner.addFloorplanListener(_events.EVENT_WALL_2D_CLICKED, function (evt) {
+  settingsSelectedCorner.hide();
+  settingsSelectedWall.show();
+  settingsSelectedRoom.hide();
+  settingsSelectedWall.setValue('wallThickness', _dimensioning.Dimensioning.cmToMeasureRaw(evt.item.thickness));
+});
+blueprint3d.floorplanner.addFloorplanListener(_events.EVENT_ROOM_2D_CLICKED, function (evt) {
+  settingsSelectedCorner.hide();
+  settingsSelectedWall.hide();
+  settingsSelectedRoom.show();
+  settingsSelectedRoom.setValue('roomName', evt.item.name);
+});
 blueprint3d.model.loadSerialized(empty);
-uxInterface = _quicksettings.default.create(0, 0, 'BlueprintJS');
-settingsViewer2d = _quicksettings.default.create(0, 0, 'Viewer 2D');
-settingsViewer3d = _quicksettings.default.create(0, 0, 'Viewer 3D');
-uxInterface.addButton('Switch Viewer', switchViewer);
-uxInterface.addHTML('Current View', 'Floorplanning');
-uxInterface.addFileChooser("Load Design", "Load Design", ".blueprint3d", loadBlueprint3DDesign);
-uxInterface.addButton('Save Design', saveBlueprint3DDesign);
-settingsViewer2d.bindBoolean('snapToGrid', configurationHelper.snapToGrid, configurationHelper);
-settingsViewer2d.bindBoolean('directionalDrag', configurationHelper.directionalDrag, configurationHelper);
-settingsViewer2d.bindBoolean('dragOnlyX', configurationHelper.dragOnlyX, configurationHelper);
-settingsViewer2d.bindBoolean('dragOnlyY', configurationHelper.dragOnlyY, configurationHelper);
-settingsViewer2d.bindNumber('boundsX', 1, 200, configurationHelper.boundsX, 1, configurationHelper);
-settingsViewer2d.bindNumber('boundsY', 1, 200, configurationHelper.boundsY, 1, configurationHelper);
-settingsViewer2d.bindRange('snapTolerance', 1, 200, configurationHelper.snapTolerance, 1, configurationHelper);
-settingsViewer2d.bindRange('gridSpacing', 10, 200, configurationHelper.gridSpacing, 1, configurationHelper);
-settingsViewer2d.addButton('Draw Mode', switchViewer2DToDraw);
-settingsViewer2d.addButton('Move Mode', switchViewer2DToMove);
-settingsViewer3d.addHTML('Tips:', '<p>Click and drag to rotate the room in 360\xB0</p><p>Add room items (Coming soon)</p><p>Drag and Place items(pink boxes) in the room</p><p>There are 8 different types of items <ul><li>1: FloorItem</li> <li>2: WallItem</li> <li>3: InWallItem</li> <li>7: InWallFloorItem</li> <li>8: OnFloorItem</li> <li>9: WallFloorItem</li><li>0: Item</li> <li>4: RoofItem</li></ul></p>');
-uxInterface.setWidth(panelWidths);
-settingsViewer2d.setWidth(panelWidths);
-settingsViewer3d.setWidth(panelWidths);
-uxInterface.setHeight(uxInterfaceHeight);
-uxInterface.setPosition(document.getElementById('bp3d-js-app').clientWidth - panelWidths, 0);
-settingsViewer2d.setPosition(document.getElementById('bp3d-js-app').clientWidth - panelWidths, uxInterfaceHeight);
-settingsViewer3d.setPosition(document.getElementById('bp3d-js-app').clientWidth - panelWidths, uxInterfaceHeight);
-settingsViewer3d.hide(); // });
-},{"./scripts/blueprint.js":"scripts/blueprint.js","./scripts/core/events.js":"scripts/core/events.js","./scripts/core/configuration.js":"scripts/core/configuration.js","./scripts/core/constants.js":"scripts/core/constants.js","quicksettings":"../node_modules/quicksettings/quicksettings.min.js","./scripts/helpers/ConfigurationHelper.js":"scripts/helpers/ConfigurationHelper.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+
+if (!opts.widget) {
+  uxInterface = _quicksettings.default.create(0, 0, 'BlueprintJS', app_parent);
+  settingsViewer2d = _quicksettings.default.create(0, 0, 'Viewer 2D', app_parent);
+  settingsSelectedCorner = _quicksettings.default.create(0, 0, 'Corner', app_parent);
+  settingsSelectedWall = _quicksettings.default.create(0, 0, 'Wall', app_parent);
+  settingsSelectedRoom = _quicksettings.default.create(0, 0, 'Room', app_parent);
+  settingsViewer3d = _quicksettings.default.create(0, 0, 'Viewer 3D', app_parent);
+  uxInterface.addButton('Switch Viewer', switchViewer);
+  uxInterface.addHTML('Current View', 'Floorplanning');
+  uxInterface.addFileChooser("Load Design", "Load Design", ".blueprint3d", loadBlueprint3DDesign);
+  uxInterface.addButton('Save Design', saveBlueprint3DDesign);
+  settingsViewer2d.addButton('Draw Mode', switchViewer2DToDraw);
+  settingsViewer2d.addButton('Move Mode', switchViewer2DToMove);
+  settingsViewer2d.bindBoolean('snapToGrid', configurationHelper.snapToGrid, configurationHelper);
+  settingsViewer2d.bindBoolean('directionalDrag', configurationHelper.directionalDrag, configurationHelper);
+  settingsViewer2d.bindBoolean('dragOnlyX', configurationHelper.dragOnlyX, configurationHelper);
+  settingsViewer2d.bindBoolean('dragOnlyY', configurationHelper.dragOnlyY, configurationHelper);
+  settingsViewer2d.bindRange('snapTolerance', 1, 200, configurationHelper.snapTolerance, 1, configurationHelper);
+  settingsViewer2d.bindRange('gridSpacing', 10, 200, configurationHelper.gridSpacing, 1, configurationHelper);
+  settingsViewer2d.bindNumber('boundsX', 1, 200, configurationHelper.boundsX, 1, configurationHelper);
+  settingsViewer2d.bindNumber('boundsY', 1, 200, configurationHelper.boundsY, 1, configurationHelper);
+  settingsSelectedCorner.bindRange('cornerElevation', 0, 500, floorplanningHelper.cornerElevation, 1, floorplanningHelper);
+  settingsSelectedWall.bindRange('wallThickness', 0, 100, floorplanningHelper.wallThickness, 0.1, floorplanningHelper);
+  settingsSelectedRoom.bindText('roomName', floorplanningHelper.roomName, floorplanningHelper);
+  settingsViewer3d.addDropDown('Floor Textures', floor_texture_keys, selectFloorTexture);
+  settingsViewer3d.addImage('Floor Texture:', floor_textures[floor_texture_keys[0]].colormap, null);
+  settingsViewer3d.addDropDown('Wall Textures', wall_texture_keys, selectWallTexture);
+  settingsViewer3d.addImage('Wall Texture:', wall_textures[wall_texture_keys[0]].colormap, null);
+  settingsViewer3d.addHTML('Tips:', '<p>Click and drag to rotate the room in 360\xB0</p><p>Add room items (Coming soon)</p><p>Drag and Place items(pink boxes) in the room</p><p>There are 8 different types of items <ul><li>1: FloorItem</li> <li>2: WallItem</li> <li>3: InWallItem</li> <li>7: InWallFloorItem</li> <li>8: OnFloorItem</li> <li>9: WallFloorItem</li><li>0: Item</li> <li>4: RoofItem</li></ul></p>');
+  uxInterface.setWidth(panelWidths);
+  uxInterface.setHeight(uxInterfaceHeight);
+  settingsViewer2d.setWidth(panelWidths);
+  settingsViewer3d.setWidth(panelWidths);
+  settingsViewer2d.setHeight(subPanelsHeight);
+  settingsViewer3d.setHeight(subPanelsHeight);
+  uxInterface.setPosition(app_parent.clientWidth - panelWidths, startY);
+  settingsViewer2d.setPosition(app_parent.clientWidth - panelWidths, startY + uxInterfaceHeight);
+  settingsViewer3d.setPosition(app_parent.clientWidth - panelWidths, startY + uxInterfaceHeight);
+  settingsViewer3d.hide();
+  settingsSelectedCorner.hide();
+  settingsSelectedWall.hide();
+  settingsSelectedRoom.hide();
+}
+},{"./scripts/blueprint.js":"scripts/blueprint.js","./scripts/core/events.js":"scripts/core/events.js","./scripts/core/configuration.js":"scripts/core/configuration.js","./scripts/core/constants.js":"scripts/core/constants.js","quicksettings":"../node_modules/quicksettings/quicksettings.min.js","./floor_textures.json":"floor_textures.json","./wall_textures.json":"wall_textures.json","./scripts/core/dimensioning.js":"scripts/core/dimensioning.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -110803,7 +111603,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "41779" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "38413" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

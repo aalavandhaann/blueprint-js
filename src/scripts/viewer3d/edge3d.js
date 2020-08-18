@@ -1,6 +1,7 @@
 import { EventDispatcher, TextureLoader, RepeatWrapping, Vector2, Vector3, MeshBasicMaterial, FrontSide, DoubleSide, BackSide, Shape, Path, ShapeGeometry, Mesh, Geometry, Face3, } from 'three';
 import { Utils } from '../core/utils.js';
-import { EVENT_REDRAW } from '../core/events.js';
+import { EVENT_REDRAW, EVENT_UPDATE_TEXTURES } from '../core/events.js';
+import { Material3D } from '../materials/Material3D.js';
 
 export class Edge3D extends EventDispatcher {
     constructor(scene, edge, controls) {
@@ -31,9 +32,24 @@ export class Edge3D extends EventDispatcher {
         this.redrawevent = this.__redraw.bind(this); //() => { scope.redraw(); };
         this.visibilityevent = this.__visibility.bind(this); //() => { scope.updateVisibility(); };
         this.showallevent = this.__showAll.bind(this); //() => { scope.showAll(); };
+        this.__updateTexturePackEvent = this.__updateTexturePack.bind(this);
 
         this.visibilityfactor = true;
+
+        let texturePack = this.edge.getTexture();
+        this.__wallMaterial3D = new Material3D({ color: texturePack.color, side: FrontSide }, texturePack, this.scene);;
         this.init();
+    }
+
+    __updateTexturePack() {
+        let height = this.wall.height;
+        let width = this.edge.interiorDistance();
+        let texturePack = this.edge.getTexture();
+        this.__wallMaterial3D = new Material3D({ color: texturePack.color, side: FrontSide }, texturePack, this.scene);
+        // this.__wallMaterial3D.textureMapPack = texturePack;
+        // this.__wallMaterial3D.updateDimensions(width, height);
+        this.redraw();
+        this.scene.needsUpdate = true;
     }
 
     __redraw() {
@@ -49,12 +65,14 @@ export class Edge3D extends EventDispatcher {
     }
 
     remove() {
+        this.edge.removeEventListener(EVENT_UPDATE_TEXTURES, this.__updateTexturePackEvent);
         this.edge.removeEventListener(EVENT_REDRAW, this.redrawevent);
         this.controls.removeEventListener('change', this.visibilityevent);
         this.removeFromScene();
     }
 
     init() {
+        this.edge.addEventListener(EVENT_UPDATE_TEXTURES, this.__updateTexturePackEvent);
         this.edge.addEventListener(EVENT_REDRAW, this.redrawevent);
         this.controls.addEventListener('change', this.visibilityevent);
 
@@ -167,23 +185,28 @@ export class Edge3D extends EventDispatcher {
         if (this.edge == null) {
             return;
         }
-        let scope = this;
-        // callback is fired when texture loads
-        callback = callback || function() { scope.scene.needsUpdate = true; };
-        let textureData = this.edge.getTexture();
-        let stretch = textureData.stretch;
-        let url = textureData.url; //this is a hack temperory
-        let scale = textureData.scale;
-        this.texture = new TextureLoader().load(url, callback);
 
-        if (!stretch) {
-            let height = this.wall.height;
-            let width = this.edge.interiorDistance();
-            this.texture.wrapT = RepeatWrapping;
-            this.texture.wrapS = RepeatWrapping;
-            this.texture.repeat.set(width / scale, height / scale);
-            this.texture.needsUpdate = true;
-        }
+        let height = this.wall.height;
+        let width = this.edge.interiorDistance();
+        // this.__wallMaterial3D.textureMapPack = texturePack;
+        this.__wallMaterial3D.updateDimensions(width, height);
+
+        // let scope = this;
+        // // callback is fired when texture loads
+        // callback = callback || function() { scope.scene.needsUpdate = true; };
+        // let textureData = this.edge.getTexture();
+        // let stretch = textureData.stretch;
+        // let url = textureData.url; //this is a hack temperory
+        // let scale = textureData.scale;
+        // this.texture = new TextureLoader().load(url, callback);
+
+        // if (!stretch) {
+
+        //     this.texture.wrapT = RepeatWrapping;
+        //     this.texture.wrapS = RepeatWrapping;
+        //     this.texture.repeat.set(width / scale, height / scale);
+        //     this.texture.needsUpdate = true;
+        // }
     }
 
     updatePlanes() {
@@ -203,16 +226,16 @@ export class Edge3D extends EventDispatcher {
         var wallMaterial = new MeshBasicMaterial({
             color: color,
             side: FrontSide,
-            map: this.texture,
+            // map: this.texture,
             transparent: true,
-            lightMap: this.lightMap,
+            // lightMap: this.lightMap,
             opacity: 1.0,
             wireframe: false,
         });
         var fillerMaterial = new MeshBasicMaterial({
             color: this.fillerColor,
             side: DoubleSide,
-            map: this.texture,
+            // map: this.texture,
             transparent: true,
             opacity: 1.0,
             wireframe: false,
@@ -225,7 +248,8 @@ export class Edge3D extends EventDispatcher {
             this.planes.push(this.makeWall(exteriorStart, exteriorEnd, this.edge.exteriorTransform, this.edge.invExteriorTransform, fillerMaterial));
         }
         // interior plane
-        this.planes.push(this.makeWall(interiorStart, interiorEnd, this.edge.interiorTransform, this.edge.invInteriorTransform, wallMaterial));
+        // this.planes.push(this.makeWall(interiorStart, interiorEnd, this.edge.interiorTransform, this.edge.invInteriorTransform, wallMaterial));
+        this.planes.push(this.makeWall(interiorStart, interiorEnd, this.edge.interiorTransform, this.edge.invInteriorTransform, this.__wallMaterial3D));
         // bottom
         // put into basePlanes since this is always visible
         this.basePlanes.push(this.buildFillerUniformHeight(this.edge, 0, BackSide, this.baseColor));

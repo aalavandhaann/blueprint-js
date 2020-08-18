@@ -1,6 +1,6 @@
 import { EventDispatcher, Vector2 } from 'three';
 import { Plane, Raycaster, Vector3, Matrix4 } from 'three/build/three.module';
-import { EVENT_ITEM_SELECTED, EVENT_ITEM_MOVE, EVENT_ITEM_HOVERON, EVENT_ITEM_HOVEROFF, EVENT_ITEM_MOVE_FINISH, EVENT_NO_ITEM_SELECTED } from '../core/events';
+import { EVENT_ITEM_SELECTED, EVENT_ITEM_MOVE, EVENT_ITEM_HOVERON, EVENT_ITEM_HOVEROFF, EVENT_ITEM_MOVE_FINISH, EVENT_NO_ITEM_SELECTED, EVENT_WALL_CLICKED, EVENT_FLOOR_CLICKED, EVENT_ROOM_CLICKED } from '../core/events';
 import { IS_TOUCH_DEVICE } from '../../DeviceInfo';
 
 /**
@@ -10,8 +10,10 @@ import { IS_TOUCH_DEVICE } from '../../DeviceInfo';
  * a invisible box geometry based on the loaded gltf
  */
 export class DragRoomItemsControl3D extends EventDispatcher {
-    constructor(items, camera, domElement) {
+    constructor(walls, floors, items, camera, domElement) {
         super();
+        this.__walls = walls;
+        this.__floors = floors;
         this.__draggableItems = items;
         this.__camera = camera;
         this.__domElement = domElement;
@@ -78,6 +80,18 @@ export class DragRoomItemsControl3D extends EventDispatcher {
         if (this.__selected) {
             this.dispatchEvent({ type: EVENT_ITEM_MOVE_FINISH, item: this.__selected });
             this.__selected = null;
+        } else {
+
+            evt = (evt.changedTouches !== undefined) ? evt.changedTouches[0] : evt;
+            this.__raycaster.setFromCamera(this.__mouse, this.__camera);
+
+            let wallPlanesThatIntersect = this.__raycaster.intersectObjects(this.__walls, false);
+            let floorPlanesThatIntersect = this.__raycaster.intersectObjects(this.__floors, false);
+            if (wallPlanesThatIntersect.length) {
+                this.dispatchEvent({ type: EVENT_WALL_CLICKED, item: wallPlanesThatIntersect[0].object.edge });
+            } else if (floorPlanesThatIntersect.length) {
+                this.dispatchEvent({ type: EVENT_ROOM_CLICKED, item: floorPlanesThatIntersect[0].object.room });
+            }
         }
         this.__domElement.style.cursor = (this.__hovered) ? 'pointer' : 'auto';
 
@@ -155,7 +169,7 @@ export class DragRoomItemsControl3D extends EventDispatcher {
         this.__domElement.addEventListener('touchmove', this.__moveListenerEvent, false);
 
         this.__domElement.addEventListener('mouseup', this.__releaseListenerEvent, false);
-        this.__domElement.addEventListener('mouseleave', this.__releaseListenerEvent, false);
+        // this.__domElement.addEventListener('mouseleave', this.__releaseListenerEvent, false);//Not necessary
         this.__domElement.addEventListener('touchend', this.__releaseListenerEvent, false);
 
     }
@@ -168,7 +182,7 @@ export class DragRoomItemsControl3D extends EventDispatcher {
         this.__domElement.removeEventListener('touchmove', this.__moveListenerEvent, false);
 
         this.__domElement.removeEventListener('mouseup', this.__releaseListenerEvent, false);
-        this.__domElement.removeEventListener('mouseleave', this.__releaseListenerEvent, false);
+        // this.__domElement.removeEventListener('mouseleave', this.__releaseListenerEvent, false);//Not necessary
         this.__domElement.removeEventListener('touchend', this.__releaseListenerEvent, false);
 
         this.__domElement.style.cursor = '';

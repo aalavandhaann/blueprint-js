@@ -3,7 +3,7 @@ import { EVENT_CORNER_ATTRIBUTES_CHANGED, EVENT_WALL_ATTRIBUTES_CHANGED, EVENT_R
 import { EventDispatcher, Vector2, Vector3, Matrix4 } from 'three';
 import { Utils } from '../core/utils.js';
 import { Dimensioning } from '../core/dimensioning.js';
-import { dimInch, dimFeetAndInch, dimMeter, dimCentiMeter, dimMilliMeter } from '../core/constants.js';
+import { dimInch, dimFeetAndInch, dimMeter, dimCentiMeter, dimMilliMeter, defaultWallTexture } from '../core/constants.js';
 import { WallTypes } from '../core/constants.js';
 import { Version } from '../core/version.js';
 import { cornerTolerance, Configuration, configDimUnit } from '../core/configuration.js';
@@ -511,6 +511,7 @@ export class Floorplan extends EventDispatcher {
                     'wallType': wall.wallType.description,
                     'a': { x: wall.a.x, y: wall.a.y },
                     'b': { x: wall.b.x, y: wall.b.y },
+                    'thickness': Dimensioning.cmToMeasureRaw(wall.thickness),
                 });
                 cornerIds.push(wall.getStart());
                 cornerIds.push(wall.getEnd());
@@ -597,10 +598,23 @@ export class Floorplan extends EventDispatcher {
             var newWall = scope.newWall(corners[wall.corner1], corners[wall.corner2]);
 
             if (wall.frontTexture) {
-                newWall.frontTexture = wall.frontTexture;
+                if (wall.frontTexture.colormap) {
+                    newWall.frontTexture = wall.frontTexture;
+                } else {
+                    newWall.frontTexture = defaultWallTexture;
+                }
+
             }
             if (wall.backTexture) {
-                newWall.backTexture = wall.backTexture;
+                if (wall.backTexture.colormap) {
+                    newWall.backTexture = wall.backTexture;
+                } else {
+                    newWall.backTexture = defaultWallTexture;
+                }
+
+            }
+            if (wall.thickness) {
+                newWall.thickness = Dimensioning.cmFromMeasureRaw(wall.thickness);
             }
             // Adding of a, b, wallType (straight, curved) for walls happened
             // with introduction of 0.0.2a

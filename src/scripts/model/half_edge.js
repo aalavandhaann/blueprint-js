@@ -1,5 +1,5 @@
 import { EventDispatcher, Vector2, Vector3, Matrix4, Face3, Mesh, Geometry, MeshBasicMaterial, Box3 } from 'three';
-import { EVENT_REDRAW, EVENT_MOVED, EVENT_UPDATED } from '../core/events.js';
+import { EVENT_REDRAW, EVENT_MOVED, EVENT_UPDATED, EVENT_UPDATE_TEXTURES } from '../core/events.js';
 import { Utils } from '../core/utils.js';
 import { WallTypes } from '../core/constants.js';
 import { BufferGeometry } from 'three/build/three.module';
@@ -175,6 +175,21 @@ export class HalfEdge extends EventDispatcher {
         } else {
             return this.wall.backTexture;
         }
+    }
+
+    setTextureMaps(texturePack) {
+        if (!texturePack.color) {
+            texturePack.color = '#FFFFFF';
+        }
+        if (!texturePack.repeat) {
+            texturePack.repeat = 200; //For every 50 cms
+        }
+        if (this.front) {
+            this.wall.frontTexture = texturePack;
+        } else {
+            this.wall.backTexture = texturePack;
+        }
+        this.dispatchEvent({ type: EVENT_UPDATE_TEXTURES, item: this });
     }
 
     /**

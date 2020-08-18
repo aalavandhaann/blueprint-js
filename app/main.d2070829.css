@@ -15,9 +15,10 @@ div {
     padding: 0;
 }
 
-#bp3d-js-app {
+
+/* #bp3d-js-app {
     overflow: hidden;
-}
+} */
 
 #bp3djs-viewer2d,
 #bp3djs-viewer3d {

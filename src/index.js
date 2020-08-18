@@ -1,22 +1,42 @@
 import { BlueprintJS } from './scripts/blueprint.js';
-import { EVENT_LOADED } from './scripts/core/events.js';
+import { EVENT_LOADED, EVENT_NOTHING_2D_SELECTED, EVENT_CORNER_2D_CLICKED, EVENT_WALL_2D_CLICKED, EVENT_ROOM_2D_CLICKED } from './scripts/core/events.js';
 import { Configuration, configDimUnit } from './scripts/core/configuration.js';
 import { dimMeter } from './scripts/core/constants.js';
 import QuickSettings from 'quicksettings';
-import { ConfigurationHelper } from './scripts/helpers/ConfigurationHelper.js';
 
+import * as floor_textures_json from './floor_textures.json';
+import * as wall_textures_json from './wall_textures.json';
+import { Dimensioning } from './scripts/core/dimensioning.js';
+
+let startY = 0;
 let panelWidths = 200;
-let uxInterfaceHeight = 225;
-let empty = '{"floorplan":{"version":"0.0.2a","units":"m", "corners":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2":{"x":0,"y":0,"elevation":2.5},"f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"x":0,"y":5,"elevation":2.5},"da026c08-d76a-a944-8e7b-096b752da9ed":{"x":5,"y":5,"elevation":2.5},"4e3d65cb-54c0-0681-28bf-bddcc7bdb571":{"x":5,"y":0,"elevation":2.5}},"walls":[{"corner1":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","corner2":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":-176.77669529663686,"y":176.7766952966369},"b":{"x":-176.7766952966369,"y":323.22330470336317}},{"corner1":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","corner2":"da026c08-d76a-a944-8e7b-096b752da9ed","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":176.7766952966369,"y":676.7766952966368},"b":{"x":323.22330470336317,"y":676.776695296637}},{"corner1":"da026c08-d76a-a944-8e7b-096b752da9ed","corner2":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":676.7766952966368,"y":323.2233047033631},"b":{"x":676.776695296637,"y":176.77669529663686}},{"corner1":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","corner2":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":323.2233047033631,"y":-176.77669529663686},"b":{"x":176.77669529663686,"y":-176.7766952966369}}],"rooms":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,4e3d65cb-54c0-0681-28bf-bddcc7bdb571,da026c08-d76a-a944-8e7b-096b752da9ed,f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"name":"Ashok\'s Room"}},"wallTextures":[],"floorTextures":{},"newFloorTextures":{},"carbonSheet":{"url":"","transparency":1,"x":0,"y":0,"anchorX":0,"anchorY":0,"width":0.01,"height":0.01}},"items":[{"id":"7d0b3e90-c315-e7a5-a6d9-594757d5b7e4","itemName":"An Item","itemType":2,"position":[0,0,0],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":true,"resizable":true, "modelURL":"models/Cube.glb"}, {"itemName":"Lantern","itemType":9,"position":[10,0,0],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false, "modelURL":"models/Cube.glb"}, {"itemName":"Lantern","itemType":4,"position":[10,0,0],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false, "modelURL":"models/Cube.glb"}]}';
+let uxInterfaceHeight = 230;
+let subPanelsHeight = 460;
+let empty = '{"floorplan":{"version":"2.0.1a","corners":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2":{"x":0,"y":0,"elevation":2.5},"f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"x":0,"y":5,"elevation":2.5},"da026c08-d76a-a944-8e7b-096b752da9ed":{"x":5,"y":5,"elevation":2.5},"4e3d65cb-54c0-0681-28bf-bddcc7bdb571":{"x":5,"y":0,"elevation":2.5}},"walls":[{"corner1":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","corner2":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":-176.77669529663686,"y":176.7766952966369},"b":{"x":-176.7766952966369,"y":323.22330470336317}},{"corner1":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","corner2":"da026c08-d76a-a944-8e7b-096b752da9ed","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":176.7766952966369,"y":676.7766952966368},"b":{"x":323.22330470336317,"y":676.776695296637}},{"corner1":"da026c08-d76a-a944-8e7b-096b752da9ed","corner2":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":676.7766952966368,"y":323.2233047033631},"b":{"x":676.776695296637,"y":176.77669529663686}},{"corner1":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","corner2":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":323.2233047033631,"y":-176.77669529663686},"b":{"x":176.77669529663686,"y":-176.7766952966369}}],"rooms":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,4e3d65cb-54c0-0681-28bf-bddcc7bdb571,da026c08-d76a-a944-8e7b-096b752da9ed,f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"name":"Ashok\'s Room"}},"wallTextures":[],"floorTextures":{},"newFloorTextures":{},"carbonSheet":{},"units":"m"},"items":[{"id":"7d0b3e90-c315-e7a5-a6d9-594757d5b7e4","itemName":"An Item","itemType":2,"position":[65.00000000000006,88.19608972775876,292.4379793118495],"rotation":[0,1.5707963267948966,0],"scale":[1,1,1],"size":[240,50,100],"fixed":true,"resizable":true,"modelURL":"models/Cube.glb"},{"itemName":"Lantern","itemType":9,"position":[435,30,265.8727998642687],"rotation":[0,-1.5707963267948966,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"},{"itemName":"Lantern","itemType":4,"position":[260.0256835276736,220,244.4952575168973],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"}]}';
 
+let floor_textures = floor_textures_json['default'];
+let floor_texture_keys = Object.keys(floor_textures);
+
+let wall_textures = wall_textures_json['default'];
+let wall_texture_keys = Object.keys(wall_textures);
 
 let blueprint3d = null;
 
-let configurationHelper = new ConfigurationHelper();
+let app_parent = document.getElementById('bp3d-js-app');
+
+let configurationHelper = null;
+let floorplanningHelper = null;
+let roomplanningHelper = null;
+
 
 let settingsViewer2d = null;
+let settingsSelectedCorner = null;
+let settingsSelectedWall = null;
+let settingsSelectedRoom = null;
+
 let settingsViewer3d = null;
 let uxInterface = null;
+
 
 let opts = {
     viewer2d: {
@@ -35,6 +55,18 @@ let opts = {
     widget: false,
     resize: true,
 };
+
+function selectFloorTexture(data) {
+    let floor_texture_pack = floor_textures[data.value];
+    settingsViewer3d.setValue('Floor Texture:', floor_texture_pack.colormap);
+    roomplanningHelper.roomTexturePack = floor_texture_pack;
+}
+
+function selectWallTexture(data) {
+    let wall_texture_pack = wall_textures[data.value];
+    settingsViewer3d.setValue('Wall Texture:', wall_texture_pack.colormap);
+    roomplanningHelper.wallTexturePack = wall_texture_pack;
+}
 
 function switchViewer() {
     blueprint3d.switchView();
@@ -81,44 +113,100 @@ function saveBlueprint3DDesign() {
 console.log('ON DOCUMENT READY ');
 blueprint3d = new BlueprintJS(opts);
 Configuration.setValue(configDimUnit, dimMeter);
+
+configurationHelper = blueprint3d.configurationHelper;
+floorplanningHelper = blueprint3d.floorplanningHelper;
+roomplanningHelper = blueprint3d.roomplanningHelper;
+
 blueprint3d.model.addEventListener(EVENT_LOADED, function() { console.log('LOAD SERIALIZED JSON ::: '); });
+blueprint3d.floorplanner.addFloorplanListener(EVENT_NOTHING_2D_SELECTED, function() {
+    settingsSelectedCorner.hide();
+    settingsSelectedWall.hide();
+    settingsSelectedRoom.hide();
+});
+blueprint3d.floorplanner.addFloorplanListener(EVENT_CORNER_2D_CLICKED, function(evt) {
+    settingsSelectedCorner.show();
+    settingsSelectedWall.hide();
+    settingsSelectedRoom.hide();
+    settingsSelectedCorner.setValue('cornerElevation', Dimensioning.cmToMeasureRaw(evt.item.elevation));
+});
+blueprint3d.floorplanner.addFloorplanListener(EVENT_WALL_2D_CLICKED, function(evt) {
+    settingsSelectedCorner.hide();
+    settingsSelectedWall.show();
+    settingsSelectedRoom.hide();
+    settingsSelectedWall.setValue('wallThickness', Dimensioning.cmToMeasureRaw(evt.item.thickness));
+});
+blueprint3d.floorplanner.addFloorplanListener(EVENT_ROOM_2D_CLICKED, function(evt) {
+    settingsSelectedCorner.hide();
+    settingsSelectedWall.hide();
+    settingsSelectedRoom.show();
+    settingsSelectedRoom.setValue('roomName', evt.item.name);
+});
+
+
+
 blueprint3d.model.loadSerialized(empty);
 
 
-uxInterface = QuickSettings.create(0, 0, 'BlueprintJS');
-settingsViewer2d = QuickSettings.create(0, 0, 'Viewer 2D');
-settingsViewer3d = QuickSettings.create(0, 0, 'Viewer 3D');
-uxInterface.addButton('Switch Viewer', switchViewer);
-uxInterface.addHTML('Current View', 'Floorplanning');
+if (!opts.widget) {
+    uxInterface = QuickSettings.create(0, 0, 'BlueprintJS', app_parent);
+    settingsViewer2d = QuickSettings.create(0, 0, 'Viewer 2D', app_parent);
+    settingsSelectedCorner = QuickSettings.create(0, 0, 'Corner', app_parent);
+    settingsSelectedWall = QuickSettings.create(0, 0, 'Wall', app_parent);
+    settingsSelectedRoom = QuickSettings.create(0, 0, 'Room', app_parent);
 
-uxInterface.addFileChooser("Load Design", "Load Design", ".blueprint3d", loadBlueprint3DDesign);
-uxInterface.addButton('Save Design', saveBlueprint3DDesign);
-
-settingsViewer2d.bindBoolean('snapToGrid', configurationHelper.snapToGrid, configurationHelper);
-settingsViewer2d.bindBoolean('directionalDrag', configurationHelper.directionalDrag, configurationHelper);
-settingsViewer2d.bindBoolean('dragOnlyX', configurationHelper.dragOnlyX, configurationHelper);
-settingsViewer2d.bindBoolean('dragOnlyY', configurationHelper.dragOnlyY, configurationHelper);
-settingsViewer2d.bindNumber('boundsX', 1, 200, configurationHelper.boundsX, 1, configurationHelper);
-settingsViewer2d.bindNumber('boundsY', 1, 200, configurationHelper.boundsY, 1, configurationHelper);
-settingsViewer2d.bindRange('snapTolerance', 1, 200, configurationHelper.snapTolerance, 1, configurationHelper);
-settingsViewer2d.bindRange('gridSpacing', 10, 200, configurationHelper.gridSpacing, 1, configurationHelper);
-
-settingsViewer2d.addButton('Draw Mode', switchViewer2DToDraw);
-settingsViewer2d.addButton('Move Mode', switchViewer2DToMove);
-
-settingsViewer3d.addHTML('Tips:', '<p>Click and drag to rotate the room in 360\xB0</p><p>Add room items (Coming soon)</p><p>Drag and Place items(pink boxes) in the room</p><p>There are 8 different types of items <ul><li>1: FloorItem</li> <li>2: WallItem</li> <li>3: InWallItem</li> <li>7: InWallFloorItem</li> <li>8: OnFloorItem</li> <li>9: WallFloorItem</li><li>0: Item</li> <li>4: RoofItem</li></ul></p>');
+    settingsViewer3d = QuickSettings.create(0, 0, 'Viewer 3D', app_parent);
 
 
-uxInterface.setWidth(panelWidths);
-settingsViewer2d.setWidth(panelWidths);
-settingsViewer3d.setWidth(panelWidths);
+    uxInterface.addButton('Switch Viewer', switchViewer);
+    uxInterface.addHTML('Current View', 'Floorplanning');
 
-uxInterface.setHeight(uxInterfaceHeight);
+    uxInterface.addFileChooser("Load Design", "Load Design", ".blueprint3d", loadBlueprint3DDesign);
+    uxInterface.addButton('Save Design', saveBlueprint3DDesign);
 
-uxInterface.setPosition(document.getElementById('bp3d-js-app').clientWidth - panelWidths, 0);
-settingsViewer2d.setPosition(document.getElementById('bp3d-js-app').clientWidth - panelWidths, uxInterfaceHeight);
-settingsViewer3d.setPosition(document.getElementById('bp3d-js-app').clientWidth - panelWidths, uxInterfaceHeight);
+    settingsViewer2d.addButton('Draw Mode', switchViewer2DToDraw);
+    settingsViewer2d.addButton('Move Mode', switchViewer2DToMove);
 
-settingsViewer3d.hide();
+    settingsViewer2d.bindBoolean('snapToGrid', configurationHelper.snapToGrid, configurationHelper);
+    settingsViewer2d.bindBoolean('directionalDrag', configurationHelper.directionalDrag, configurationHelper);
+    settingsViewer2d.bindBoolean('dragOnlyX', configurationHelper.dragOnlyX, configurationHelper);
+    settingsViewer2d.bindBoolean('dragOnlyY', configurationHelper.dragOnlyY, configurationHelper);
+    settingsViewer2d.bindRange('snapTolerance', 1, 200, configurationHelper.snapTolerance, 1, configurationHelper);
+    settingsViewer2d.bindRange('gridSpacing', 10, 200, configurationHelper.gridSpacing, 1, configurationHelper);
+    settingsViewer2d.bindNumber('boundsX', 1, 200, configurationHelper.boundsX, 1, configurationHelper);
+    settingsViewer2d.bindNumber('boundsY', 1, 200, configurationHelper.boundsY, 1, configurationHelper);
 
-// });
+    settingsSelectedCorner.bindRange('cornerElevation', 0, 500, floorplanningHelper.cornerElevation, 1, floorplanningHelper);
+    settingsSelectedWall.bindRange('wallThickness', 0, 100, floorplanningHelper.wallThickness, 0.1, floorplanningHelper);
+    settingsSelectedRoom.bindText('roomName', floorplanningHelper.roomName, floorplanningHelper);
+
+    settingsViewer3d.addDropDown('Floor Textures', floor_texture_keys, selectFloorTexture);
+    settingsViewer3d.addImage('Floor Texture:', floor_textures[floor_texture_keys[0]].colormap, null);
+
+    settingsViewer3d.addDropDown('Wall Textures', wall_texture_keys, selectWallTexture);
+    settingsViewer3d.addImage('Wall Texture:', wall_textures[wall_texture_keys[0]].colormap, null);
+
+    settingsViewer3d.addHTML('Tips:', '<p>Click and drag to rotate the room in 360\xB0</p><p>Add room items (Coming soon)</p><p>Drag and Place items(pink boxes) in the room</p><p>There are 8 different types of items <ul><li>1: FloorItem</li> <li>2: WallItem</li> <li>3: InWallItem</li> <li>7: InWallFloorItem</li> <li>8: OnFloorItem</li> <li>9: WallFloorItem</li><li>0: Item</li> <li>4: RoofItem</li></ul></p>');
+
+
+    uxInterface.setWidth(panelWidths);
+    uxInterface.setHeight(uxInterfaceHeight);
+
+    settingsViewer2d.setWidth(panelWidths);
+    settingsViewer3d.setWidth(panelWidths);
+
+
+    settingsViewer2d.setHeight(subPanelsHeight);
+    settingsViewer3d.setHeight(subPanelsHeight);
+
+
+
+    uxInterface.setPosition(app_parent.clientWidth - panelWidths, startY);
+    settingsViewer2d.setPosition(app_parent.clientWidth - panelWidths, startY + uxInterfaceHeight);
+    settingsViewer3d.setPosition(app_parent.clientWidth - panelWidths, startY + uxInterfaceHeight);
+
+    settingsViewer3d.hide();
+    settingsSelectedCorner.hide();
+    settingsSelectedWall.hide();
+    settingsSelectedRoom.hide();
+}
