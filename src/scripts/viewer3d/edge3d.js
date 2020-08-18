@@ -1,7 +1,6 @@
-import { EventDispatcher, TextureLoader, RepeatWrapping, Vector2, Vector3, MeshBasicMaterial, FrontSide, DoubleSide, BackSide, Shape, Path, ShapeGeometry, Mesh, Geometry, Face3, } from 'three';
+import { EventDispatcher, Vector2, Vector3, MeshBasicMaterial, FrontSide, DoubleSide, BackSide, Shape, Path, ShapeGeometry, Mesh, Geometry, Face3, } from 'three';
 import { Utils } from '../core/utils.js';
 import { EVENT_REDRAW, EVENT_UPDATE_TEXTURES } from '../core/events.js';
-import { Material3D } from '../materials/Material3D.js';
 import { WallMaterial3D } from '../materials/WallMaterial3D.js';
 
 export class Edge3D extends EventDispatcher {
@@ -18,6 +17,8 @@ export class Edge3D extends EventDispatcher {
         this.planes = [];
         this.phantomPlanes = [];
         this.basePlanes = []; // always visible
+
+        this.__wallPlaneMesh = null;
 
         //Debug wall intersection planes. Edge.plane is the plane used for intersection
         //		this.phantomPlanes.push(this.edge.plane);//Enable this line to see the wall planes
@@ -169,6 +170,18 @@ export class Edge3D extends EventDispatcher {
             // plane.material.opacity = (scope.visible) ? 1.0 : 0.1;
             plane.visible = scope.visible;
         });
+
+        if (this.__wallPlaneMesh && this.edge && scope.visible) {
+            console.log(this.__wallPlaneMesh);
+            let wallLocation = this.wall.location.clone();
+            let y = Math.min(this.edge.getEnd().elevation, this.edge.getStart().elevation) * 0.5;
+            this.__wallPlaneMesh.visible = false;
+            this.__wallMaterial3D.envMapCamera.position.set(wallLocation.x, y, wallLocation.y);
+            this.__wallMaterial3D.envMapCamera.update(this.scene.renderer, this.scene);
+            this.__wallPlaneMesh.visible = true;
+            // this.scene.renderToACamera(this.__floorMaterial3D.envMapCamera);
+            this.__wallMaterial3D.needsUpdate = true;
+        }
         scope.updateObjectVisibility();
     }
 
@@ -231,7 +244,8 @@ export class Edge3D extends EventDispatcher {
         }
         // interior plane
         // this.planes.push(this.makeWall(interiorStart, interiorEnd, this.edge.interiorTransform, this.edge.invInteriorTransform, wallMaterial));
-        this.planes.push(this.makeWall(interiorStart, interiorEnd, this.edge.interiorTransform, this.edge.invInteriorTransform, this.__wallMaterial3D));
+        this.__wallPlaneMesh = this.makeWall(interiorStart, interiorEnd, this.edge.interiorTransform, this.edge.invInteriorTransform, this.__wallMaterial3D)
+        this.planes.push(this.__wallPlaneMesh);
         // bottom
         // put into basePlanes since this is always visible
         this.basePlanes.push(this.buildFillerUniformHeight(this.edge, 0, BackSide, this.baseColor));

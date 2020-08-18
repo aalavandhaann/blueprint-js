@@ -46638,6 +46638,18 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function set(target, property, value, receiver) { if (typeof Reflect !== "undefined" && Reflect.set) { set = Reflect.set; } else { set = function set(target, property, value, receiver) { var base = _superPropBase(target, property); var desc; if (base) { desc = Object.getOwnPropertyDescriptor(base, property); if (desc.set) { desc.set.call(receiver, value); return true; } else if (!desc.writable) { return false; } } desc = Object.getOwnPropertyDescriptor(receiver, property); if (desc) { if (!desc.writable) { return false; } desc.value = value; Object.defineProperty(receiver, property, desc); } else { _defineProperty(receiver, property, value); } return true; }; } return set(target, property, value, receiver); }
+
+function _set(target, property, value, receiver, isStrict) { var s = set(target, property, value, receiver || target); if (!s && isStrict) { throw new Error('failed to set property'); } return value; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
@@ -46658,10 +46670,30 @@ var WallMaterial3D = /*#__PURE__*/function (_Material3D) {
   var _super = _createSuper(WallMaterial3D);
 
   function WallMaterial3D(parameters, textureMapPack, scene) {
+    var _this;
+
     _classCallCheck(this, WallMaterial3D);
 
-    return _super.call(this, parameters, textureMapPack, scene);
+    _this = _super.call(this, parameters, textureMapPack, scene, true);
+    _this.roughness = 0.7;
+    return _this;
   }
+
+  _createClass(WallMaterial3D, [{
+    key: "textureMapPack",
+    get: function get() {
+      return this.__textureMapPack;
+    },
+    set: function set(tpack) {
+      _set(_getPrototypeOf(WallMaterial3D.prototype), "textureMapPack", tpack, this, true);
+
+      if (tpack.reflective) {
+        this.roughness = tpack.reflective;
+      } else {
+        this.roughness = 0.7;
+      }
+    }
+  }]);
 
   return WallMaterial3D;
 }(_Material3D2.Material3D);
@@ -46680,8 +46712,6 @@ var _three = require("three");
 var _utils = require("../core/utils.js");
 
 var _events = require("../core/events.js");
-
-var _Material3D = require("../materials/Material3D.js");
 
 var _WallMaterial3D = require("../materials/WallMaterial3D.js");
 
@@ -46727,7 +46757,8 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
     _this.planes = [];
     _this.phantomPlanes = [];
     _this.basePlanes = []; // always visible
-    //Debug wall intersection planes. Edge.plane is the plane used for intersection
+
+    _this.__wallPlaneMesh = null; //Debug wall intersection planes. Edge.plane is the plane used for intersection
     //		this.phantomPlanes.push(this.edge.plane);//Enable this line to see the wall planes
 
     _this.fillerColor = 0x000000; //0xdddddd;
@@ -46899,6 +46930,24 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
         // plane.material.opacity = (scope.visible) ? 1.0 : 0.1;
         plane.visible = scope.visible;
       });
+
+      if (this.__wallPlaneMesh && this.edge && scope.visible) {
+        console.log(this.__wallPlaneMesh);
+        var wallLocation = this.wall.location.clone();
+
+        var _y = Math.min(this.edge.getEnd().elevation, this.edge.getStart().elevation) * 0.5;
+
+        this.__wallPlaneMesh.visible = false;
+
+        this.__wallMaterial3D.envMapCamera.position.set(wallLocation.x, _y, wallLocation.y);
+
+        this.__wallMaterial3D.envMapCamera.update(this.scene.renderer, this.scene);
+
+        this.__wallPlaneMesh.visible = true; // this.scene.renderToACamera(this.__floorMaterial3D.envMapCamera);
+
+        this.__wallMaterial3D.needsUpdate = true;
+      }
+
       scope.updateObjectVisibility();
     }
   }, {
@@ -46964,7 +47013,8 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
       // this.planes.push(this.makeWall(interiorStart, interiorEnd, this.edge.interiorTransform, this.edge.invInteriorTransform, wallMaterial));
 
 
-      this.planes.push(this.makeWall(interiorStart, interiorEnd, this.edge.interiorTransform, this.edge.invInteriorTransform, this.__wallMaterial3D)); // bottom
+      this.__wallPlaneMesh = this.makeWall(interiorStart, interiorEnd, this.edge.interiorTransform, this.edge.invInteriorTransform, this.__wallMaterial3D);
+      this.planes.push(this.__wallPlaneMesh); // bottom
       // put into basePlanes since this is always visible
 
       this.basePlanes.push(this.buildFillerUniformHeight(this.edge, 0, _three.BackSide, this.baseColor)); // if (this.edge.wall.start.getAttachedRooms().length < 2 || this.edge.wall.end.getAttachedRooms().length < 2) {
@@ -47106,7 +47156,7 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
 }(_three.EventDispatcher);
 
 exports.Edge3D = Edge3D;
-},{"three":"../node_modules/three/build/three.module.js","../core/utils.js":"scripts/core/utils.js","../core/events.js":"scripts/core/events.js","../materials/Material3D.js":"scripts/materials/Material3D.js","../materials/WallMaterial3D.js":"scripts/materials/WallMaterial3D.js"}],"scripts/materials/FloorMaterial3D.js":[function(require,module,exports) {
+},{"three":"../node_modules/three/build/three.module.js","../core/utils.js":"scripts/core/utils.js","../core/events.js":"scripts/core/events.js","../materials/WallMaterial3D.js":"scripts/materials/WallMaterial3D.js"}],"scripts/materials/FloorMaterial3D.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -111842,7 +111892,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "35755" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "44969" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
