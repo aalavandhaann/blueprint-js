@@ -24,13 +24,12 @@ export class Floor3D extends EventDispatcher {
     }
 
     __updateReflections() {
-        if (this.__floorMaterial3D) {
+        if (this.__floorMaterial3D && this.scene.enabled) {
             let floorSize = this.room.floorRectangleSize.clone();
             this.floorPlane.visible = false;
             this.__floorMaterial3D.envMapCamera.position.set(floorSize.x, 0, floorSize.y);
             this.__floorMaterial3D.envMapCamera.update(this.scene.renderer, this.scene);
             this.floorPlane.visible = true;
-            // this.scene.renderToACamera(this.__floorMaterial3D.envMapCamera);
             this.__floorMaterial3D.needsUpdate = true;
         }
     }
@@ -42,8 +41,8 @@ export class Floor3D extends EventDispatcher {
             this.__floorMaterial3D = new FloorMaterial3D({ color: texturePack.color, side: DoubleSide }, texturePack, this.scene);
         }
         this.__floorMaterial3D.textureMapPack = texturePack;
-        this.__floorMaterial3D.updateDimensions(floorSize.x, floorSize.y);
-        // this.redraw();
+        // this.__floorMaterial3D.updateDimensions(floorSize.x, floorSize.y);
+        this.__floorMaterial3D.dimensions = floorSize;
         this.scene.needsUpdate = true;
     }
 
@@ -93,7 +92,8 @@ export class Floor3D extends EventDispatcher {
         geometry.computeVertexNormals();
         geometry.uvsNeedUpdate = true;
         let useGeometry = new BufferGeometry().fromGeometry(geometry);
-        this.__floorMaterial3D.updateDimensions(floorSize.x, floorSize.y);
+        // this.__floorMaterial3D.updateDimensions(floorSize.x, floorSize.y);
+        this.__floorMaterial3D.dimensions = floorSize;
         this.__floorMaterial3D.envMapCamera.position.copy(new Vector3(floorSize.x, 0, floorSize.y));
         let floor = new Mesh(useGeometry, this.__floorMaterial3D);
         floor.rotation.set(Math.PI * 0.5, 0, 0);

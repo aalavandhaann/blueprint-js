@@ -46,10 +46,14 @@ export class Edge3D extends EventDispatcher {
         let texturePack = this.edge.getTexture();
 
         if (!this.__wallMaterial3D) {
-            this.__wallMaterial3D = new WallMaterial3D({ color: texturePack.color, side: FrontSide }, texturePack, this.scene);
+            if (!texturePack.color) {
+                texturePack.color = '#FF0000';
+            }
+            this.__wallMaterial3D = new WallMaterial3D({ color: texturePack.color, side: FrontSide, transparent: true, wireframe: false }, texturePack, this.scene);
         }
         this.__wallMaterial3D.textureMapPack = texturePack;
-        this.__wallMaterial3D.updateDimensions(width, height);
+        this.__wallMaterial3D.dimensions = new Vector2(width, height);
+        // this.__wallMaterial3D.updateDimensions(width, height);
         this.redraw();
         this.scene.needsUpdate = true;
     }
@@ -170,18 +174,6 @@ export class Edge3D extends EventDispatcher {
             // plane.material.opacity = (scope.visible) ? 1.0 : 0.1;
             plane.visible = scope.visible;
         });
-
-        if (this.__wallPlaneMesh && this.edge && scope.visible) {
-            console.log(this.__wallPlaneMesh);
-            let wallLocation = this.wall.location.clone();
-            let y = Math.min(this.edge.getEnd().elevation, this.edge.getStart().elevation) * 0.5;
-            this.__wallPlaneMesh.visible = false;
-            this.__wallMaterial3D.envMapCamera.position.set(wallLocation.x, y, wallLocation.y);
-            this.__wallMaterial3D.envMapCamera.update(this.scene.renderer, this.scene);
-            this.__wallPlaneMesh.visible = true;
-            // this.scene.renderToACamera(this.__floorMaterial3D.envMapCamera);
-            this.__wallMaterial3D.needsUpdate = true;
-        }
         scope.updateObjectVisibility();
     }
 
@@ -201,7 +193,8 @@ export class Edge3D extends EventDispatcher {
         }
         let height = Math.max(this.wall.startElevation, this.wall.endElevation);
         let width = this.edge.interiorDistance();
-        this.__wallMaterial3D.updateDimensions(width, height);
+        this.__wallMaterial3D.dimensions = new Vector2(width, height);
+        // this.__wallMaterial3D.updateDimensions(width, height);
     }
 
     updatePlanes() {
@@ -217,16 +210,6 @@ export class Edge3D extends EventDispatcher {
         let exteriorStart = this.edge.exteriorStart();
         let exteriorEnd = this.edge.exteriorEnd();
 
-        var color = 0xFFFFFF;
-        var wallMaterial = new MeshBasicMaterial({
-            color: color,
-            side: FrontSide,
-            // map: this.texture,
-            transparent: true,
-            // lightMap: this.lightMap,
-            opacity: 1.0,
-            wireframe: false,
-        });
         var fillerMaterial = new MeshBasicMaterial({
             color: this.fillerColor,
             side: DoubleSide,
@@ -244,7 +227,7 @@ export class Edge3D extends EventDispatcher {
         }
         // interior plane
         // this.planes.push(this.makeWall(interiorStart, interiorEnd, this.edge.interiorTransform, this.edge.invInteriorTransform, wallMaterial));
-        this.__wallPlaneMesh = this.makeWall(interiorStart, interiorEnd, this.edge.interiorTransform, this.edge.invInteriorTransform, this.__wallMaterial3D)
+        this.__wallPlaneMesh = this.makeWall(interiorStart, interiorEnd, this.edge.interiorTransform, this.edge.invInteriorTransform, this.__wallMaterial3D);
         this.planes.push(this.__wallPlaneMesh);
         // bottom
         // put into basePlanes since this is always visible

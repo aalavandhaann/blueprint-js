@@ -75,7 +75,7 @@ export class Viewer3D extends Scene {
 
         scope.camera = new PerspectiveCamera(45, 10, scope.cameraNear, scope.cameraFar);
 
-        let cubeRenderTarget = new WebGLCubeRenderTarget(128, { format: RGBFormat, generateMipmaps: true, minFilter: LinearMipmapLinearFilter });
+        let cubeRenderTarget = new WebGLCubeRenderTarget(16, { format: RGBFormat, generateMipmaps: true, minFilter: LinearMipmapLinearFilter });
         scope.__environmentCamera = new CubeCamera(1, 100000, cubeRenderTarget);
 
         scope.renderer = scope.getARenderer();

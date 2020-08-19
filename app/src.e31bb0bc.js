@@ -177,15 +177,16 @@ var TEXTURE_DEFAULT_REPEAT = 300;
 exports.TEXTURE_DEFAULT_REPEAT = TEXTURE_DEFAULT_REPEAT;
 var defaultWallTexture = {
   color: '#FFFFFF',
-  repeat: TEXTURE_DEFAULT_REPEAT,
-  colormap: 'textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_BaseColor.jpg',
-  normalmap: 'textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Normal.jpg',
-  bumpmap: 'textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Height.png',
-  ambientmap: 'textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_AmbientOcclusion.jpg',
-  roughnessmap: 'textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Roughness.jpg'
+  repeat: 300,
+  normalmap: 'textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_normal.jpg',
+  roughnessmap: 'textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_roughness.jpg',
+  colormap: 'textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_basecolor.jpg',
+  ambientmap: 'textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_ambientOcclusion.jpg',
+  bumpmap: 'textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_height.png'
 };
 exports.defaultWallTexture = defaultWallTexture;
 var defaultFloorTexture = {
+  reflective: 0.5,
   color: '#FFFFFF',
   repeat: TEXTURE_DEFAULT_REPEAT,
   ambientmap: 'textures/Floor/Marble_Tiles_001/Marble_Tiles_001_ambientOcclusion.jpg',
@@ -46425,6 +46426,8 @@ exports.Material3D = void 0;
 
 var _three = require("three");
 
+var _constants = require("../core/constants");
+
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -46463,15 +46466,10 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
     _this.__scene = scene;
     _this.__reflectsScene = reflectsScene;
     _this.__mirrorCamera = null;
-
-    if (!textureMapPack.reflective) {
-      _this.roughness = 0.5;
-    } else {
-      _this.roughness = textureMapPack.reflective;
-    }
+    _this.roughness = !textureMapPack.reflective ? 0.5 : textureMapPack.reflective;
+    _this.__repeat = !textureMapPack.repeat ? _constants.TEXTURE_DEFAULT_REPEAT : textureMapPack.repeat;
 
     if (_this.__reflectsScene) {
-      console.log('CREATE REFLECTING MATERIAL');
       _this.__mirrorCamera = _this.__scene.environmentCamera;
       _this.envMap = _this.__mirrorCamera.renderTarget.texture;
     }
@@ -46479,7 +46477,8 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
     _this.__textureMapPack = textureMapPack;
     _this.__uRatio = 1.0;
     _this.__vRatio = 1.0;
-    _this.__repeatPerCentimeter = 1.0 / _this.__textureMapPack.repeat; //Repeat for every 'x' centimeters
+    _this.__dimensions = new _three.Vector2();
+    _this.__repeatPerCentimeter = 1.0 / _this.__repeat; //Repeat for every 'x' centimeters
 
     _this.__colorTexture = null;
     _this.__normalTexture = null;
@@ -46489,7 +46488,7 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
 
     _this.__applyNewTextures();
 
-    _this.normalScale.set(100, 100);
+    _this.normalScale.set(10, 10);
 
     return _this;
   }
@@ -46497,48 +46496,48 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
   _createClass(Material3D, [{
     key: "__updateTextures",
     value: function __updateTextures() {
+      var flag = false;
+
       if (this.__colorTexture) {
+        flag = true;
         this.__colorTexture.wrapS = this.__colorTexture.wrapT = _three.RepeatWrapping;
 
-        this.__colorTexture.repeat.set(this.__uRatio, this.__vRatio);
+        this.__colorTexture.repeat.set(this.__uRatio, this.__vRatio); // this.__colorTexture.needsUpdate = true;
 
-        this.__colorTexture.needsUpdate = true;
       }
 
       if (this.__normalTexture) {
         this.__normalTexture.wrapS = this.__normalTexture.wrapT = _three.RepeatWrapping;
 
-        this.__normalTexture.repeat.set(this.__uRatio, this.__vRatio);
+        this.__normalTexture.repeat.set(this.__uRatio, this.__vRatio); // this.__normalTexture.needsUpdate = true;
 
-        this.__normalTexture.needsUpdate = true;
       }
 
       if (this.__roughnessTexture) {
         this.__roughnessTexture.wrapS = this.__roughnessTexture.wrapT = _three.RepeatWrapping;
 
-        this.__roughnessTexture.repeat.set(this.__uRatio, this.__vRatio);
+        this.__roughnessTexture.repeat.set(this.__uRatio, this.__vRatio); // this.__roughnessTexture.needsUpdate = true;
 
-        this.__roughnessTexture.needsUpdate = true;
       }
 
       if (this.__ambientTexture) {
         this.__ambientTexture.wrapS = this.__ambientTexture.wrapT = _three.RepeatWrapping;
 
-        this.__ambientTexture.repeat.set(this.__uRatio, this.__vRatio);
+        this.__ambientTexture.repeat.set(this.__uRatio, this.__vRatio); // this.__ambientTexture.needsUpdate = true;
 
-        this.__ambientTexture.needsUpdate = true;
       }
 
       if (this.__bumpTexture) {
         this.__bumpTexture.wrapS = this.__bumpTexture.wrapT = _three.RepeatWrapping;
 
-        this.__bumpTexture.repeat.set(this.__uRatio, this.__vRatio);
+        this.__bumpTexture.repeat.set(this.__uRatio, this.__vRatio); // this.__bumpTexture.needsUpdate = true;
 
-        this.__bumpTexture.needsUpdate = true;
       }
 
-      this.needsUpdate = true;
-      this.__scene.needsUpdate = true;
+      if (flag) {
+        this.needsUpdate = true;
+        this.__scene.needsUpdate = true;
+      }
     }
   }, {
     key: "__applyNewTextures",
@@ -46587,8 +46586,8 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
      */
 
   }, {
-    key: "updateDimensions",
-    value: function updateDimensions(width, height) {
+    key: "__updateDimensions",
+    value: function __updateDimensions(width, height) {
       var ur = Math.max(width * this.__repeatPerCentimeter, 1.0);
       var vr = Math.max(height * this.__repeatPerCentimeter, 1.0);
 
@@ -46604,19 +46603,35 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
     get: function get() {
       return this.__textureMapPack;
     },
-    set: function set(tpack) {
-      this.__textureMapPack = tpack;
-      this.color = new _three.Color(tpack.color);
-
-      if (tpack.reflective) {
-        this.roughness = tpack.reflective;
-      } else {
-        this.roughness = 0.5;
-      }
-
-      this.__repeatPerCentimeter = 1.0 / tpack.repeat;
+    set: function set(textureMapPack) {
+      this.__textureMapPack = textureMapPack;
+      this.color = new _three.Color(textureMapPack.color);
+      this.roughness = !textureMapPack.reflective ? 0.5 : textureMapPack.reflective;
+      this.__repeat = !textureMapPack.repeat ? _constants.TEXTURE_DEFAULT_REPEAT : textureMapPack.repeat;
+      this.__repeatPerCentimeter = 1.0 / this.__repeat;
 
       this.__applyNewTextures();
+    }
+  }, {
+    key: "repeat",
+    get: function get() {
+      return this.__repeat;
+    },
+    set: function set(value) {
+      this.__repeat = value;
+      this.__repeatPerCentimeter = 1.0 / this.__repeat;
+
+      this.__updateDimensions(this.__dimensions.x, this.__dimensions.y);
+    }
+  }, {
+    key: "dimensions",
+    get: function get() {
+      return this.__dimensions;
+    },
+    set: function set(vec2) {
+      this.__dimensions = vec2.clone();
+
+      this.__updateDimensions(this.__dimensions.x, this.__dimensions.y);
     }
   }]);
 
@@ -46624,7 +46639,7 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
 }(_three.MeshStandardMaterial);
 
 exports.Material3D = Material3D;
-},{"three":"../node_modules/three/build/three.module.js"}],"scripts/materials/WallMaterial3D.js":[function(require,module,exports) {
+},{"three":"../node_modules/three/build/three.module.js","../core/constants":"scripts/core/constants.js"}],"scripts/materials/WallMaterial3D.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -46637,18 +46652,6 @@ var _Material3D2 = require("./Material3D");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function set(target, property, value, receiver) { if (typeof Reflect !== "undefined" && Reflect.set) { set = Reflect.set; } else { set = function set(target, property, value, receiver) { var base = _superPropBase(target, property); var desc; if (base) { desc = Object.getOwnPropertyDescriptor(base, property); if (desc.set) { desc.set.call(receiver, value); return true; } else if (!desc.writable) { return false; } } desc = Object.getOwnPropertyDescriptor(receiver, property); if (desc) { if (!desc.writable) { return false; } desc.value = value; Object.defineProperty(receiver, property, desc); } else { _defineProperty(receiver, property, value); } return true; }; } return set(target, property, value, receiver); }
-
-function _set(target, property, value, receiver, isStrict) { var s = set(target, property, value, receiver || target); if (!s && isStrict) { throw new Error('failed to set property'); } return value; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
@@ -46674,26 +46677,13 @@ var WallMaterial3D = /*#__PURE__*/function (_Material3D) {
 
     _classCallCheck(this, WallMaterial3D);
 
-    _this = _super.call(this, parameters, textureMapPack, scene, true);
+    _this = _super.call(this, parameters, textureMapPack, scene, false);
     _this.roughness = 0.7;
+
+    _this.normalScale.set(100, 100);
+
     return _this;
   }
-
-  _createClass(WallMaterial3D, [{
-    key: "textureMapPack",
-    get: function get() {
-      return this.__textureMapPack;
-    },
-    set: function set(tpack) {
-      _set(_getPrototypeOf(WallMaterial3D.prototype), "textureMapPack", tpack, this, true);
-
-      if (tpack.reflective) {
-        this.roughness = tpack.reflective;
-      } else {
-        this.roughness = 0.7;
-      }
-    }
-  }]);
 
   return WallMaterial3D;
 }(_Material3D2.Material3D);
@@ -46793,15 +46783,20 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
       var texturePack = this.edge.getTexture();
 
       if (!this.__wallMaterial3D) {
+        if (!texturePack.color) {
+          texturePack.color = '#FF0000';
+        }
+
         this.__wallMaterial3D = new _WallMaterial3D.WallMaterial3D({
           color: texturePack.color,
-          side: _three.FrontSide
+          side: _three.FrontSide,
+          transparent: true,
+          wireframe: false
         }, texturePack, this.scene);
       }
 
       this.__wallMaterial3D.textureMapPack = texturePack;
-
-      this.__wallMaterial3D.updateDimensions(width, height);
+      this.__wallMaterial3D.dimensions = new _three.Vector2(width, height); // this.__wallMaterial3D.updateDimensions(width, height);
 
       this.redraw();
       this.scene.needsUpdate = true;
@@ -46930,24 +46925,6 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
         // plane.material.opacity = (scope.visible) ? 1.0 : 0.1;
         plane.visible = scope.visible;
       });
-
-      if (this.__wallPlaneMesh && this.edge && scope.visible) {
-        console.log(this.__wallPlaneMesh);
-        var wallLocation = this.wall.location.clone();
-
-        var _y = Math.min(this.edge.getEnd().elevation, this.edge.getStart().elevation) * 0.5;
-
-        this.__wallPlaneMesh.visible = false;
-
-        this.__wallMaterial3D.envMapCamera.position.set(wallLocation.x, _y, wallLocation.y);
-
-        this.__wallMaterial3D.envMapCamera.update(this.scene.renderer, this.scene);
-
-        this.__wallPlaneMesh.visible = true; // this.scene.renderToACamera(this.__floorMaterial3D.envMapCamera);
-
-        this.__wallMaterial3D.needsUpdate = true;
-      }
-
       scope.updateObjectVisibility();
     }
   }, {
@@ -46969,8 +46946,7 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
 
       var height = Math.max(this.wall.startElevation, this.wall.endElevation);
       var width = this.edge.interiorDistance();
-
-      this.__wallMaterial3D.updateDimensions(width, height);
+      this.__wallMaterial3D.dimensions = new _three.Vector2(width, height); // this.__wallMaterial3D.updateDimensions(width, height);
     }
   }, {
     key: "updatePlanes",
@@ -46986,16 +46962,6 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
       var interiorEnd = this.edge.interiorEnd();
       var exteriorStart = this.edge.exteriorStart();
       var exteriorEnd = this.edge.exteriorEnd();
-      var color = 0xFFFFFF;
-      var wallMaterial = new _three.MeshBasicMaterial({
-        color: color,
-        side: _three.FrontSide,
-        // map: this.texture,
-        transparent: true,
-        // lightMap: this.lightMap,
-        opacity: 1.0,
-        wireframe: false
-      });
       var fillerMaterial = new _three.MeshBasicMaterial({
         color: this.fillerColor,
         side: _three.DoubleSide,
@@ -47196,7 +47162,7 @@ var FloorMaterial3D = /*#__PURE__*/function (_Material3D) {
 
     _this = _super.call(this, parameters, textureMapPack, scene, true); // this.metalness = 1.0;
 
-    _this.normalScale.set(1, 1);
+    _this.normalScale.set(-10, -10);
 
     return _this;
   }
@@ -47280,7 +47246,7 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
   _createClass(Floor3D, [{
     key: "__updateReflections",
     value: function __updateReflections() {
-      if (this.__floorMaterial3D) {
+      if (this.__floorMaterial3D && this.scene.enabled) {
         var floorSize = this.room.floorRectangleSize.clone();
         this.floorPlane.visible = false;
 
@@ -47288,8 +47254,7 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
 
         this.__floorMaterial3D.envMapCamera.update(this.scene.renderer, this.scene);
 
-        this.floorPlane.visible = true; // this.scene.renderToACamera(this.__floorMaterial3D.envMapCamera);
-
+        this.floorPlane.visible = true;
         this.__floorMaterial3D.needsUpdate = true;
       }
     }
@@ -47306,11 +47271,9 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
         }, texturePack, this.scene);
       }
 
-      this.__floorMaterial3D.textureMapPack = texturePack;
+      this.__floorMaterial3D.textureMapPack = texturePack; // this.__floorMaterial3D.updateDimensions(floorSize.x, floorSize.y);
 
-      this.__floorMaterial3D.updateDimensions(floorSize.x, floorSize.y); // this.redraw();
-
-
+      this.__floorMaterial3D.dimensions = floorSize;
       this.scene.needsUpdate = true;
     }
   }, {
@@ -47362,9 +47325,9 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
       geometry.computeFaceNormals();
       geometry.computeVertexNormals();
       geometry.uvsNeedUpdate = true;
-      var useGeometry = new _three2.BufferGeometry().fromGeometry(geometry);
+      var useGeometry = new _three2.BufferGeometry().fromGeometry(geometry); // this.__floorMaterial3D.updateDimensions(floorSize.x, floorSize.y);
 
-      this.__floorMaterial3D.updateDimensions(floorSize.x, floorSize.y);
+      this.__floorMaterial3D.dimensions = floorSize;
 
       this.__floorMaterial3D.envMapCamera.position.copy(new _three.Vector3(floorSize.x, 0, floorSize.y));
 
@@ -56148,7 +56111,7 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
       var scope = this;
       _three.ImageUtils.crossOrigin = '';
       scope.camera = new _three.PerspectiveCamera(45, 10, scope.cameraNear, scope.cameraFar);
-      var cubeRenderTarget = new _three2.WebGLCubeRenderTarget(128, {
+      var cubeRenderTarget = new _three2.WebGLCubeRenderTarget(16, {
         format: _three.RGBFormat,
         generateMipmaps: true,
         minFilter: _three.LinearMipmapLinearFilter
@@ -111543,12 +111506,14 @@ var define;
 },{}],"floor_textures.json":[function(require,module,exports) {
 module.exports = {
   "Stylized_Stone_Floor_001": {
+    "repeat": 100,
     "ambientmap": "textures/Floor/Stylized_Stone_Floor_001/Stylized_Stone_Floor_001_ambientOcclusion.jpg",
     "normalmap": "textures/Floor/Stylized_Stone_Floor_001/Stylized_Stone_Floor_001_normal.jpg",
     "colormap": "textures/Floor/Stylized_Stone_Floor_001/Stylized_Stone_Floor_001_basecolor.jpg",
     "roughnessmap": "textures/Floor/Stylized_Stone_Floor_001/Stylized_Stone_Floor_001_roughness.jpg"
   },
   "Rubber_Floor_001": {
+    "repeat": 100,
     "reflective": 1.0,
     "roughnessmap": "textures/Floor/Rubber_Floor_001/Rubber_Floor_001_roughness.jpg",
     "colormap": "textures/Floor/Rubber_Floor_001/Rubber_Floor_001_basecolor.jpg",
@@ -111556,18 +111521,21 @@ module.exports = {
     "normalmap": "textures/Floor/Rubber_Floor_001/Rubber_Floor_001_normal.jpg"
   },
   "Wood_Herringbone_Tiles_001": {
+    "repeat": 100,
     "ambientmap": "textures/Floor/Wood_Herringbone_Tiles_001/Wood_Herringbone_Tiles_001_ambientOcclusion.jpg",
     "colormap": "textures/Floor/Wood_Herringbone_Tiles_001/Wood_Herringbone_Tiles_001_basecolor.jpg",
     "normalmap": "textures/Floor/Wood_Herringbone_Tiles_001/Wood_Herringbone_Tiles_001_normal.jpg",
     "roughnessmap": "textures/Floor/Wood_Herringbone_Tiles_001/Wood_Herringbone_Tiles_001_roughness.jpg"
   },
   "Stone_Tiles_004": {
+    "repeat": 100,
     "ambientmap": "textures/Floor/Stone_Tiles_004/Stone_Tiles_004_ambientOcclusion.jpg",
     "roughnessmap": "textures/Floor/Stone_Tiles_004/Stone_Tiles_004_roughness.jpg",
     "normalmap": "textures/Floor/Stone_Tiles_004/Stone_Tiles_004_normal.jpg",
     "colormap": "textures/Floor/Stone_Tiles_004/Stone_Tiles_004_basecolor.jpg"
   },
   "Terracotta_Tiles_003": {
+    "repeat": 100,
     "reflective": 1.0,
     "normalmap": "textures/Floor/Terracotta_Tiles_003/Terracota_Tiles_003_normal.jpg",
     "ambientmap": "textures/Floor/Terracotta_Tiles_003/Terracota_Tiles_003_ambientOcclusion.jpg",
@@ -111575,12 +111543,15 @@ module.exports = {
     "roughnessmap": "textures/Floor/Terracotta_Tiles_003/Terracota_Tiles_003_roughness.jpg"
   },
   "Marble_Tiles_001": {
+    "repeat": 100,
+    "reflective": 0.1,
     "ambientmap": "textures/Floor/Marble_Tiles_001/Marble_Tiles_001_ambientOcclusion.jpg",
     "colormap": "textures/Floor/Marble_Tiles_001/Marble_Tiles_001_basecolor.jpg",
     "roughnessmap": "textures/Floor/Marble_Tiles_001/Marble_Tiles_001_roughness.jpg",
     "normalmap": "textures/Floor/Marble_Tiles_001/Marble_Tiles_001_normal.jpg"
   },
   "Terrazzo_Tiles_001": {
+    "repeat": 100,
     "roughnessmap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_roughness.jpg",
     "ambientmap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_ambientOcclusion.jpg",
     "normalmap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_normal.jpg",
@@ -111590,6 +111561,7 @@ module.exports = {
 },{}],"wall_textures.json":[function(require,module,exports) {
 module.exports = {
   "Concrete_Wall_005_SD": {
+    "repeat": 200,
     "colormap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_BaseColor.jpg",
     "normalmap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Normal.jpg",
     "bumpmap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Height.png",
@@ -111597,6 +111569,7 @@ module.exports = {
     "roughnessmap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Roughness.jpg"
   },
   "Terracotta_Bricks_002": {
+    "repeat": 200,
     "normalmap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_normal.jpg",
     "ambientmap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_ambientOcclusion.jpg",
     "bumpmap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_height.png",
@@ -111604,6 +111577,7 @@ module.exports = {
     "colormap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_basecolor.jpg"
   },
   "Concrete-Wall-002": {
+    "repeat": 200,
     "colormap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_basecolor.jpg",
     "bumpmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_height.png",
     "normalmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_normal.jpg",
@@ -111611,6 +111585,7 @@ module.exports = {
     "ambientmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_ambientocclusion.jpg"
   },
   "Concrete_016_SD": {
+    "repeat": 200,
     "bumpmap": "textures/Wall/Concrete_016_SD/Concrete_016_height.png",
     "ambientmap": "textures/Wall/Concrete_016_SD/Concrete_016_ambientOcclusion.jpg",
     "normalmap": "textures/Wall/Concrete_016_SD/Concrete_016_normal.jpg",
@@ -111618,6 +111593,7 @@ module.exports = {
     "colormap": "textures/Wall/Concrete_016_SD/Concrete_016_baseColor.jpg"
   },
   "Concrete_Column_001_SD": {
+    "repeat": 200,
     "ambientmap": "textures/Wall/Concrete_Column_001_SD/Concrete_Column_001_ambientOcclusion.jpg",
     "normalmap": "textures/Wall/Concrete_Column_001_SD/Concrete_Column_001_normal.jpg",
     "bumpmap": "textures/Wall/Concrete_Column_001_SD/Concrete_Column_001_height.png",
@@ -111625,6 +111601,7 @@ module.exports = {
     "colormap": "textures/Wall/Concrete_Column_001_SD/Concrete_Column_001_basecolor.jpg"
   },
   "Brick_Wall_017_SD": {
+    "repeat": 200,
     "normalmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_normal.jpg",
     "roughnessmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_roughness.jpg",
     "colormap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_basecolor.jpg",
@@ -111632,6 +111609,7 @@ module.exports = {
     "bumpmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_height.png"
   },
   "Stone-Wall-015": {
+    "repeat": 200,
     "normalmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_normal.jpg",
     "colormap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_basecolor.jpg",
     "ambientmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_ambientOcclusion.jpg",
@@ -111639,6 +111617,7 @@ module.exports = {
     "roughnessmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_roughness.jpg"
   },
   "Stone_Wall_012_SD": {
+    "repeat": 200,
     "ambientmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_ambientOcclusion.jpg",
     "colormap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_basecolor.jpg",
     "normalmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_normal.jpg",
@@ -111646,6 +111625,7 @@ module.exports = {
     "roughnessmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_roughness.jpg"
   },
   "Stylized-Sci-fi Wall-001": {
+    "repeat": 200,
     "normalmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_normal.jpg",
     "ambientmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_ambientOcclusion.jpg",
     "colormap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_basecolor.jpg",
@@ -111892,7 +111872,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "44969" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "40645" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
