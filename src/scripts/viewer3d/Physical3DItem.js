@@ -40,7 +40,6 @@ export class Physical3DItem extends Mesh {
             scope.parent.needsUpdate = true;
         }
         if (evt.property === 'position') {
-            console.log('PHYSICAL ITEM UPDATE POSITION ');
             gsap.to(this.position, { duration: duration, x: this.__itemModel.position.x, onUpdate: __tinyUpdate });
             gsap.to(this.position, { duration: duration, y: this.__itemModel.position.y });
             gsap.to(this.position, { duration: duration, z: this.__itemModel.position.z });

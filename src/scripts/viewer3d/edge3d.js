@@ -180,11 +180,22 @@ export class Edge3D extends EventDispatcher {
 
     updateObjectVisibility() {
         var scope = this;
+
+        function itemVisibility(item, visibility) {
+            if (scope.front) {
+                item.frontVisible = visibility;
+            } else {
+                item.backVisible = visibility;
+            }
+            return (item.frontVisible || item.backVisible);
+        }
         this.wall.inWallItems.forEach((item) => {
-            item.visible = scope.visible;
+            let visibility = itemVisibility(item, scope.visible);
+            item.visible = visibility;
         });
         this.wall.onWallItems.forEach((item) => {
-            item.visible = scope.visible;
+            let visibility = itemVisibility(item, scope.visible);
+            item.visible = visibility;
         });
     }
 

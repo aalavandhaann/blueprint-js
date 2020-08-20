@@ -150,7 +150,6 @@ export class Wall extends EventDispatcher {
                 let vect = this.end.location.clone().sub(this.start.location);
                 let itemVect = item.position2d.clone().sub(this.start.location);
                 let ratio = itemVect.length() / vect.length();
-                console.log(vect, itemVect, ratio);
                 this.__inWallItems.push(item);
                 this.__inWallItemsSnappedRatios.push(ratio);
             }

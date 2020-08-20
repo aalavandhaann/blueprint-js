@@ -51,6 +51,9 @@ export class Item extends EventDispatcher {
 
         this.__fixed = false; //This is part of application logic and also Metadata
         this.__resizable = false; //This is part of application logic and also Metadata
+
+        this.__frontVisible = false;
+        this.__backVisible = false;
         this.__visible = true;
 
         this.__currentWall = null;
@@ -66,14 +69,12 @@ export class Item extends EventDispatcher {
         if (wall === undefined || !wall || wall === 'undefined') {
             return;
         }
-        // if (this.__currentWall === wall) {
-        //     return;
-        // }
         if (this.__currentWall && this.__currentWall !== wall) {
             this.__currentWall.removeItem(this);
         }
         wall.addItem(this);
         this.__currentWall = wall;
+        this.__metadata.wall = this.__currentWall.id;
     }
 
     __initializeMetaData() {
@@ -91,6 +92,18 @@ export class Item extends EventDispatcher {
         if (this.__metadata.size.length) {
             this.__size = new Vector3().fromArray(this.__metadata.size).clone();
             this.__halfSize = this.__size.clone().multiplyScalar(0.5);
+        }
+
+        if (this.__metadata.wall) {
+            let walls = this.__model.floorplan.walls;
+            for (let i = 0; i < walls.length; i++) {
+                let wall = walls[i];
+                if (wall.id === this.__metadata.wall) {
+                    wall.addItem(this);
+                    this.__currentWall = wall;
+                    break;
+                }
+            }
         }
     }
 
@@ -202,12 +215,30 @@ export class Item extends EventDispatcher {
         this.__metaDataUpdate('fixed');
     }
 
+    get frontVisible() {
+        return this.__frontVisible;
+    }
+
+    set frontVisible(flag) {
+        this.__frontVisible = flag;
+    }
+
+    get backVisible() {
+        return this.__backVisible;
+    }
+
+    set backVisible(flag) {
+        this.__backVisible = flag;
+    }
+
     get visible() {
         return this.__visible;
     }
 
     set visible(flag) {
         this.__visible = flag;
+        // this.frontVisible = false;
+        // this.backVisible = false;
         this.__metaDataUpdate('visible');
     }
 

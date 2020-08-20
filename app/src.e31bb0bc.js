@@ -41536,6 +41536,8 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
 
     _this.__resizable = false; //This is part of application logic and also Metadata
 
+    _this.__frontVisible = false;
+    _this.__backVisible = false;
     _this.__visible = true;
     _this.__currentWall = null;
     _this.__currentFloor = null;
@@ -41554,10 +41556,7 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
 
       if (wall === undefined || !wall || wall === 'undefined') {
         return;
-      } // if (this.__currentWall === wall) {
-      //     return;
-      // }
-
+      }
 
       if (this.__currentWall && this.__currentWall !== wall) {
         this.__currentWall.removeItem(this);
@@ -41565,6 +41564,7 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
 
       wall.addItem(this);
       this.__currentWall = wall;
+      this.__metadata.wall = this.__currentWall.id;
     }
   }, {
     key: "__initializeMetaData",
@@ -41587,6 +41587,20 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
       if (this.__metadata.size.length) {
         this.__size = new _three.Vector3().fromArray(this.__metadata.size).clone();
         this.__halfSize = this.__size.clone().multiplyScalar(0.5);
+      }
+
+      if (this.__metadata.wall) {
+        var walls = this.__model.floorplan.walls;
+
+        for (var i = 0; i < walls.length; i++) {
+          var wall = walls[i];
+
+          if (wall.id === this.__metadata.wall) {
+            wall.addItem(this);
+            this.__currentWall = wall;
+            break;
+          }
+        }
       }
     }
     /** */
@@ -41727,12 +41741,29 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
       this.__metaDataUpdate('fixed');
     }
   }, {
+    key: "frontVisible",
+    get: function get() {
+      return this.__frontVisible;
+    },
+    set: function set(flag) {
+      this.__frontVisible = flag;
+    }
+  }, {
+    key: "backVisible",
+    get: function get() {
+      return this.__backVisible;
+    },
+    set: function set(flag) {
+      this.__backVisible = flag;
+    }
+  }, {
     key: "visible",
     get: function get() {
       return this.__visible;
     },
     set: function set(flag) {
-      this.__visible = flag;
+      this.__visible = flag; // this.frontVisible = false;
+      // this.backVisible = false;
 
       this.__metaDataUpdate('visible');
     }
@@ -42279,7 +42310,6 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
           var vect = this.end.location.clone().sub(this.start.location);
           var itemVect = item.position2d.clone().sub(this.start.location);
           var ratio = itemVect.length() / vect.length();
-          console.log(vect, itemVect, ratio);
 
           this.__inWallItems.push(item);
 
@@ -46868,11 +46898,24 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
     key: "updateObjectVisibility",
     value: function updateObjectVisibility() {
       var scope = this;
+
+      function itemVisibility(item, visibility) {
+        if (scope.front) {
+          item.frontVisible = visibility;
+        } else {
+          item.backVisible = visibility;
+        }
+
+        return item.frontVisible || item.backVisible;
+      }
+
       this.wall.inWallItems.forEach(function (item) {
-        item.visible = scope.visible;
+        var visibility = itemVisibility(item, scope.visible);
+        item.visible = visibility;
       });
       this.wall.onWallItems.forEach(function (item) {
-        item.visible = scope.visible;
+        var visibility = itemVisibility(item, scope.visible);
+        item.visible = visibility;
       });
     }
   }, {
@@ -55447,8 +55490,6 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
       }
 
       if (evt.property === 'position') {
-        console.log('PHYSICAL ITEM UPDATE POSITION ');
-
         _gsap.default.to(this.position, {
           duration: duration,
           x: this.__itemModel.position.x,
@@ -111854,7 +111895,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "45771" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "46083" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
