@@ -65,10 +65,6 @@ And of course to [**parcel**](https://parceljs.org/) and [**npm**](https://www.n
 - [Concrete Column 001](https://3dtextures.me/2019/07/15/concrete-column-001/)
 - [Brick Wall 017](https://3dtextures.me/2019/11/21/brick-wall-017/)
 
-
-
-
-
 ## DEMO ##
 
 [Cick for example](https://aalavandhaann.github.io/blueprint-js/demo/)
@@ -154,3 +150,7 @@ The `src` directory contains the core of the project. Here is a description of t
 - Adding routines to modify the skybox images as environment (a crude implementation)
 - Otherwise the api is ditto and the same
 - Adding a BoxHelper to show selected states of items
+
+# Support me
+
+<a href='https://ko-fi.com/F1F522LRS' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://cdn.ko-fi.com/cdn/kofi2.png?v=2' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
