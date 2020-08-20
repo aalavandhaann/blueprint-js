@@ -1,13 +1,11 @@
 import { WebGLRenderer, ImageUtils, PerspectiveCamera, AxesHelper, Scene, RGBFormat, LinearMipmapLinearFilter } from 'three';
 import { PCFSoftShadowMap } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
 
 import { EVENT_UPDATED, EVENT_LOADED, EVENT_ITEM_SELECTED, EVENT_ITEM_MOVE, EVENT_ITEM_MOVE_FINISH, EVENT_NO_ITEM_SELECTED, EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED } from '../core/events.js';
 // import { EVENT_NEW, EVENT_DELETED } from '../core/events.js';
 
 import { Skybox } from './skybox.js';
-// import { WallView3D } from './WallView3d.js';
 import { Edge3D } from './edge3d.js';
 import { Floor3D } from './floor3d.js';
 import { Lights3D } from './lights3d.js';
@@ -212,13 +210,6 @@ export class Viewer3D extends Scene {
             let edge3d = new Edge3D(scope, wallEdges[i], scope.controls);
             scope.edges3d.push(edge3d);
         }
-
-        // let walls = scope.floorplan.getWalls();
-        // for (i = 0; i < walls.length; i++) {
-        //     let wall3d = new WallView3D(walls[i], scope.floorplan, scope, scope.controls);
-        //     scope.scene.add(wall3d);
-        //     scope.walls3d.push(wall3d);
-        // }
 
         scope.shouldRender = true;
 

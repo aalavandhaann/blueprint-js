@@ -14,7 +14,8 @@ export class RoomPlannerHelper {
         this.__selectedItem = null;
         this.__selectedRoom = null;
         this.__wallTexturePack = null;
-        this.__floorTexturePack = null;
+        this.__roomTexturePack = null;
+        this.__roomWallsTexturePack = null;
 
         this.__nothingSelectedEvent = this.__nothingSelected.bind(this);
         this.__itemSelectedEvent = this.__itemSelected.bind(this);
@@ -98,6 +99,17 @@ export class RoomPlannerHelper {
         this.__roomTexturePack = tpack;
         if (this.__selectedRoom) {
             this.__selectedRoom.setTextureMaps(tpack);
+        }
+    }
+
+    get roomWallsTexturePack() {
+        return this.__roomWallsTexturePack;
+    }
+
+    set roomWallsTexturePack(tpack) {
+        this.__roomTexturePack = tpack;
+        if (this.__selectedRoom) {
+            this.__selectedRoom.setRoomWallsTextureMaps(tpack);
         }
     }
 

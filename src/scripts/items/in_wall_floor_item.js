@@ -16,5 +16,6 @@ export class InWallFloorItem extends InWallItem {
         this.rotation = new Vector3(0, angle, 0);
         point.y = this.halfSize.y + 5;
         this.position = point;
+        this.__addToAWall(intersectingPlane);
     }
 }

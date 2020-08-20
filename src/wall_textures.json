@@ -64,7 +64,7 @@
         "roughnessmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_roughness.jpg"
     },
     "Stylized-Sci-fi Wall-001": {
-        "repeat": 200,
+        "repeat": 125,
         "normalmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_normal.jpg",
         "ambientmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_ambientOcclusion.jpg",
         "colormap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_basecolor.jpg",

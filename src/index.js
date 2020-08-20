@@ -1,5 +1,5 @@
 import { BlueprintJS } from './scripts/blueprint.js';
-import { EVENT_LOADED, EVENT_NOTHING_2D_SELECTED, EVENT_CORNER_2D_CLICKED, EVENT_WALL_2D_CLICKED, EVENT_ROOM_2D_CLICKED } from './scripts/core/events.js';
+import { EVENT_LOADED, EVENT_NOTHING_2D_SELECTED, EVENT_CORNER_2D_CLICKED, EVENT_WALL_2D_CLICKED, EVENT_ROOM_2D_CLICKED, EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED, EVENT_NO_ITEM_SELECTED } from './scripts/core/events.js';
 import { Configuration, configDimUnit } from './scripts/core/configuration.js';
 import { dimMeter } from './scripts/core/constants.js';
 import QuickSettings from 'quicksettings';
@@ -12,7 +12,7 @@ let startY = 0;
 let panelWidths = 200;
 let uxInterfaceHeight = 230;
 let subPanelsHeight = 460;
-let empty = '{"floorplan":{"version":"2.0.1a","corners":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2":{"x":0,"y":0,"elevation":2.5},"f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"x":0,"y":5,"elevation":2.5},"da026c08-d76a-a944-8e7b-096b752da9ed":{"x":5,"y":5,"elevation":2.5},"4e3d65cb-54c0-0681-28bf-bddcc7bdb571":{"x":5,"y":0,"elevation":2.5}},"walls":[{"corner1":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","corner2":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":-176.77669529663686,"y":176.7766952966369},"b":{"x":-176.7766952966369,"y":323.22330470336317}},{"corner1":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","corner2":"da026c08-d76a-a944-8e7b-096b752da9ed","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":176.7766952966369,"y":676.7766952966368},"b":{"x":323.22330470336317,"y":676.776695296637}},{"corner1":"da026c08-d76a-a944-8e7b-096b752da9ed","corner2":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":676.7766952966368,"y":323.2233047033631},"b":{"x":676.776695296637,"y":176.77669529663686}},{"corner1":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","corner2":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":323.2233047033631,"y":-176.77669529663686},"b":{"x":176.77669529663686,"y":-176.7766952966369}}],"rooms":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,4e3d65cb-54c0-0681-28bf-bddcc7bdb571,da026c08-d76a-a944-8e7b-096b752da9ed,f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"name":"Ashok\'s Room"}},"wallTextures":[],"floorTextures":{},"newFloorTextures":{},"carbonSheet":{},"units":"m"},"items":[{"id":"7d0b3e90-c315-e7a5-a6d9-594757d5b7e4","itemName":"An Item","itemType":2,"position":[65.00000000000006,88.19608972775876,292.4379793118495],"rotation":[0,1.5707963267948966,0],"scale":[1,1,1],"size":[240,50,100],"fixed":true,"resizable":true,"modelURL":"models/Cube.glb"},{"itemName":"Lantern","itemType":9,"position":[435,30,265.8727998642687],"rotation":[0,-1.5707963267948966,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"},{"itemName":"Lantern","itemType":4,"position":[260.0256835276736,220,244.4952575168973],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"}]}';
+let empty = '{"floorplan":{"version":"2.0.1a","corners":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2":{"x":0,"y":0,"elevation":2.5},"f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"x":0,"y":5,"elevation":2.5},"da026c08-d76a-a944-8e7b-096b752da9ed":{"x":5,"y":5,"elevation":2.5},"4e3d65cb-54c0-0681-28bf-bddcc7bdb571":{"x":5,"y":0,"elevation":2.5}},"walls":[{"corner1":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","corner2":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":-176.77669529663686,"y":176.7766952966369},"b":{"x":-176.7766952966369,"y":323.22330470336317}},{"corner1":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","corner2":"da026c08-d76a-a944-8e7b-096b752da9ed","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":176.7766952966369,"y":676.7766952966368},"b":{"x":323.22330470336317,"y":676.776695296637}},{"corner1":"da026c08-d76a-a944-8e7b-096b752da9ed","corner2":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":676.7766952966368,"y":323.2233047033631},"b":{"x":676.776695296637,"y":176.77669529663686}},{"corner1":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","corner2":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":323.2233047033631,"y":-176.77669529663686},"b":{"x":176.77669529663686,"y":-176.7766952966369}}],"rooms":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,4e3d65cb-54c0-0681-28bf-bddcc7bdb571,da026c08-d76a-a944-8e7b-096b752da9ed,f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"name":"Ashok\'s Room"}},"wallTextures":[],"floorTextures":{},"newFloorTextures":{},"carbonSheet":{},"units":"m"},"items":[{"id":"7d0b3e90-c315-e7a5-a6d9-594757d5b7e4","itemName":"An Item","itemType":3,"position":[65.00000000000006,88.19608972775876,292.4379793118495],"rotation":[0,1.5707963267948966,0],"scale":[1,1,1],"size":[240,100,50],"fixed":true,"resizable":true,"modelURL":"models/HollowCube.glb"},{"itemName":"Lantern","itemType":9,"position":[435,30,265.8727998642687],"rotation":[0,-1.5707963267948966,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"},{"itemName":"Lantern","itemType":4,"position":[260.0256835276736,220,244.4952575168973],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"}]}';
 
 let floor_textures = floor_textures_json['default'];
 let floor_texture_keys = Object.keys(floor_textures);
@@ -33,6 +33,9 @@ let settingsViewer2d = null;
 let settingsSelectedCorner = null;
 let settingsSelectedWall = null;
 let settingsSelectedRoom = null;
+
+let settingsSelectedRoom3D = null;
+let settingsSelectedWall3D = null;
 
 let settingsViewer3d = null;
 let uxInterface = null;
@@ -58,20 +61,30 @@ let opts = {
 
 function selectFloorTexture(data) {
     if (!data.index) {
-        data = settingsViewer3d.getValue('Floor Textures');
+        data = settingsSelectedRoom3D.getValue('Floor Textures');
     }
     let floor_texture_pack = floor_textures[data.value];
-    settingsViewer3d.setValue('Floor Texture:', floor_texture_pack.colormap);
+    settingsSelectedRoom3D.setValue('Floor Texture:', floor_texture_pack.colormap);
     roomplanningHelper.roomTexturePack = floor_texture_pack;
 }
 
 function selectWallTexture(data) {
     if (!data.index) {
-        data = settingsViewer3d.getValue('Wall Textures');
+        if (settingsSelectedWall3D._hidden && !settingsSelectedRoom3D._hidden) {
+            data = settingsSelectedRoom3D.getValue('All Wall Textures');
+        } else {
+            data = settingsSelectedWall3D.getValue('Wall Textures');
+        }
+
     }
     let wall_texture_pack = wall_textures[data.value];
-    settingsViewer3d.setValue('Wall Texture:', wall_texture_pack.colormap);
-    roomplanningHelper.wallTexturePack = wall_texture_pack;
+    if (settingsSelectedWall3D._hidden && !settingsSelectedRoom3D._hidden) {
+        settingsSelectedRoom3D.setValue('All Wall Texture:', wall_texture_pack.colormap);
+        roomplanningHelper.roomWallsTexturePack = wall_texture_pack;
+    } else {
+        settingsSelectedWall3D.setValue('Wall Texture:', wall_texture_pack.colormap);
+        roomplanningHelper.wallTexturePack = wall_texture_pack;
+    }
 }
 
 function switchViewer() {
@@ -80,9 +93,16 @@ function switchViewer() {
         uxInterface.setValue("Current View", "Floor Planning");
         settingsViewer3d.hide();
         settingsViewer2d.show();
+
+        settingsSelectedWall3D.hide();
+        settingsSelectedRoom3D.hide();
+
     } else if (blueprint3d.currentView === 3) {
         uxInterface.setValue("Current View", "Room Planning");
         settingsViewer2d.hide();
+        settingsSelectedCorner.hide();
+        settingsSelectedWall.hide();
+        settingsSelectedRoom.hide();
         settingsViewer3d.show();
     }
 }
@@ -150,18 +170,35 @@ blueprint3d.floorplanner.addFloorplanListener(EVENT_ROOM_2D_CLICKED, function(ev
 });
 
 
+blueprint3d.roomplanner.addRoomplanListener(EVENT_NO_ITEM_SELECTED, function() {
+    settingsSelectedWall3D.hide();
+    settingsSelectedRoom3D.hide();
+});
+blueprint3d.roomplanner.addRoomplanListener(EVENT_WALL_CLICKED, function(evt) {
+    settingsSelectedWall3D.show();
+    settingsSelectedRoom3D.hide();
+});
+blueprint3d.roomplanner.addRoomplanListener(EVENT_ROOM_CLICKED, function(evt) {
+    settingsSelectedWall3D.hide();
+    settingsSelectedRoom3D.show();
+});
+
+
 
 blueprint3d.model.loadSerialized(empty);
 
 
 if (!opts.widget) {
     uxInterface = QuickSettings.create(0, 0, 'BlueprintJS', app_parent);
+
     settingsViewer2d = QuickSettings.create(0, 0, 'Viewer 2D', app_parent);
     settingsSelectedCorner = QuickSettings.create(0, 0, 'Corner', app_parent);
     settingsSelectedWall = QuickSettings.create(0, 0, 'Wall', app_parent);
     settingsSelectedRoom = QuickSettings.create(0, 0, 'Room', app_parent);
 
     settingsViewer3d = QuickSettings.create(0, 0, 'Viewer 3D', app_parent);
+    settingsSelectedWall3D = QuickSettings.create(0, 0, 'Wall', app_parent);
+    settingsSelectedRoom3D = QuickSettings.create(0, 0, 'Room', app_parent);
 
 
     uxInterface.addButton('Switch Viewer', switchViewer);
@@ -186,13 +223,25 @@ if (!opts.widget) {
     settingsSelectedWall.bindRange('wallThickness', 0, 100, floorplanningHelper.wallThickness, 0.1, floorplanningHelper);
     settingsSelectedRoom.bindText('roomName', floorplanningHelper.roomName, floorplanningHelper);
 
-    settingsViewer3d.addDropDown('Floor Textures', floor_texture_keys, selectFloorTexture);
-    settingsViewer3d.addImage('Floor Texture:', floor_textures[floor_texture_keys[0]].colormap, null);
-    settingsViewer3d.addButton('Apply', selectFloorTexture);
+    // settingsViewer3d.addDropDown('Floor Textures', floor_texture_keys, selectFloorTexture);
+    // settingsViewer3d.addImage('Floor Texture:', floor_textures[floor_texture_keys[0]].colormap, null);
+    // settingsViewer3d.addButton('Apply', selectFloorTexture);
 
-    settingsViewer3d.addDropDown('Wall Textures', wall_texture_keys, selectWallTexture);
-    settingsViewer3d.addImage('Wall Texture:', wall_textures[wall_texture_keys[0]].colormap, null);
-    settingsViewer3d.addButton('Apply', selectWallTexture);
+    // settingsViewer3d.addDropDown('Wall Textures', wall_texture_keys, selectWallTexture);
+    // settingsViewer3d.addImage('Wall Texture:', wall_textures[wall_texture_keys[0]].colormap, null);
+    // settingsViewer3d.addButton('Apply', selectWallTexture);
+
+    settingsSelectedRoom3D.addDropDown('Floor Textures', floor_texture_keys, selectFloorTexture);
+    settingsSelectedRoom3D.addImage('Floor Texture:', floor_textures[floor_texture_keys[0]].colormap, null);
+    settingsSelectedRoom3D.addButton('Apply', selectFloorTexture);
+
+    settingsSelectedRoom3D.addDropDown('All Wall Textures', wall_texture_keys, selectWallTexture);
+    settingsSelectedRoom3D.addImage('All Wall Texture:', wall_textures[wall_texture_keys[0]].colormap, null);
+    settingsSelectedRoom3D.addButton('Apply', selectWallTexture);
+
+    settingsSelectedWall3D.addDropDown('Wall Textures', wall_texture_keys, selectWallTexture);
+    settingsSelectedWall3D.addImage('Wall Texture:', wall_textures[wall_texture_keys[0]].colormap, null);
+    settingsSelectedWall3D.addButton('Apply', selectWallTexture);
 
     settingsViewer3d.addHTML('Tips:', '<p>Click and drag to rotate the room in 360\xB0</p><p>Add room items (Coming soon)</p><p>Drag and Place items(pink boxes) in the room</p><p>There are 8 different types of items <ul><li>1: FloorItem</li> <li>2: WallItem</li> <li>3: InWallItem</li> <li>7: InWallFloorItem</li> <li>8: OnFloorItem</li> <li>9: WallFloorItem</li><li>0: Item</li> <li>4: RoofItem</li></ul></p>');
 
@@ -213,8 +262,12 @@ if (!opts.widget) {
     settingsViewer2d.setPosition(app_parent.clientWidth - panelWidths, startY + uxInterfaceHeight);
     settingsViewer3d.setPosition(app_parent.clientWidth - panelWidths, startY + uxInterfaceHeight);
 
-    settingsViewer3d.hide();
+
     settingsSelectedCorner.hide();
     settingsSelectedWall.hide();
     settingsSelectedRoom.hide();
+
+    settingsViewer3d.hide();
+    settingsSelectedWall3D.hide();
+    settingsSelectedRoom3D.hide();
 }

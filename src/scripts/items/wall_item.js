@@ -1,5 +1,4 @@
 import { Vector2, Vector3 } from 'three';
-import { EVENT_DELETED } from '../core/events.js';
 import { Utils } from '../core/utils.js';
 import { Item, UP_VECTOR } from './item.js';
 
@@ -28,5 +27,6 @@ export class WallItem extends Item {
         point = point.clone().add(normal.clone().multiplyScalar(this.halfSize.z + (intersectingPlane.edge.wall.thickness * 0.25)));
         this.position = point;
         this.rotation = new Vector3(0, angle, 0);
+        this.__addToAWall(intersectingPlane);
     }
 }

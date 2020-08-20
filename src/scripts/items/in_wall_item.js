@@ -14,5 +14,6 @@ export class InWallItem extends WallItem {
         let angle = Utils.angle(UP_VECTOR, normal2d);
         this.rotation = new Vector3(0, angle, 0);
         this.position = point;
+        this.__addToAWall(intersectingPlane);
     }
 }

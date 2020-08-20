@@ -1,6 +1,7 @@
 import { EventDispatcher, Vector3 } from 'three';
 import { EVENT_UPDATED } from '../core/events';
 import { Utils } from '../core/utils';
+import { Vector2 } from 'three/build/three.module';
 
 export const UP_VECTOR = new Vector3(0, 1, 0);
 /**
@@ -30,6 +31,7 @@ export class Item extends EventDispatcher {
         this.__id = id || Utils.guide();
         this.__metadata = metadata;
         this.__model = model;
+        this.__position2d = new Vector2();
         this.__position = new Vector3();
         this.__rotation = new Vector3();
         this.__scale = new Vector3(1, 1, 1);
@@ -50,9 +52,27 @@ export class Item extends EventDispatcher {
         this.__fixed = false; //This is part of application logic and also Metadata
         this.__resizable = false; //This is part of application logic and also Metadata
 
+        this.__currentWall = null;
+        this.__currentFloor = null;
+
         this.castShadow = false;
         this.receiveShadow = false;
         this.__initializeMetaData();
+    }
+
+    __addToAWall(intersectingPlane) {
+        let wall = intersectingPlane.wall;
+        if (wall === undefined || !wall || wall === 'undefined') {
+            return;
+        }
+        // if (this.__currentWall === wall) {
+        //     return;
+        // }
+        if (this.__currentWall && this.__currentWall !== wall) {
+            this.__currentWall.removeItem(this);
+        }
+        wall.addItem(this);
+        this.__currentWall = wall;
     }
 
     __initializeMetaData() {
@@ -116,10 +136,16 @@ export class Item extends EventDispatcher {
         this.__applyMetaData();
     }
 
+    get position2d() {
+        return this.__position2d;
+    }
+
     get position() {
         return this.__position;
     }
     set position(p) {
+        this.__position2d.x = p.x;
+        this.__position2d.y = p.z;
         this.__position.copy(p);
         this.__metadata.position = this.__position.toArray();
         this.__moveToPosition();

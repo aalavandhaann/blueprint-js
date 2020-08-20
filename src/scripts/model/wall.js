@@ -4,6 +4,11 @@ import { WallTypes, defaultWallTexture } from '../core/constants.js';
 import { EVENT_ACTION, EVENT_MOVED, EVENT_DELETED, EVENT_UPDATED, EVENT_CORNER_ATTRIBUTES_CHANGED } from '../core/events.js';
 import { Configuration, configWallThickness, configWallHeight } from '../core/configuration.js';
 import { Utils } from '../core/utils.js';
+import { InWallItem } from '../items/in_wall_item.js';
+import { InWallFloorItem } from '../items/in_wall_floor_item.js';
+import { WallItem } from '../items/wall_item.js';
+import { WallFloorItem } from '../items/wall_floor_item.js';
+import { Matrix4 } from 'three/build/three.module';
 
 
 /** The default wall texture. */
@@ -79,6 +84,12 @@ export class Wall extends EventDispatcher {
         /** */
         this.onItems = [];
 
+        this.__onWallItems = [];
+        this.__inWallItems = [];
+
+        this.__onWallItemsSnappedRatios = [];
+        this.__inWallItemsSnappedRatios = [];
+
         /** The front-side texture. */
         this.frontTexture = defaultWallTexture;
 
@@ -114,6 +125,68 @@ export class Wall extends EventDispatcher {
         this.addCornerMoveListener(this.end);
     }
 
+
+    __updateItemPositions() {
+        // let i = 0;
+        // let vect = this.end.location.clone().sub(this.start.location);
+        // this.__onWallItems.forEach((item) => {
+        //     let snappedRatio = this.__onWallItemsSnappedRatios[i];
+        //     let newPosition = vect.clone().multiplyScalar(snappedRatio).add(this.start.location);
+        //     item.position = new Vector3(newPosition.x, item.position.y, newPosition.y);
+        //     i++;
+        // });
+        // i = 0;
+        // this.__inWallItems.forEach((item) => {
+        //     let snappedRatio = this.__inWallItemsSnappedRatios[i];
+        //     let newPosition = vect.clone().multiplyScalar(snappedRatio).add(this.start.location);
+        //     item.position = new Vector3(newPosition.x, item.position.y, newPosition.y);
+        //     i++;
+        // });
+    }
+
+    addItem(item) {
+        if (item instanceof InWallItem || item instanceof InWallFloorItem) {
+            if (!Utils.hasValue(this.__inWallItems, item)) {
+                let vect = this.end.location.clone().sub(this.start.location);
+                let itemVect = item.position2d.clone().sub(this.start.location);
+                let ratio = itemVect.length() / vect.length();
+                console.log(vect, itemVect, ratio);
+                this.__inWallItems.push(item);
+                this.__inWallItemsSnappedRatios.push(ratio);
+            }
+            this.dispatchEvent({ type: EVENT_MOVED, item: this, position: null });
+        }
+
+        if (item instanceof WallItem || item instanceof WallFloorItem) {
+            if (!Utils.hasValue(this.__onWallItems, item)) {
+                let vect = this.end.location.clone().sub(this.start.location);
+                let itemVect = item.position2d.clone().sub(this.start.location);
+                let ratio = itemVect.length() / vect.length();
+                this.__onWallItems.push(item);
+                this.__onWallItemsSnappedRatios.push(ratio);
+            }
+        }
+    }
+
+    removeItem(item) {
+        if (item instanceof InWallItem || item instanceof InWallFloorItem) {
+            if (Utils.hasValue(this.__inWallItems, item)) {
+                let i = Utils.removeValue(this.__inWallItems, item);
+                let snappedPositionRatio = this.__inWallItemsSnappedRatios[i];
+                Utils.removeValue(this.__inWallItemsSnappedRatios, snappedPositionRatio);
+                this.dispatchEvent({ type: EVENT_MOVED, item: this, position: null });
+            }
+        }
+
+        if (item instanceof WallItem || item instanceof WallFloorItem) {
+            if (Utils.hasValue(this.__onWallItems, item)) {
+                let i = Utils.removeValue(this.__onWallItems, item);
+                let snappedPositionRatio = this.__onWallItemsSnappedRatios[i];
+                Utils.removeValue(this.__onWallItemsSnappedRatios, snappedPositionRatio);
+            }
+        }
+    }
+
     addCornerMoveListener(corner, remove = false) {
         let scope = this;
 
@@ -122,6 +195,7 @@ export class Wall extends EventDispatcher {
         }
 
         function cornerAttributesChanged() {
+            scope.__updateItemPositions();
             scope.dispatchEvent({ type: EVENT_MOVED, item: scope, position: null });
         }
 
@@ -288,6 +362,14 @@ export class Wall extends EventDispatcher {
          * Then this instance will also trigger the move event 
          */
         // this.dispatchEvent({ type: EVENT_UPDATED, item: this });
+    }
+
+    get onWallItems() {
+        return this.__onWallItems;
+    }
+
+    get inWallItems() {
+        return this.__inWallItems;
     }
 
     get attachedRooms() {

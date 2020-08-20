@@ -1,4 +1,5 @@
 import { EventDispatcher, Vector2, Vector3, MeshBasicMaterial, FrontSide, DoubleSide, BackSide, Shape, Path, ShapeGeometry, Mesh, Geometry, Face3, } from 'three';
+// import { SubdivisionModifier } from 'three/examples/jsm/modifiers/SubdivisionModifier';
 import { Utils } from '../core/utils.js';
 import { EVENT_REDRAW, EVENT_UPDATE_TEXTURES } from '../core/events.js';
 import { WallMaterial3D } from '../materials/WallMaterial3D.js';
@@ -178,13 +179,13 @@ export class Edge3D extends EventDispatcher {
     }
 
     updateObjectVisibility() {
-        //		var scope = this;
-        //		this.wall.items.forEach((item) => {
-        //			item.updateEdgeVisibility(scope.visible, scope.front);
-        //		});
-        //		this.wall.onItems.forEach((item) => {
-        //			item.updateEdgeVisibility(scope.visible, scope.front);
-        //		});
+        // var scope = this;
+        // this.wall.inWallItems.forEach((item) => {
+        //     item.updateEdgeVisibility(scope.visible, scope.front);
+        // });
+        // this.wall.onWallItems.forEach((item) => {
+        //     item.updateEdgeVisibility(scope.visible, scope.front);
+        // });
     }
 
     updateTexture(callback) {
@@ -263,9 +264,9 @@ export class Edge3D extends EventDispatcher {
 
         var spoints = [new Vector2(points[0].x, points[0].y), new Vector2(points[1].x, points[1].y), new Vector2(points[2].x, points[2].y), new Vector2(points[3].x, points[3].y)];
         var shape = new Shape(spoints);
-
         // add holes for each wall item
-        this.wall.items.forEach((item) => {
+        // this.wall.items.forEach((item) => {
+        this.wall.inWallItems.forEach((item) => {
             var pos = item.position.clone();
             pos.applyMatrix4(transform);
             var halfSize = item.halfSize;
@@ -305,6 +306,10 @@ export class Edge3D extends EventDispatcher {
             var y = vertex.y / height;
             return new Vector2(x, y);
         }
+
+        // let subdivider = new SubdivisionModifier(3, true);
+        // geometry = subdivider.modify(geometry);
+
 
         var mesh = new Mesh(geometry, material);
         mesh.name = 'wall';

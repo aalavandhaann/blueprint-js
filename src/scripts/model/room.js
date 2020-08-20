@@ -240,6 +240,26 @@ export class Room extends EventDispatcher {
         //		this.floorChangeCallbacks.fire();
     }
 
+    setRoomWallsTextureMaps(texturePack) {
+        let edge = this.edgePointer;
+        let iterateWhile = true;
+        if (!texturePack.color) {
+            texturePack.color = '#FFFFFF';
+        }
+        if (!texturePack.repeat) {
+            texturePack.repeat = TEXTURE_DEFAULT_REPEAT; //For every TEXTURE_DEFAULT_REPEAT cms
+        }
+        edge.setTextureMaps(texturePack);
+        while (iterateWhile) {
+            if (edge.next === this.edgePointer) {
+                break;
+            } else {
+                edge = edge.next;
+            }
+            edge.setTextureMaps(texturePack);
+        }
+    }
+
     setTextureMaps(texturePack) {
         let uuid = this.getUuid();
         if (!texturePack.color) {

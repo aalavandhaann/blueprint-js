@@ -37159,10 +37159,10 @@ var Utils = /*#__PURE__*/function () {
       return tCCW(tP1, tP3, tP4) != tCCW(tP2, tP3, tP4) && tCCW(tP1, tP2, tP3) != tCCW(tP1, tP2, tP4);
     }
     /**
-        @param corners Is an array of points with x,y attributes
-         @param startX X start coord for raycast
-         @param startY Y start coord for raycast
-     */
+     @param corners Is an array of points with x,y attributes
+      @param startX X start coord for raycast
+      @param startY Y start coord for raycast
+    */
 
   }, {
     key: "pointInPolygon2",
@@ -37182,10 +37182,10 @@ var Utils = /*#__PURE__*/function () {
       return inside;
     }
     /**
-        @param corners Is an array of points with x,y attributes
-         @param startX X start coord for raycast
-         @param startY Y start coord for raycast
-     */
+     @param corners Is an array of points with x,y attributes
+      @param startX X start coord for raycast
+      @param startY Y start coord for raycast
+    */
 
   }, {
     key: "pointInPolygon",
@@ -37336,6 +37336,7 @@ var Utils = /*#__PURE__*/function () {
       for (var tI = array.length - 1; tI >= 0; tI--) {
         if (array[tI] === value) {
           array.splice(tI, 1);
+          return tI;
         }
       }
     }
@@ -41433,7 +41434,639 @@ module.exports = convertPath;
 },{"./utils.js":"../node_modules/bezier-js/lib/utils.js","./poly-bezier.js":"../node_modules/bezier-js/lib/poly-bezier.js","./svg-to-beziers":"../node_modules/bezier-js/lib/svg-to-beziers.js"}],"../node_modules/bezier-js/index.js":[function(require,module,exports) {
 module.exports = require('./lib/bezier');
 
-},{"./lib/bezier":"../node_modules/bezier-js/lib/bezier.js"}],"scripts/model/wall.js":[function(require,module,exports) {
+},{"./lib/bezier":"../node_modules/bezier-js/lib/bezier.js"}],"scripts/items/item.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Item = exports.UP_VECTOR = void 0;
+
+var _three = require("three");
+
+var _events = require("../core/events");
+
+var _utils = require("../core/utils");
+
+var _three2 = require("three/build/three.module");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var UP_VECTOR = new _three.Vector3(0, 1, 0);
+/**
+ * An Item is an abstract entity for all things placed in the scene, e.g. at
+ * walls or on the floor.
+ */
+
+exports.UP_VECTOR = UP_VECTOR;
+
+var Item = /*#__PURE__*/function (_EventDispatcher) {
+  _inherits(Item, _EventDispatcher);
+
+  var _super = _createSuper(Item);
+
+  /**
+   * Constructs an item. This is a pure data representation of a room item.
+   * Because floorplanner is pure MVC or MVP it is the responsibility of the respective viewer
+   * to create the physical entity based on the item data
+   *
+   * @param model
+   *            TODO
+   * @param metadata
+   *            TODO
+   * @param id
+   *            TODO
+   */
+  function Item(metadata, model, id) {
+    var _this;
+
+    _classCallCheck(this, Item);
+
+    _this = _super.call(this);
+    /**
+     * @property {String} id The id of this corner. Autogenerated the first time
+     * @type {String}
+     **/
+
+    _this.__id = id || _utils.Utils.guide();
+    _this.__metadata = metadata;
+    _this.__model = model;
+    _this.__position2d = new _three2.Vector2();
+    _this.__position = new _three.Vector3();
+    _this.__rotation = new _three.Vector3();
+    _this.__scale = new _three.Vector3(1, 1, 1);
+    _this.__size = new _three.Vector3(1, 1, 1);
+    _this.__halfSize = new _three.Vector3(1, 1, 1);
+    _this.__customIntersectionPlanes = [];
+    /** */
+
+    _this.__hover = false; //This is part of application logic only
+
+    /** */
+
+    _this.__selected = false; //This is part of application logic only
+
+    _this.__freePosition = true; //This is part of application logic only
+
+    _this.__boundToFloor = false; //This is part of application logic only
+
+    _this.__allowRotate = true; //This is part of application logic only
+
+    _this.__fixed = false; //This is part of application logic and also Metadata
+
+    _this.__resizable = false; //This is part of application logic and also Metadata
+
+    _this.__currentWall = null;
+    _this.__currentFloor = null;
+    _this.castShadow = false;
+    _this.receiveShadow = false;
+
+    _this.__initializeMetaData();
+
+    return _this;
+  }
+
+  _createClass(Item, [{
+    key: "__addToAWall",
+    value: function __addToAWall(intersectingPlane) {
+      var wall = intersectingPlane.wall;
+
+      if (wall === undefined || !wall || wall === 'undefined') {
+        return;
+      } // if (this.__currentWall === wall) {
+      //     return;
+      // }
+
+
+      if (this.__currentWall && this.__currentWall !== wall) {
+        this.__currentWall.removeItem(this);
+      }
+
+      wall.addItem(this);
+      this.__currentWall = wall;
+    }
+  }, {
+    key: "__initializeMetaData",
+    value: function __initializeMetaData() {
+      this.__fixed = this.__metadata.fixed ? this.__metadata.fixed : true;
+      this.__resizable = this.__metadata.resizable ? this.__metadata.resizable : true;
+
+      if (this.__metadata.position.length) {
+        this.__position = new _three.Vector3().fromArray(this.__metadata.position).clone();
+      }
+
+      if (this.__metadata.rotation.length) {
+        this.__rotation = new _three.Vector3().fromArray(this.__metadata.rotation).clone();
+      }
+
+      if (this.__metadata.scale.length) {
+        this.__scale = new _three.Vector3().fromArray(this.__metadata.scale).clone();
+      }
+
+      if (this.__metadata.size.length) {
+        this.__size = new _three.Vector3().fromArray(this.__metadata.size).clone();
+        this.__halfSize = this.__size.clone().multiplyScalar(0.5);
+      }
+    }
+    /** */
+
+  }, {
+    key: "__moveToPosition",
+    value: function __moveToPosition() {}
+  }, {
+    key: "__getMetaData",
+    value: function __getMetaData() {
+      return {
+        id: this.id,
+        itemName: this.metadata.itemName,
+        itemType: this.metadata.itemType,
+        modelURL: this.metadata.modelUrl,
+        position: this.position.toArray(),
+        rotation: this.rotation.toArray(),
+        scale: this.scale.toArray(),
+        size: this.size.toArray(),
+        fixed: this.__fixed,
+        resizable: this.__resizable
+      };
+    }
+  }, {
+    key: "__metaDataUpdate",
+    value: function __metaDataUpdate(propertyname) {
+      this.dispatchEvent({
+        type: _events.EVENT_UPDATED,
+        property: propertyname
+      });
+    }
+  }, {
+    key: "updateMetadataExplicit",
+    value: function updateMetadataExplicit() {
+      this.__metadata = this.__getMetaData();
+    }
+  }, {
+    key: "snapToPoint",
+    value: function snapToPoint(point, normal, intersectingPlane) {
+      this.position = point;
+    }
+  }, {
+    key: "id",
+    get: function get() {
+      return this.__id;
+    }
+  }, {
+    key: "metadata",
+    get: function get() {
+      return this.__metadata;
+    },
+    set: function set(mdata) {
+      this.__metadata = mdata;
+
+      this.__applyMetaData();
+    }
+  }, {
+    key: "position2d",
+    get: function get() {
+      return this.__position2d;
+    }
+  }, {
+    key: "position",
+    get: function get() {
+      return this.__position;
+    },
+    set: function set(p) {
+      this.__position2d.x = p.x;
+      this.__position2d.y = p.z;
+
+      this.__position.copy(p);
+
+      this.__metadata.position = this.__position.toArray();
+
+      this.__moveToPosition();
+
+      this.__metaDataUpdate('position');
+    }
+  }, {
+    key: "rotation",
+    get: function get() {
+      return this.__rotation;
+    },
+    set: function set(r) {
+      var old = this.__rotation.clone();
+
+      var current = r.clone();
+
+      if (old.sub(current).length() < 1e-4) {
+        return;
+      }
+
+      this.__rotation.copy(r);
+
+      this.__metadata.rotation = this.__rotation.toArray();
+
+      this.__metaDataUpdate('rotation');
+    }
+  }, {
+    key: "scale",
+    get: function get() {
+      return this.__scale;
+    },
+    set: function set(s) {
+      this.__scale.copy(s);
+
+      this.__metadata.scale = this.__scale.toArray();
+
+      this.__metaDataUpdate('scale');
+    }
+    /**
+     * This is a read-only property. This can be changed only internally with private and protected acces
+     */
+
+  }, {
+    key: "size",
+    get: function get() {
+      return this.__size.clone();
+    }
+  }, {
+    key: "modelURL",
+    get: function get() {
+      return this.__metadata.modelURL;
+    },
+    set: function set(value) {
+      this.__metadata.modelURL = value;
+
+      this.__metaDataUpdate('modelURL');
+    }
+  }, {
+    key: "fixed",
+    get: function get() {
+      return this.__fixed;
+    },
+    set: function set(flag) {
+      this.__fixed = flag;
+
+      this.__metaDataUpdate('fixed');
+    }
+  }, {
+    key: "resizable",
+    get: function get() {
+      return this.__resizable;
+    }
+  }, {
+    key: "itemName",
+    get: function get() {
+      return this.__metadata.itemName;
+    }
+  }, {
+    key: "itemType",
+    get: function get() {
+      return this.__metadata.itemType;
+    }
+  }, {
+    key: "halfSize",
+    get: function get() {
+      return this.__halfSize.clone();
+    }
+  }, {
+    key: "intersectionPlanes",
+    get: function get() {
+      return this.__customIntersectionPlanes;
+    }
+  }]);
+
+  return Item;
+}(_three.EventDispatcher);
+
+exports.Item = Item;
+},{"three":"../node_modules/three/build/three.module.js","../core/events":"scripts/core/events.js","../core/utils":"scripts/core/utils.js","three/build/three.module":"../node_modules/three/build/three.module.js"}],"scripts/items/wall_item.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.WallItem = void 0;
+
+var _three = require("three");
+
+var _utils = require("../core/utils.js");
+
+var _item = require("./item.js");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+/**
+ * A Wall Item is an entity to be placed related to a wall.
+ */
+var WallItem = /*#__PURE__*/function (_Item) {
+  _inherits(WallItem, _Item);
+
+  var _super = _createSuper(WallItem);
+
+  function WallItem(model, metadata, id) {
+    var _this;
+
+    _classCallCheck(this, WallItem);
+
+    _this = _super.call(this, model, metadata, id);
+    _this.__boundToFloor = false;
+    _this.__allowRotate = false;
+    _this.__freePosition = false;
+    _this.__customIntersectionPlanes = _this.__model.floorplan.wallPlanesForIntersection;
+    return _this;
+  }
+
+  _createClass(WallItem, [{
+    key: "snapToPoint",
+    value: function snapToPoint(point, normal, intersectingPlane) {
+      var normal2d = new _three.Vector2(normal.x, normal.z);
+
+      var angle = _utils.Utils.angle(_item.UP_VECTOR, normal2d);
+
+      var rotatedSize = this.halfSize.clone();
+      rotatedSize.applyAxisAngle(_item.UP_VECTOR, angle); // The below needs to done so the size is always positive
+      // The rotation of size might lead to negative values based on the angle of rotation
+
+      rotatedSize.x = Math.abs(rotatedSize.x);
+      rotatedSize.y = Math.abs(rotatedSize.y);
+      rotatedSize.z = Math.abs(rotatedSize.z);
+      point = point.clone().add(normal.clone().multiplyScalar(this.halfSize.z + intersectingPlane.edge.wall.thickness * 0.25));
+      this.position = point;
+      this.rotation = new _three.Vector3(0, angle, 0);
+
+      this.__addToAWall(intersectingPlane);
+    }
+  }]);
+
+  return WallItem;
+}(_item.Item);
+
+exports.WallItem = WallItem;
+},{"three":"../node_modules/three/build/three.module.js","../core/utils.js":"scripts/core/utils.js","./item.js":"scripts/items/item.js"}],"scripts/items/in_wall_item.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.InWallItem = void 0;
+
+var _wall_item = require("./wall_item.js");
+
+var _three = require("three");
+
+var _utils = require("../core/utils.js");
+
+var _item = require("./item.js");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+/** */
+var InWallItem = /*#__PURE__*/function (_WallItem) {
+  _inherits(InWallItem, _WallItem);
+
+  var _super = _createSuper(InWallItem);
+
+  function InWallItem(model, metadata, id) {
+    var _this;
+
+    _classCallCheck(this, InWallItem);
+
+    _this = _super.call(this, model, metadata, id);
+    _this.__customIntersectionPlanes = _this.__model.floorplan.wallPlanesForIntersection;
+    return _this;
+  }
+
+  _createClass(InWallItem, [{
+    key: "snapToPoint",
+    value: function snapToPoint(point, normal, intersectingPlane) {
+      var normal2d = new _three.Vector2(normal.x, normal.z);
+
+      var angle = _utils.Utils.angle(_item.UP_VECTOR, normal2d);
+
+      this.rotation = new _three.Vector3(0, angle, 0);
+      this.position = point;
+
+      this.__addToAWall(intersectingPlane);
+    }
+  }]);
+
+  return InWallItem;
+}(_wall_item.WallItem);
+
+exports.InWallItem = InWallItem;
+},{"./wall_item.js":"scripts/items/wall_item.js","three":"../node_modules/three/build/three.module.js","../core/utils.js":"scripts/core/utils.js","./item.js":"scripts/items/item.js"}],"scripts/items/in_wall_floor_item.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.InWallFloorItem = void 0;
+
+var _in_wall_item = require("./in_wall_item.js");
+
+var _three = require("three");
+
+var _item = require("./item.js");
+
+var _utils = require("../core/utils.js");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+/** */
+var InWallFloorItem = /*#__PURE__*/function (_InWallItem) {
+  _inherits(InWallFloorItem, _InWallItem);
+
+  var _super = _createSuper(InWallFloorItem);
+
+  function InWallFloorItem(model, metadata, id) {
+    var _this;
+
+    _classCallCheck(this, InWallFloorItem);
+
+    _this = _super.call(this, model, metadata, id);
+    _this.__customIntersectionPlanes = _this.__model.floorplan.wallPlanesForIntersection;
+    return _this;
+  }
+
+  _createClass(InWallFloorItem, [{
+    key: "snapToPoint",
+    value: function snapToPoint(point, normal, intersectingPlane) {
+      var normal2d = new _three.Vector2(normal.x, normal.z);
+
+      var angle = _utils.Utils.angle(_item.UP_VECTOR, normal2d);
+
+      this.rotation = new _three.Vector3(0, angle, 0);
+      point.y = this.halfSize.y + 5;
+      this.position = point;
+
+      this.__addToAWall(intersectingPlane);
+    }
+  }]);
+
+  return InWallFloorItem;
+}(_in_wall_item.InWallItem);
+
+exports.InWallFloorItem = InWallFloorItem;
+},{"./in_wall_item.js":"scripts/items/in_wall_item.js","three":"../node_modules/three/build/three.module.js","./item.js":"scripts/items/item.js","../core/utils.js":"scripts/core/utils.js"}],"scripts/items/wall_floor_item.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.WallFloorItem = void 0;
+
+var _wall_item = require("./wall_item.js");
+
+var _three = require("three");
+
+var _utils = require("../core/utils.js");
+
+var _item = require("./item.js");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+/** */
+var WallFloorItem = /*#__PURE__*/function (_WallItem) {
+  _inherits(WallFloorItem, _WallItem);
+
+  var _super = _createSuper(WallFloorItem);
+
+  function WallFloorItem(model, metadata, id) {
+    var _this;
+
+    _classCallCheck(this, WallFloorItem);
+
+    _this = _super.call(this, model, metadata, id);
+    _this.__boundToFloor = true;
+    _this.__customIntersectionPlanes = _this.__model.floorplan.wallPlanesForIntersection;
+    return _this;
+  }
+
+  _createClass(WallFloorItem, [{
+    key: "snapToPoint",
+    value: function snapToPoint(point, normal, intersectingPlane) {
+      var normal2d = new _three.Vector2(normal.x, normal.z);
+
+      var angle = _utils.Utils.angle(_item.UP_VECTOR, normal2d);
+
+      var rotatedSize = this.halfSize.clone();
+      rotatedSize.applyAxisAngle(_item.UP_VECTOR, angle); // The below needs to done so the size is always positive
+      // The rotation of size might lead to negative values based on the angle of rotation
+
+      rotatedSize.x = Math.abs(rotatedSize.x);
+      rotatedSize.y = Math.abs(rotatedSize.y);
+      rotatedSize.z = Math.abs(rotatedSize.z);
+      point = point.clone().add(normal.clone().multiplyScalar(this.halfSize.z + intersectingPlane.edge.wall.thickness * 0.25));
+      point.y = this.halfSize.y + 5;
+      this.rotation = new _three.Vector3(0, angle, 0);
+      this.position = point;
+
+      this.__addToAWall(intersectingPlane);
+    }
+  }]);
+
+  return WallFloorItem;
+}(_wall_item.WallItem);
+
+exports.WallFloorItem = WallFloorItem;
+},{"./wall_item.js":"scripts/items/wall_item.js","three":"../node_modules/three/build/three.module.js","../core/utils.js":"scripts/core/utils.js","./item.js":"scripts/items/item.js"}],"scripts/model/wall.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -41452,6 +42085,16 @@ var _events = require("../core/events.js");
 var _configuration = require("../core/configuration.js");
 
 var _utils = require("../core/utils.js");
+
+var _in_wall_item = require("../items/in_wall_item.js");
+
+var _in_wall_floor_item = require("../items/in_wall_floor_item.js");
+
+var _wall_item = require("../items/wall_item.js");
+
+var _wall_floor_item = require("../items/wall_floor_item.js");
+
+var _three2 = require("three/build/three.module");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -41558,6 +42201,10 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
     /** */
 
     _this.onItems = [];
+    _this.__onWallItems = [];
+    _this.__inWallItems = [];
+    _this.__onWallItemsSnappedRatios = [];
+    _this.__inWallItemsSnappedRatios = [];
     /** The front-side texture. */
 
     _this.frontTexture = _constants.defaultWallTexture;
@@ -41596,6 +42243,89 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
   }
 
   _createClass(Wall, [{
+    key: "__updateItemPositions",
+    value: function __updateItemPositions() {// let i = 0;
+      // let vect = this.end.location.clone().sub(this.start.location);
+      // this.__onWallItems.forEach((item) => {
+      //     let snappedRatio = this.__onWallItemsSnappedRatios[i];
+      //     let newPosition = vect.clone().multiplyScalar(snappedRatio).add(this.start.location);
+      //     item.position = new Vector3(newPosition.x, item.position.y, newPosition.y);
+      //     i++;
+      // });
+      // i = 0;
+      // this.__inWallItems.forEach((item) => {
+      //     let snappedRatio = this.__inWallItemsSnappedRatios[i];
+      //     let newPosition = vect.clone().multiplyScalar(snappedRatio).add(this.start.location);
+      //     item.position = new Vector3(newPosition.x, item.position.y, newPosition.y);
+      //     i++;
+      // });
+    }
+  }, {
+    key: "addItem",
+    value: function addItem(item) {
+      if (item instanceof _in_wall_item.InWallItem || item instanceof _in_wall_floor_item.InWallFloorItem) {
+        if (!_utils.Utils.hasValue(this.__inWallItems, item)) {
+          var vect = this.end.location.clone().sub(this.start.location);
+          var itemVect = item.position2d.clone().sub(this.start.location);
+          var ratio = itemVect.length() / vect.length();
+          console.log(vect, itemVect, ratio);
+
+          this.__inWallItems.push(item);
+
+          this.__inWallItemsSnappedRatios.push(ratio);
+        }
+
+        this.dispatchEvent({
+          type: _events.EVENT_MOVED,
+          item: this,
+          position: null
+        });
+      }
+
+      if (item instanceof _wall_item.WallItem || item instanceof _wall_floor_item.WallFloorItem) {
+        if (!_utils.Utils.hasValue(this.__onWallItems, item)) {
+          var _vect = this.end.location.clone().sub(this.start.location);
+
+          var _itemVect = item.position2d.clone().sub(this.start.location);
+
+          var _ratio = _itemVect.length() / _vect.length();
+
+          this.__onWallItems.push(item);
+
+          this.__onWallItemsSnappedRatios.push(_ratio);
+        }
+      }
+    }
+  }, {
+    key: "removeItem",
+    value: function removeItem(item) {
+      if (item instanceof _in_wall_item.InWallItem || item instanceof _in_wall_floor_item.InWallFloorItem) {
+        if (_utils.Utils.hasValue(this.__inWallItems, item)) {
+          var i = _utils.Utils.removeValue(this.__inWallItems, item);
+
+          var snappedPositionRatio = this.__inWallItemsSnappedRatios[i];
+
+          _utils.Utils.removeValue(this.__inWallItemsSnappedRatios, snappedPositionRatio);
+
+          this.dispatchEvent({
+            type: _events.EVENT_MOVED,
+            item: this,
+            position: null
+          });
+        }
+      }
+
+      if (item instanceof _wall_item.WallItem || item instanceof _wall_floor_item.WallFloorItem) {
+        if (_utils.Utils.hasValue(this.__onWallItems, item)) {
+          var _i = _utils.Utils.removeValue(this.__onWallItems, item);
+
+          var _snappedPositionRatio = this.__onWallItemsSnappedRatios[_i];
+
+          _utils.Utils.removeValue(this.__onWallItemsSnappedRatios, _snappedPositionRatio);
+        }
+      }
+    }
+  }, {
     key: "addCornerMoveListener",
     value: function addCornerMoveListener(corner) {
       var remove = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
@@ -41606,6 +42336,8 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
       }
 
       function cornerAttributesChanged() {
+        scope.__updateItemPositions();
+
         scope.dispatchEvent({
           type: _events.EVENT_MOVED,
           item: scope,
@@ -41974,6 +42706,16 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
       return this.wallLength();
     }
   }, {
+    key: "onWallItems",
+    get: function get() {
+      return this.__onWallItems;
+    }
+  }, {
+    key: "inWallItems",
+    get: function get() {
+      return this.__inWallItems;
+    }
+  }, {
     key: "attachedRooms",
     get: function get() {
       return this.__attachedRooms;
@@ -42089,7 +42831,7 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
 exports.Wall = Wall;
 var _default = Wall;
 exports.default = _default;
-},{"three":"../node_modules/three/build/three.module.js","bezier-js":"../node_modules/bezier-js/index.js","../core/constants.js":"scripts/core/constants.js","../core/events.js":"scripts/core/events.js","../core/configuration.js":"scripts/core/configuration.js","../core/utils.js":"scripts/core/utils.js"}],"scripts/model/room.js":[function(require,module,exports) {
+},{"three":"../node_modules/three/build/three.module.js","bezier-js":"../node_modules/bezier-js/index.js","../core/constants.js":"scripts/core/constants.js","../core/events.js":"scripts/core/events.js","../core/configuration.js":"scripts/core/configuration.js","../core/utils.js":"scripts/core/utils.js","../items/in_wall_item.js":"scripts/items/in_wall_item.js","../items/in_wall_floor_item.js":"scripts/items/in_wall_floor_item.js","../items/wall_item.js":"scripts/items/wall_item.js","../items/wall_floor_item.js":"scripts/items/wall_floor_item.js","three/build/three.module":"../node_modules/three/build/three.module.js"}],"scripts/model/room.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -42396,6 +43138,32 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
         type: _events.EVENT_CHANGED,
         item: this
       }); //		this.floorChangeCallbacks.fire();
+    }
+  }, {
+    key: "setRoomWallsTextureMaps",
+    value: function setRoomWallsTextureMaps(texturePack) {
+      var edge = this.edgePointer;
+      var iterateWhile = true;
+
+      if (!texturePack.color) {
+        texturePack.color = '#FFFFFF';
+      }
+
+      if (!texturePack.repeat) {
+        texturePack.repeat = _constants.TEXTURE_DEFAULT_REPEAT; //For every TEXTURE_DEFAULT_REPEAT cms
+      }
+
+      edge.setTextureMaps(texturePack);
+
+      while (iterateWhile) {
+        if (edge.next === this.edgePointer) {
+          break;
+        } else {
+          edge = edge.next;
+        }
+
+        edge.setTextureMaps(texturePack);
+      }
     }
   }, {
     key: "setTextureMaps",
@@ -44115,297 +44883,7 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
 exports.Floorplan = Floorplan;
 var _default = Floorplan;
 exports.default = _default;
-},{"../core/events.js":"scripts/core/events.js","three":"../node_modules/three/build/three.module.js","../core/utils.js":"scripts/core/utils.js","../core/dimensioning.js":"scripts/core/dimensioning.js","../core/constants.js":"scripts/core/constants.js","../core/version.js":"scripts/core/version.js","../core/configuration.js":"scripts/core/configuration.js","./half_edge.js":"scripts/model/half_edge.js","./corner.js":"scripts/model/corner.js","./wall.js":"scripts/model/wall.js","./room.js":"scripts/model/room.js"}],"scripts/items/item.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Item = exports.UP_VECTOR = void 0;
-
-var _three = require("three");
-
-var _events = require("../core/events");
-
-var _utils = require("../core/utils");
-
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-var UP_VECTOR = new _three.Vector3(0, 1, 0);
-/**
- * An Item is an abstract entity for all things placed in the scene, e.g. at
- * walls or on the floor.
- */
-
-exports.UP_VECTOR = UP_VECTOR;
-
-var Item = /*#__PURE__*/function (_EventDispatcher) {
-  _inherits(Item, _EventDispatcher);
-
-  var _super = _createSuper(Item);
-
-  /**
-   * Constructs an item. This is a pure data representation of a room item.
-   * Because floorplanner is pure MVC or MVP it is the responsibility of the respective viewer
-   * to create the physical entity based on the item data
-   *
-   * @param model
-   *            TODO
-   * @param metadata
-   *            TODO
-   * @param id
-   *            TODO
-   */
-  function Item(metadata, model, id) {
-    var _this;
-
-    _classCallCheck(this, Item);
-
-    _this = _super.call(this);
-    /**
-     * @property {String} id The id of this corner. Autogenerated the first time
-     * @type {String}
-     **/
-
-    _this.__id = id || _utils.Utils.guide();
-    _this.__metadata = metadata;
-    _this.__model = model;
-    _this.__position = new _three.Vector3();
-    _this.__rotation = new _three.Vector3();
-    _this.__scale = new _three.Vector3(1, 1, 1);
-    _this.__size = new _three.Vector3(1, 1, 1);
-    _this.__halfSize = new _three.Vector3(1, 1, 1);
-    _this.__customIntersectionPlanes = [];
-    /** */
-
-    _this.__hover = false; //This is part of application logic only
-
-    /** */
-
-    _this.__selected = false; //This is part of application logic only
-
-    _this.__freePosition = true; //This is part of application logic only
-
-    _this.__boundToFloor = false; //This is part of application logic only
-
-    _this.__allowRotate = true; //This is part of application logic only
-
-    _this.__fixed = false; //This is part of application logic and also Metadata
-
-    _this.__resizable = false; //This is part of application logic and also Metadata
-
-    _this.castShadow = false;
-    _this.receiveShadow = false;
-
-    _this.__initializeMetaData();
-
-    return _this;
-  }
-
-  _createClass(Item, [{
-    key: "__initializeMetaData",
-    value: function __initializeMetaData() {
-      this.__fixed = this.__metadata.fixed ? this.__metadata.fixed : true;
-      this.__resizable = this.__metadata.resizable ? this.__metadata.resizable : true;
-
-      if (this.__metadata.position.length) {
-        this.__position = new _three.Vector3().fromArray(this.__metadata.position).clone();
-      }
-
-      if (this.__metadata.rotation.length) {
-        this.__rotation = new _three.Vector3().fromArray(this.__metadata.rotation).clone();
-      }
-
-      if (this.__metadata.scale.length) {
-        this.__scale = new _three.Vector3().fromArray(this.__metadata.scale).clone();
-      }
-
-      if (this.__metadata.size.length) {
-        this.__size = new _three.Vector3().fromArray(this.__metadata.size).clone();
-        this.__halfSize = this.__size.clone().multiplyScalar(0.5);
-      }
-    }
-    /** */
-
-  }, {
-    key: "__moveToPosition",
-    value: function __moveToPosition() {}
-  }, {
-    key: "__getMetaData",
-    value: function __getMetaData() {
-      return {
-        id: this.id,
-        itemName: this.metadata.itemName,
-        itemType: this.metadata.itemType,
-        modelURL: this.metadata.modelUrl,
-        position: this.position.toArray(),
-        rotation: this.rotation.toArray(),
-        scale: this.scale.toArray(),
-        size: this.size.toArray(),
-        fixed: this.__fixed,
-        resizable: this.__resizable
-      };
-    }
-  }, {
-    key: "__metaDataUpdate",
-    value: function __metaDataUpdate(propertyname) {
-      this.dispatchEvent({
-        type: _events.EVENT_UPDATED,
-        property: propertyname
-      });
-    }
-  }, {
-    key: "updateMetadataExplicit",
-    value: function updateMetadataExplicit() {
-      this.__metadata = this.__getMetaData();
-    }
-  }, {
-    key: "snapToPoint",
-    value: function snapToPoint(point, normal, intersectingPlane) {
-      this.position = point;
-    }
-  }, {
-    key: "id",
-    get: function get() {
-      return this.__id;
-    }
-  }, {
-    key: "metadata",
-    get: function get() {
-      return this.__metadata;
-    },
-    set: function set(mdata) {
-      this.__metadata = mdata;
-
-      this.__applyMetaData();
-    }
-  }, {
-    key: "position",
-    get: function get() {
-      return this.__position;
-    },
-    set: function set(p) {
-      this.__position.copy(p);
-
-      this.__metadata.position = this.__position.toArray();
-
-      this.__moveToPosition();
-
-      this.__metaDataUpdate('position');
-    }
-  }, {
-    key: "rotation",
-    get: function get() {
-      return this.__rotation;
-    },
-    set: function set(r) {
-      var old = this.__rotation.clone();
-
-      var current = r.clone();
-
-      if (old.sub(current).length() < 1e-4) {
-        return;
-      }
-
-      this.__rotation.copy(r);
-
-      this.__metadata.rotation = this.__rotation.toArray();
-
-      this.__metaDataUpdate('rotation');
-    }
-  }, {
-    key: "scale",
-    get: function get() {
-      return this.__scale;
-    },
-    set: function set(s) {
-      this.__scale.copy(s);
-
-      this.__metadata.scale = this.__scale.toArray();
-
-      this.__metaDataUpdate('scale');
-    }
-    /**
-     * This is a read-only property. This can be changed only internally with private and protected acces
-     */
-
-  }, {
-    key: "size",
-    get: function get() {
-      return this.__size.clone();
-    }
-  }, {
-    key: "modelURL",
-    get: function get() {
-      return this.__metadata.modelURL;
-    },
-    set: function set(value) {
-      this.__metadata.modelURL = value;
-
-      this.__metaDataUpdate('modelURL');
-    }
-  }, {
-    key: "fixed",
-    get: function get() {
-      return this.__fixed;
-    },
-    set: function set(flag) {
-      this.__fixed = flag;
-
-      this.__metaDataUpdate('fixed');
-    }
-  }, {
-    key: "resizable",
-    get: function get() {
-      return this.__resizable;
-    }
-  }, {
-    key: "itemName",
-    get: function get() {
-      return this.__metadata.itemName;
-    }
-  }, {
-    key: "itemType",
-    get: function get() {
-      return this.__metadata.itemType;
-    }
-  }, {
-    key: "halfSize",
-    get: function get() {
-      return this.__halfSize.clone();
-    }
-  }, {
-    key: "intersectionPlanes",
-    get: function get() {
-      return this.__customIntersectionPlanes;
-    }
-  }]);
-
-  return Item;
-}(_three.EventDispatcher);
-
-exports.Item = Item;
-},{"three":"../node_modules/three/build/three.module.js","../core/events":"scripts/core/events.js","../core/utils":"scripts/core/utils.js"}],"scripts/items/floor_item.js":[function(require,module,exports) {
+},{"../core/events.js":"scripts/core/events.js","three":"../node_modules/three/build/three.module.js","../core/utils.js":"scripts/core/utils.js","../core/dimensioning.js":"scripts/core/dimensioning.js","../core/constants.js":"scripts/core/constants.js","../core/version.js":"scripts/core/version.js","../core/configuration.js":"scripts/core/configuration.js","./half_edge.js":"scripts/model/half_edge.js","./corner.js":"scripts/model/corner.js","./wall.js":"scripts/model/wall.js","./room.js":"scripts/model/room.js"}],"scripts/items/floor_item.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -44486,231 +44964,7 @@ var FloorItem = /*#__PURE__*/function (_Item) {
 }(_item.Item);
 
 exports.FloorItem = FloorItem;
-},{"./item.js":"scripts/items/item.js","three":"../node_modules/three/build/three.module.js","../core/utils.js":"scripts/core/utils.js"}],"scripts/items/wall_item.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.WallItem = void 0;
-
-var _three = require("three");
-
-var _events = require("../core/events.js");
-
-var _utils = require("../core/utils.js");
-
-var _item = require("./item.js");
-
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-/**
- * A Wall Item is an entity to be placed related to a wall.
- */
-var WallItem = /*#__PURE__*/function (_Item) {
-  _inherits(WallItem, _Item);
-
-  var _super = _createSuper(WallItem);
-
-  function WallItem(model, metadata, id) {
-    var _this;
-
-    _classCallCheck(this, WallItem);
-
-    _this = _super.call(this, model, metadata, id);
-    _this.__boundToFloor = false;
-    _this.__allowRotate = false;
-    _this.__freePosition = false;
-    _this.__customIntersectionPlanes = _this.__model.floorplan.wallPlanesForIntersection;
-    return _this;
-  }
-
-  _createClass(WallItem, [{
-    key: "snapToPoint",
-    value: function snapToPoint(point, normal, intersectingPlane) {
-      var normal2d = new _three.Vector2(normal.x, normal.z);
-
-      var angle = _utils.Utils.angle(_item.UP_VECTOR, normal2d);
-
-      var rotatedSize = this.halfSize.clone();
-      rotatedSize.applyAxisAngle(_item.UP_VECTOR, angle); // The below needs to done so the size is always positive
-      // The rotation of size might lead to negative values based on the angle of rotation
-
-      rotatedSize.x = Math.abs(rotatedSize.x);
-      rotatedSize.y = Math.abs(rotatedSize.y);
-      rotatedSize.z = Math.abs(rotatedSize.z);
-      point = point.clone().add(normal.clone().multiplyScalar(this.halfSize.z + intersectingPlane.edge.wall.thickness * 0.25));
-      this.position = point;
-      this.rotation = new _three.Vector3(0, angle, 0);
-    }
-  }]);
-
-  return WallItem;
-}(_item.Item);
-
-exports.WallItem = WallItem;
-},{"three":"../node_modules/three/build/three.module.js","../core/events.js":"scripts/core/events.js","../core/utils.js":"scripts/core/utils.js","./item.js":"scripts/items/item.js"}],"scripts/items/in_wall_item.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.InWallItem = void 0;
-
-var _wall_item = require("./wall_item.js");
-
-var _three = require("three");
-
-var _utils = require("../core/utils.js");
-
-var _item = require("./item.js");
-
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-/** */
-var InWallItem = /*#__PURE__*/function (_WallItem) {
-  _inherits(InWallItem, _WallItem);
-
-  var _super = _createSuper(InWallItem);
-
-  function InWallItem(model, metadata, id) {
-    var _this;
-
-    _classCallCheck(this, InWallItem);
-
-    _this = _super.call(this, model, metadata, id);
-    _this.__customIntersectionPlanes = _this.__model.floorplan.wallPlanesForIntersection;
-    return _this;
-  }
-
-  _createClass(InWallItem, [{
-    key: "snapToPoint",
-    value: function snapToPoint(point, normal, intersectingPlane) {
-      var normal2d = new _three.Vector2(normal.x, normal.z);
-
-      var angle = _utils.Utils.angle(_item.UP_VECTOR, normal2d);
-
-      this.rotation = new _three.Vector3(0, angle, 0);
-      this.position = point;
-    }
-  }]);
-
-  return InWallItem;
-}(_wall_item.WallItem);
-
-exports.InWallItem = InWallItem;
-},{"./wall_item.js":"scripts/items/wall_item.js","three":"../node_modules/three/build/three.module.js","../core/utils.js":"scripts/core/utils.js","./item.js":"scripts/items/item.js"}],"scripts/items/in_wall_floor_item.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.InWallFloorItem = void 0;
-
-var _in_wall_item = require("./in_wall_item.js");
-
-var _three = require("three");
-
-var _item = require("./item.js");
-
-var _utils = require("../core/utils.js");
-
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-/** */
-var InWallFloorItem = /*#__PURE__*/function (_InWallItem) {
-  _inherits(InWallFloorItem, _InWallItem);
-
-  var _super = _createSuper(InWallFloorItem);
-
-  function InWallFloorItem(model, metadata, id) {
-    var _this;
-
-    _classCallCheck(this, InWallFloorItem);
-
-    _this = _super.call(this, model, metadata, id);
-    _this.__customIntersectionPlanes = _this.__model.floorplan.wallPlanesForIntersection;
-    return _this;
-  }
-
-  _createClass(InWallFloorItem, [{
-    key: "snapToPoint",
-    value: function snapToPoint(point, normal, intersectingPlane) {
-      var normal2d = new _three.Vector2(normal.x, normal.z);
-
-      var angle = _utils.Utils.angle(_item.UP_VECTOR, normal2d);
-
-      this.rotation = new _three.Vector3(0, angle, 0);
-      point.y = this.halfSize.y + 5;
-      this.position = point;
-    }
-  }]);
-
-  return InWallFloorItem;
-}(_in_wall_item.InWallItem);
-
-exports.InWallFloorItem = InWallFloorItem;
-},{"./in_wall_item.js":"scripts/items/in_wall_item.js","three":"../node_modules/three/build/three.module.js","./item.js":"scripts/items/item.js","../core/utils.js":"scripts/core/utils.js"}],"scripts/items/on_floor_item.js":[function(require,module,exports) {
+},{"./item.js":"scripts/items/item.js","three":"../node_modules/three/build/three.module.js","../core/utils.js":"scripts/core/utils.js"}],"scripts/items/on_floor_item.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -44761,87 +45015,7 @@ var OnFloorItem = /*#__PURE__*/function (_Item) {
 }(_item.Item);
 
 exports.OnFloorItem = OnFloorItem;
-},{"./floor_item.js":"scripts/items/floor_item.js","./item.js":"scripts/items/item.js"}],"scripts/items/wall_floor_item.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.WallFloorItem = void 0;
-
-var _wall_item = require("./wall_item.js");
-
-var _three = require("three");
-
-var _utils = require("../core/utils.js");
-
-var _item = require("./item.js");
-
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-/** */
-var WallFloorItem = /*#__PURE__*/function (_WallItem) {
-  _inherits(WallFloorItem, _WallItem);
-
-  var _super = _createSuper(WallFloorItem);
-
-  function WallFloorItem(model, metadata, id) {
-    var _this;
-
-    _classCallCheck(this, WallFloorItem);
-
-    _this = _super.call(this, model, metadata, id);
-    _this.__boundToFloor = true;
-    _this.__customIntersectionPlanes = _this.__model.floorplan.wallPlanesForIntersection;
-    return _this;
-  }
-
-  _createClass(WallFloorItem, [{
-    key: "snapToPoint",
-    value: function snapToPoint(point, normal, intersectingPlane) {
-      var normal2d = new _three.Vector2(normal.x, normal.z);
-
-      var angle = _utils.Utils.angle(_item.UP_VECTOR, normal2d);
-
-      var rotatedSize = this.halfSize.clone();
-      rotatedSize.applyAxisAngle(_item.UP_VECTOR, angle); // The below needs to done so the size is always positive
-      // The rotation of size might lead to negative values based on the angle of rotation
-
-      rotatedSize.x = Math.abs(rotatedSize.x);
-      rotatedSize.y = Math.abs(rotatedSize.y);
-      rotatedSize.z = Math.abs(rotatedSize.z);
-      point = point.clone().add(normal.clone().multiplyScalar(this.halfSize.z + intersectingPlane.edge.wall.thickness * 0.25));
-      point.y = this.halfSize.y + 5;
-      this.rotation = new _three.Vector3(0, angle, 0);
-      this.position = point;
-    }
-  }]);
-
-  return WallFloorItem;
-}(_wall_item.WallItem);
-
-exports.WallFloorItem = WallFloorItem;
-},{"./wall_item.js":"scripts/items/wall_item.js","three":"../node_modules/three/build/three.module.js","../core/utils.js":"scripts/core/utils.js","./item.js":"scripts/items/item.js"}],"scripts/items/roof_item.js":[function(require,module,exports) {
+},{"./floor_item.js":"scripts/items/floor_item.js","./item.js":"scripts/items/item.js"}],"scripts/items/roof_item.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -45984,260 +46158,6 @@ var MapControls = function (object, domElement) {
 exports.MapControls = MapControls;
 MapControls.prototype = Object.create(_threeModule.EventDispatcher.prototype);
 MapControls.prototype.constructor = MapControls;
-},{"../../../build/three.module.js":"../node_modules/three/build/three.module.js"}],"../node_modules/three/examples/jsm/controls/DragControls.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.DragControls = void 0;
-
-var _threeModule = require("../../../build/three.module.js");
-
-/**
- * @author zz85 / https://github.com/zz85
- * @author mrdoob / http://mrdoob.com
- * Running this will allow you to drag three.js objects around the screen.
- */
-var DragControls = function (_objects, _camera, _domElement) {
-  var _plane = new _threeModule.Plane();
-
-  var _raycaster = new _threeModule.Raycaster();
-
-  var _mouse = new _threeModule.Vector2();
-
-  var _offset = new _threeModule.Vector3();
-
-  var _intersection = new _threeModule.Vector3();
-
-  var _worldPosition = new _threeModule.Vector3();
-
-  var _inverseMatrix = new _threeModule.Matrix4();
-
-  var _intersections = [];
-  var _selected = null,
-      _hovered = null; //
-
-  var scope = this;
-
-  function activate() {
-    _domElement.addEventListener('mousemove', onDocumentMouseMove, false);
-
-    _domElement.addEventListener('mousedown', onDocumentMouseDown, false);
-
-    _domElement.addEventListener('mouseup', onDocumentMouseCancel, false);
-
-    _domElement.addEventListener('mouseleave', onDocumentMouseCancel, false);
-
-    _domElement.addEventListener('touchmove', onDocumentTouchMove, false);
-
-    _domElement.addEventListener('touchstart', onDocumentTouchStart, false);
-
-    _domElement.addEventListener('touchend', onDocumentTouchEnd, false);
-  }
-
-  function deactivate() {
-    _domElement.removeEventListener('mousemove', onDocumentMouseMove, false);
-
-    _domElement.removeEventListener('mousedown', onDocumentMouseDown, false);
-
-    _domElement.removeEventListener('mouseup', onDocumentMouseCancel, false);
-
-    _domElement.removeEventListener('mouseleave', onDocumentMouseCancel, false);
-
-    _domElement.removeEventListener('touchmove', onDocumentTouchMove, false);
-
-    _domElement.removeEventListener('touchstart', onDocumentTouchStart, false);
-
-    _domElement.removeEventListener('touchend', onDocumentTouchEnd, false);
-
-    _domElement.style.cursor = '';
-  }
-
-  function dispose() {
-    deactivate();
-  }
-
-  function getObjects() {
-    return _objects;
-  }
-
-  function onDocumentMouseMove(event) {
-    event.preventDefault();
-
-    var rect = _domElement.getBoundingClientRect();
-
-    _mouse.x = (event.clientX - rect.left) / rect.width * 2 - 1;
-    _mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-    _raycaster.setFromCamera(_mouse, _camera);
-
-    if (_selected && scope.enabled) {
-      if (_raycaster.ray.intersectPlane(_plane, _intersection)) {
-        _selected.position.copy(_intersection.sub(_offset).applyMatrix4(_inverseMatrix));
-      }
-
-      scope.dispatchEvent({
-        type: 'drag',
-        object: _selected
-      });
-      return;
-    }
-
-    _intersections.length = 0;
-
-    _raycaster.setFromCamera(_mouse, _camera);
-
-    _raycaster.intersectObjects(_objects, true, _intersections);
-
-    if (_intersections.length > 0) {
-      var object = _intersections[0].object;
-
-      _plane.setFromNormalAndCoplanarPoint(_camera.getWorldDirection(_plane.normal), _worldPosition.setFromMatrixPosition(object.matrixWorld));
-
-      if (_hovered !== object) {
-        scope.dispatchEvent({
-          type: 'hoveron',
-          object: object
-        });
-        _domElement.style.cursor = 'pointer';
-        _hovered = object;
-      }
-    } else {
-      if (_hovered !== null) {
-        scope.dispatchEvent({
-          type: 'hoveroff',
-          object: _hovered
-        });
-        _domElement.style.cursor = 'auto';
-        _hovered = null;
-      }
-    }
-  }
-
-  function onDocumentMouseDown(event) {
-    event.preventDefault();
-    _intersections.length = 0;
-
-    _raycaster.setFromCamera(_mouse, _camera);
-
-    _raycaster.intersectObjects(_objects, true, _intersections);
-
-    if (_intersections.length > 0) {
-      _selected = scope.transformGroup === true ? _objects[0] : _intersections[0].object;
-
-      if (_raycaster.ray.intersectPlane(_plane, _intersection)) {
-        _inverseMatrix.getInverse(_selected.parent.matrixWorld);
-
-        _offset.copy(_intersection).sub(_worldPosition.setFromMatrixPosition(_selected.matrixWorld));
-      }
-
-      _domElement.style.cursor = 'move';
-      scope.dispatchEvent({
-        type: 'dragstart',
-        object: _selected
-      });
-    }
-  }
-
-  function onDocumentMouseCancel(event) {
-    event.preventDefault();
-
-    if (_selected) {
-      scope.dispatchEvent({
-        type: 'dragend',
-        object: _selected
-      });
-      _selected = null;
-    }
-
-    _domElement.style.cursor = _hovered ? 'pointer' : 'auto';
-  }
-
-  function onDocumentTouchMove(event) {
-    event.preventDefault();
-    event = event.changedTouches[0];
-
-    var rect = _domElement.getBoundingClientRect();
-
-    _mouse.x = (event.clientX - rect.left) / rect.width * 2 - 1;
-    _mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-    _raycaster.setFromCamera(_mouse, _camera);
-
-    if (_selected && scope.enabled) {
-      if (_raycaster.ray.intersectPlane(_plane, _intersection)) {
-        _selected.position.copy(_intersection.sub(_offset).applyMatrix4(_inverseMatrix));
-      }
-
-      scope.dispatchEvent({
-        type: 'drag',
-        object: _selected
-      });
-      return;
-    }
-  }
-
-  function onDocumentTouchStart(event) {
-    event.preventDefault();
-    event = event.changedTouches[0];
-
-    var rect = _domElement.getBoundingClientRect();
-
-    _mouse.x = (event.clientX - rect.left) / rect.width * 2 - 1;
-    _mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-    _intersections.length = 0;
-
-    _raycaster.setFromCamera(_mouse, _camera);
-
-    _raycaster.intersectObjects(_objects, true, _intersections);
-
-    if (_intersections.length > 0) {
-      _selected = scope.transformGroup === true ? _objects[0] : _intersections[0].object;
-
-      _plane.setFromNormalAndCoplanarPoint(_camera.getWorldDirection(_plane.normal), _worldPosition.setFromMatrixPosition(_selected.matrixWorld));
-
-      if (_raycaster.ray.intersectPlane(_plane, _intersection)) {
-        _inverseMatrix.getInverse(_selected.parent.matrixWorld);
-
-        _offset.copy(_intersection).sub(_worldPosition.setFromMatrixPosition(_selected.matrixWorld));
-      }
-
-      _domElement.style.cursor = 'move';
-      scope.dispatchEvent({
-        type: 'dragstart',
-        object: _selected
-      });
-    }
-  }
-
-  function onDocumentTouchEnd(event) {
-    event.preventDefault();
-
-    if (_selected) {
-      scope.dispatchEvent({
-        type: 'dragend',
-        object: _selected
-      });
-      _selected = null;
-    }
-
-    _domElement.style.cursor = 'auto';
-  }
-
-  activate(); // API
-
-  this.enabled = true;
-  this.transformGroup = false;
-  this.activate = activate;
-  this.deactivate = deactivate;
-  this.dispose = dispose;
-  this.getObjects = getObjects;
-};
-
-exports.DragControls = DragControls;
-DragControls.prototype = Object.create(_threeModule.EventDispatcher.prototype);
-DragControls.prototype.constructor = DragControls;
 },{"../../../build/three.module.js":"../node_modules/three/build/three.module.js"}],"scripts/viewer3d/skybox.js":[function(require,module,exports) {
 "use strict";
 
@@ -46488,7 +46408,7 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
 
     _this.__applyNewTextures();
 
-    _this.normalScale.set(10, 10);
+    _this.normalScale.set(-10, 10);
 
     return _this;
   }
@@ -46502,36 +46422,42 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
         flag = true;
         this.__colorTexture.wrapS = this.__colorTexture.wrapT = _three.RepeatWrapping;
 
-        this.__colorTexture.repeat.set(this.__uRatio, this.__vRatio); // this.__colorTexture.needsUpdate = true;
+        this.__colorTexture.repeat.set(this.__uRatio, this.__vRatio);
 
+        this.__colorTexture.needsUpdate = true;
       }
 
       if (this.__normalTexture) {
         this.__normalTexture.wrapS = this.__normalTexture.wrapT = _three.RepeatWrapping;
 
-        this.__normalTexture.repeat.set(this.__uRatio, this.__vRatio); // this.__normalTexture.needsUpdate = true;
+        this.__normalTexture.repeat.set(this.__uRatio, this.__vRatio);
 
+        this.__normalTexture.needsUpdate = true;
       }
 
       if (this.__roughnessTexture) {
         this.__roughnessTexture.wrapS = this.__roughnessTexture.wrapT = _three.RepeatWrapping;
 
-        this.__roughnessTexture.repeat.set(this.__uRatio, this.__vRatio); // this.__roughnessTexture.needsUpdate = true;
+        this.__roughnessTexture.repeat.set(this.__uRatio, this.__vRatio);
 
+        this.__roughnessTexture.needsUpdate = true;
       }
 
       if (this.__ambientTexture) {
         this.__ambientTexture.wrapS = this.__ambientTexture.wrapT = _three.RepeatWrapping;
 
-        this.__ambientTexture.repeat.set(this.__uRatio, this.__vRatio); // this.__ambientTexture.needsUpdate = true;
+        this.__ambientTexture.repeat.set(this.__uRatio, this.__vRatio);
 
+        this.__ambientTexture.needsUpdate = true;
       }
 
       if (this.__bumpTexture) {
         this.__bumpTexture.wrapS = this.__bumpTexture.wrapT = _three.RepeatWrapping;
 
-        this.__bumpTexture.repeat.set(this.__uRatio, this.__vRatio); // this.__bumpTexture.needsUpdate = true;
+        this.__bumpTexture.repeat.set(this.__uRatio, this.__vRatio);
 
+        this.__bumpTexture.needsUpdate = true;
+        this.displacementMap.needsUpdate = true;
       }
 
       if (flag) {
@@ -46560,13 +46486,15 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
       if (this.__textureMapPack.ambientmap) {
         this.__ambientTexture = new _three.TextureLoader().load(this.__textureMapPack.ambientmap, this.__updateTextures.bind(this));
         this.aoMap = this.__ambientTexture;
-      }
+        this.aoMapIntensity = 1.0;
+      } // if (this.__textureMapPack.bumpmap) {
+      //     console.log('APPLY DISPLACEMENT MAP ::: ');
+      //     this.__bumpTexture = new TextureLoader().load(this.__textureMapPack.bumpmap, this.__updateTextures.bind(this));
+      //     this.displacementMap = this.__bumpTexture;
+      //     this.displacementBias = -0.001;
+      //     this.displacementScale = -100;
+      // }
 
-      if (this.__textureMapPack.bumpmap) {
-        this.__bumpTexture = new _three.TextureLoader().load(this.__textureMapPack.bumpmap, this.__updateTextures.bind(this));
-        this.displacementMap = this.__bumpTexture;
-        this.displacementBias = 1;
-      }
     }
   }, {
     key: "__scaleUV",
@@ -46678,9 +46606,7 @@ var WallMaterial3D = /*#__PURE__*/function (_Material3D) {
     _classCallCheck(this, WallMaterial3D);
 
     _this = _super.call(this, parameters, textureMapPack, scene, false);
-    _this.roughness = 0.7;
-
-    _this.normalScale.set(100, 100);
+    _this.roughness = 0.7; // this.normalScale.set(100, 100);
 
     return _this;
   }
@@ -46929,13 +46855,13 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
     }
   }, {
     key: "updateObjectVisibility",
-    value: function updateObjectVisibility() {//		var scope = this;
-      //		this.wall.items.forEach((item) => {
-      //			item.updateEdgeVisibility(scope.visible, scope.front);
-      //		});
-      //		this.wall.onItems.forEach((item) => {
-      //			item.updateEdgeVisibility(scope.visible, scope.front);
-      //		});
+    value: function updateObjectVisibility() {// var scope = this;
+      // this.wall.inWallItems.forEach((item) => {
+      //     item.updateEdgeVisibility(scope.visible, scope.front);
+      // });
+      // this.wall.onWallItems.forEach((item) => {
+      //     item.updateEdgeVisibility(scope.visible, scope.front);
+      // });
     }
   }, {
     key: "updateTexture",
@@ -47010,8 +46936,9 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
       });
       var spoints = [new _three.Vector2(points[0].x, points[0].y), new _three.Vector2(points[1].x, points[1].y), new _three.Vector2(points[2].x, points[2].y), new _three.Vector2(points[3].x, points[3].y)];
       var shape = new _three.Shape(spoints); // add holes for each wall item
+      // this.wall.items.forEach((item) => {
 
-      this.wall.items.forEach(function (item) {
+      this.wall.inWallItems.forEach(function (item) {
         var pos = item.position.clone();
         pos.applyMatrix4(transform);
         var halfSize = item.halfSize;
@@ -47045,7 +46972,9 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
         var x = _utils.Utils.distance(new _three.Vector2(v1.x, v1.z), new _three.Vector2(vertex.x, vertex.z)) / totalDistance;
         var y = vertex.y / height;
         return new _three.Vector2(x, y);
-      }
+      } // let subdivider = new SubdivisionModifier(3, true);
+      // geometry = subdivider.modify(geometry);
+
 
       var mesh = new _three.Mesh(geometry, material);
       mesh.name = 'wall';
@@ -47156,15 +47085,10 @@ var FloorMaterial3D = /*#__PURE__*/function (_Material3D) {
   var _super = _createSuper(FloorMaterial3D);
 
   function FloorMaterial3D(parameters, textureMapPack, scene) {
-    var _this;
-
     _classCallCheck(this, FloorMaterial3D);
 
-    _this = _super.call(this, parameters, textureMapPack, scene, true); // this.metalness = 1.0;
-
-    _this.normalScale.set(-10, -10);
-
-    return _this;
+    return _super.call(this, parameters, textureMapPack, scene, true); // this.metalness = 1.0;
+    // this.normalScale.set(-10, -10);
   }
 
   return FloorMaterial3D;
@@ -55511,7 +55435,8 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
       }
 
       if (evt.property === 'position') {
-        // this.position.copy(this.__itemModel.position.clone());
+        console.log('PHYSICAL ITEM UPDATE POSITION '); // this.position.copy(this.__itemModel.position.clone());
+
         _gsap.default.to(this.position, {
           duration: duration,
           x: this.__itemModel.position.x,
@@ -56002,8 +55927,6 @@ var _three = require("three");
 
 var _OrbitControls = require("three/examples/jsm/controls/OrbitControls.js");
 
-var _DragControls = require("three/examples/jsm/controls/DragControls.js");
-
 var _events = require("../core/events.js");
 
 var _skybox = require("./skybox.js");
@@ -56269,13 +56192,7 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
       for (i = 0; i < wallEdges.length; i++) {
         var edge3d = new _edge3d.Edge3D(scope, wallEdges[i], scope.controls);
         scope.edges3d.push(edge3d);
-      } // let walls = scope.floorplan.getWalls();
-      // for (i = 0; i < walls.length; i++) {
-      //     let wall3d = new WallView3D(walls[i], scope.floorplan, scope, scope.controls);
-      //     scope.scene.add(wall3d);
-      //     scope.walls3d.push(wall3d);
-      // }
-
+      }
 
       scope.shouldRender = true;
       var floorplanCenter = scope.floorplan.getDimensions(true);
@@ -56377,7 +56294,7 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
 }(_three.Scene);
 
 exports.Viewer3D = Viewer3D;
-},{"three":"../node_modules/three/build/three.module.js","three/examples/jsm/controls/OrbitControls.js":"../node_modules/three/examples/jsm/controls/OrbitControls.js","three/examples/jsm/controls/DragControls.js":"../node_modules/three/examples/jsm/controls/DragControls.js","../core/events.js":"scripts/core/events.js","./skybox.js":"scripts/viewer3d/skybox.js","./edge3d.js":"scripts/viewer3d/edge3d.js","./floor3d.js":"scripts/viewer3d/floor3d.js","./lights3d.js":"scripts/viewer3d/lights3d.js","./Physical3DItem.js":"scripts/viewer3d/Physical3DItem.js","./DragRoomItemsControl3D.js":"scripts/viewer3d/DragRoomItemsControl3D.js","three/build/three.module":"../node_modules/three/build/three.module.js"}],"../node_modules/es6-promise-polyfill/promise.js":[function(require,module,exports) {
+},{"three":"../node_modules/three/build/three.module.js","three/examples/jsm/controls/OrbitControls.js":"../node_modules/three/examples/jsm/controls/OrbitControls.js","../core/events.js":"scripts/core/events.js","./skybox.js":"scripts/viewer3d/skybox.js","./edge3d.js":"scripts/viewer3d/edge3d.js","./floor3d.js":"scripts/viewer3d/floor3d.js","./lights3d.js":"scripts/viewer3d/lights3d.js","./Physical3DItem.js":"scripts/viewer3d/Physical3DItem.js","./DragRoomItemsControl3D.js":"scripts/viewer3d/DragRoomItemsControl3D.js","three/build/three.module":"../node_modules/three/build/three.module.js"}],"../node_modules/es6-promise-polyfill/promise.js":[function(require,module,exports) {
 var global = arguments[3];
 var define;
 (function(global){
@@ -111256,7 +111173,8 @@ var RoomPlannerHelper = /*#__PURE__*/function () {
     this.__selectedItem = null;
     this.__selectedRoom = null;
     this.__wallTexturePack = null;
-    this.__floorTexturePack = null;
+    this.__roomTexturePack = null;
+    this.__roomWallsTexturePack = null;
     this.__nothingSelectedEvent = this.__nothingSelected.bind(this);
     this.__itemSelectedEvent = this.__itemSelected.bind(this);
     this.__wallSelectedEvent = this.__wallSelected.bind(this);
@@ -111353,6 +111271,18 @@ var RoomPlannerHelper = /*#__PURE__*/function () {
 
       if (this.__selectedRoom) {
         this.__selectedRoom.setTextureMaps(tpack);
+      }
+    }
+  }, {
+    key: "roomWallsTexturePack",
+    get: function get() {
+      return this.__roomWallsTexturePack;
+    },
+    set: function set(tpack) {
+      this.__roomTexturePack = tpack;
+
+      if (this.__selectedRoom) {
+        this.__selectedRoom.setRoomWallsTextureMaps(tpack);
       }
     }
   }]);
@@ -111625,7 +111555,7 @@ module.exports = {
     "roughnessmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_roughness.jpg"
   },
   "Stylized-Sci-fi Wall-001": {
-    "repeat": 200,
+    "repeat": 125,
     "normalmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_normal.jpg",
     "ambientmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_ambientOcclusion.jpg",
     "colormap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_basecolor.jpg",
@@ -111662,7 +111592,7 @@ var startY = 0;
 var panelWidths = 200;
 var uxInterfaceHeight = 230;
 var subPanelsHeight = 460;
-var empty = '{"floorplan":{"version":"2.0.1a","corners":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2":{"x":0,"y":0,"elevation":2.5},"f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"x":0,"y":5,"elevation":2.5},"da026c08-d76a-a944-8e7b-096b752da9ed":{"x":5,"y":5,"elevation":2.5},"4e3d65cb-54c0-0681-28bf-bddcc7bdb571":{"x":5,"y":0,"elevation":2.5}},"walls":[{"corner1":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","corner2":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":-176.77669529663686,"y":176.7766952966369},"b":{"x":-176.7766952966369,"y":323.22330470336317}},{"corner1":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","corner2":"da026c08-d76a-a944-8e7b-096b752da9ed","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":176.7766952966369,"y":676.7766952966368},"b":{"x":323.22330470336317,"y":676.776695296637}},{"corner1":"da026c08-d76a-a944-8e7b-096b752da9ed","corner2":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":676.7766952966368,"y":323.2233047033631},"b":{"x":676.776695296637,"y":176.77669529663686}},{"corner1":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","corner2":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":323.2233047033631,"y":-176.77669529663686},"b":{"x":176.77669529663686,"y":-176.7766952966369}}],"rooms":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,4e3d65cb-54c0-0681-28bf-bddcc7bdb571,da026c08-d76a-a944-8e7b-096b752da9ed,f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"name":"Ashok\'s Room"}},"wallTextures":[],"floorTextures":{},"newFloorTextures":{},"carbonSheet":{},"units":"m"},"items":[{"id":"7d0b3e90-c315-e7a5-a6d9-594757d5b7e4","itemName":"An Item","itemType":2,"position":[65.00000000000006,88.19608972775876,292.4379793118495],"rotation":[0,1.5707963267948966,0],"scale":[1,1,1],"size":[240,50,100],"fixed":true,"resizable":true,"modelURL":"models/Cube.glb"},{"itemName":"Lantern","itemType":9,"position":[435,30,265.8727998642687],"rotation":[0,-1.5707963267948966,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"},{"itemName":"Lantern","itemType":4,"position":[260.0256835276736,220,244.4952575168973],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"}]}';
+var empty = '{"floorplan":{"version":"2.0.1a","corners":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2":{"x":0,"y":0,"elevation":2.5},"f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"x":0,"y":5,"elevation":2.5},"da026c08-d76a-a944-8e7b-096b752da9ed":{"x":5,"y":5,"elevation":2.5},"4e3d65cb-54c0-0681-28bf-bddcc7bdb571":{"x":5,"y":0,"elevation":2.5}},"walls":[{"corner1":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","corner2":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":-176.77669529663686,"y":176.7766952966369},"b":{"x":-176.7766952966369,"y":323.22330470336317}},{"corner1":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","corner2":"da026c08-d76a-a944-8e7b-096b752da9ed","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":176.7766952966369,"y":676.7766952966368},"b":{"x":323.22330470336317,"y":676.776695296637}},{"corner1":"da026c08-d76a-a944-8e7b-096b752da9ed","corner2":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":676.7766952966368,"y":323.2233047033631},"b":{"x":676.776695296637,"y":176.77669529663686}},{"corner1":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","corner2":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":323.2233047033631,"y":-176.77669529663686},"b":{"x":176.77669529663686,"y":-176.7766952966369}}],"rooms":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,4e3d65cb-54c0-0681-28bf-bddcc7bdb571,da026c08-d76a-a944-8e7b-096b752da9ed,f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"name":"Ashok\'s Room"}},"wallTextures":[],"floorTextures":{},"newFloorTextures":{},"carbonSheet":{},"units":"m"},"items":[{"id":"7d0b3e90-c315-e7a5-a6d9-594757d5b7e4","itemName":"An Item","itemType":3,"position":[65.00000000000006,88.19608972775876,292.4379793118495],"rotation":[0,1.5707963267948966,0],"scale":[1,1,1],"size":[240,100,50],"fixed":true,"resizable":true,"modelURL":"models/HollowCube.glb"},{"itemName":"Lantern","itemType":9,"position":[435,30,265.8727998642687],"rotation":[0,-1.5707963267948966,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"},{"itemName":"Lantern","itemType":4,"position":[260.0256835276736,220,244.4952575168973],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"}]}';
 var floor_textures = floor_textures_json['default'];
 var floor_texture_keys = Object.keys(floor_textures);
 var wall_textures = wall_textures_json['default'];
@@ -111676,6 +111606,8 @@ var settingsViewer2d = null;
 var settingsSelectedCorner = null;
 var settingsSelectedWall = null;
 var settingsSelectedRoom = null;
+var settingsSelectedRoom3D = null;
+var settingsSelectedWall3D = null;
 var settingsViewer3d = null;
 var uxInterface = null;
 var opts = {
@@ -111698,22 +111630,32 @@ var opts = {
 
 function selectFloorTexture(data) {
   if (!data.index) {
-    data = settingsViewer3d.getValue('Floor Textures');
+    data = settingsSelectedRoom3D.getValue('Floor Textures');
   }
 
   var floor_texture_pack = floor_textures[data.value];
-  settingsViewer3d.setValue('Floor Texture:', floor_texture_pack.colormap);
+  settingsSelectedRoom3D.setValue('Floor Texture:', floor_texture_pack.colormap);
   roomplanningHelper.roomTexturePack = floor_texture_pack;
 }
 
 function selectWallTexture(data) {
   if (!data.index) {
-    data = settingsViewer3d.getValue('Wall Textures');
+    if (settingsSelectedWall3D._hidden && !settingsSelectedRoom3D._hidden) {
+      data = settingsSelectedRoom3D.getValue('All Wall Textures');
+    } else {
+      data = settingsSelectedWall3D.getValue('Wall Textures');
+    }
   }
 
   var wall_texture_pack = wall_textures[data.value];
-  settingsViewer3d.setValue('Wall Texture:', wall_texture_pack.colormap);
-  roomplanningHelper.wallTexturePack = wall_texture_pack;
+
+  if (settingsSelectedWall3D._hidden && !settingsSelectedRoom3D._hidden) {
+    settingsSelectedRoom3D.setValue('All Wall Texture:', wall_texture_pack.colormap);
+    roomplanningHelper.roomWallsTexturePack = wall_texture_pack;
+  } else {
+    settingsSelectedWall3D.setValue('Wall Texture:', wall_texture_pack.colormap);
+    roomplanningHelper.wallTexturePack = wall_texture_pack;
+  }
 }
 
 function switchViewer() {
@@ -111723,9 +111665,14 @@ function switchViewer() {
     uxInterface.setValue("Current View", "Floor Planning");
     settingsViewer3d.hide();
     settingsViewer2d.show();
+    settingsSelectedWall3D.hide();
+    settingsSelectedRoom3D.hide();
   } else if (blueprint3d.currentView === 3) {
     uxInterface.setValue("Current View", "Room Planning");
     settingsViewer2d.hide();
+    settingsSelectedCorner.hide();
+    settingsSelectedWall.hide();
+    settingsSelectedRoom.hide();
     settingsViewer3d.show();
   }
 }
@@ -111797,6 +111744,18 @@ blueprint3d.floorplanner.addFloorplanListener(_events.EVENT_ROOM_2D_CLICKED, fun
   settingsSelectedRoom.show();
   settingsSelectedRoom.setValue('roomName', evt.item.name);
 });
+blueprint3d.roomplanner.addRoomplanListener(_events.EVENT_NO_ITEM_SELECTED, function () {
+  settingsSelectedWall3D.hide();
+  settingsSelectedRoom3D.hide();
+});
+blueprint3d.roomplanner.addRoomplanListener(_events.EVENT_WALL_CLICKED, function (evt) {
+  settingsSelectedWall3D.show();
+  settingsSelectedRoom3D.hide();
+});
+blueprint3d.roomplanner.addRoomplanListener(_events.EVENT_ROOM_CLICKED, function (evt) {
+  settingsSelectedWall3D.hide();
+  settingsSelectedRoom3D.show();
+});
 blueprint3d.model.loadSerialized(empty);
 
 if (!opts.widget) {
@@ -111806,6 +111765,8 @@ if (!opts.widget) {
   settingsSelectedWall = _quicksettings.default.create(0, 0, 'Wall', app_parent);
   settingsSelectedRoom = _quicksettings.default.create(0, 0, 'Room', app_parent);
   settingsViewer3d = _quicksettings.default.create(0, 0, 'Viewer 3D', app_parent);
+  settingsSelectedWall3D = _quicksettings.default.create(0, 0, 'Wall', app_parent);
+  settingsSelectedRoom3D = _quicksettings.default.create(0, 0, 'Room', app_parent);
   uxInterface.addButton('Switch Viewer', switchViewer);
   uxInterface.addHTML('Current View', 'Floorplanning');
   uxInterface.addFileChooser("Load Design", "Load Design", ".blueprint3d", loadBlueprint3DDesign);
@@ -111822,13 +111783,22 @@ if (!opts.widget) {
   settingsViewer2d.bindNumber('boundsY', 1, 200, configurationHelper.boundsY, 1, configurationHelper);
   settingsSelectedCorner.bindRange('cornerElevation', 0, 500, floorplanningHelper.cornerElevation, 1, floorplanningHelper);
   settingsSelectedWall.bindRange('wallThickness', 0, 100, floorplanningHelper.wallThickness, 0.1, floorplanningHelper);
-  settingsSelectedRoom.bindText('roomName', floorplanningHelper.roomName, floorplanningHelper);
-  settingsViewer3d.addDropDown('Floor Textures', floor_texture_keys, selectFloorTexture);
-  settingsViewer3d.addImage('Floor Texture:', floor_textures[floor_texture_keys[0]].colormap, null);
-  settingsViewer3d.addButton('Apply', selectFloorTexture);
-  settingsViewer3d.addDropDown('Wall Textures', wall_texture_keys, selectWallTexture);
-  settingsViewer3d.addImage('Wall Texture:', wall_textures[wall_texture_keys[0]].colormap, null);
-  settingsViewer3d.addButton('Apply', selectWallTexture);
+  settingsSelectedRoom.bindText('roomName', floorplanningHelper.roomName, floorplanningHelper); // settingsViewer3d.addDropDown('Floor Textures', floor_texture_keys, selectFloorTexture);
+  // settingsViewer3d.addImage('Floor Texture:', floor_textures[floor_texture_keys[0]].colormap, null);
+  // settingsViewer3d.addButton('Apply', selectFloorTexture);
+  // settingsViewer3d.addDropDown('Wall Textures', wall_texture_keys, selectWallTexture);
+  // settingsViewer3d.addImage('Wall Texture:', wall_textures[wall_texture_keys[0]].colormap, null);
+  // settingsViewer3d.addButton('Apply', selectWallTexture);
+
+  settingsSelectedRoom3D.addDropDown('Floor Textures', floor_texture_keys, selectFloorTexture);
+  settingsSelectedRoom3D.addImage('Floor Texture:', floor_textures[floor_texture_keys[0]].colormap, null);
+  settingsSelectedRoom3D.addButton('Apply', selectFloorTexture);
+  settingsSelectedRoom3D.addDropDown('All Wall Textures', wall_texture_keys, selectWallTexture);
+  settingsSelectedRoom3D.addImage('All Wall Texture:', wall_textures[wall_texture_keys[0]].colormap, null);
+  settingsSelectedRoom3D.addButton('Apply', selectWallTexture);
+  settingsSelectedWall3D.addDropDown('Wall Textures', wall_texture_keys, selectWallTexture);
+  settingsSelectedWall3D.addImage('Wall Texture:', wall_textures[wall_texture_keys[0]].colormap, null);
+  settingsSelectedWall3D.addButton('Apply', selectWallTexture);
   settingsViewer3d.addHTML('Tips:', '<p>Click and drag to rotate the room in 360\xB0</p><p>Add room items (Coming soon)</p><p>Drag and Place items(pink boxes) in the room</p><p>There are 8 different types of items <ul><li>1: FloorItem</li> <li>2: WallItem</li> <li>3: InWallItem</li> <li>7: InWallFloorItem</li> <li>8: OnFloorItem</li> <li>9: WallFloorItem</li><li>0: Item</li> <li>4: RoofItem</li></ul></p>');
   uxInterface.setWidth(panelWidths);
   uxInterface.setHeight(uxInterfaceHeight);
@@ -111839,10 +111809,12 @@ if (!opts.widget) {
   uxInterface.setPosition(app_parent.clientWidth - panelWidths, startY);
   settingsViewer2d.setPosition(app_parent.clientWidth - panelWidths, startY + uxInterfaceHeight);
   settingsViewer3d.setPosition(app_parent.clientWidth - panelWidths, startY + uxInterfaceHeight);
-  settingsViewer3d.hide();
   settingsSelectedCorner.hide();
   settingsSelectedWall.hide();
   settingsSelectedRoom.hide();
+  settingsViewer3d.hide();
+  settingsSelectedWall3D.hide();
+  settingsSelectedRoom3D.hide();
 }
 },{"./scripts/blueprint.js":"scripts/blueprint.js","./scripts/core/events.js":"scripts/core/events.js","./scripts/core/configuration.js":"scripts/core/configuration.js","./scripts/core/constants.js":"scripts/core/constants.js","quicksettings":"../node_modules/quicksettings/quicksettings.min.js","./floor_textures.json":"floor_textures.json","./wall_textures.json":"wall_textures.json","./scripts/core/dimensioning.js":"scripts/core/dimensioning.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -111872,7 +111844,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "40645" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "36669" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -28,7 +28,7 @@ export class Material3D extends MeshStandardMaterial {
         this.__ambientTexture = null;
         this.__bumpTexture = null;
         this.__applyNewTextures();
-        this.normalScale.set(10, 10);
+        this.normalScale.set(-10, 10);
     }
 
     get envMapCamera() {
@@ -41,28 +41,29 @@ export class Material3D extends MeshStandardMaterial {
             flag = true;
             this.__colorTexture.wrapS = this.__colorTexture.wrapT = RepeatWrapping;
             this.__colorTexture.repeat.set(this.__uRatio, this.__vRatio);
-            // this.__colorTexture.needsUpdate = true;
+            this.__colorTexture.needsUpdate = true;
         }
         if (this.__normalTexture) {
             this.__normalTexture.wrapS = this.__normalTexture.wrapT = RepeatWrapping;
             this.__normalTexture.repeat.set(this.__uRatio, this.__vRatio);
-            // this.__normalTexture.needsUpdate = true;
+            this.__normalTexture.needsUpdate = true;
         }
 
         if (this.__roughnessTexture) {
             this.__roughnessTexture.wrapS = this.__roughnessTexture.wrapT = RepeatWrapping;
             this.__roughnessTexture.repeat.set(this.__uRatio, this.__vRatio);
-            // this.__roughnessTexture.needsUpdate = true;
+            this.__roughnessTexture.needsUpdate = true;
         }
         if (this.__ambientTexture) {
             this.__ambientTexture.wrapS = this.__ambientTexture.wrapT = RepeatWrapping;
             this.__ambientTexture.repeat.set(this.__uRatio, this.__vRatio);
-            // this.__ambientTexture.needsUpdate = true;
+            this.__ambientTexture.needsUpdate = true;
         }
         if (this.__bumpTexture) {
             this.__bumpTexture.wrapS = this.__bumpTexture.wrapT = RepeatWrapping;
             this.__bumpTexture.repeat.set(this.__uRatio, this.__vRatio);
-            // this.__bumpTexture.needsUpdate = true;
+            this.__bumpTexture.needsUpdate = true;
+            this.displacementMap.needsUpdate = true;
         }
         if (flag) {
             this.needsUpdate = true;
@@ -87,12 +88,15 @@ export class Material3D extends MeshStandardMaterial {
         if (this.__textureMapPack.ambientmap) {
             this.__ambientTexture = new TextureLoader().load(this.__textureMapPack.ambientmap, this.__updateTextures.bind(this));
             this.aoMap = this.__ambientTexture;
+            this.aoMapIntensity = 1.0;
         }
-        if (this.__textureMapPack.bumpmap) {
-            this.__bumpTexture = new TextureLoader().load(this.__textureMapPack.bumpmap, this.__updateTextures.bind(this));
-            this.displacementMap = this.__bumpTexture;
-            this.displacementBias = 1;
-        }
+        // if (this.__textureMapPack.bumpmap) {
+        //     console.log('APPLY DISPLACEMENT MAP ::: ');
+        //     this.__bumpTexture = new TextureLoader().load(this.__textureMapPack.bumpmap, this.__updateTextures.bind(this));
+        //     this.displacementMap = this.__bumpTexture;
+        //     this.displacementBias = -0.001;
+        //     this.displacementScale = -100;
+        // }
     }
 
     __scaleUV(uRatio, vRatio) {

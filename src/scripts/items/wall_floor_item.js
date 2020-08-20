@@ -27,5 +27,6 @@ export class WallFloorItem extends WallItem {
 
         this.rotation = new Vector3(0, angle, 0);
         this.position = point;
+        this.__addToAWall(intersectingPlane);
     }
 }
