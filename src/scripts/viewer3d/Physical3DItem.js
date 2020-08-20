@@ -41,27 +41,20 @@ export class Physical3DItem extends Mesh {
         }
         if (evt.property === 'position') {
             console.log('PHYSICAL ITEM UPDATE POSITION ');
-            // this.position.copy(this.__itemModel.position.clone());
             gsap.to(this.position, { duration: duration, x: this.__itemModel.position.x, onUpdate: __tinyUpdate });
             gsap.to(this.position, { duration: duration, y: this.__itemModel.position.y });
             gsap.to(this.position, { duration: duration, z: this.__itemModel.position.z });
         }
         if (evt.property === 'rotation') {
-            // this.__loadedItem.rotation.x = this.__itemModel.rotation.x;
-            // this.__loadedItem.rotation.y = this.__itemModel.rotation.y;
-            // this.__loadedItem.rotation.z = this.__itemModel.rotation.z;
-
-            // this.__boxhelper.rotation.x = this.__itemModel.rotation.x;
-            // this.__boxhelper.rotation.y = this.__itemModel.rotation.y;
-            // this.__boxhelper.rotation.z = this.__itemModel.rotation.z;
-
-
             gsap.to(this.__loadedItem.rotation, { duration: duration, x: this.__itemModel.rotation.x, onUpdate: __tinyUpdate });
             gsap.to(this.__loadedItem.rotation, { duration: duration, y: this.__itemModel.rotation.y });
             gsap.to(this.__loadedItem.rotation, { duration: duration, z: this.__itemModel.rotation.z });
             gsap.to(this.__boxhelper.rotation, { duration: duration, x: this.__itemModel.rotation.x });
             gsap.to(this.__boxhelper.rotation, { duration: duration, y: this.__itemModel.rotation.y });
             gsap.to(this.__boxhelper.rotation, { duration: duration, z: this.__itemModel.rotation.z });
+        }
+        if (evt.property === 'visible') {
+            this.visible = this.__itemModel.visible;
         }
     }
 

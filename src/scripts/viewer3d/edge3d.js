@@ -179,13 +179,13 @@ export class Edge3D extends EventDispatcher {
     }
 
     updateObjectVisibility() {
-        // var scope = this;
-        // this.wall.inWallItems.forEach((item) => {
-        //     item.updateEdgeVisibility(scope.visible, scope.front);
-        // });
-        // this.wall.onWallItems.forEach((item) => {
-        //     item.updateEdgeVisibility(scope.visible, scope.front);
-        // });
+        var scope = this;
+        this.wall.inWallItems.forEach((item) => {
+            item.visible = scope.visible;
+        });
+        this.wall.onWallItems.forEach((item) => {
+            item.visible = scope.visible;
+        });
     }
 
     updateTexture(callback) {

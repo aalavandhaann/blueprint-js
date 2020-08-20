@@ -41536,6 +41536,7 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
 
     _this.__resizable = false; //This is part of application logic and also Metadata
 
+    _this.__visible = true;
     _this.__currentWall = null;
     _this.__currentFloor = null;
     _this.castShadow = false;
@@ -41724,6 +41725,16 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
       this.__fixed = flag;
 
       this.__metaDataUpdate('fixed');
+    }
+  }, {
+    key: "visible",
+    get: function get() {
+      return this.__visible;
+    },
+    set: function set(flag) {
+      this.__visible = flag;
+
+      this.__metaDataUpdate('visible');
     }
   }, {
     key: "resizable",
@@ -46855,13 +46866,14 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
     }
   }, {
     key: "updateObjectVisibility",
-    value: function updateObjectVisibility() {// var scope = this;
-      // this.wall.inWallItems.forEach((item) => {
-      //     item.updateEdgeVisibility(scope.visible, scope.front);
-      // });
-      // this.wall.onWallItems.forEach((item) => {
-      //     item.updateEdgeVisibility(scope.visible, scope.front);
-      // });
+    value: function updateObjectVisibility() {
+      var scope = this;
+      this.wall.inWallItems.forEach(function (item) {
+        item.visible = scope.visible;
+      });
+      this.wall.onWallItems.forEach(function (item) {
+        item.visible = scope.visible;
+      });
     }
   }, {
     key: "updateTexture",
@@ -55435,7 +55447,7 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
       }
 
       if (evt.property === 'position') {
-        console.log('PHYSICAL ITEM UPDATE POSITION '); // this.position.copy(this.__itemModel.position.clone());
+        console.log('PHYSICAL ITEM UPDATE POSITION ');
 
         _gsap.default.to(this.position, {
           duration: duration,
@@ -55455,12 +55467,6 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
       }
 
       if (evt.property === 'rotation') {
-        // this.__loadedItem.rotation.x = this.__itemModel.rotation.x;
-        // this.__loadedItem.rotation.y = this.__itemModel.rotation.y;
-        // this.__loadedItem.rotation.z = this.__itemModel.rotation.z;
-        // this.__boxhelper.rotation.x = this.__itemModel.rotation.x;
-        // this.__boxhelper.rotation.y = this.__itemModel.rotation.y;
-        // this.__boxhelper.rotation.z = this.__itemModel.rotation.z;
         _gsap.default.to(this.__loadedItem.rotation, {
           duration: duration,
           x: this.__itemModel.rotation.x,
@@ -55491,6 +55497,10 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
           duration: duration,
           z: this.__itemModel.rotation.z
         });
+      }
+
+      if (evt.property === 'visible') {
+        this.visible = this.__itemModel.visible;
       }
     }
   }, {
@@ -111844,7 +111854,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "36669" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "45771" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

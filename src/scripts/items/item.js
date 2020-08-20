@@ -51,6 +51,7 @@ export class Item extends EventDispatcher {
 
         this.__fixed = false; //This is part of application logic and also Metadata
         this.__resizable = false; //This is part of application logic and also Metadata
+        this.__visible = true;
 
         this.__currentWall = null;
         this.__currentFloor = null;
@@ -199,6 +200,15 @@ export class Item extends EventDispatcher {
     set fixed(flag) {
         this.__fixed = flag;
         this.__metaDataUpdate('fixed');
+    }
+
+    get visible() {
+        return this.__visible;
+    }
+
+    set visible(flag) {
+        this.__visible = flag;
+        this.__metaDataUpdate('visible');
     }
 
     get resizable() {
