@@ -41434,7 +41434,21 @@ module.exports = convertPath;
 },{"./utils.js":"../node_modules/bezier-js/lib/utils.js","./poly-bezier.js":"../node_modules/bezier-js/lib/poly-bezier.js","./svg-to-beziers":"../node_modules/bezier-js/lib/svg-to-beziers.js"}],"../node_modules/bezier-js/index.js":[function(require,module,exports) {
 module.exports = require('./lib/bezier');
 
-},{"./lib/bezier":"../node_modules/bezier-js/lib/bezier.js"}],"scripts/items/item.js":[function(require,module,exports) {
+},{"./lib/bezier":"../node_modules/bezier-js/lib/bezier.js"}],"scripts/parametrics/ParametricTypes.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.BASE_PARAMETRIC_TYPES = void 0;
+
+var _es6Enum = _interopRequireDefault(require("es6-enum"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var BASE_PARAMETRIC_TYPES = (0, _es6Enum.default)('DOOR', 'WINDOW', 'CABINET', 'SHELVES');
+exports.BASE_PARAMETRIC_TYPES = BASE_PARAMETRIC_TYPES;
+},{"es6-enum":"../node_modules/es6-enum/dist/enum.js"}],"scripts/items/item.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -41449,6 +41463,8 @@ var _events = require("../core/events");
 var _utils = require("../core/utils");
 
 var _three2 = require("three/build/three.module");
+
+var _ParametricTypes = require("../parametrics/ParametricTypes");
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -41539,6 +41555,10 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
     _this.__frontVisible = false;
     _this.__backVisible = false;
     _this.__visible = true;
+    _this.__isParametric = false;
+    _this.__baseParametricType = _ParametricTypes.BASE_PARAMETRIC_TYPES.DOOR;
+    _this.__subParametricType = 1;
+    _this.__parametricData = null;
     _this.__currentWall = null;
     _this.__currentFloor = null;
     _this.castShadow = false;
@@ -41601,6 +41621,25 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
             break;
           }
         }
+      }
+
+      if (this.__metadata.isParametric) {
+        this.__isParametric = this.__metadata.isParametric;
+
+        if (this.__metadata.baseParametricType === 'DOOR') {
+          this.__baseParametricType = _ParametricTypes.BASE_PARAMETRIC_TYPES.DOOR;
+        } else if (this.__metadata.baseParametricType === 'WINDOW') {
+          this.__baseParametricType = _ParametricTypes.BASE_PARAMETRIC_TYPES.WINDOW;
+        } else if (this.__metadata.baseParametricType === 'CABINET') {
+          this.__baseParametricType = _ParametricTypes.BASE_PARAMETRIC_TYPES.CABINET;
+        } else if (this.__metadata.baseParametricType === 'SHELVES') {
+          this.__baseParametricType = _ParametricTypes.BASE_PARAMETRIC_TYPES.SHELVES;
+        }
+
+        this.__subParametricData = this.__metadata.subParametricData;
+        console.log('GENERATE A PARAMETRIC ITEM ', this.__isParametric, this.__subParametricType, this.__subParametricType);
+      } else {
+        this.__metadata.isParametric = false;
       }
     }
     /** */
@@ -41768,6 +41807,21 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
       this.__metaDataUpdate('visible');
     }
   }, {
+    key: "isParametric",
+    get: function get() {
+      return this.__isParametric;
+    }
+  }, {
+    key: "baseParametricType",
+    get: function get() {
+      return this.__baseParametricType;
+    }
+  }, {
+    key: "subParametricData",
+    get: function get() {
+      return this.__subParametricData;
+    }
+  }, {
     key: "resizable",
     get: function get() {
       return this.__resizable;
@@ -41798,7 +41852,7 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
 }(_three.EventDispatcher);
 
 exports.Item = Item;
-},{"three":"../node_modules/three/build/three.module.js","../core/events":"scripts/core/events.js","../core/utils":"scripts/core/utils.js","three/build/three.module":"../node_modules/three/build/three.module.js"}],"scripts/items/wall_item.js":[function(require,module,exports) {
+},{"three":"../node_modules/three/build/three.module.js","../core/events":"scripts/core/events.js","../core/utils":"scripts/core/utils.js","three/build/three.module":"../node_modules/three/build/three.module.js","../parametrics/ParametricTypes":"scripts/parametrics/ParametricTypes.js"}],"scripts/items/wall_item.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55395,7 +55449,380 @@ TweenMaxWithCSS = gsapWithCSS.core.Tween;
 
 exports.TweenMax = TweenMaxWithCSS;
 exports.default = exports.gsap = gsapWithCSS;
-},{"./gsap-core.js":"../node_modules/gsap/gsap-core.js","./CSSPlugin.js":"../node_modules/gsap/CSSPlugin.js"}],"scripts/viewer3d/Physical3DItem.js":[function(require,module,exports) {
+},{"./gsap-core.js":"../node_modules/gsap/gsap-core.js","./CSSPlugin.js":"../node_modules/gsap/CSSPlugin.js"}],"scripts/parametrics/doors/ParametricBaseDoor.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ParametricBaseDoor = exports.DOOR_HANDLE_TYPES = exports.DOOR_OPEN_DIRECTIONS = void 0;
+
+var _es6Enum = _interopRequireDefault(require("es6-enum"));
+
+var _three = require("three");
+
+var _three2 = require("three/build/three.module");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var DOOR_OPEN_DIRECTIONS = (0, _es6Enum.default)('RIGHT', 'LEFT', 'BOTH_SIDES', 'NO_DOORS');
+exports.DOOR_OPEN_DIRECTIONS = DOOR_OPEN_DIRECTIONS;
+var DOOR_HANDLE_TYPES = (0, _es6Enum.default)('None', 'HANDLE_01', 'HANDLE_02', 'HANDLE_03', 'HANDLE_04');
+/**
+ * ParametricBaseDoor is the implementation of Model 01 from Archimesh
+ */
+
+exports.DOOR_HANDLE_TYPES = DOOR_HANDLE_TYPES;
+
+var ParametricBaseDoor = /*#__PURE__*/function () {
+  function ParametricBaseDoor(parameters) {
+    _classCallCheck(this, ParametricBaseDoor);
+
+    var opts = {
+      frameSize: 5,
+      frameWidth: 100,
+      frameHeight: 200,
+      frameThickness: 20,
+      doorRatio: 0.5,
+      openDirection: DOOR_OPEN_DIRECTIONS.RIGHT,
+      handleType: DOOR_HANDLE_TYPES.HANDLE_01
+    };
+
+    for (var opt in opts) {
+      if (opts.hasOwnProperty(opt) && parameters.hasOwnProperty(opt)) {
+        opts[opt] = parameters[opt];
+      }
+    }
+
+    opts = this.__validateParameters(opts);
+    this.__frameSize = opts.frameSize; //This value will be set in validatePArameters
+
+    switch (opts.openDirection) {
+      case DOOR_OPEN_DIRECTIONS.RIGHT.description:
+        this.__openDirection = DOOR_OPEN_DIRECTIONS.RIGHT; //This value will be set in validatePArameters
+
+        break;
+
+      case DOOR_OPEN_DIRECTIONS.LEFT.description:
+        this.__openDirection = DOOR_OPEN_DIRECTIONS.LEFT; //This value will be set in validatePArameters
+
+        break;
+
+      case DOOR_OPEN_DIRECTIONS.BOTH_SIDES.description:
+        this.__openDirection = DOOR_OPEN_DIRECTIONS.BOTH_SIDES; //This value will be set in validatePArameters
+
+        break;
+
+      case DOOR_OPEN_DIRECTIONS.NO_DOORS.description:
+        this.__openDirection = DOOR_OPEN_DIRECTIONS.NO_DOORS; //This value will be set in validatePArameters
+
+        break;
+    }
+
+    this.__frameWidth = opts.frameWidth;
+    this.__frameHeight = opts.frameHeight;
+    this.__frameThickness = opts.frameThickness;
+    this.__doorRatio = opts.doorRatio;
+    this.__handleType = opts.handleType;
+    this.__geometry = this.__proceedure();
+    this.__frameMaterial = new _three2.MeshStandardMaterial({
+      color: '#FF0000',
+      side: _three.DoubleSide
+    });
+    this.__doorMaterial = new _three2.MeshStandardMaterial({
+      color: '#0000FF',
+      side: _three.DoubleSide
+    });
+    this.__material = new _three2.MeshFaceMaterial([this.__frameMaterial, this.__doorMaterial]);
+  }
+
+  _createClass(ParametricBaseDoor, [{
+    key: "__convertFrom4ToFace3",
+    value: function __convertFrom4ToFace3(facegroups) {
+      var materialId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+      var faces = [];
+
+      for (var i = 0; i < facegroups.length; i += 4) {
+        var f1 = new _three.Face3(facegroups[i], facegroups[i + 1], facegroups[i + 2]);
+        var f2 = new _three.Face3(facegroups[i], facegroups[i + 2], facegroups[i + 3]);
+        f1.materialIndex = materialId;
+        f2.materialIndex = materialId;
+        faces.push(f1);
+        faces.push(f2);
+      }
+
+      return faces;
+    }
+  }, {
+    key: "__validateParameters",
+    value: function __validateParameters(parameters) {
+      parameters.frameSize = Math.max(5, Math.min(25, parameters.frameSize)); //Expressed in centimeters
+
+      var doorOpenParameter = parameters.openDirection;
+
+      switch (doorOpenParameter) {
+        case DOOR_OPEN_DIRECTIONS.RIGHT.description:
+        case DOOR_OPEN_DIRECTIONS.LEFT.description:
+        case DOOR_OPEN_DIRECTIONS.BOTH_SIDES.description:
+        case DOOR_OPEN_DIRECTIONS.NO_DOORS.description:
+          break;
+
+        default:
+          throw new Error('Unindentifiable door type');
+      }
+
+      return parameters;
+    }
+  }, {
+    key: "__proceedure",
+    value: function __proceedure() {
+      var doorGeometry = new _three.Geometry(); //new BufferGeometry();
+
+      var doorFrameGeometry = this.__shapeMesh();
+
+      var doorsToGenerate = this.__shapeChildren();
+
+      if (doorFrameGeometry) {
+        doorGeometry.merge(doorFrameGeometry);
+      }
+
+      if (doorsToGenerate.right) {
+        doorGeometry.merge(doorsToGenerate.right);
+      }
+
+      if (doorsToGenerate.left) {
+        doorGeometry.merge(doorsToGenerate.left);
+      }
+
+      doorGeometry.elementsNeedUpdate = true;
+      doorGeometry.computeVertexNormals();
+      doorGeometry.computeFaceNormals();
+      doorGeometry.computeBoundingBox();
+      return doorGeometry;
+    }
+  }, {
+    key: "__shapeMesh",
+    value: function __shapeMesh() {
+      var doorFrameGeometry = this.__createDoorFrame();
+
+      return doorFrameGeometry;
+    }
+  }, {
+    key: "__createDoorFrame",
+    value: function __createDoorFrame() {
+      var tf = this.__frameThickness / 3.0;
+      var sf = this.__frameSize;
+      var wf = this.__frameWidth * 0.5 - sf;
+      var hf = this.__frameHeight - sf;
+      var gap = 0.02;
+      var deep = this.__frameThickness * 0.50;
+      var verts = [new _three.Vector3(-wf - sf, -tf, 0), new _three.Vector3(-wf - sf, tf * 2, 0), new _three.Vector3(-wf, tf * 2, 0), new _three.Vector3(-wf - sf, -tf, hf + sf), new _three.Vector3(-wf - sf, tf * 2, hf + sf), new _three.Vector3(wf + sf, tf * 2, hf + sf), new _three.Vector3(wf + sf, -tf, hf + sf), new _three.Vector3(wf, -tf, hf), new _three.Vector3(-wf, tf * 2, hf), new _three.Vector3(wf, -tf, 0), new _three.Vector3(wf + sf, -tf, 0), new _three.Vector3(wf + sf, tf * 2, 0), new _three.Vector3(wf, -tf + deep, hf), new _three.Vector3(-wf, -tf + deep, hf), new _three.Vector3(-wf, -tf + deep, 0), new _three.Vector3(-wf + gap, -tf + deep, hf), new _three.Vector3(-wf + gap, -tf + deep, 0), new _three.Vector3(-wf + gap, tf * 2, hf), new _three.Vector3(-wf + gap, tf * 2, 0), new _three.Vector3(wf, -tf + deep, 0), new _three.Vector3(-wf, -tf, hf), new _three.Vector3(-wf, -tf, 0), new _three.Vector3(wf, tf * 2, hf), new _three.Vector3(wf, tf * 2, 0), new _three.Vector3(wf - gap, tf * 2, 0), new _three.Vector3(wf - gap, -tf + deep, 0), new _three.Vector3(wf - gap, tf * 2, hf), new _three.Vector3(wf - gap, -tf + deep, hf - gap), new _three.Vector3(wf - gap, -tf + deep, hf), new _three.Vector3(-wf + gap, tf * 2, hf - gap), new _three.Vector3(-wf + gap, -tf + deep, hf - gap), new _three.Vector3(wf - gap, tf * 2, hf - gap)];
+      var geometry = new _three.Geometry();
+      var faceIds = [3, 4, 1, 0, 7, 12, 19, 9, 4, 3, 6, 5, 10, 11, 5, 6, 13, 20, 21, 14, 17, 15, 16, 18, 11, 23, 22, 5, 20, 13, 12, 7, 20, 3, 0, 21, 9, 10, 6, 7, 13, 14, 16, 15, 4, 8, 2, 1, 29, 30, 27, 31, 7, 6, 3, 20, 8, 4, 5, 22, 14, 2, 18, 16, 17, 18, 2, 8, 28, 25, 19, 12, 28, 26, 24, 25, 25, 24, 23, 19, 22, 23, 24, 26, 29, 31, 26, 17, 15, 28, 27, 30];
+
+      var faces = this.__convertFrom4ToFace3(faceIds, 0);
+
+      var extraFace = new _three.Face3(8, 22, 26);
+      extraFace.materialIndex = 0;
+      faces.push(extraFace);
+      geometry.vertices = verts;
+      geometry.faces = faces;
+      geometry.elementsNeedUpdate = true;
+      geometry.applyMatrix4(new _three.Matrix4().makeRotationAxis(new _three.Vector3(1, 0, 0), -Math.PI * 0.5));
+      geometry.applyMatrix4(new _three.Matrix4().makeTranslation(0, -this.__frameHeight * 0.5, 0));
+      return geometry; //new BufferGeometry().fromGeometry(geometry);
+    }
+  }, {
+    key: "__shapeChildren",
+    value: function __shapeChildren() {
+      var doorRight = null,
+          doorLeft = null;
+      var w = this.__frameWidth;
+      var w1 = w * this.__doorRatio;
+      var w2 = w - w1;
+
+      switch (this.__openDirection) {
+        case DOOR_OPEN_DIRECTIONS.NO_DOORS:
+          break;
+
+        case DOOR_OPEN_DIRECTIONS.LEFT:
+          //Get the buffergeometry of only one door
+          doorLeft = this.__makeOneDoor(w, this.__openDirection);
+          doorLeft.applyMatrix4(new _three.Matrix4().makeTranslation(-(this.__frameWidth * 0.5) + this.__frameSize, 0, 0));
+          break;
+
+        case DOOR_OPEN_DIRECTIONS.RIGHT:
+          //Get the buffergeometry of only one door
+          doorRight = this.__makeOneDoor(w, this.__openDirection);
+          doorRight.applyMatrix4(new _three.Matrix4().makeTranslation(this.__frameWidth * 0.5 - this.__frameSize, 0, 0));
+          break;
+
+        case DOOR_OPEN_DIRECTIONS.BOTH_SIDES:
+          //Get the buffergeometry of left door
+          doorLeft = this.__makeOneDoor(w1 + this.__frameSize, DOOR_OPEN_DIRECTIONS.LEFT);
+          doorLeft.applyMatrix4(new _three.Matrix4().makeTranslation(-(this.__frameWidth * 0.5) + this.__frameSize, 0, 0)); //Get the buffergeometry of right door
+
+          doorRight = this.__makeOneDoor(w2 + this.__frameSize, DOOR_OPEN_DIRECTIONS.RIGHT);
+          doorRight.applyMatrix4(new _three.Matrix4().makeTranslation(this.__frameWidth * 0.5 - this.__frameSize, 0, 0));
+          break;
+
+        default:
+          throw new Error("Unindentifiable door type ".concat(this.__openDirection));
+      }
+
+      return {
+        right: doorRight,
+        left: doorLeft
+      };
+    }
+  }, {
+    key: "__makeOneDoor",
+    value: function __makeOneDoor(frameWidth, openingDirection) {
+      var aDoorGeometry = this.__createDoorData(frameWidth, openingDirection);
+
+      return aDoorGeometry;
+    }
+  }, {
+    key: "__createDoorData",
+    value: function __createDoorData(frameWidth, openingDirection) {
+      var doorModelData = this.__createForDoorModel(frameWidth, openingDirection);
+
+      var geometry = new _three.Geometry();
+      var m = new _three.Matrix4();
+      var tx = doorModelData.widthFactor * 0.5 * doorModelData.side;
+      var ty = this.__frameHeight * 0.5;
+      var tz = -(doorModelData.depth * 0.65);
+      geometry.vertices = doorModelData.vertices;
+      geometry.faces = doorModelData.faces;
+      geometry.elementsNeedUpdate = true;
+      m.makeRotationAxis(new _three.Vector3(1, 0, 0), -Math.PI * 0.5); // m.multiply(new Matrix4().makeTranslation(0, tz, ty));
+      // m.makeTranslation(tx, ty, tz);
+
+      geometry.applyMatrix4(m);
+      geometry.elementsNeedUpdate = true;
+      return geometry; //new BufferGeometry().fromGeometry(geometry);
+    }
+    /**
+     * Based on the DoorType the below method will change
+     * This can be replaced by the appropriate door model class
+     * This method will change with logic based on the door model type
+     */
+
+  }, {
+    key: "__createForDoorModel",
+    value: function __createForDoorModel(frameWidth, openingDirection) {
+      var gap = 0.002;
+      var sf = this.__frameSize;
+      var wf = frameWidth - sf * 2 - gap * 2;
+      var hf = this.__frameHeight / 2 - gap * 2;
+      var deep = this.__frameThickness * 0.50 - gap * 3;
+      var side = 0,
+          minx = 0,
+          maxx = 0; // # Open to right or left
+
+      if (openingDirection == DOOR_OPEN_DIRECTIONS.RIGHT) {
+        side = 1;
+        minx = wf * -1;
+        maxx = 0.0;
+      } else {
+        side = -1;
+        minx = 0.0;
+        maxx = wf;
+      }
+
+      var miny = 0.0; //# locked
+
+      var maxy = deep;
+      var minz = -hf;
+      var maxz = hf - sf - gap;
+      var faceids = [4, 5, 1, 0, 5, 6, 2, 1, 6, 7, 3, 2, 7, 4, 0, 3, 0, 1, 2, 3, 7, 6, 5, 4]; // # Vertex
+
+      var myvertex = [new _three.Vector3(minx, miny, minz), new _three.Vector3(minx, maxy, minz), new _three.Vector3(maxx, maxy, minz), new _three.Vector3(maxx, miny, minz), new _three.Vector3(minx, miny, maxz), new _three.Vector3(minx, maxy, maxz), new _three.Vector3(maxx, maxy, maxz), new _three.Vector3(maxx, miny, maxz)]; // # Faces
+
+      var myfaces = this.__convertFrom4ToFace3(faceids, 1); // let myfaces = [new Face3(4, 5, 1, 0), new Face3(5, 6, 2, 1), new Face3(6, 7, 3, 2), new Face3(7, 4, 0, 3), new Face3(0, 1, 2, 3), new Face3(7, 6, 5, 4)];
+
+
+      return {
+        vertices: myvertex,
+        faces: myfaces,
+        widthFactor: wf,
+        depth: deep,
+        side: side
+      };
+    }
+  }, {
+    key: "geometry",
+    get: function get() {
+      return this.__geometry;
+    }
+  }, {
+    key: "material",
+    get: function get() {
+      return this.__material;
+    }
+  }, {
+    key: "metadata",
+    get: function get() {
+      return {
+        type: 1,
+        frameColor: '#FF0000',
+        doorColor: '#0000FF'
+      };
+    }
+  }]);
+
+  return ParametricBaseDoor;
+}();
+
+exports.ParametricBaseDoor = ParametricBaseDoor;
+},{"es6-enum":"../node_modules/es6-enum/dist/enum.js","three":"../node_modules/three/build/three.module.js","three/build/three.module":"../node_modules/three/build/three.module.js"}],"scripts/parametrics/doors/DoorFactory.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.DoorFactory = exports.DOOR_TYPES = void 0;
+
+var _ParametricBaseDoor = require("./ParametricBaseDoor");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var DOOR_TYPES = {
+  1: _ParametricBaseDoor.ParametricBaseDoor
+};
+/** Factory class to create items. */
+
+exports.DOOR_TYPES = DOOR_TYPES;
+
+var DoorFactory = /*#__PURE__*/function () {
+  function DoorFactory() {
+    _classCallCheck(this, DoorFactory);
+  }
+
+  _createClass(DoorFactory, null, [{
+    key: "getClass",
+
+    /** Gets the class for the specified item. */
+    value: function getClass(doorType) {
+      return DOOR_TYPES[doorType];
+    }
+  }]);
+
+  return DoorFactory;
+}();
+
+exports.DoorFactory = DoorFactory;
+},{"./ParametricBaseDoor":"scripts/parametrics/doors/ParametricBaseDoor.js"}],"scripts/viewer3d/Physical3DItem.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55412,6 +55839,10 @@ var _events = require("../core/events");
 var _three2 = require("three/build/three.module");
 
 var _gsap = _interopRequireDefault(require("gsap"));
+
+var _ParametricTypes = require("../parametrics/ParametricTypes");
+
+var _DoorFactory = require("../parametrics/doors/DoorFactory");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -55474,7 +55905,11 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
 
     _this.position.copy(_this.__itemModel.position);
 
-    _this.__loadItemModel();
+    if (_this.__itemModel.isParametric) {
+      _this.__createParametricItem();
+    } else {
+      _this.__loadItemModel();
+    }
 
     return _this;
   }
@@ -55545,6 +55980,24 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
       }
     }
   }, {
+    key: "__initializeChildItem",
+    value: function __initializeChildItem() {
+      this.__box = new _three.Box3().setFromObject(this.__loadedItem);
+      this.__center = this.__box.getCenter(new _three.Vector3());
+      this.__size = this.__box.getSize(new _three.Vector3());
+      this.__boxhelper.geometry = new _three2.EdgesGeometry(new _three2.BoxBufferGeometry(this.__size.x, this.__size.y, this.__size.z));
+      this.add(this.__loadedItem);
+      this.geometry = new _three2.BoxBufferGeometry(this.__size.x, this.__size.y, this.__size.z, 1, 1, 1);
+      this.geometry.computeBoundingBox();
+      this.material.visible = false;
+      this.__loadedItem.rotation.x = this.__itemModel.rotation.x;
+      this.__loadedItem.rotation.y = this.__itemModel.rotation.y;
+      this.__loadedItem.rotation.z = this.__itemModel.rotation.z;
+      this.__boxhelper.rotation.x = this.__itemModel.rotation.x;
+      this.__boxhelper.rotation.y = this.__itemModel.rotation.y;
+      this.__boxhelper.rotation.z = this.__itemModel.rotation.z;
+    }
+  }, {
     key: "__loadItemModel",
     value: function __loadItemModel() {
       if (!this.__itemModel.modelURL || this.__itemModel.modelURL === undefined || this.__itemModel.modelURL === 'undefined') {
@@ -55561,20 +56014,9 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
     key: "__gltfLoaded",
     value: function __gltfLoaded(gltfModel) {
       this.__loadedItem = gltfModel.scene;
-      this.__box = new _three.Box3().setFromObject(this.__loadedItem);
-      this.__center = this.__box.getCenter(new _three.Vector3());
-      this.__size = this.__box.getSize(new _three.Vector3());
-      this.__boxhelper.geometry = new _three2.EdgesGeometry(new _three2.BoxBufferGeometry(this.__size.x, this.__size.y, this.__size.z));
-      this.add(this.__loadedItem);
-      this.geometry = new _three2.BoxBufferGeometry(this.__size.x, this.__size.y, this.__size.z, 1, 1, 1);
-      this.geometry.computeBoundingBox();
-      this.material.visible = false;
-      this.__loadedItem.rotation.x = this.__itemModel.rotation.x;
-      this.__loadedItem.rotation.y = this.__itemModel.rotation.y;
-      this.__loadedItem.rotation.z = this.__itemModel.rotation.z;
-      this.__boxhelper.rotation.x = this.__itemModel.rotation.x;
-      this.__boxhelper.rotation.y = this.__itemModel.rotation.y;
-      this.__boxhelper.rotation.z = this.__itemModel.rotation.z;
+
+      this.__initializeChildItem();
+
       this.dispatchEvent({
         type: _events.EVENT_ITEM_LOADED
       });
@@ -55589,6 +56031,32 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
         percent: xhr.loaded / xhr.total * 100,
         jsraw: xhr
       });
+    }
+  }, {
+    key: "__createParametricItem",
+    value: function __createParametricItem() {
+      var parametricData = null;
+      console.log(this.__itemModel.baseParametricType, _ParametricTypes.BASE_PARAMETRIC_TYPES.DOOR);
+
+      switch (this.__itemModel.baseParametricType) {
+        case _ParametricTypes.BASE_PARAMETRIC_TYPES.DOOR:
+          parametricData = new (_DoorFactory.DoorFactory.getClass(this.__itemModel.subParametricData.type))(this.__itemModel.subParametricData);
+          break;
+
+        default:
+          throw new Error('Not Implemented Error');
+      }
+
+      if (parametricData) {
+        console.log(parametricData.geometry, parametricData.material);
+        this.__loadedItem = new _three.Mesh(parametricData.geometry, parametricData.material);
+
+        this.__initializeChildItem();
+
+        this.dispatchEvent({
+          type: _events.EVENT_ITEM_LOADED
+        });
+      }
     }
   }, {
     key: "dispose",
@@ -55630,7 +56098,7 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
 }(_three.Mesh);
 
 exports.Physical3DItem = Physical3DItem;
-},{"three":"../node_modules/three/build/three.module.js","three/examples/jsm/loaders/GLTFLoader":"../node_modules/three/examples/jsm/loaders/GLTFLoader.js","../core/events":"scripts/core/events.js","three/build/three.module":"../node_modules/three/build/three.module.js","gsap":"../node_modules/gsap/index.js"}],"DeviceInfo.js":[function(require,module,exports) {
+},{"three":"../node_modules/three/build/three.module.js","three/examples/jsm/loaders/GLTFLoader":"../node_modules/three/examples/jsm/loaders/GLTFLoader.js","../core/events":"scripts/core/events.js","three/build/three.module":"../node_modules/three/build/three.module.js","gsap":"../node_modules/gsap/index.js","../parametrics/ParametricTypes":"scripts/parametrics/ParametricTypes.js","../parametrics/doors/DoorFactory":"scripts/parametrics/doors/DoorFactory.js"}],"DeviceInfo.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -111643,7 +112111,7 @@ var startY = 0;
 var panelWidths = 200;
 var uxInterfaceHeight = 230;
 var subPanelsHeight = 460;
-var empty = '{"floorplan":{"version":"2.0.1a","corners":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2":{"x":0,"y":0,"elevation":2.5},"f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"x":0,"y":5,"elevation":2.5},"da026c08-d76a-a944-8e7b-096b752da9ed":{"x":5,"y":5,"elevation":2.5},"4e3d65cb-54c0-0681-28bf-bddcc7bdb571":{"x":5,"y":0,"elevation":2.5}},"walls":[{"corner1":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","corner2":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":-176.77669529663686,"y":176.7766952966369},"b":{"x":-176.7766952966369,"y":323.22330470336317}},{"corner1":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","corner2":"da026c08-d76a-a944-8e7b-096b752da9ed","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":176.7766952966369,"y":676.7766952966368},"b":{"x":323.22330470336317,"y":676.776695296637}},{"corner1":"da026c08-d76a-a944-8e7b-096b752da9ed","corner2":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":676.7766952966368,"y":323.2233047033631},"b":{"x":676.776695296637,"y":176.77669529663686}},{"corner1":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","corner2":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":323.2233047033631,"y":-176.77669529663686},"b":{"x":176.77669529663686,"y":-176.7766952966369}}],"rooms":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,4e3d65cb-54c0-0681-28bf-bddcc7bdb571,da026c08-d76a-a944-8e7b-096b752da9ed,f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"name":"Ashok\'s Room"}},"wallTextures":[],"floorTextures":{},"newFloorTextures":{},"carbonSheet":{},"units":"m"},"items":[{"id":"7d0b3e90-c315-e7a5-a6d9-594757d5b7e4","itemName":"An Item","itemType":3,"position":[65.00000000000006,88.19608972775876,292.4379793118495],"rotation":[0,1.5707963267948966,0],"scale":[1,1,1],"size":[240,100,50],"fixed":true,"resizable":true,"modelURL":"models/HollowCube.glb"},{"itemName":"Lantern","itemType":9,"position":[435,30,265.8727998642687],"rotation":[0,-1.5707963267948966,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"},{"itemName":"Lantern","itemType":4,"position":[260.0256835276736,220,244.4952575168973],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"}]}';
+var empty = '{"floorplan":{"version":"2.0.1a","corners":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2":{"x":0,"y":0,"elevation":2.5},"f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"x":0,"y":5,"elevation":2.5},"da026c08-d76a-a944-8e7b-096b752da9ed":{"x":5,"y":5,"elevation":2.5},"4e3d65cb-54c0-0681-28bf-bddcc7bdb571":{"x":5,"y":0,"elevation":2.5}},"walls":[{"corner1":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","corner2":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":-176.77669529663686,"y":176.7766952966369},"b":{"x":-176.7766952966369,"y":323.22330470336317}},{"corner1":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","corner2":"da026c08-d76a-a944-8e7b-096b752da9ed","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":176.7766952966369,"y":676.7766952966368},"b":{"x":323.22330470336317,"y":676.776695296637}},{"corner1":"da026c08-d76a-a944-8e7b-096b752da9ed","corner2":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":676.7766952966368,"y":323.2233047033631},"b":{"x":676.776695296637,"y":176.77669529663686}},{"corner1":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","corner2":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":323.2233047033631,"y":-176.77669529663686},"b":{"x":176.77669529663686,"y":-176.7766952966369}}],"rooms":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,4e3d65cb-54c0-0681-28bf-bddcc7bdb571,da026c08-d76a-a944-8e7b-096b752da9ed,f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"name":"Ashok\'s Room"}},"wallTextures":[],"floorTextures":{},"newFloorTextures":{},"carbonSheet":{},"units":"m"},"items":[{"id":"7d0b3e90-c315-e7a5-a6d9-594757d5b7e4","itemName":"An Item","itemType":3,"position":[65.00000000000006,88.19608972775876,292.4379793118495],"rotation":[0,1.5707963267948966,0],"scale":[1,1,1],"size":[240,100,50],"fixed":true,"resizable":true,"modelURL":"models/HollowCube.glb"},{"itemName":"Lantern","itemType":9,"position":[435,30,265.8727998642687],"rotation":[0,-1.5707963267948966,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"},{"itemName":"Lantern","itemType":4,"position":[260.0256835276736,220,244.4952575168973],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"}, {"itemName":"Parametric Door", "isParametric": true, "baseParametricType": "DOOR", "subParametricData": {"type": 1, "frameColor": "#00FF00", "doorColor": "#0000FF", "openDirection": "LEFT"}, "itemType":7,"position":[100, 0, 0],"rotation":[0,0,0],"scale":[1,1,1],"size":[100,200,20], "fixed":false,"resizable":false}, {"itemName":"Parametric Door", "isParametric": true, "baseParametricType": "DOOR", "subParametricData": {"type": 1, "frameColor": "#00FF00", "doorColor": "#0000FF", "openDirection": "NO_DOORS"}, "itemType":7,"position":[100, 0, 0],"rotation":[0,0,0],"scale":[1,1,1],"size":[100,200,20], "fixed":false,"resizable":false}]}';
 var floor_textures = floor_textures_json['default'];
 var floor_texture_keys = Object.keys(floor_textures);
 var wall_textures = wall_textures_json['default'];
@@ -111895,7 +112363,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "46083" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42459" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

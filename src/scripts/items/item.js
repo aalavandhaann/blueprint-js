@@ -2,6 +2,7 @@ import { EventDispatcher, Vector3 } from 'three';
 import { EVENT_UPDATED } from '../core/events';
 import { Utils } from '../core/utils';
 import { Vector2 } from 'three/build/three.module';
+import { BASE_PARAMETRIC_TYPES } from '../parametrics/ParametricTypes';
 
 export const UP_VECTOR = new Vector3(0, 1, 0);
 /**
@@ -56,6 +57,11 @@ export class Item extends EventDispatcher {
         this.__backVisible = false;
         this.__visible = true;
 
+        this.__isParametric = false;
+        this.__baseParametricType = BASE_PARAMETRIC_TYPES.DOOR;
+        this.__subParametricType = 1;
+        this.__parametricData = null;
+
         this.__currentWall = null;
         this.__currentFloor = null;
 
@@ -104,6 +110,24 @@ export class Item extends EventDispatcher {
                     break;
                 }
             }
+        }
+
+        if (this.__metadata.isParametric) {
+            this.__isParametric = this.__metadata.isParametric;
+            if (this.__metadata.baseParametricType === 'DOOR') {
+                this.__baseParametricType = BASE_PARAMETRIC_TYPES.DOOR;
+            } else if (this.__metadata.baseParametricType === 'WINDOW') {
+                this.__baseParametricType = BASE_PARAMETRIC_TYPES.WINDOW;
+            } else if (this.__metadata.baseParametricType === 'CABINET') {
+                this.__baseParametricType = BASE_PARAMETRIC_TYPES.CABINET;
+            } else if (this.__metadata.baseParametricType === 'SHELVES') {
+                this.__baseParametricType = BASE_PARAMETRIC_TYPES.SHELVES;
+            }
+
+            this.__subParametricData = this.__metadata.subParametricData;
+            console.log('GENERATE A PARAMETRIC ITEM ', this.__isParametric, this.__subParametricType, this.__subParametricType);
+        } else {
+            this.__metadata.isParametric = false;
         }
     }
 
@@ -240,6 +264,18 @@ export class Item extends EventDispatcher {
         // this.frontVisible = false;
         // this.backVisible = false;
         this.__metaDataUpdate('visible');
+    }
+
+    get isParametric() {
+        return this.__isParametric;
+    }
+
+    get baseParametricType() {
+        return this.__baseParametricType;
+    }
+
+    get subParametricData() {
+        return this.__subParametricData;
     }
 
     get resizable() {

@@ -3,6 +3,8 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { EVENT_ITEM_LOADED, EVENT_ITEM_LOADING, EVENT_UPDATED } from "../core/events";
 import { BoxBufferGeometry, LineBasicMaterial, LineSegments, EdgesGeometry } from "three/build/three.module";
 import gsap from 'gsap';
+import { BASE_TYPES, BASE_PARAMETRIC_TYPES } from "../parametrics/ParametricTypes";
+import { DoorFactory } from "../parametrics/doors/DoorFactory";
 
 export class Physical3DItem extends Mesh {
     constructor(itemModel) {
@@ -29,7 +31,12 @@ export class Physical3DItem extends Mesh {
         this.__boxhelper.material.linewidth = 5;
         this.selected = false;
         this.position.copy(this.__itemModel.position);
-        this.__loadItemModel();
+        if (this.__itemModel.isParametric) {
+            this.__createParametricItem();
+        } else {
+            this.__loadItemModel();
+        }
+
     }
 
     __itemUpdated(evt) {
@@ -57,6 +64,26 @@ export class Physical3DItem extends Mesh {
         }
     }
 
+    __initializeChildItem() {
+        this.__box = new Box3().setFromObject(this.__loadedItem);
+        this.__center = this.__box.getCenter(new Vector3());
+        this.__size = this.__box.getSize(new Vector3());
+
+        this.__boxhelper.geometry = new EdgesGeometry(new BoxBufferGeometry(this.__size.x, this.__size.y, this.__size.z));
+        this.add(this.__loadedItem);
+
+        this.geometry = new BoxBufferGeometry(this.__size.x, this.__size.y, this.__size.z, 1, 1, 1);
+        this.geometry.computeBoundingBox();
+
+        this.material.visible = false;
+        this.__loadedItem.rotation.x = this.__itemModel.rotation.x;
+        this.__loadedItem.rotation.y = this.__itemModel.rotation.y;
+        this.__loadedItem.rotation.z = this.__itemModel.rotation.z;
+        this.__boxhelper.rotation.x = this.__itemModel.rotation.x;
+        this.__boxhelper.rotation.y = this.__itemModel.rotation.y;
+        this.__boxhelper.rotation.z = this.__itemModel.rotation.z;
+    }
+
     __loadItemModel() {
         if (!this.__itemModel.modelURL || this.__itemModel.modelURL === undefined || this.__itemModel.modelURL === 'undefined') {
             return;
@@ -71,28 +98,30 @@ export class Physical3DItem extends Mesh {
 
     __gltfLoaded(gltfModel) {
         this.__loadedItem = gltfModel.scene;
-        this.__box = new Box3().setFromObject(this.__loadedItem);
-        this.__center = this.__box.getCenter(new Vector3());
-        this.__size = this.__box.getSize(new Vector3());
-        this.__boxhelper.geometry = new EdgesGeometry(new BoxBufferGeometry(this.__size.x, this.__size.y, this.__size.z));
-        this.add(this.__loadedItem);
-
-        this.geometry = new BoxBufferGeometry(this.__size.x, this.__size.y, this.__size.z, 1, 1, 1);
-        this.geometry.computeBoundingBox();
-
-        this.material.visible = false;
-        this.__loadedItem.rotation.x = this.__itemModel.rotation.x;
-        this.__loadedItem.rotation.y = this.__itemModel.rotation.y;
-        this.__loadedItem.rotation.z = this.__itemModel.rotation.z;
-        this.__boxhelper.rotation.x = this.__itemModel.rotation.x;
-        this.__boxhelper.rotation.y = this.__itemModel.rotation.y;
-        this.__boxhelper.rotation.z = this.__itemModel.rotation.z;
-
+        this.__initializeChildItem();
         this.dispatchEvent({ type: EVENT_ITEM_LOADED });
     }
 
     __gltfLoadingProgress(xhr) {
         this.dispatchEvent({ type: EVENT_ITEM_LOADING, loaded: xhr.loaded, total: xhr.total, percent: (xhr.loaded / xhr.total) * 100, jsraw: xhr });
+    }
+
+    __createParametricItem() {
+        let parametricData = null;
+        console.log(this.__itemModel.baseParametricType, BASE_PARAMETRIC_TYPES.DOOR);
+        switch (this.__itemModel.baseParametricType) {
+            case BASE_PARAMETRIC_TYPES.DOOR:
+                parametricData = new(DoorFactory.getClass(this.__itemModel.subParametricData.type))(this.__itemModel.subParametricData);
+                break;
+            default:
+                throw new Error('Not Implemented Error');
+        }
+        if (parametricData) {
+            console.log(parametricData.geometry, parametricData.material);
+            this.__loadedItem = new Mesh(parametricData.geometry, parametricData.material);
+            this.__initializeChildItem();
+            this.dispatchEvent({ type: EVENT_ITEM_LOADED });
+        }
     }
 
     dispose() {
