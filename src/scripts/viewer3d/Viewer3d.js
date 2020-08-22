@@ -142,6 +142,7 @@ export class Viewer3D extends Scene {
         this.__currentItemSelected = evt.item;
         this.__currentItemSelected.selected = true;
         this.needsUpdate = true;
+        evt.itemModel = this.__currentItemSelected.itemModel;
         this.dispatchEvent(evt);
     }
 
@@ -263,6 +264,12 @@ export class Viewer3D extends Scene {
         scope.renderer.render(scope, scope.camera);
         scope.lastRender = Date.now();
         this.needsUpdate = false;
+    }
+
+    forceRender() {
+        let scope = this;
+        scope.renderer.render(scope, scope.camera);
+        scope.lastRender = Date.now();
     }
 
     addRoomplanListener(type, listener) {

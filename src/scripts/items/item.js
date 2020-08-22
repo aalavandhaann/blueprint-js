@@ -1,8 +1,7 @@
-import { EventDispatcher, Vector3 } from 'three';
-import { EVENT_UPDATED } from '../core/events';
+import { EventDispatcher, Vector3, Vector2 } from 'three';
+import { EVENT_UPDATED, EVENT_PARAMETRIC_GEOMETRY_UPATED } from '../core/events';
 import { Utils } from '../core/utils';
-import { Vector2 } from 'three/build/three.module';
-import { BASE_PARAMETRIC_TYPES } from '../parametrics/ParametricTypes';
+import { BASE_PARAMETRIC_TYPES, ParametricFactory } from '../parametrics/ParametricFactory';
 
 export const UP_VECTOR = new Vector3(0, 1, 0);
 /**
@@ -60,27 +59,18 @@ export class Item extends EventDispatcher {
         this.__isParametric = false;
         this.__baseParametricType = BASE_PARAMETRIC_TYPES.DOOR;
         this.__subParametricType = 1;
-        this.__parametricData = null;
+        this.__parametricClass = null;
 
         this.__currentWall = null;
         this.__currentFloor = null;
+        this.__currentWallNormal = null;
+        this.__currentWallSnapPoint = null;
+
+        this.__parametricGeometryUpdateEvent = this.__parametricGeometryUpdate.bind(this);
 
         this.castShadow = false;
         this.receiveShadow = false;
         this.__initializeMetaData();
-    }
-
-    __addToAWall(intersectingPlane) {
-        let wall = intersectingPlane.wall;
-        if (wall === undefined || !wall || wall === 'undefined') {
-            return;
-        }
-        if (this.__currentWall && this.__currentWall !== wall) {
-            this.__currentWall.removeItem(this);
-        }
-        wall.addItem(this);
-        this.__currentWall = wall;
-        this.__metadata.wall = this.__currentWall.id;
     }
 
     __initializeMetaData() {
@@ -114,21 +104,51 @@ export class Item extends EventDispatcher {
 
         if (this.__metadata.isParametric) {
             this.__isParametric = this.__metadata.isParametric;
-            if (this.__metadata.baseParametricType === 'DOOR') {
-                this.__baseParametricType = BASE_PARAMETRIC_TYPES.DOOR;
-            } else if (this.__metadata.baseParametricType === 'WINDOW') {
-                this.__baseParametricType = BASE_PARAMETRIC_TYPES.WINDOW;
-            } else if (this.__metadata.baseParametricType === 'CABINET') {
-                this.__baseParametricType = BASE_PARAMETRIC_TYPES.CABINET;
-            } else if (this.__metadata.baseParametricType === 'SHELVES') {
-                this.__baseParametricType = BASE_PARAMETRIC_TYPES.SHELVES;
+            switch (this.__metadata.baseParametricType) {
+                case BASE_PARAMETRIC_TYPES.DOOR.description:
+                    this.__baseParametricType = BASE_PARAMETRIC_TYPES.DOOR;
+                    break;
+                case BASE_PARAMETRIC_TYPES.WINDOW.description:
+                    this.__baseParametricType = BASE_PARAMETRIC_TYPES.WINDOW;
+                    break;
+                case BASE_PARAMETRIC_TYPES.CABINET.description:
+                    this.__baseParametricType = BASE_PARAMETRIC_TYPES.CABINET;
+                    break;
+                case BASE_PARAMETRIC_TYPES.SHELVES.description:
+                    this.__baseParametricType = BASE_PARAMETRIC_TYPES.SHELVES;
+                    break;
             }
-
             this.__subParametricData = this.__metadata.subParametricData;
-            console.log('GENERATE A PARAMETRIC ITEM ', this.__isParametric, this.__subParametricType, this.__subParametricType);
+            let parametricClass = ParametricFactory.getParametricClass(this.__baseParametricType.description);
+            this.__parametricClass = new(parametricClass.getClass(this.__subParametricData.type))(this.__subParametricData);
+            this.__parametricClass.addEventListener(EVENT_PARAMETRIC_GEOMETRY_UPATED, this.__parametricGeometryUpdateEvent);
+
         } else {
             this.__metadata.isParametric = false;
         }
+    }
+
+    __parametricGeometryUpdate(evt, updateForWall = true) {
+        let box = this.__parametricClass.geometry.boundingBox;
+        this.__size = box.getSize(new Vector3());
+        this.__halfSize = this.__size.clone().multiplyScalar(0.5);
+        if (this.__currentWall && updateForWall) {
+            this.position = this.__position;
+            this.__currentWall.addItem(this);
+        }
+    }
+
+    __addToAWall(intersectingPlane) {
+        let wall = intersectingPlane.wall;
+        if (wall === undefined || !wall || wall === 'undefined') {
+            return;
+        }
+        if (this.__currentWall && this.__currentWall !== wall) {
+            this.__currentWall.removeItem(this);
+        }
+        wall.addItem(this);
+        this.__currentWall = wall;
+        this.__metadata.wall = this.__currentWall.id;
     }
 
     /** */
@@ -166,6 +186,9 @@ export class Item extends EventDispatcher {
     }
 
     get metadata() {
+        if (this.isParametric) {
+            this.__metadata.subParametricData = this.__parametricClass.metadata;
+        }
         return this.__metadata;
     }
 
@@ -276,6 +299,10 @@ export class Item extends EventDispatcher {
 
     get subParametricData() {
         return this.__subParametricData;
+    }
+
+    get parametricClass() {
+        return this.__parametricClass;
     }
 
     get resizable() {

@@ -16,6 +16,17 @@ export class InWallFloorItem extends InWallItem {
         this.rotation = new Vector3(0, angle, 0);
         point.y = this.halfSize.y + 5;
         this.position = point;
+        this.__currentWallNormal = normal.clone();
         this.__addToAWall(intersectingPlane);
+    }
+
+    __parametricGeometryUpdate(evt, updateForWall = true) {
+        super.__parametricGeometryUpdate(evt, false);
+        if (this.__currentWall && updateForWall) {
+            let currentPosition = this.position.clone();
+            currentPosition.y = this.halfSize.y + 5;
+            this.position = currentPosition;
+            this.__currentWall.addItem(this);
+        }
     }
 }

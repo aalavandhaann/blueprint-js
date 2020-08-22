@@ -93,6 +93,10 @@ class BlueprintJS {
         this.floorplanner.switchMode(floorplannerModes.MOVE);
     }
 
+    updateView3D() {
+        this.viewer3d.needsUpdate = true;
+    }
+
     get currentView() {
         return this.view_now;
     }

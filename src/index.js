@@ -1,5 +1,5 @@
 import { BlueprintJS } from './scripts/blueprint.js';
-import { EVENT_LOADED, EVENT_NOTHING_2D_SELECTED, EVENT_CORNER_2D_CLICKED, EVENT_WALL_2D_CLICKED, EVENT_ROOM_2D_CLICKED, EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED, EVENT_NO_ITEM_SELECTED } from './scripts/core/events.js';
+import { EVENT_LOADED, EVENT_NOTHING_2D_SELECTED, EVENT_CORNER_2D_CLICKED, EVENT_WALL_2D_CLICKED, EVENT_ROOM_2D_CLICKED, EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED, EVENT_NO_ITEM_SELECTED, EVENT_ITEM_SELECTED } from './scripts/core/events.js';
 import { Configuration, configDimUnit } from './scripts/core/configuration.js';
 import { dimMeter } from './scripts/core/constants.js';
 import QuickSettings from 'quicksettings';
@@ -7,12 +7,13 @@ import QuickSettings from 'quicksettings';
 import * as floor_textures_json from './floor_textures.json';
 import * as wall_textures_json from './wall_textures.json';
 import { Dimensioning } from './scripts/core/dimensioning.js';
+import { ParametricsInterface } from './scripts/ParametricsInterface.js';
 
 let startY = 0;
 let panelWidths = 200;
 let uxInterfaceHeight = 230;
 let subPanelsHeight = 460;
-let empty = '{"floorplan":{"version":"2.0.1a","corners":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2":{"x":0,"y":0,"elevation":2.5},"f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"x":0,"y":5,"elevation":2.5},"da026c08-d76a-a944-8e7b-096b752da9ed":{"x":5,"y":5,"elevation":2.5},"4e3d65cb-54c0-0681-28bf-bddcc7bdb571":{"x":5,"y":0,"elevation":2.5}},"walls":[{"corner1":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","corner2":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":-176.77669529663686,"y":176.7766952966369},"b":{"x":-176.7766952966369,"y":323.22330470336317}},{"corner1":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","corner2":"da026c08-d76a-a944-8e7b-096b752da9ed","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":176.7766952966369,"y":676.7766952966368},"b":{"x":323.22330470336317,"y":676.776695296637}},{"corner1":"da026c08-d76a-a944-8e7b-096b752da9ed","corner2":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":676.7766952966368,"y":323.2233047033631},"b":{"x":676.776695296637,"y":176.77669529663686}},{"corner1":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","corner2":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":323.2233047033631,"y":-176.77669529663686},"b":{"x":176.77669529663686,"y":-176.7766952966369}}],"rooms":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,4e3d65cb-54c0-0681-28bf-bddcc7bdb571,da026c08-d76a-a944-8e7b-096b752da9ed,f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"name":"Ashok\'s Room"}},"wallTextures":[],"floorTextures":{},"newFloorTextures":{},"carbonSheet":{},"units":"m"},"items":[{"id":"7d0b3e90-c315-e7a5-a6d9-594757d5b7e4","itemName":"An Item","itemType":3,"position":[65.00000000000006,88.19608972775876,292.4379793118495],"rotation":[0,1.5707963267948966,0],"scale":[1,1,1],"size":[240,100,50],"fixed":true,"resizable":true,"modelURL":"models/HollowCube.glb"},{"itemName":"Lantern","itemType":9,"position":[435,30,265.8727998642687],"rotation":[0,-1.5707963267948966,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"},{"itemName":"Lantern","itemType":4,"position":[260.0256835276736,220,244.4952575168973],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"}, {"itemName":"Parametric Door", "isParametric": true, "baseParametricType": "DOOR", "subParametricData": {"type": 1, "frameColor": "#00FF00", "doorColor": "#0000FF", "openDirection": "LEFT"}, "itemType":7,"position":[100, 0, 0],"rotation":[0,0,0],"scale":[1,1,1],"size":[100,200,20], "fixed":false,"resizable":false}, {"itemName":"Parametric Door", "isParametric": true, "baseParametricType": "DOOR", "subParametricData": {"type": 1, "frameColor": "#00FF00", "doorColor": "#0000FF", "openDirection": "NO_DOORS"}, "itemType":7,"position":[100, 0, 0],"rotation":[0,0,0],"scale":[1,1,1],"size":[100,200,20], "fixed":false,"resizable":false}]}';
+let empty = '{"floorplan":{"version":"2.0.1a","corners":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2":{"x":0,"y":0,"elevation":2.5},"f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"x":0,"y":5,"elevation":2.5},"da026c08-d76a-a944-8e7b-096b752da9ed":{"x":5,"y":5,"elevation":2.5},"4e3d65cb-54c0-0681-28bf-bddcc7bdb571":{"x":5,"y":0,"elevation":2.5}},"walls":[{"corner1":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","corner2":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":-176.77669529663686,"y":176.7766952966369},"b":{"x":-176.7766952966369,"y":323.22330470336317}},{"corner1":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","corner2":"da026c08-d76a-a944-8e7b-096b752da9ed","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":176.7766952966369,"y":676.7766952966368},"b":{"x":323.22330470336317,"y":676.776695296637}},{"corner1":"da026c08-d76a-a944-8e7b-096b752da9ed","corner2":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":676.7766952966368,"y":323.2233047033631},"b":{"x":676.776695296637,"y":176.77669529663686}},{"corner1":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","corner2":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":323.2233047033631,"y":-176.77669529663686},"b":{"x":176.77669529663686,"y":-176.7766952966369}}],"rooms":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,4e3d65cb-54c0-0681-28bf-bddcc7bdb571,da026c08-d76a-a944-8e7b-096b752da9ed,f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"name":"Ashok\'s Room"}},"wallTextures":[],"floorTextures":{},"newFloorTextures":{},"carbonSheet":{},"units":"m"},"items":[{"id":"7d0b3e90-c315-e7a5-a6d9-594757d5b7e4","itemName":"An Item","itemType":3,"position":[65.00000000000006,88.19608972775876,292.4379793118495],"rotation":[0,1.5707963267948966,0],"scale":[1,1,1],"size":[240,100,50],"fixed":true,"resizable":true,"modelURL":"models/HollowCube.glb"},{"itemName":"Lantern","itemType":9,"position":[435,30,265.8727998642687],"rotation":[0,-1.5707963267948966,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"},{"itemName":"Lantern","itemType":4,"position":[260.0256835276736,220,244.4952575168973],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"}, {"itemName":"Parametric Door", "isParametric": true, "baseParametricType": "DOOR", "subParametricData": {"type": 1, "frameColor": "#00FF00", "doorColor": "#0000FF", "openDirection": "BOTH_SIDES"}, "itemType":7,"position":[100, 0, 0],"rotation":[0,0,0],"scale":[1,1,1],"size":[100,200,20], "fixed":false,"resizable":false}, {"itemName":"Parametric Door", "isParametric": true, "baseParametricType": "DOOR", "subParametricData": {"type": 1, "frameColor": "#FF0000", "doorColor": "#FF0000", "openDirection": "NO_DOORS"}, "itemType":7,"position":[100, 0, 0],"rotation":[0,0,0],"scale":[1,1,1],"size":[100,200,20], "fixed":false,"resizable":false}]}';
 
 let floor_textures = floor_textures_json['default'];
 let floor_texture_keys = Object.keys(floor_textures);
@@ -39,6 +40,8 @@ let settingsSelectedWall3D = null;
 
 let settingsViewer3d = null;
 let uxInterface = null;
+
+let parametricContextInterface = null;
 
 
 let opts = {
@@ -96,6 +99,10 @@ function switchViewer() {
 
         settingsSelectedWall3D.hide();
         settingsSelectedRoom3D.hide();
+        if (parametricContextInterface) {
+            parametricContextInterface.destroy();
+            parametricContextInterface = null;
+        }
 
     } else if (blueprint3d.currentView === 3) {
         uxInterface.setValue("Current View", "Room Planning");
@@ -169,18 +176,43 @@ blueprint3d.floorplanner.addFloorplanListener(EVENT_ROOM_2D_CLICKED, function(ev
     settingsSelectedRoom.setValue('roomName', evt.item.name);
 });
 
+blueprint3d.roomplanner.addRoomplanListener(EVENT_ITEM_SELECTED, function(evt) {
+    settingsSelectedWall3D.hide();
+    settingsSelectedRoom3D.hide();
+    let itemModel = evt.itemModel;
+    if (parametricContextInterface) {
+        parametricContextInterface.destroy();
+        parametricContextInterface = null;
+    }
+    if (itemModel.isParametric) {
+        parametricContextInterface = new ParametricsInterface(itemModel.parametricClass, blueprint3d.roomplanner);
+    }
+});
+
 
 blueprint3d.roomplanner.addRoomplanListener(EVENT_NO_ITEM_SELECTED, function() {
     settingsSelectedWall3D.hide();
     settingsSelectedRoom3D.hide();
+    if (parametricContextInterface) {
+        parametricContextInterface.destroy();
+        parametricContextInterface = null;
+    }
 });
 blueprint3d.roomplanner.addRoomplanListener(EVENT_WALL_CLICKED, function(evt) {
     settingsSelectedWall3D.show();
     settingsSelectedRoom3D.hide();
+    if (parametricContextInterface) {
+        parametricContextInterface.destroy();
+        parametricContextInterface = null;
+    }
 });
 blueprint3d.roomplanner.addRoomplanListener(EVENT_ROOM_CLICKED, function(evt) {
     settingsSelectedWall3D.hide();
     settingsSelectedRoom3D.show();
+    if (parametricContextInterface) {
+        parametricContextInterface.destroy();
+        parametricContextInterface = null;
+    }
 });
 
 

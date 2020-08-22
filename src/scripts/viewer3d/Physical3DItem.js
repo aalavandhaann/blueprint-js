@@ -1,11 +1,8 @@
-import { Mesh, Box3, Vector3 } from "three";
+import { Mesh, Box3, Vector3, AxesHelper, Matrix4 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { EVENT_ITEM_LOADED, EVENT_ITEM_LOADING, EVENT_UPDATED } from "../core/events";
-import { BoxBufferGeometry, LineBasicMaterial, LineSegments, EdgesGeometry } from "three/build/three.module";
+import { EVENT_ITEM_LOADED, EVENT_ITEM_LOADING, EVENT_UPDATED, EVENT_PARAMETRIC_GEOMETRY_UPATED } from "../core/events";
+import { BoxBufferGeometry, LineBasicMaterial, LineSegments, EdgesGeometry } from "three";
 import gsap from 'gsap';
-import { BASE_TYPES, BASE_PARAMETRIC_TYPES } from "../parametrics/ParametricTypes";
-import { DoorFactory } from "../parametrics/doors/DoorFactory";
-
 export class Physical3DItem extends Mesh {
     constructor(itemModel) {
         super();
@@ -26,6 +23,9 @@ export class Physical3DItem extends Mesh {
         this.__gltfLoadingProgressEvent = this.__gltfLoadingProgress.bind(this);
         this.__gltfLoadedEvent = this.__gltfLoaded.bind(this);
         this.__itemUpdatedEvent = this.__itemUpdated.bind(this);
+        this.__parametricGeometryUpdateEvent = this.__parametricGeometryUpdate.bind(this);
+
+
         this.__itemModel.addEventListener(EVENT_UPDATED, this.__itemUpdatedEvent);
         this.add(this.__boxhelper);
         this.__boxhelper.material.linewidth = 5;
@@ -36,9 +36,21 @@ export class Physical3DItem extends Mesh {
         } else {
             this.__loadItemModel();
         }
-
     }
 
+    __parametricGeometryUpdate(evt) {
+        let mLocal = new Matrix4().getInverse(this.matrixWorld);
+        this.__loadedItem.geometry = this.__itemModel.parametricClass.geometry;
+        this.parent.needsUpdate = true;
+        this.__box = new Box3().setFromObject(this.__loadedItem);
+        this.__center = this.__box.getCenter(new Vector3());
+        this.__size = this.__box.getSize(new Vector3());
+        let localCenter = this.__center.clone().applyMatrix4(mLocal);
+        let m = new Matrix4();
+        m = m.makeTranslation(-localCenter.x, -localCenter.y, -localCenter.z);
+        this.__boxhelper.geometry = new EdgesGeometry(new BoxBufferGeometry(this.__size.x, this.__size.y, this.__size.z));
+        this.__boxhelper.geometry.applyMatrix4(m);
+    }
     __itemUpdated(evt) {
         let scope = this;
         let duration = 0.15;
@@ -107,19 +119,17 @@ export class Physical3DItem extends Mesh {
     }
 
     __createParametricItem() {
-        let parametricData = null;
-        console.log(this.__itemModel.baseParametricType, BASE_PARAMETRIC_TYPES.DOOR);
-        switch (this.__itemModel.baseParametricType) {
-            case BASE_PARAMETRIC_TYPES.DOOR:
-                parametricData = new(DoorFactory.getClass(this.__itemModel.subParametricData.type))(this.__itemModel.subParametricData);
-                break;
-            default:
-                throw new Error('Not Implemented Error');
-        }
+        let parametricData = this.__itemModel.parametricClass;
+
+        // let parametricClass = ParametricFactory.getParametricClass(this.__itemModel.baseParametricType.description);
+        // parametricData = new(parametricClass.getClass(this.__itemModel.subParametricData.type))(this.__itemModel.subParametricData);
+
         if (parametricData) {
-            console.log(parametricData.geometry, parametricData.material);
             this.__loadedItem = new Mesh(parametricData.geometry, parametricData.material);
+            this.__itemModel.parametricClass.addEventListener(EVENT_PARAMETRIC_GEOMETRY_UPATED, this.__parametricGeometryUpdateEvent);
             this.__initializeChildItem();
+            let axes = new AxesHelper(1000);
+            this.add(axes);
             this.dispatchEvent({ type: EVENT_ITEM_LOADED });
         }
     }
@@ -152,5 +162,9 @@ export class Physical3DItem extends Mesh {
 
     get intersectionPlanes() {
         return this.__itemModel.intersectionPlanes;
+    }
+
+    get itemModel() {
+        return this.__itemModel;
     }
 }

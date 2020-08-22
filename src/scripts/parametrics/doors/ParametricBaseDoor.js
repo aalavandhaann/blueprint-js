@@ -1,7 +1,8 @@
 import Enum from "es6-enum";
-import { BufferGeometry, Matrix4, Vector3, Face3, Geometry, DoubleSide } from "three";
-import { MeshFaceMaterial, MeshStandardMaterial } from "three/build/three.module";
-
+import { BufferGeometry, Matrix4, Vector3, Face3, Geometry, DoubleSide, Color } from "three";
+import { MeshStandardMaterial, EventDispatcher } from "three";
+import { EVENT_PARAMETRIC_GEOMETRY_UPATED } from "../../core/events";
+import { DoorHandleGenerator } from "./doorhandles/DoorHandleGenerator";
 
 
 export const DOOR_OPEN_DIRECTIONS = Enum('RIGHT', 'LEFT', 'BOTH_SIDES', 'NO_DOORS');
@@ -10,16 +11,30 @@ export const DOOR_HANDLE_TYPES = Enum('None', 'HANDLE_01', 'HANDLE_02', 'HANDLE_
 /**
  * ParametricBaseDoor is the implementation of Model 01 from Archimesh
  */
-export class ParametricBaseDoor {
+export class ParametricBaseDoor extends EventDispatcher {
     constructor(parameters) {
-        let opts = { frameSize: 5, frameWidth: 100, frameHeight: 200, frameThickness: 20, doorRatio: 0.5, openDirection: DOOR_OPEN_DIRECTIONS.RIGHT, handleType: DOOR_HANDLE_TYPES.HANDLE_01 };
+        super();
+        let opts = { frameSize: 5, frameColor: '#FF0000', doorColor: '#00F0F0', frameWidth: 100, frameHeight: 200, frameThickness: 20, doorRatio: 0.5, openDirection: DOOR_OPEN_DIRECTIONS.RIGHT.description, handleType: DOOR_HANDLE_TYPES.HANDLE_01.description };
         for (var opt in opts) {
-            if (opts.hasOwnProperty(opt) && parameters.hasOwnProperty(opt)) {
+            if (opt === 'frameColor' || opt === 'doorColor') {
+                opts[opt] = new Color(parameters[opt]);
+            } else if (opts.hasOwnProperty(opt) && parameters.hasOwnProperty(opt)) {
                 opts[opt] = parameters[opt];
             }
         }
         opts = this.__validateParameters(opts);
+        this.__doorType = 1;
+        this.__name = 'Door';
+
         this.__frameSize = opts.frameSize; //This value will be set in validatePArameters
+        this.__frameWidth = opts.frameWidth;
+        this.__frameHeight = opts.frameHeight;
+        this.__frameThickness = opts.frameThickness;
+        this.__doorRatio = opts.doorRatio;
+
+
+        this.__openDirection = null;
+        this.__handleType = null;
         switch (opts.openDirection) {
             case DOOR_OPEN_DIRECTIONS.RIGHT.description:
                 this.__openDirection = DOOR_OPEN_DIRECTIONS.RIGHT; //This value will be set in validatePArameters
@@ -35,17 +50,39 @@ export class ParametricBaseDoor {
                 break;
         }
 
-
-        this.__frameWidth = opts.frameWidth;
-        this.__frameHeight = opts.frameHeight;
-        this.__frameThickness = opts.frameThickness;
-        this.__doorRatio = opts.doorRatio;
-        this.__handleType = opts.handleType;
+        switch (opts.handleType) {
+            case DOOR_HANDLE_TYPES.None.description:
+                this.__handleType = DOOR_HANDLE_TYPES.None; //This value will be set in validatePArameters
+                break;
+            case DOOR_HANDLE_TYPES.HANDLE_01.description:
+                this.__handleType = DOOR_HANDLE_TYPES.HANDLE_01; //This value will be set in validatePArameters
+                break;
+            case DOOR_HANDLE_TYPES.HANDLE_02.description:
+                this.__handleType = DOOR_HANDLE_TYPES.HANDLE_02; //This value will be set in validatePArameters
+                break;
+            case DOOR_HANDLE_TYPES.HANDLE_03.description:
+                this.__handleType = DOOR_HANDLE_TYPES.HANDLE_03; //This value will be set in validatePArameters
+                break;
+            case DOOR_HANDLE_TYPES.HANDLE_04.description:
+                this.__handleType = DOOR_HANDLE_TYPES.HANDLE_04; //This value will be set in validatePArameters
+                break;
+        }
         this.__geometry = this.__proceedure();
-        this.__frameMaterial = new MeshStandardMaterial({ color: '#FF0000', side: DoubleSide });
-        this.__doorMaterial = new MeshStandardMaterial({ color: '#0000FF', side: DoubleSide });
-
-        this.__material = new MeshFaceMaterial([this.__frameMaterial, this.__doorMaterial]);
+        this.__frameMaterial = new MeshStandardMaterial({ color: opts.frameColor, side: DoubleSide });
+        this.__doorMaterial = new MeshStandardMaterial({ color: opts.doorColor, side: DoubleSide, wireframe: false });
+        this.__handleMaterial = new MeshStandardMaterial({ color: '#F0F0FF', side: DoubleSide, wireframe: false });
+        this.__rightDoorMaterial = this.__doorMaterial; //new MeshStandardMaterial({ color: '#FF0000', wireframe: false }); //Right is red color
+        this.__leftDoorMaterial = this.__doorMaterial; //new MeshStandardMaterial({ color: '#0000FF', wireframe: false }); //Left is blue color
+        this.__doorHandleMaterial = new MeshStandardMaterial({ color: '#F0F0F0', wireframe: false, roughness: 0.0, metalness: 0.0 });
+        this.__leftDoorId = 2;
+        this.__rightDoorId = 3;
+        this.__material = [
+            this.__frameMaterial,
+            this.__doorMaterial,
+            this.__leftDoorMaterial,
+            this.__rightDoorMaterial,
+            this.__doorHandleMaterial
+        ]; //new MeshFaceMaterial([this.__frameMaterial, this.__doorMaterial]);
     }
 
     __convertFrom4ToFace3(facegroups, materialId = 0) {
@@ -63,6 +100,7 @@ export class ParametricBaseDoor {
 
     __validateParameters(parameters) {
         parameters.frameSize = Math.max(5, Math.min(25, parameters.frameSize)); //Expressed in centimeters
+        parameters.doorRatio = Math.max(0.0, Math.min(1.0, parameters.doorRatio)); //Expressed in centimeters
         let doorOpenParameter = parameters.openDirection;
         switch (doorOpenParameter) {
             case DOOR_OPEN_DIRECTIONS.RIGHT.description:
@@ -76,8 +114,16 @@ export class ParametricBaseDoor {
         return parameters;
     }
 
+    __updateGeometry() {
+        let updatedGeometry = this.__proceedure();
+        this.__geometry.dispose();
+        this.__geometry = updatedGeometry;
+
+        this.dispatchEvent({ type: EVENT_PARAMETRIC_GEOMETRY_UPATED, target: this });
+    }
+
     __proceedure() {
-        let doorGeometry = new Geometry(); //new BufferGeometry();
+        let doorGeometry = new Geometry();
         let doorFrameGeometry = this.__shapeMesh();
         let doorsToGenerate = this.__shapeChildren();
         if (doorFrameGeometry) {
@@ -89,11 +135,11 @@ export class ParametricBaseDoor {
         if (doorsToGenerate.left) {
             doorGeometry.merge(doorsToGenerate.left);
         }
-        doorGeometry.elementsNeedUpdate = true;
+
         doorGeometry.computeVertexNormals();
         doorGeometry.computeFaceNormals();
         doorGeometry.computeBoundingBox();
-        return doorGeometry;
+        return new BufferGeometry().fromGeometry(doorGeometry);
     }
 
     __shapeMesh() {
@@ -154,7 +200,9 @@ export class ParametricBaseDoor {
         geometry.elementsNeedUpdate = true;
         geometry.applyMatrix4(new Matrix4().makeRotationAxis(new Vector3(1, 0, 0), -Math.PI * 0.5));
         geometry.applyMatrix4(new Matrix4().makeTranslation(0, -this.__frameHeight * 0.5, 0));
-
+        geometry.computeVertexNormals();
+        geometry.computeFaceNormals();
+        geometry.computeBoundingBox();
         return geometry; //new BufferGeometry().fromGeometry(geometry);
     }
 
@@ -164,26 +212,25 @@ export class ParametricBaseDoor {
         let w = this.__frameWidth;
         let w1 = (w * this.__doorRatio);
         let w2 = (w - w1);
-
         switch (this.__openDirection) {
             case DOOR_OPEN_DIRECTIONS.NO_DOORS:
                 break;
             case DOOR_OPEN_DIRECTIONS.LEFT:
                 //Get the buffergeometry of only one door
-                doorLeft = this.__makeOneDoor(w, this.__openDirection);
+                doorLeft = this.__makeOneDoor(w, this.__openDirection, this.__leftDoorId, 'Left');
                 doorLeft.applyMatrix4(new Matrix4().makeTranslation(-(this.__frameWidth * 0.5) + this.__frameSize, 0, 0));
                 break;
             case DOOR_OPEN_DIRECTIONS.RIGHT:
                 //Get the buffergeometry of only one door
-                doorRight = this.__makeOneDoor(w, this.__openDirection);
+                doorRight = this.__makeOneDoor(w, this.__openDirection, this.__rightDoorId, 'Right');
                 doorRight.applyMatrix4(new Matrix4().makeTranslation((this.__frameWidth * 0.5) - this.__frameSize, 0, 0));
                 break;
             case DOOR_OPEN_DIRECTIONS.BOTH_SIDES:
                 //Get the buffergeometry of left door
-                doorLeft = this.__makeOneDoor(w1 + this.__frameSize, DOOR_OPEN_DIRECTIONS.LEFT);
+                doorLeft = this.__makeOneDoor(w1 + this.__frameSize, DOOR_OPEN_DIRECTIONS.LEFT, this.__leftDoorId, 'Left');
                 doorLeft.applyMatrix4(new Matrix4().makeTranslation(-(this.__frameWidth * 0.5) + this.__frameSize, 0, 0));
                 //Get the buffergeometry of right door
-                doorRight = this.__makeOneDoor(w2 + this.__frameSize, DOOR_OPEN_DIRECTIONS.RIGHT);
+                doorRight = this.__makeOneDoor(w2 + this.__frameSize, DOOR_OPEN_DIRECTIONS.RIGHT, this.__rightDoorId, 'Right');
                 doorRight.applyMatrix4(new Matrix4().makeTranslation((this.__frameWidth * 0.5) - this.__frameSize, 0, 0));
                 break;
             default:
@@ -192,15 +239,23 @@ export class ParametricBaseDoor {
         return { right: doorRight, left: doorLeft };
     }
 
-    __makeOneDoor(frameWidth, openingDirection) {
-        let aDoorGeometry = this.__createDoorData(frameWidth, openingDirection);
+    __makeOneDoor(frameWidth, openingDirection, materialId = 1, doorSide = 'Right') {
+        let aDoorGeometry = this.__createDoorData(frameWidth, openingDirection, materialId);
+
+        if (this.__handleType !== DOOR_HANDLE_TYPES.None) {
+            let doorRatio = (doorSide === 'Right') ? 1.0 - this.doorRatio : this.doorRatio;
+            let front_handle = DoorHandleGenerator.generate_handle(this.__handleType.description, 'Front', doorSide, doorRatio, this.frameWidth, this.frameSize, this.frameThickness, this.__openDirection.description);
+            let back_handle = DoorHandleGenerator.generate_handle(this.__handleType.description, 'Back', doorSide, doorRatio, this.frameWidth, this.frameSize, this.frameThickness, this.__openDirection.description);
+
+            aDoorGeometry.merge(front_handle);
+            aDoorGeometry.merge(back_handle);
+        }
 
         return aDoorGeometry;
-
     }
 
-    __createDoorData(frameWidth, openingDirection) {
-        let doorModelData = this.__createForDoorModel(frameWidth, openingDirection);
+    __createDoorData(frameWidth, openingDirection, materialId = 1) {
+        let doorModelData = this.__createForDoorModel(frameWidth, openingDirection, materialId);
         let geometry = new Geometry();
         let m = new Matrix4();
         let tx = (doorModelData.widthFactor * 0.5) * doorModelData.side;
@@ -215,6 +270,9 @@ export class ParametricBaseDoor {
         // m.makeTranslation(tx, ty, tz);
         geometry.applyMatrix4(m);
         geometry.elementsNeedUpdate = true;
+        geometry.computeVertexNormals();
+        geometry.computeFaceNormals();
+        geometry.computeBoundingBox();
         return geometry; //new BufferGeometry().fromGeometry(geometry);
     }
 
@@ -223,8 +281,9 @@ export class ParametricBaseDoor {
      * This can be replaced by the appropriate door model class
      * This method will change with logic based on the door model type
      */
-    __createForDoorModel(frameWidth, openingDirection) {
-        let gap = 0.002;
+    __createForDoorModel(frameWidth, openingDirection, materialId = 1) {
+
+        let gap = 0.25; //0.002;
         let sf = this.__frameSize;
         let wf = frameWidth - (sf * 2) - (gap * 2);
         let hf = (this.__frameHeight / 2) - (gap * 2);
@@ -245,15 +304,131 @@ export class ParametricBaseDoor {
         let miny = 0.0; //# locked
         let maxy = deep;
         let minz = -hf;
-        let maxz = hf - sf - gap;
+        let maxz = hf - sf; // - gap;
 
         let faceids = [4, 5, 1, 0, 5, 6, 2, 1, 6, 7, 3, 2, 7, 4, 0, 3, 0, 1, 2, 3, 7, 6, 5, 4];
         // # Vertex
         let myvertex = [new Vector3(minx, miny, minz), new Vector3(minx, maxy, minz), new Vector3(maxx, maxy, minz), new Vector3(maxx, miny, minz), new Vector3(minx, miny, maxz), new Vector3(minx, maxy, maxz), new Vector3(maxx, maxy, maxz), new Vector3(maxx, miny, maxz)];
         // # Faces
-        let myfaces = this.__convertFrom4ToFace3(faceids, 1);
+        let myfaces = this.__convertFrom4ToFace3(faceids, materialId);
         // let myfaces = [new Face3(4, 5, 1, 0), new Face3(5, 6, 2, 1), new Face3(6, 7, 3, 2), new Face3(7, 4, 0, 3), new Face3(0, 1, 2, 3), new Face3(7, 6, 5, 4)];
         return { vertices: myvertex, faces: myfaces, widthFactor: wf, depth: deep, side: side };
+    }
+
+    get frameWidth() {
+        return this.__frameWidth;
+    }
+
+    set frameWidth(value) {
+        this.__frameWidth = value;
+        this.__updateGeometry();
+    }
+
+    get frameHeight() {
+        return this.__frameHeight;
+    }
+
+    set frameHeight(value) {
+        this.__frameHeight = value;
+        this.__updateGeometry();
+    }
+
+    get frameThickness() {
+        return this.__frameThickness;
+    }
+
+    set frameThickness(value) {
+        this.__frameThickness = value;
+        this.__updateGeometry();
+    }
+
+    get frameSize() {
+        return this.__frameSize;
+    }
+
+    set frameSize(value) {
+        this.__frameSize = Math.max(5, Math.min(25, value)); //Expressed in centimeters
+        this.__updateGeometry();
+    }
+
+    get doorRatio() {
+        return this.__doorRatio;
+    }
+
+    set doorRatio(value) {
+        this.__doorRatio = Math.max(0.0, Math.min(1.0, value)); //Expressed as a ratio between 0 -> 1
+        this.__updateGeometry();
+    }
+
+    get doorColor() {
+        return `#${this.__doorMaterial.color.getHexString()}`;
+    }
+
+    set doorColor(color) {
+        this.__doorMaterial.color = new Color(color);
+        this.__doorMaterial.needsUpdate = true;
+        this.__material.needsUpdate = true;
+    }
+
+    get frameColor() {
+        return `#${this.__frameMaterial.color.getHexString()}`;
+    }
+
+    set frameColor(color) {
+        this.__frameMaterial.color = new Color(color);
+        this.__frameMaterial.needsUpdate = true;
+        this.__material.needsUpdate = true;
+    }
+
+    get openDirection() {
+        return this.__openDirection.description;
+    }
+
+    set openDirection(direction) {
+        switch (direction) {
+            case DOOR_OPEN_DIRECTIONS.RIGHT.description:
+                this.__openDirection = DOOR_OPEN_DIRECTIONS.RIGHT; //This value will be set in validatePArameters
+                break;
+            case DOOR_OPEN_DIRECTIONS.LEFT.description:
+                this.__openDirection = DOOR_OPEN_DIRECTIONS.LEFT; //This value will be set in validatePArameters
+                break;
+            case DOOR_OPEN_DIRECTIONS.BOTH_SIDES.description:
+                this.__openDirection = DOOR_OPEN_DIRECTIONS.BOTH_SIDES; //This value will be set in validatePArameters
+                break;
+            case DOOR_OPEN_DIRECTIONS.NO_DOORS.description:
+                this.__openDirection = DOOR_OPEN_DIRECTIONS.NO_DOORS; //This value will be set in validatePArameters
+                break;
+        }
+        this.__updateGeometry();
+    }
+
+    get handleType() {
+        return this.__handleType.description;
+    }
+
+    set handleType(type) {
+        switch (type) {
+            case DOOR_HANDLE_TYPES.None.description:
+                this.__handleType = DOOR_HANDLE_TYPES.None; //This value will be set in validatePArameters
+                break;
+            case DOOR_HANDLE_TYPES.HANDLE_01.description:
+                this.__handleType = DOOR_HANDLE_TYPES.HANDLE_01; //This value will be set in validatePArameters
+                break;
+            case DOOR_HANDLE_TYPES.HANDLE_02.description:
+                this.__handleType = DOOR_HANDLE_TYPES.HANDLE_02; //This value will be set in validatePArameters
+                break;
+            case DOOR_HANDLE_TYPES.HANDLE_03.description:
+                this.__handleType = DOOR_HANDLE_TYPES.HANDLE_03; //This value will be set in validatePArameters
+                break;
+            case DOOR_HANDLE_TYPES.HANDLE_04.description:
+                this.__handleType = DOOR_HANDLE_TYPES.HANDLE_04; //This value will be set in validatePArameters
+                break;
+        }
+        this.__updateGeometry();
+    }
+
+    get doorType() {
+        return this.__doorType;
     }
 
     get geometry() {
@@ -265,6 +440,57 @@ export class ParametricBaseDoor {
     }
 
     get metadata() {
-        return { type: 1, frameColor: '#FF0000', doorColor: '#0000FF' };
+        return {
+            type: 1,
+            frameColor: this.__frameMaterial.color,
+            doorColor: this.__doorMaterial.color,
+            frameWidth: this.frameWidth,
+            frameHeight: this.frameHeight,
+            frameSize: this.frameSize,
+            frameThickness: this.frameThickness,
+            doorRatio: this.doorRatio,
+            openDirection: this.__openDirection.description,
+            handleType: this.__handleType.description
+        };
+    }
+
+
+    get parameters() {
+        return {
+            frameColor: { type: 'color' },
+            doorColor: { type: 'color' },
+            frameWidth: { type: 'number' },
+            frameHeight: { type: 'number' },
+            frameSize: { type: 'range', min: 5, max: 25, step: 0.1 },
+            frameThickness: { type: 'number' },
+            doorRatio: { type: 'range', min: 0.2, max: 0.8, step: 0.001 },
+            openDirection: {
+                type: 'choice',
+                value: [
+                    DOOR_OPEN_DIRECTIONS.RIGHT.description,
+                    DOOR_OPEN_DIRECTIONS.LEFT.description,
+                    DOOR_OPEN_DIRECTIONS.BOTH_SIDES.description,
+                    DOOR_OPEN_DIRECTIONS.NO_DOORS.description
+                ]
+            },
+            handleType: {
+                type: 'choice',
+                value: [
+                    DOOR_HANDLE_TYPES.None.description,
+                    DOOR_HANDLE_TYPES.HANDLE_01.description,
+                    DOOR_HANDLE_TYPES.HANDLE_02.description,
+                    DOOR_HANDLE_TYPES.HANDLE_03.description,
+                    DOOR_HANDLE_TYPES.HANDLE_04.description
+                ]
+            }
+        };
+    }
+
+    get name() {
+        return this.__name;
+    }
+
+    set name(value) {
+        this.__name = value;
     }
 }
