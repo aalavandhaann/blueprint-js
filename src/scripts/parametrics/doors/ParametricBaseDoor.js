@@ -14,7 +14,7 @@ export const DOOR_HANDLE_TYPES = Enum('None', 'HANDLE_01', 'HANDLE_02', 'HANDLE_
 export class ParametricBaseDoor extends EventDispatcher {
     constructor(parameters) {
         super();
-        let opts = { frameSize: 5, frameColor: '#FF0000', doorColor: '#00F0F0', frameWidth: 100, frameHeight: 200, frameThickness: 20, doorRatio: 0.5, openDirection: DOOR_OPEN_DIRECTIONS.RIGHT.description, handleType: DOOR_HANDLE_TYPES.HANDLE_01.description };
+        let opts = { frameSize: 5, frameColor: '#FF0000', doorColor: '#00F0F0', frameWidth: 100, frameHeight: 200, frameThickness: 20, doorRatio: 0.5, openDirection: DOOR_OPEN_DIRECTIONS.RIGHT.description, handleType: DOOR_HANDLE_TYPES.HANDLE_01.description, doorHandleColor: '#F0F0F0' };
         for (var opt in opts) {
             if (opt === 'frameColor' || opt === 'doorColor') {
                 opts[opt] = new Color(parameters[opt]);
@@ -73,7 +73,7 @@ export class ParametricBaseDoor extends EventDispatcher {
         this.__handleMaterial = new MeshStandardMaterial({ color: '#F0F0FF', side: DoubleSide, wireframe: false });
         this.__rightDoorMaterial = this.__doorMaterial; //new MeshStandardMaterial({ color: '#FF0000', wireframe: false }); //Right is red color
         this.__leftDoorMaterial = this.__doorMaterial; //new MeshStandardMaterial({ color: '#0000FF', wireframe: false }); //Left is blue color
-        this.__doorHandleMaterial = new MeshStandardMaterial({ color: '#F0F0F0', wireframe: false, roughness: 0.0, metalness: 0.0 });
+        this.__doorHandleMaterial = new MeshStandardMaterial({ color: opts.doorHandleColor, wireframe: false, roughness: 0.0, metalness: 0.0 });
         this.__leftDoorId = 2;
         this.__rightDoorId = 3;
         this.__material = [
@@ -370,6 +370,16 @@ export class ParametricBaseDoor extends EventDispatcher {
         this.__material.needsUpdate = true;
     }
 
+    get doorHandleColor() {
+        return `#${this.__doorHandleMaterial.color.getHexString()}`;
+    }
+
+    set doorHandleColor(color) {
+        this.__doorHandleMaterial.color = new Color(color);
+        this.__doorHandleMaterial.needsUpdate = true;
+        this.__material.needsUpdate = true;
+    }
+
     get frameColor() {
         return `#${this.__frameMaterial.color.getHexString()}`;
     }
@@ -444,6 +454,7 @@ export class ParametricBaseDoor extends EventDispatcher {
             type: 1,
             frameColor: this.__frameMaterial.color,
             doorColor: this.__doorMaterial.color,
+            doorHandleColor: this.__doorHandleMaterial.color,
             frameWidth: this.frameWidth,
             frameHeight: this.frameHeight,
             frameSize: this.frameSize,
@@ -459,6 +470,7 @@ export class ParametricBaseDoor extends EventDispatcher {
         return {
             frameColor: { type: 'color' },
             doorColor: { type: 'color' },
+            doorHandleColor: { type: 'color' },
             frameWidth: { type: 'number' },
             frameHeight: { type: 'number' },
             frameSize: { type: 'range', min: 5, max: 25, step: 0.1 },

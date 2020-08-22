@@ -41756,7 +41756,8 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
       frameThickness: 20,
       doorRatio: 0.5,
       openDirection: DOOR_OPEN_DIRECTIONS.RIGHT.description,
-      handleType: DOOR_HANDLE_TYPES.HANDLE_01.description
+      handleType: DOOR_HANDLE_TYPES.HANDLE_01.description,
+      doorHandleColor: '#F0F0F0'
     };
 
     for (var opt in opts) {
@@ -41848,7 +41849,7 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
     _this.__leftDoorMaterial = _this.__doorMaterial; //new MeshStandardMaterial({ color: '#0000FF', wireframe: false }); //Left is blue color
 
     _this.__doorHandleMaterial = new _three.MeshStandardMaterial({
-      color: '#F0F0F0',
+      color: opts.doorHandleColor,
       wireframe: false,
       roughness: 0.0,
       metalness: 0.0
@@ -42174,6 +42175,16 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
       this.__material.needsUpdate = true;
     }
   }, {
+    key: "doorHandleColor",
+    get: function get() {
+      return "#".concat(this.__doorHandleMaterial.color.getHexString());
+    },
+    set: function set(color) {
+      this.__doorHandleMaterial.color = new _three.Color(color);
+      this.__doorHandleMaterial.needsUpdate = true;
+      this.__material.needsUpdate = true;
+    }
+  }, {
     key: "frameColor",
     get: function get() {
       return "#".concat(this.__frameMaterial.color.getHexString());
@@ -42270,6 +42281,7 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
         type: 1,
         frameColor: this.__frameMaterial.color,
         doorColor: this.__doorMaterial.color,
+        doorHandleColor: this.__doorHandleMaterial.color,
         frameWidth: this.frameWidth,
         frameHeight: this.frameHeight,
         frameSize: this.frameSize,
@@ -42287,6 +42299,9 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
           type: 'color'
         },
         doorColor: {
+          type: 'color'
+        },
+        doorHandleColor: {
           type: 'color'
         },
         frameWidth: {
@@ -113242,7 +113257,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "34345" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "35583" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
