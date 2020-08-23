@@ -42,14 +42,22 @@ export class Physical3DItem extends Mesh {
         let mLocal = new Matrix4().getInverse(this.matrixWorld);
         this.__loadedItem.geometry = this.__itemModel.parametricClass.geometry;
         this.parent.needsUpdate = true;
-        this.__box = new Box3().setFromObject(this.__loadedItem);
+
+
+        this.__box = this.__loadedItem.geometry.boundingBox.clone(); //new Box3().setFromObject(this.__loadedItem);
         this.__center = this.__box.getCenter(new Vector3());
         this.__size = this.__box.getSize(new Vector3());
         let localCenter = this.__center.clone().applyMatrix4(mLocal);
         let m = new Matrix4();
         m = m.makeTranslation(-localCenter.x, -localCenter.y, -localCenter.z);
+
         this.__boxhelper.geometry = new EdgesGeometry(new BoxBufferGeometry(this.__size.x, this.__size.y, this.__size.z));
-        this.__boxhelper.geometry.applyMatrix4(m);
+        // this.__boxhelper.geometry.applyMatrix4(m);
+
+        this.__boxhelper.rotation.x = this.__itemModel.rotation.x;
+        this.__boxhelper.rotation.y = this.__itemModel.rotation.y;
+        this.__boxhelper.rotation.z = this.__itemModel.rotation.z;
+
     }
     __itemUpdated(evt) {
         let scope = this;
@@ -128,8 +136,8 @@ export class Physical3DItem extends Mesh {
             this.__loadedItem = new Mesh(parametricData.geometry, parametricData.material);
             this.__itemModel.parametricClass.addEventListener(EVENT_PARAMETRIC_GEOMETRY_UPATED, this.__parametricGeometryUpdateEvent);
             this.__initializeChildItem();
-            let axes = new AxesHelper(1000);
-            this.add(axes);
+            // let axes = new AxesHelper(1000);
+            // this.add(axes);
             this.dispatchEvent({ type: EVENT_ITEM_LOADED });
         }
     }

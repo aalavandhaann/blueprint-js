@@ -50,11 +50,20 @@ export class DragRoomItemsControl3D extends EventDispatcher {
 
         this.__intersections.length = 0;
 
+        let visibleDraggableItems = [];
+        for (let i = 0; i < this.__draggableItems.length; i++) {
+            if (this.__draggableItems[i].visible) {
+                visibleDraggableItems.push(this.__draggableItems[i]);
+            }
+        }
+
         this.__raycaster.setFromCamera(this.__mouse, this.__camera);
-        this.__raycaster.intersectObjects(this.__draggableItems, false, this.__intersections);
+        // this.__raycaster.intersectObjects(this.__draggableItems, false, this.__intersections);
+        this.__raycaster.intersectObjects(visibleDraggableItems, false, this.__intersections);
 
         if (this.__intersections.length) {
             this.__selected = (this.__transformGroup) ? this.__draggableItems[0] : this.__intersections[0].object;
+
             if (this.__raycaster.ray.intersectPlane(this.__plane, this.__intersection)) {
 
                 this.__inverseMatrix.getInverse(this.__selected.parent.matrixWorld);
@@ -88,9 +97,9 @@ export class DragRoomItemsControl3D extends EventDispatcher {
             let wallPlanesThatIntersect = this.__raycaster.intersectObjects(this.__walls, false);
             let floorPlanesThatIntersect = this.__raycaster.intersectObjects(this.__floors, false);
             if (wallPlanesThatIntersect.length) {
-                this.dispatchEvent({ type: EVENT_WALL_CLICKED, item: wallPlanesThatIntersect[0].object.edge });
+                this.dispatchEvent({ type: EVENT_WALL_CLICKED, item: wallPlanesThatIntersect[0].object.edge, point: wallPlanesThatIntersect[0].point, normal: wallPlanesThatIntersect[0].face.normal });
             } else if (floorPlanesThatIntersect.length) {
-                this.dispatchEvent({ type: EVENT_ROOM_CLICKED, item: floorPlanesThatIntersect[0].object.room });
+                this.dispatchEvent({ type: EVENT_ROOM_CLICKED, item: floorPlanesThatIntersect[0].object.room, point: floorPlanesThatIntersect[0].point, normal: floorPlanesThatIntersect[0].face.normal });
             }
         }
         this.__domElement.style.cursor = (this.__hovered) ? 'pointer' : 'auto';
@@ -107,7 +116,7 @@ export class DragRoomItemsControl3D extends EventDispatcher {
 
         this.__raycaster.setFromCamera(this.__mouse, this.__camera);
 
-        if (this.__selected && this.__enabled) {
+        if (this.__selected && this.__enabled && this.__selected.visible) {
             //Check if the item has customIntersectionPlanes, otherwise move it freely
             if (!this.__selected.intersectionPlanes.length) {
                 if (this.__raycaster.ray.intersectPlane(this.__plane, this.__intersection)) {

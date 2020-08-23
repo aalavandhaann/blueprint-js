@@ -14,7 +14,7 @@ export class WallItem extends Item {
         this.__customIntersectionPlanes = this.__model.floorplan.wallPlanesForIntersection;
     }
 
-    snapToPoint(point, normal, intersectingPlane) {
+    snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
         let normal2d = new Vector2(normal.x, normal.z);
         let angle = Utils.angle(UP_VECTOR, normal2d);
         let rotatedSize = this.halfSize.clone();
@@ -32,7 +32,7 @@ export class WallItem extends Item {
 
         this.position = point;
         this.rotation = new Vector3(0, angle, 0);
-        this.__addToAWall(intersectingPlane);
+        this.__addToAWall(intersectingPlane, toWall, toFloor, toRoof);
     }
 
     __parametricGeometryUpdate(evt, updateForWall = true) {

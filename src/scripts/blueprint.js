@@ -47,7 +47,7 @@ class BlueprintJS {
 
         this.configurationHelper = new ConfigurationHelper();
         this.floorplanningHelper = null;
-        this.roomplanningHelper = new RoomPlannerHelper(this.model.floorplan, this.roomplanner);
+        this.roomplanningHelper = new RoomPlannerHelper(this.model, this.model.floorplan, this.roomplanner);
         if (!options.widget) {
             /**
              * @property {Floorplanner2D} floorplanner

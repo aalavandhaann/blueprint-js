@@ -1,8 +1,10 @@
 import { Dimensioning } from "../core/dimensioning";
 import { EVENT_CORNER_2D_CLICKED, EVENT_NOTHING_2D_SELECTED, EVENT_WALL_2D_CLICKED, EVENT_ROOM_2D_CLICKED, EVENT_NO_ITEM_SELECTED, EVENT_ITEM_SELECTED, EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED } from "../core/events";
+import { InWallFloorItem } from "../items/in_wall_floor_item";
 
 export class RoomPlannerHelper {
-    constructor(floorplan, roomplanner) {
+    constructor(model, floorplan, roomplanner) {
+        this.__model = model;
         this.__floorplan = floorplan;
         this.__roomplanner = roomplanner;
 
@@ -10,7 +12,10 @@ export class RoomPlannerHelper {
         this.__cornerElevation = Dimensioning.cmToMeasureRaw(250);
         this.__roomName = 'A New Room';
 
-        this.__selectedWall = null;
+        this.__selectedEdge = null;
+        this.__selectedEdgeNormal = null;
+        this.__selectedEdgePoint = null;
+
         this.__selectedItem = null;
         this.__selectedRoom = null;
         this.__wallTexturePack = null;
@@ -33,7 +38,9 @@ export class RoomPlannerHelper {
     }
 
     __wallSelected(evt) {
-        this.__selectedWall = evt.item;
+        this.__selectedEdge = evt.item;
+        this.__selectedEdgeNormal = evt.normal;
+        this.__selectedEdgePoint = evt.point;
         this.__wallThickness = Dimensioning.cmToMeasureRaw(evt.item.thickness);
     }
 
@@ -43,15 +50,70 @@ export class RoomPlannerHelper {
     }
 
     __nothingSelected() {
-        // this.__selectedWall = null;
+        // this.__selectedEdge = null;
         // this.__selectedRoom = null;
         // this.__selectedItem = null;
     }
 
+    addParametricDoorToCurrentWall(doorType) {
+        if (!this.__selectedEdge) {
+            return;
+        }
+
+        let itemMetaData = {
+            itemName: "Parametric Door",
+            isParametric: true,
+            baseParametricType: "DOOR",
+            subParametricData: {
+                type: doorType,
+                frameColor: "#E7E7E7",
+                doorColor: "#E7E7E7",
+                doorHandleColor: '#F0F0F0',
+                glassColor: '#87CEEB',
+                frameWidth: 100,
+                frameHeight: 200,
+                frameSize: 5,
+                frameThickness: 20,
+                doorRatio: 0.5,
+                openDirection: "RIGHT",
+                handleType: "HANDLE_01"
+            },
+            itemType: 7,
+            position: [
+                0,
+                0,
+                0
+            ],
+            rotation: [
+                0,
+                0,
+                0
+            ],
+            scale: [
+                1,
+                1,
+                1
+            ],
+            size: [
+                100,
+                200,
+                20
+            ],
+            fixed: false,
+            resizable: false,
+            wall: this.__selectedEdge.id,
+        };
+
+        let item = new InWallFloorItem(itemMetaData, this.__model);
+        this.__model.addItem(item);
+        // console.log(this.__selectedEdgePoint, this.__selectedEdgeNormal);
+        item.snapToPoint(this.__selectedEdgePoint, this.__selectedEdgeNormal, null, this.__selectedEdge.wall);
+    }
+
     set wallThickness(value) {
-        if (this.__selectedWall) {
+        if (this.__selectedEdge) {
             let cms = Dimensioning.cmFromMeasureRaw(value);
-            this.__selectedWall.thickness = cms;
+            this.__selectedEdge.thickness = cms;
             this.__wallThickness = value;
         }
     }
@@ -86,8 +148,8 @@ export class RoomPlannerHelper {
 
     set wallTexturePack(tpack) {
         this.__wallTexturePack = tpack;
-        if (this.__selectedWall) {
-            this.__selectedWall.setTextureMaps(tpack);
+        if (this.__selectedEdge) {
+            this.__selectedEdge.setTextureMaps(tpack);
         }
     }
 

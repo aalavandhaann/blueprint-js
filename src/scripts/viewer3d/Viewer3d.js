@@ -1,8 +1,9 @@
 import { WebGLRenderer, ImageUtils, PerspectiveCamera, AxesHelper, Scene, RGBFormat, LinearMipmapLinearFilter } from 'three';
-import { PCFSoftShadowMap } from 'three';
+import { PCFSoftShadowMap, WebGLCubeRenderTarget, CubeCamera } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter';
 
-import { EVENT_UPDATED, EVENT_LOADED, EVENT_ITEM_SELECTED, EVENT_ITEM_MOVE, EVENT_ITEM_MOVE_FINISH, EVENT_NO_ITEM_SELECTED, EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED } from '../core/events.js';
+import { EVENT_UPDATED, EVENT_LOADED, EVENT_ITEM_SELECTED, EVENT_ITEM_MOVE, EVENT_ITEM_MOVE_FINISH, EVENT_NO_ITEM_SELECTED, EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED, EVENT_GLTF_READY, EVENT_NEW_ITEM } from '../core/events.js';
 // import { EVENT_NEW, EVENT_DELETED } from '../core/events.js';
 
 import { Skybox } from './skybox.js';
@@ -11,7 +12,6 @@ import { Floor3D } from './floor3d.js';
 import { Lights3D } from './lights3d.js';
 import { Physical3DItem } from './Physical3DItem.js';
 import { DragRoomItemsControl3D } from './DragRoomItemsControl3D.js';
-import { WebGLCubeRenderTarget, CubeCamera } from 'three/build/three.module';
 
 export class Viewer3D extends Scene {
     constructor(model, element, opts) {
@@ -56,6 +56,7 @@ export class Viewer3D extends Scene {
 
         this.needsUpdate = true;
 
+        this.__newItemEvent = this.__addNewItem.bind(this);
         this.__wallSelectedEvent = this.__wallSelected.bind(this);
         this.__roomSelectedEvent = this.__roomSelected.bind(this);
         this.__roomItemSelectedEvent = this.__roomItemSelected.bind(this);
@@ -110,6 +111,8 @@ export class Viewer3D extends Scene {
             scope.renderer.setAnimationLoop(function() { scope.render(); });
             scope.render();
         }
+
+        scope.model.addEventListener(EVENT_NEW_ITEM, scope.__newItemEvent);
         scope.model.addEventListener(EVENT_LOADED, (evt) => scope.addRoomItems(evt));
         scope.floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.addWalls(evt));
         this.controls.addEventListener('change', () => { scope.needsUpdate = true; });
@@ -163,6 +166,16 @@ export class Viewer3D extends Scene {
             this.needsUpdate = true;
         }
         this.dispatchEvent(evt);
+    }
+
+    __addNewItem(evt) {
+        if (!evt.item) {
+            return;
+        }
+        let physicalRoomItem = new Physical3DItem(evt.item);
+        this.add(physicalRoomItem);
+        this.__physicalRoomItems.push(physicalRoomItem);
+        this.__roomItemSelected({ type: EVENT_ITEM_SELECTED, item: physicalRoomItem });
     }
 
     addRoomItems(evt) {
@@ -264,6 +277,14 @@ export class Viewer3D extends Scene {
         scope.renderer.render(scope, scope.camera);
         scope.lastRender = Date.now();
         this.needsUpdate = false;
+    }
+
+    exportSceneAsGTLF() {
+        let scope = this;
+        let exporter = new GLTFExporter();
+        exporter.parse(this, function(gltf) {
+            scope.dispatchEvent({ type: EVENT_GLTF_READY, gltf: JSON.stringify(gltf) });
+        });
     }
 
     forceRender() {

@@ -12,7 +12,7 @@ export class FloorItem extends Item {
         this.__customIntersectionPlanes = this.__model.floorplan.floorPlanesForIntersection;
     }
 
-    snapToPoint(point, normal, intersectingPlane) {
+    snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
         let normal2d = new Vector2(normal.x, normal.z);
         let angle = Utils.angle(UP_VECTOR, normal2d);
         this.rotation = new Vector3(0, angle, 0);

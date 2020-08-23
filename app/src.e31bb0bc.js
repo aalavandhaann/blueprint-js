@@ -36411,7 +36411,7 @@ if (typeof __THREE_DEVTOOLS__ !== 'undefined') {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.EVENT_PARAMETRIC_GEOMETRY_UPATED = exports.EVENT_UPDATE_TEXTURES = exports.EVENT_KEY_RELEASED = exports.EVENT_KEY_PRESSED = exports.EVENT_ROOM_2D_HOVER = exports.EVENT_WALL_2D_HOVER = exports.EVENT_CORNER_2D_HOVER = exports.EVENT_ROOM_2D_DOUBLE_CLICKED = exports.EVENT_WALL_2D_DOUBLE_CLICKED = exports.EVENT_CORNER_2D_DOUBLE_CLICKED = exports.EVENT_NOTHING_2D_SELECTED = exports.EVENT_2D_SELECTED = exports.EVENT_2D_UNSELECTED = exports.EVENT_ROOM_2D_CLICKED = exports.EVENT_WALL_2D_CLICKED = exports.EVENT_CORNER_2D_CLICKED = exports.EVENT_ROOM_ATTRIBUTES_CHANGED = exports.EVENT_WALL_ATTRIBUTES_CHANGED = exports.EVENT_CORNER_ATTRIBUTES_CHANGED = exports.EVENT_NEW_ROOMS_ADDED = exports.EVENT_ROOM_NAME_CHANGED = exports.EVENT_NOTHING_CLICKED = exports.EVENT_FLOOR_CLICKED = exports.EVENT_ROOM_CLICKED = exports.EVENT_WALL_CLICKED = exports.EVENT_FPS_EXIT = exports.EVENT_CAMERA_VIEW_CHANGE = exports.EVENT_CAMERA_ACTIVE_STATUS = exports.EVENT_CAMERA_MOVED = exports.EVENT_MODE_RESET = exports.EVENT_NO_ITEM_SELECTED = exports.EVENT_ITEM_HOVEROFF = exports.EVENT_ITEM_HOVERON = exports.EVENT_ITEM_MOVE_FINISH = exports.EVENT_ITEM_MOVE = exports.EVENT_ITEM_SELECTED = exports.EVENT_ITEM_REMOVED = exports.EVENT_ITEM_LOADED = exports.EVENT_ITEM_LOADING = exports.EVENT_GLTF_READY = exports.EVENT_CHANGED = exports.EVENT_SAVED = exports.EVENT_UPDATED = exports.EVENT_LOADING = exports.EVENT_LOADED = exports.EVENT_NEW = exports.EVENT_REDRAW = exports.EVENT_MOVED = exports.EVENT_DELETED = exports.EVENT_ACTION = void 0;
+exports.EVENT_PARAMETRIC_GEOMETRY_UPATED = exports.EVENT_UPDATE_TEXTURES = exports.EVENT_KEY_RELEASED = exports.EVENT_KEY_PRESSED = exports.EVENT_ROOM_2D_HOVER = exports.EVENT_WALL_2D_HOVER = exports.EVENT_CORNER_2D_HOVER = exports.EVENT_ROOM_2D_DOUBLE_CLICKED = exports.EVENT_WALL_2D_DOUBLE_CLICKED = exports.EVENT_CORNER_2D_DOUBLE_CLICKED = exports.EVENT_NOTHING_2D_SELECTED = exports.EVENT_2D_SELECTED = exports.EVENT_2D_UNSELECTED = exports.EVENT_ROOM_2D_CLICKED = exports.EVENT_WALL_2D_CLICKED = exports.EVENT_CORNER_2D_CLICKED = exports.EVENT_ROOM_ATTRIBUTES_CHANGED = exports.EVENT_WALL_ATTRIBUTES_CHANGED = exports.EVENT_CORNER_ATTRIBUTES_CHANGED = exports.EVENT_NEW_ROOMS_ADDED = exports.EVENT_ROOM_NAME_CHANGED = exports.EVENT_NOTHING_CLICKED = exports.EVENT_FLOOR_CLICKED = exports.EVENT_ROOM_CLICKED = exports.EVENT_WALL_CLICKED = exports.EVENT_FPS_EXIT = exports.EVENT_CAMERA_VIEW_CHANGE = exports.EVENT_CAMERA_ACTIVE_STATUS = exports.EVENT_CAMERA_MOVED = exports.EVENT_MODE_RESET = exports.EVENT_NO_ITEM_SELECTED = exports.EVENT_ITEM_HOVEROFF = exports.EVENT_ITEM_HOVERON = exports.EVENT_ITEM_MOVE_FINISH = exports.EVENT_ITEM_MOVE = exports.EVENT_ITEM_SELECTED = exports.EVENT_ITEM_REMOVED = exports.EVENT_ITEM_LOADED = exports.EVENT_ITEM_LOADING = exports.EVENT_NEW_ITEM = exports.EVENT_NEW_PARAMETRIC_ITEM = exports.EVENT_GLTF_READY = exports.EVENT_CHANGED = exports.EVENT_SAVED = exports.EVENT_UPDATED = exports.EVENT_LOADING = exports.EVENT_LOADED = exports.EVENT_NEW = exports.EVENT_REDRAW = exports.EVENT_MOVED = exports.EVENT_DELETED = exports.EVENT_ACTION = void 0;
 var EVENT_ACTION = 'ACTION_EVENT';
 exports.EVENT_ACTION = EVENT_ACTION;
 var EVENT_DELETED = 'DELETED_EVENT';
@@ -36434,6 +36434,10 @@ var EVENT_CHANGED = 'CHANGED_EVENT';
 exports.EVENT_CHANGED = EVENT_CHANGED;
 var EVENT_GLTF_READY = 'GLTF_READY_EVENT';
 exports.EVENT_GLTF_READY = EVENT_GLTF_READY;
+var EVENT_NEW_PARAMETRIC_ITEM = 'NEW_PARAMETRIC_ITEM_EVENT';
+exports.EVENT_NEW_PARAMETRIC_ITEM = EVENT_NEW_PARAMETRIC_ITEM;
+var EVENT_NEW_ITEM = 'NEW_ITEM_EVENT';
+exports.EVENT_NEW_ITEM = EVENT_NEW_ITEM;
 var EVENT_ITEM_LOADING = 'ITEM_LOADING_EVENT';
 exports.EVENT_ITEM_LOADING = EVENT_ITEM_LOADING;
 var EVENT_ITEM_LOADED = 'ITEM_LOADED_EVENT';
@@ -41523,24 +41527,24 @@ var DoorHandleGenerator = /*#__PURE__*/function () {
 
   _createClass(DoorHandleGenerator, null, [{
     key: "generate_handle",
-    value: function generate_handle(handleType, frontOrBack, doorSide, doorRatio, frame_width, frame_size, frame_thickness, doorOpenDirection) {
+    value: function generate_handle(handleType, frontOrBack, doorSide, doorRatio, frame_width, frame_size, frame_thickness, doorOpenDirection, materialId) {
       var handle = null;
 
       switch (handleType) {
         case 'HANDLE_01':
-          handle = DoorHandleGenerator.handle_model_01();
+          handle = DoorHandleGenerator.handle_model_01(materialId);
           break;
 
         case 'HANDLE_02':
-          handle = DoorHandleGenerator.handle_model_02();
+          handle = DoorHandleGenerator.handle_model_02(materialId);
           break;
 
         case 'HANDLE_03':
-          handle = DoorHandleGenerator.handle_model_03();
+          handle = DoorHandleGenerator.handle_model_03(materialId);
           break;
 
         case 'HANDLE_04':
-          handle = DoorHandleGenerator.handle_model_04();
+          handle = DoorHandleGenerator.handle_model_04(materialId);
           break;
       }
 
@@ -41587,6 +41591,7 @@ var DoorHandleGenerator = /*#__PURE__*/function () {
   }, {
     key: "handle_model_01",
     value: function handle_model_01() {
+      var materialId = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 4;
       var geometry = new _three.Geometry();
       var vertices = [];
       var faces = [];
@@ -41597,7 +41602,7 @@ var DoorHandleGenerator = /*#__PURE__*/function () {
 
       _Handle_.Handle_01_faces.forEach(function (face) {
         var face2 = face.clone();
-        face2.materialIndex = 4;
+        face2.materialIndex = materialId;
         faces.push(face2);
       });
 
@@ -41611,6 +41616,7 @@ var DoorHandleGenerator = /*#__PURE__*/function () {
   }, {
     key: "handle_model_02",
     value: function handle_model_02() {
+      var materialId = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 4;
       var geometry = new _three.Geometry();
       var vertices = [];
       var faces = [];
@@ -41621,7 +41627,7 @@ var DoorHandleGenerator = /*#__PURE__*/function () {
 
       _Handle_2.Handle_02_faces.forEach(function (face) {
         var face2 = face.clone();
-        face2.materialIndex = 4;
+        face2.materialIndex = materialId;
         faces.push(face2);
       });
 
@@ -41636,6 +41642,7 @@ var DoorHandleGenerator = /*#__PURE__*/function () {
   }, {
     key: "handle_model_03",
     value: function handle_model_03() {
+      var materialId = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 4;
       var geometry = new _three.Geometry();
       var vertices = [];
       var faces = [];
@@ -41646,7 +41653,7 @@ var DoorHandleGenerator = /*#__PURE__*/function () {
 
       _Handle_3.Handle_03_faces.forEach(function (face) {
         var face2 = face.clone();
-        face2.materialIndex = 4;
+        face2.materialIndex = materialId;
         faces.push(face2);
       });
 
@@ -41660,6 +41667,7 @@ var DoorHandleGenerator = /*#__PURE__*/function () {
   }, {
     key: "handle_model_04",
     value: function handle_model_04() {
+      var materialId = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 4;
       var geometry = new _three.Geometry();
       var vertices = [];
       var faces = [];
@@ -41670,7 +41678,7 @@ var DoorHandleGenerator = /*#__PURE__*/function () {
 
       _Handle_4.Handle_04_faces.forEach(function (face) {
         var face2 = face.clone();
-        face2.materialIndex = 4;
+        face2.materialIndex = materialId;
         faces.push(face2);
       });
 
@@ -41750,18 +41758,19 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
     var opts = {
       frameSize: 5,
       frameColor: '#FF0000',
-      doorColor: '#00F0F0',
+      doorColor: '#E0E0EE',
       frameWidth: 100,
       frameHeight: 200,
       frameThickness: 20,
       doorRatio: 0.5,
       openDirection: DOOR_OPEN_DIRECTIONS.RIGHT.description,
       handleType: DOOR_HANDLE_TYPES.HANDLE_01.description,
-      doorHandleColor: '#F0F0F0'
+      doorHandleColor: '#F0F0F0',
+      glassColor: '#87CEEB'
     };
 
     for (var opt in opts) {
-      if (opt === 'frameColor' || opt === 'doorColor') {
+      if (opt === 'frameColor' || opt === 'doorColor' || opt === 'doorHandleColor' || opt === 'glassColor') {
         opts[opt] = new _three.Color(parameters[opt]);
       } else if (opts.hasOwnProperty(opt) && parameters.hasOwnProperty(opt)) {
         opts[opt] = parameters[opt];
@@ -41829,7 +41838,6 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
         break;
     }
 
-    _this.__geometry = _this.__proceedure();
     _this.__frameMaterial = new _three.MeshStandardMaterial({
       color: opts.frameColor,
       side: _three.DoubleSide
@@ -41854,10 +41862,24 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
       roughness: 0.0,
       metalness: 0.0
     });
-    _this.__leftDoorId = 2;
-    _this.__rightDoorId = 3;
-    _this.__material = [_this.__frameMaterial, _this.__doorMaterial, _this.__leftDoorMaterial, _this.__rightDoorMaterial, _this.__doorHandleMaterial]; //new MeshFaceMaterial([this.__frameMaterial, this.__doorMaterial]);
+    _this.__glassMaterial = new _three.MeshStandardMaterial({
+      color: opts.glassColor,
+      side: _three.DoubleSide,
+      wireframe: false,
+      transparent: true,
+      opacity: 0.6
+    });
+    _this.__doorFrameMaterialId = 0;
+    _this.__doorMaterialId = 1;
+    _this.__leftDoorMaterialId = 2;
+    _this.__rightDoorMaterialId = 3;
+    _this.__doorHandleMaterialId = 4;
+    _this.__glassMaterialId = 5;
+    _this.__material = [_this.__frameMaterial, _this.__doorMaterial, _this.__leftDoorMaterial, _this.__rightDoorMaterial, _this.__doorHandleMaterial, _this.__glassMaterial];
 
+    _this.__doorMaterial.normalScale.set(100, 100, 100);
+
+    _this.__geometry = _this.__proceedure();
     return _this;
   }
 
@@ -41916,6 +41938,7 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "__proceedure",
     value: function __proceedure() {
+      var returnGeometry = null;
       var doorGeometry = new _three.Geometry();
 
       var doorFrameGeometry = this.__shapeMesh();
@@ -41937,7 +41960,9 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
       doorGeometry.computeVertexNormals();
       doorGeometry.computeFaceNormals();
       doorGeometry.computeBoundingBox();
-      return new _three.BufferGeometry().fromGeometry(doorGeometry);
+      returnGeometry = new _three.BufferGeometry().fromGeometry(doorGeometry);
+      returnGeometry.normalizeNormals();
+      return returnGeometry;
     }
   }, {
     key: "__shapeMesh",
@@ -41989,22 +42014,22 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
 
         case DOOR_OPEN_DIRECTIONS.LEFT:
           //Get the buffergeometry of only one door
-          doorLeft = this.__makeOneDoor(w, this.__openDirection, this.__leftDoorId, 'Left');
+          doorLeft = this.__makeOneDoor(w, this.__openDirection, this.__leftDoorMaterialId, 'Left');
           doorLeft.applyMatrix4(new _three.Matrix4().makeTranslation(-(this.__frameWidth * 0.5) + this.__frameSize, 0, 0));
           break;
 
         case DOOR_OPEN_DIRECTIONS.RIGHT:
           //Get the buffergeometry of only one door
-          doorRight = this.__makeOneDoor(w, this.__openDirection, this.__rightDoorId, 'Right');
+          doorRight = this.__makeOneDoor(w, this.__openDirection, this.__rightDoorMaterialId, 'Right');
           doorRight.applyMatrix4(new _three.Matrix4().makeTranslation(this.__frameWidth * 0.5 - this.__frameSize, 0, 0));
           break;
 
         case DOOR_OPEN_DIRECTIONS.BOTH_SIDES:
           //Get the buffergeometry of left door
-          doorLeft = this.__makeOneDoor(w1 + this.__frameSize, DOOR_OPEN_DIRECTIONS.LEFT, this.__leftDoorId, 'Left');
+          doorLeft = this.__makeOneDoor(w1 + this.__frameSize, DOOR_OPEN_DIRECTIONS.LEFT, this.__leftDoorMaterialId, 'Left');
           doorLeft.applyMatrix4(new _three.Matrix4().makeTranslation(-(this.__frameWidth * 0.5) + this.__frameSize, 0, 0)); //Get the buffergeometry of right door
 
-          doorRight = this.__makeOneDoor(w2 + this.__frameSize, DOOR_OPEN_DIRECTIONS.RIGHT, this.__rightDoorId, 'Right');
+          doorRight = this.__makeOneDoor(w2 + this.__frameSize, DOOR_OPEN_DIRECTIONS.RIGHT, this.__rightDoorMaterialId, 'Right');
           doorRight.applyMatrix4(new _three.Matrix4().makeTranslation(this.__frameWidth * 0.5 - this.__frameSize, 0, 0));
           break;
 
@@ -42028,9 +42053,9 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
       if (this.__handleType !== DOOR_HANDLE_TYPES.None) {
         var doorRatio = doorSide === 'Right' ? 1.0 - this.doorRatio : this.doorRatio;
 
-        var front_handle = _DoorHandleGenerator.DoorHandleGenerator.generate_handle(this.__handleType.description, 'Front', doorSide, doorRatio, this.frameWidth, this.frameSize, this.frameThickness, this.__openDirection.description);
+        var front_handle = _DoorHandleGenerator.DoorHandleGenerator.generate_handle(this.__handleType.description, 'Front', doorSide, doorRatio, this.frameWidth, this.frameSize, this.frameThickness, this.__openDirection.description, this.__doorHandleMaterialId);
 
-        var back_handle = _DoorHandleGenerator.DoorHandleGenerator.generate_handle(this.__handleType.description, 'Back', doorSide, doorRatio, this.frameWidth, this.frameSize, this.frameThickness, this.__openDirection.description);
+        var back_handle = _DoorHandleGenerator.DoorHandleGenerator.generate_handle(this.__handleType.description, 'Back', doorSide, doorRatio, this.frameWidth, this.frameSize, this.frameThickness, this.__openDirection.description, this.__doorHandleMaterialId);
 
         aDoorGeometry.merge(front_handle);
         aDoorGeometry.merge(back_handle);
@@ -42165,16 +42190,6 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
       this.__updateGeometry();
     }
   }, {
-    key: "doorColor",
-    get: function get() {
-      return "#".concat(this.__doorMaterial.color.getHexString());
-    },
-    set: function set(color) {
-      this.__doorMaterial.color = new _three.Color(color);
-      this.__doorMaterial.needsUpdate = true;
-      this.__material.needsUpdate = true;
-    }
-  }, {
     key: "doorHandleColor",
     get: function get() {
       return "#".concat(this.__doorHandleMaterial.color.getHexString());
@@ -42182,6 +42197,26 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
     set: function set(color) {
       this.__doorHandleMaterial.color = new _three.Color(color);
       this.__doorHandleMaterial.needsUpdate = true;
+      this.__material.needsUpdate = true;
+    }
+  }, {
+    key: "doorGlassColor",
+    get: function get() {
+      return "#".concat(this.__glassMaterial.color.getHexString());
+    },
+    set: function set(color) {
+      this.__glassMaterial.color = new _three.Color(color);
+      this.__glassMaterial.needsUpdate = true;
+      this.__material.needsUpdate = true;
+    }
+  }, {
+    key: "doorColor",
+    get: function get() {
+      return "#".concat(this.__doorMaterial.color.getHexString());
+    },
+    set: function set(color) {
+      this.__doorMaterial.color = new _three.Color(color);
+      this.__doorMaterial.needsUpdate = true;
       this.__material.needsUpdate = true;
     }
   }, {
@@ -42278,10 +42313,11 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
     key: "metadata",
     get: function get() {
       return {
-        type: 1,
+        type: this.__doorType,
         frameColor: this.__frameMaterial.color,
         doorColor: this.__doorMaterial.color,
         doorHandleColor: this.__doorHandleMaterial.color,
+        glassColor: this.__glassMaterial.color,
         frameWidth: this.frameWidth,
         frameHeight: this.frameHeight,
         frameSize: this.frameSize,
@@ -42302,6 +42338,9 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
           type: 'color'
         },
         doorHandleColor: {
+          type: 'color'
+        },
+        doorGlassColor: {
           type: 'color'
         },
         frameWidth: {
@@ -42349,7 +42388,562 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
 }(_three.EventDispatcher);
 
 exports.ParametricBaseDoor = ParametricBaseDoor;
-},{"es6-enum":"../node_modules/es6-enum/dist/enum.js","three":"../node_modules/three/build/three.module.js","../../core/events":"scripts/core/events.js","./doorhandles/DoorHandleGenerator":"scripts/parametrics/doors/doorhandles/DoorHandleGenerator.js"}],"scripts/parametrics/doors/DoorFactory.js":[function(require,module,exports) {
+},{"es6-enum":"../node_modules/es6-enum/dist/enum.js","three":"../node_modules/three/build/three.module.js","../../core/events":"scripts/core/events.js","./doorhandles/DoorHandleGenerator":"scripts/parametrics/doors/doorhandles/DoorHandleGenerator.js"}],"scripts/parametrics/doors/ParametricDoorType2.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ParametricDoorType2 = void 0;
+
+var _ParametricBaseDoor2 = require("./ParametricBaseDoor");
+
+var _three = require("three");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var ParametricDoorType2 = /*#__PURE__*/function (_ParametricBaseDoor) {
+  _inherits(ParametricDoorType2, _ParametricBaseDoor);
+
+  var _super = _createSuper(ParametricDoorType2);
+
+  function ParametricDoorType2(parameters) {
+    var _this;
+
+    _classCallCheck(this, ParametricDoorType2);
+
+    _this = _super.call(this, parameters);
+    _this.__doorType = 2;
+    return _this;
+  }
+  /**
+   * Based on the DoorType the below method will change
+   * This can be replaced by the appropriate door model class
+   * This method will change with logic based on the door model type
+   */
+
+
+  _createClass(ParametricDoorType2, [{
+    key: "__createForDoorModel",
+    value: function __createForDoorModel(frameWidth, openingDirection) {
+      var gap = 0.25; //0.002;
+
+      var sf = this.__frameSize;
+      var wf = frameWidth - sf * 2 - gap * 2;
+      var hf = this.__frameHeight / 2 - gap * 2;
+      var deep = this.__frameThickness * 0.5;
+      var side = 0,
+          minx = 0,
+          maxx = 0; // # Open to right or left
+
+      if (openingDirection == _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
+        side = 1;
+        minx = wf * -1;
+        maxx = 0.0;
+      } else {
+        side = -1;
+        minx = 0.0;
+        maxx = wf;
+      }
+
+      var miny = 0.0; //# locked
+
+      var maxy = deep;
+      var minz = -hf;
+      var maxz = hf - sf - gap;
+      var myvertex = [new _three.Vector3(minx, -1.57160684466362e-08 * 100, minz + 2.384185791015625e-06 * 100), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, minz), new _three.Vector3(minx, -1.5599653124809265e-08 * 100, maxz), new _three.Vector3(minx, -1.5599653124809265e-08 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(minx, -1.57160684466362e-08 * 100, minz + 0.2500007152557373 * 100), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, maxz), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.11609852313995361 * 100, -1.5599653124809265e-08 * 100, maxz), new _three.Vector3(maxx - 0.12357193231582642 * 100, -1.5599653124809265e-08 * 100, minz), new _three.Vector3(maxx - 0.11658430099487305 * 100, -1.5599653124809265e-08 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.12263774871826172 * 100, -1.5599653124809265e-08 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(minx, -1.57160684466362e-08 * 100, minz + 0.8700000941753387 * 100), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, minz + 0.8700000941753387 * 100), new _three.Vector3(maxx - 0.12076938152313232 * 100, -1.5599653124809265e-08 * 100, minz + 0.7500001192092896 * 100), new _three.Vector3(minx + 0.11735659837722778 * 100, -1.57160684466362e-08 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(minx + 0.12341010570526123 * 100, -1.5599653124809265e-08 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(minx + 0.11642247438430786 * 100, -1.57160684466362e-08 * 100, minz), new _three.Vector3(minx + 0.11967337131500244 * 100, -1.57160684466362e-08 * 100, minz + 0.8700000941753387 * 100), new _three.Vector3(minx, -1.57160684466362e-08 * 100, minz + 0.7500001192092896 * 100), new _three.Vector3(maxx - 0.12032097578048706 * 100, -1.5599653124809265e-08 * 100, minz + 0.8700000941753387 * 100), new _three.Vector3(minx + 0.12389582395553589 * 100, -1.5599653124809265e-08 * 100, maxz), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, minz + 0.7500001192092896 * 100), new _three.Vector3(minx + 0.11922496557235718 * 100, -1.57160684466362e-08 * 100, minz + 0.7500001192092896 * 100), new _three.Vector3(minx + 0.11922496557235718 * 100, -0.010000014677643776 * 100, minz + 0.7500001192092896 * 100), new _three.Vector3(minx + 0.12341010570526123 * 100, -0.010000014677643776 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.12032097578048706 * 100, -0.010000014677643776 * 100, minz + 0.8700000941753387 * 100), new _three.Vector3(minx + 0.11735659837722778 * 100, -0.010000014677643776 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(maxx - 0.11658430099487305 * 100, -0.010000014677643776 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.12263774871826172 * 100, -0.010000014677643776 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(minx + 0.11967337131500244 * 100, -0.010000014677643776 * 100, minz + 0.8700000941753387 * 100), new _three.Vector3(maxx - 0.12076938152313232 * 100, -0.010000014677643776 * 100, minz + 0.7500001192092896 * 100), new _three.Vector3(minx + 0.13388586044311523 * 100, -0.010000014677643776 * 100, minz + 0.7375001013278961 * 100), new _three.Vector3(minx + 0.1321108341217041 * 100, -0.010000014677643776 * 100, minz + 0.2625001072883606 * 100), new _three.Vector3(maxx - 0.1372986137866974 * 100, -0.010000014677643776 * 100, minz + 0.2625001072883606 * 100), new _three.Vector3(maxx - 0.13552364706993103 * 100, -0.010000014677643776 * 100, minz + 0.7375001013278961 * 100), new _three.Vector3(minx + 0.13802427053451538 * 100, -0.010000014677643776 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(maxx - 0.13493508100509644 * 100, -0.010000014677643776 * 100, minz + 0.8866067305207253 * 100), new _three.Vector3(maxx - 0.13138526678085327 * 100, -0.010000014677643776 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(minx + 0.13447439670562744 * 100, -0.010000014677643776 * 100, minz + 0.8866067305207253 * 100), new _three.Vector3(minx + 0.13388586044311523 * 100, -0.008776669390499592 * 100, minz + 0.7375001013278961 * 100), new _three.Vector3(minx + 0.1321108341217041 * 100, -0.008776669390499592 * 100, minz + 0.2625001072883606 * 100), new _three.Vector3(maxx - 0.1372986137866974 * 100, -0.008776669390499592 * 100, minz + 0.2625001072883606 * 100), new _three.Vector3(maxx - 0.13552364706993103 * 100, -0.008776669390499592 * 100, minz + 0.7375001013278961 * 100), new _three.Vector3(minx + 0.13802427053451538 * 100, -0.008776669390499592 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(maxx - 0.13493508100509644 * 100, -0.008776669390499592 * 100, minz + 0.8866067305207253 * 100), new _three.Vector3(maxx - 0.13138526678085327 * 100, -0.008776669390499592 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(minx + 0.13447439670562744 * 100, -0.008776669390499592 * 100, minz + 0.8866067305207253 * 100), new _three.Vector3(minx, maxy - 0.009999999776482582 * 100, minz + 2.384185791015625e-06 * 100), new _three.Vector3(maxx, maxy - 0.009999999776482582 * 100, minz), new _three.Vector3(minx, maxy - 0.009999999776482582 * 100, maxz), new _three.Vector3(minx, maxy - 0.009999999776482582 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(minx, maxy - 0.009999999776482582 * 100, minz + 0.2500007152557373 * 100), new _three.Vector3(maxx, maxy - 0.009999999776482582 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(maxx, maxy - 0.009999999776482582 * 100, maxz), new _three.Vector3(maxx, maxy - 0.009999999776482582 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.11609852313995361 * 100, maxy - 0.009999999776482582 * 100, maxz), new _three.Vector3(maxx - 0.12357193231582642 * 100, maxy - 0.009999999776482582 * 100, minz), new _three.Vector3(maxx - 0.11658430099487305 * 100, maxy - 0.009999999776482582 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.12263774871826172 * 100, maxy - 0.009999999776482582 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(minx, maxy - 0.009999999776482582 * 100, minz + 0.8700000941753387 * 100), new _three.Vector3(maxx, maxy - 0.009999999776482582 * 100, minz + 0.8700000941753387 * 100), new _three.Vector3(maxx - 0.12076938152313232 * 100, maxy - 0.009999999776482582 * 100, minz + 0.7500001192092896 * 100), new _three.Vector3(minx + 0.11735659837722778 * 100, maxy - 0.009999999776482582 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(minx + 0.12341010570526123 * 100, maxy - 0.009999999776482582 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(minx + 0.11642247438430786 * 100, maxy - 0.009999999776482582 * 100, minz), new _three.Vector3(minx + 0.11967337131500244 * 100, maxy - 0.009999999776482582 * 100, minz + 0.8700000941753387 * 100), new _three.Vector3(minx, maxy - 0.009999999776482582 * 100, minz + 0.7500001192092896 * 100), new _three.Vector3(maxx - 0.12032097578048706 * 100, maxy - 0.009999999776482582 * 100, minz + 0.8700000941753387 * 100), new _three.Vector3(minx + 0.12389582395553589 * 100, maxy - 0.009999999776482582 * 100, maxz), new _three.Vector3(maxx, maxy - 0.009999999776482582 * 100, minz + 0.7500001192092896 * 100), new _three.Vector3(minx + 0.11922496557235718 * 100, maxy - 0.009999999776482582 * 100, minz + 0.7500001192092896 * 100), new _three.Vector3(minx + 0.11922496557235718 * 100, maxy, minz + 0.7500001192092896 * 100), new _three.Vector3(minx + 0.12341010570526123 * 100, maxy, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.12032097578048706 * 100, maxy, minz + 0.8700000941753387 * 100), new _three.Vector3(minx + 0.11735659837722778 * 100, maxy, minz + 0.25000011920928955 * 100), new _three.Vector3(maxx - 0.11658430099487305 * 100, maxy, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.12263774871826172 * 100, maxy, minz + 0.25000011920928955 * 100), new _three.Vector3(minx + 0.11967337131500244 * 100, maxy, minz + 0.8700000941753387 * 100), new _three.Vector3(maxx - 0.12076938152313232 * 100, maxy, minz + 0.7500001192092896 * 100), new _three.Vector3(minx + 0.13388586044311523 * 100, maxy, minz + 0.7375001013278961 * 100), new _three.Vector3(minx + 0.1321108341217041 * 100, maxy, minz + 0.2625001072883606 * 100), new _three.Vector3(maxx - 0.1372986137866974 * 100, maxy, minz + 0.2625001072883606 * 100), new _three.Vector3(maxx - 0.13552364706993103 * 100, maxy, minz + 0.7375001013278961 * 100), new _three.Vector3(minx + 0.13802427053451538 * 100, maxy, maxz - 0.14747536182403564 * 100), new _three.Vector3(maxx - 0.13493508100509644 * 100, maxy, minz + 0.8866067305207253 * 100), new _three.Vector3(maxx - 0.13138526678085327 * 100, maxy, maxz - 0.14747536182403564 * 100), new _three.Vector3(minx + 0.13447439670562744 * 100, maxy, minz + 0.8866067305207253 * 100), new _three.Vector3(minx + 0.13388586044311523 * 100, maxy - 0.0012233443558216095 * 100, minz + 0.7375001013278961 * 100), new _three.Vector3(minx + 0.1321108341217041 * 100, maxy - 0.0012233443558216095 * 100, minz + 0.2625001072883606 * 100), new _three.Vector3(maxx - 0.1372986137866974 * 100, maxy - 0.0012233443558216095 * 100, minz + 0.2625001072883606 * 100), new _three.Vector3(maxx - 0.13552364706993103 * 100, maxy - 0.0012233443558216095 * 100, minz + 0.7375001013278961 * 100), new _three.Vector3(minx + 0.13802427053451538 * 100, maxy - 0.0012233443558216095 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(maxx - 0.13493508100509644 * 100, maxy - 0.0012233443558216095 * 100, minz + 0.8866067305207253 * 100), new _three.Vector3(maxx - 0.13138526678085327 * 100, maxy - 0.0012233443558216095 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(minx + 0.13447439670562744 * 100, maxy - 0.0012233443558216095 * 100, minz + 0.8866067305207253 * 100)];
+      var myfaces = [new _three.Face3(0, 4, 15), new _three.Face3(17, 0, 15), new _three.Face3(3, 2, 21), new _three.Face3(16, 3, 21), new _three.Face3(4, 19, 23), new _three.Face3(15, 4, 23), new _three.Face3(10, 8, 6), new _three.Face3(7, 10, 6), new _three.Face3(16, 21, 8), new _three.Face3(10, 16, 8), new _three.Face3(12, 3, 16), new _three.Face3(18, 12, 16), new _three.Face3(17, 15, 11), new _three.Face3(9, 17, 11), new _three.Face3(23, 18, 20), new _three.Face3(14, 23, 20), new _three.Face3(19, 12, 18), new _three.Face3(23, 19, 18), new _three.Face3(9, 11, 5), new _three.Face3(1, 9, 5), new _three.Face3(11, 14, 22), new _three.Face3(5, 11, 22), new _three.Face3(20, 10, 7), new _three.Face3(13, 20, 7), new _three.Face3(14, 20, 13), new _three.Face3(22, 14, 13), new _three.Face3(28, 10, 20), new _three.Face3(26, 28, 20), new _three.Face3(25, 16, 10), new _three.Face3(28, 25, 10), new _three.Face3(30, 18, 16), new _three.Face3(25, 30, 16), new _three.Face3(26, 20, 18), new _three.Face3(30, 26, 18), new _three.Face3(29, 11, 15), new _three.Face3(27, 29, 15), new _three.Face3(24, 23, 14), new _three.Face3(31, 24, 14), new _three.Face3(27, 15, 23), new _three.Face3(24, 27, 23), new _three.Face3(31, 14, 11), new _three.Face3(29, 31, 11), new _three.Face3(32, 24, 31), new _three.Face3(35, 32, 31), new _three.Face3(33, 27, 24), new _three.Face3(32, 33, 24), new _three.Face3(34, 29, 27), new _three.Face3(33, 34, 27), new _three.Face3(35, 31, 29), new _three.Face3(34, 35, 29), new _three.Face3(38, 28, 26), new _three.Face3(37, 38, 26), new _three.Face3(37, 26, 30), new _three.Face3(39, 37, 30), new _three.Face3(36, 25, 28), new _three.Face3(38, 36, 28), new _three.Face3(39, 30, 25), new _three.Face3(36, 39, 25), new _three.Face3(42, 34, 33), new _three.Face3(41, 42, 33), new _three.Face3(47, 39, 36), new _three.Face3(44, 47, 36), new _three.Face3(43, 35, 34), new _three.Face3(42, 43, 34), new _three.Face3(46, 38, 37), new _three.Face3(45, 46, 37), new _three.Face3(41, 33, 32), new _three.Face3(40, 41, 32), new _three.Face3(44, 36, 38), new _three.Face3(46, 44, 38), new _three.Face3(40, 32, 35), new _three.Face3(43, 40, 35), new _three.Face3(45, 37, 39), new _three.Face3(47, 45, 39), new _three.Face3(10, 20, 18), new _three.Face3(16, 10, 18), new _three.Face3(15, 23, 14), new _three.Face3(11, 15, 14), new _three.Face3(48, 52, 63), new _three.Face3(65, 48, 63), new _three.Face3(51, 50, 69), new _three.Face3(64, 51, 69), new _three.Face3(52, 67, 71), new _three.Face3(63, 52, 71), new _three.Face3(58, 56, 54), new _three.Face3(55, 58, 54), new _three.Face3(64, 69, 56), new _three.Face3(58, 64, 56), new _three.Face3(60, 51, 64), new _three.Face3(66, 60, 64), new _three.Face3(65, 63, 59), new _three.Face3(57, 65, 59), new _three.Face3(71, 66, 68), new _three.Face3(62, 71, 68), new _three.Face3(67, 60, 66), new _three.Face3(71, 67, 66), new _three.Face3(57, 59, 53), new _three.Face3(49, 57, 53), new _three.Face3(59, 62, 70), new _three.Face3(53, 59, 70), new _three.Face3(68, 58, 55), new _three.Face3(61, 68, 55), new _three.Face3(62, 68, 61), new _three.Face3(70, 62, 61), new _three.Face3(76, 58, 68), new _three.Face3(74, 76, 68), new _three.Face3(73, 64, 58), new _three.Face3(76, 73, 58), new _three.Face3(78, 66, 64), new _three.Face3(73, 78, 64), new _three.Face3(74, 68, 66), new _three.Face3(78, 74, 66), new _three.Face3(77, 59, 63), new _three.Face3(75, 77, 63), new _three.Face3(72, 71, 62), new _three.Face3(79, 72, 62), new _three.Face3(75, 63, 71), new _three.Face3(72, 75, 71), new _three.Face3(79, 62, 59), new _three.Face3(77, 79, 59), new _three.Face3(80, 72, 79), new _three.Face3(83, 80, 79), new _three.Face3(81, 75, 72), new _three.Face3(80, 81, 72), new _three.Face3(82, 77, 75), new _three.Face3(81, 82, 75), new _three.Face3(83, 79, 77), new _three.Face3(82, 83, 77), new _three.Face3(86, 76, 74), new _three.Face3(85, 86, 74), new _three.Face3(85, 74, 78), new _three.Face3(87, 85, 78), new _three.Face3(84, 73, 76), new _three.Face3(86, 84, 76), new _three.Face3(87, 78, 73), new _three.Face3(84, 87, 73), new _three.Face3(90, 82, 81), new _three.Face3(89, 90, 81), new _three.Face3(95, 87, 84), new _three.Face3(92, 95, 84), new _three.Face3(91, 83, 82), new _three.Face3(90, 91, 82), new _three.Face3(94, 86, 85), new _three.Face3(93, 94, 85), new _three.Face3(89, 81, 80), new _three.Face3(88, 89, 80), new _three.Face3(92, 84, 86), new _three.Face3(94, 92, 86), new _three.Face3(88, 80, 83), new _three.Face3(91, 88, 83), new _three.Face3(93, 85, 87), new _three.Face3(95, 93, 87), new _three.Face3(58, 68, 66), new _three.Face3(64, 58, 66), new _three.Face3(63, 71, 62), new _three.Face3(59, 63, 62), new _three.Face3(21, 2, 50), new _three.Face3(69, 21, 50), new _three.Face3(69, 56, 8), new _three.Face3(21, 69, 8), new _three.Face3(56, 54, 6), new _three.Face3(8, 56, 6), new _three.Face3(7, 6, 54), new _three.Face3(55, 7, 54), new _three.Face3(13, 7, 55), new _three.Face3(61, 13, 55), new _three.Face3(22, 13, 61), new _three.Face3(70, 22, 61), new _three.Face3(70, 53, 5), new _three.Face3(22, 70, 5), new _three.Face3(53, 49, 1), new _three.Face3(5, 53, 1), new _three.Face3(9, 1, 49), new _three.Face3(57, 9, 49), new _three.Face3(17, 9, 57), new _three.Face3(65, 17, 57), new _three.Face3(65, 48, 0), new _three.Face3(17, 65, 0), new _three.Face3(4, 0, 48), new _three.Face3(52, 4, 48), new _three.Face3(19, 4, 52), new _three.Face3(67, 19, 52), new _three.Face3(67, 60, 12), new _three.Face3(19, 67, 12), new _three.Face3(60, 51, 3), new _three.Face3(12, 60, 3), new _three.Face3(51, 50, 2), new _three.Face3(3, 51, 2)];
+      var normal_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187];
+      var glass_ids = [];
+      var i = 0;
+
+      for (i = 0; i < normal_ids.length; i++) {
+        myfaces[normal_ids[i]].materialIndex = this.__doorMaterialId;
+      }
+
+      for (i = 0; i < glass_ids.length; i++) {
+        myfaces[glass_ids[i]].materialIndex = this.__glassMaterialId;
+      }
+
+      return {
+        vertices: myvertex,
+        faces: myfaces,
+        widthFactor: wf,
+        depth: deep,
+        side: side
+      };
+    }
+  }]);
+
+  return ParametricDoorType2;
+}(_ParametricBaseDoor2.ParametricBaseDoor);
+
+exports.ParametricDoorType2 = ParametricDoorType2;
+},{"./ParametricBaseDoor":"scripts/parametrics/doors/ParametricBaseDoor.js","three":"../node_modules/three/build/three.module.js"}],"scripts/parametrics/doors/ParametricDoorType3.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ParametricDoorType3 = void 0;
+
+var _ParametricBaseDoor2 = require("./ParametricBaseDoor");
+
+var _three = require("three");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var ParametricDoorType3 = /*#__PURE__*/function (_ParametricBaseDoor) {
+  _inherits(ParametricDoorType3, _ParametricBaseDoor);
+
+  var _super = _createSuper(ParametricDoorType3);
+
+  function ParametricDoorType3(parameters) {
+    var _this;
+
+    _classCallCheck(this, ParametricDoorType3);
+
+    _this = _super.call(this, parameters);
+    _this.__doorType = 3;
+    return _this;
+  }
+  /**
+   * Based on the DoorType the below method will change
+   * This can be replaced by the appropriate door model class
+   * This method will change with logic based on the door model type
+   */
+
+
+  _createClass(ParametricDoorType3, [{
+    key: "__createForDoorModel",
+    value: function __createForDoorModel(frameWidth, openingDirection) {
+      var gap = 0.25; //0.002;
+
+      var sf = this.__frameSize;
+      var wf = frameWidth - sf * 2 - gap * 2;
+      var hf = this.__frameHeight / 2 - gap * 2;
+      var deep = this.__frameThickness * 0.5;
+      var side = 0,
+          minx = 0,
+          maxx = 0; // # Open to right or left
+
+      if (openingDirection == _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
+        side = 1;
+        minx = wf * -1;
+        maxx = 0.0;
+      } else {
+        side = -1;
+        minx = 0.0;
+        maxx = wf;
+      }
+
+      var miny = 0.0; //# locked
+
+      var maxy = deep;
+      var minz = -hf;
+      var maxz = hf - sf - gap;
+      var myvertex = [new _three.Vector3(minx, -1.5599653124809265e-08 * 100, maxz), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, maxz), new _three.Vector3(minx, maxy, maxz), new _three.Vector3(maxx, maxy, maxz), new _three.Vector3(maxx - 0.10429960489273071 * 100, -1.5832483768463135e-08 * 100, maxz), new _three.Vector3(minx + 0.10429966449737549 * 100, -1.5832483768463135e-08 * 100, maxz), new _three.Vector3(minx + 0.10429966449737549 * 100, maxy, maxz), new _three.Vector3(minx, -1.5628756955266e-08 * 100, maxz - 0.5012519359588623 * 100), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, maxz - 0.5012525320053101 * 100), new _three.Vector3(minx, maxy, maxz - 0.5012519359588623 * 100), new _three.Vector3(maxx, maxy, maxz - 0.5012525320053101 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, -1.5832483768463135e-08 * 100, maxz - 0.501252293586731 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, -1.5832483768463135e-08 * 100, maxz - 0.5012521147727966 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, maxy, maxz - 0.5012521147727966 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, maxy, maxz - 0.501252293586731 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, -1.5832483768463135e-08 * 100, maxz), new _three.Vector3(maxx - 0.11909729242324829 * 100, -1.5832483768463135e-08 * 100, maxz), new _three.Vector3(minx + 0.11909735202789307 * 100, maxy, maxz), new _three.Vector3(minx + 0.11909735202789307 * 100, -1.5832483768463135e-08 * 100, maxz - 0.5012521743774414 * 100), new _three.Vector3(maxx - 0.11909729242324829 * 100, -1.5832483768463135e-08 * 100, maxz - 0.5012522339820862 * 100), new _three.Vector3(minx, -1.5629622041046787e-08 * 100, maxz - 0.516154021024704 * 100), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, maxz - 0.5161546468734741 * 100), new _three.Vector3(minx, maxy, maxz - 0.516154021024704 * 100), new _three.Vector3(maxx, maxy, maxz - 0.5161546468734741 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, -1.5832483768463135e-08 * 100, maxz - 0.516154408454895 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, -1.5832483768463135e-08 * 100, maxz - 0.5161541998386383 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, maxy, maxz - 0.516154408454895 * 100), new _three.Vector3(maxx - 0.11909729242324829 * 100, -1.5832483768463135e-08 * 100, maxz - 0.5161543190479279 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, -1.5832483768463135e-08 * 100, maxz - 0.5161542594432831 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, maxy, maxz - 0.5161542594432831 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, miny + 0.009999999776482582 * 100, maxz), new _three.Vector3(minx + 0.10429966449737549 * 100, miny + 0.009999999776482582 * 100, maxz), new _three.Vector3(maxx - 0.10429960489273071 * 100, miny + 0.009999999776482582 * 100, maxz - 0.501252293586731 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, miny + 0.009999999776482582 * 100, maxz - 0.5012521147727966 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, miny + 0.009999999776482582 * 100, maxz), new _three.Vector3(maxx - 0.11909729242324829 * 100, miny + 0.009999999776482582 * 100, maxz), new _three.Vector3(minx + 0.11909735202789307 * 100, miny + 0.009999999776482582 * 100, maxz - 0.5012521743774414 * 100), new _three.Vector3(maxx - 0.11909729242324829 * 100, miny + 0.009999999776482582 * 100, maxz - 0.5012522339820862 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, miny + 0.009999999776482582 * 100, maxz - 0.516154408454895 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, miny + 0.009999999776482582 * 100, maxz - 0.5161541998386383 * 100), new _three.Vector3(maxx - 0.11909729242324829 * 100, miny + 0.009999999776482582 * 100, maxz - 0.5161543190479279 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, miny + 0.009999999776482582 * 100, maxz - 0.5161542594432831 * 100), new _three.Vector3(maxx - 0.11909729242324829 * 100, -1.5832483768463135e-08 * 100, maxz - 0.992994874715805 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, -1.5832483768463135e-08 * 100, maxz - 0.9929947257041931 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, maxy, maxz - 0.9929947257041931 * 100), new _three.Vector3(maxx - 0.11909738183021545 * 100, maxy, maxz - 0.992994874715805 * 100), new _three.Vector3(minx, -1.565730833874568e-08 * 100, maxz - 0.9929942488670349 * 100), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, maxz - 0.9929954260587692 * 100), new _three.Vector3(minx, maxy, maxz - 0.9929942488670349 * 100), new _three.Vector3(maxx, maxy, maxz - 0.9929954260587692 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, -1.5832483768463135e-08 * 100, maxz - 0.9929950088262558 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, -1.5832483768463135e-08 * 100, maxz - 0.9929945915937424 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, maxy, maxz - 0.9929950088262558 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, miny + 0.009999999776482582 * 100, maxz - 0.9929950088262558 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, miny + 0.009999999776482582 * 100, maxz - 0.9929945915937424 * 100), new _three.Vector3(maxx - 0.11909729242324829 * 100, miny + 0.009999999776482582 * 100, maxz - 0.992994874715805 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, miny + 0.009999999776482582 * 100, maxz - 0.9929947257041931 * 100), new _three.Vector3(maxx - 0.11909729242324829 * 100, maxy - 0.0004077646881341934 * 100, maxz - 0.992994874715805 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, maxy - 0.0004077646881341934 * 100, maxz - 0.9929950088262558 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, maxy, maxz), new _three.Vector3(maxx - 0.11909729242324829 * 100, maxy, maxz), new _three.Vector3(maxx - 0.11909738183021545 * 100, maxy, maxz - 0.5012522339820862 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, maxy, maxz - 0.5012521743774414 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, maxy, maxz - 0.5161541998386383 * 100), new _three.Vector3(maxx - 0.11909738183021545 * 100, maxy, maxz - 0.5161543190479279 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, maxy, maxz - 0.9929945915937424 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, maxy - 0.008999999612569809 * 100, maxz), new _three.Vector3(minx + 0.10429966449737549 * 100, maxy - 0.008999999612569809 * 100, maxz), new _three.Vector3(minx + 0.10429966449737549 * 100, maxy - 0.008999999612569809 * 100, maxz - 0.5012521147727966 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, maxy - 0.008999999612569809 * 100, maxz - 0.501252293586731 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, maxy - 0.008999999612569809 * 100, maxz), new _three.Vector3(maxx - 0.11909729242324829 * 100, maxy - 0.008999999612569809 * 100, maxz), new _three.Vector3(maxx - 0.11909738183021545 * 100, maxy - 0.008999999612569809 * 100, maxz - 0.5012522339820862 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, maxy - 0.008999999612569809 * 100, maxz - 0.5012521743774414 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, maxy - 0.008999999612569809 * 100, maxz - 0.5161541998386383 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, maxy - 0.008999999612569809 * 100, maxz - 0.516154408454895 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, maxy - 0.008999999612569809 * 100, maxz - 0.5161542594432831 * 100), new _three.Vector3(maxx - 0.11909738183021545 * 100, maxy - 0.008999999612569809 * 100, maxz - 0.5161543190479279 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, maxy - 0.008999999612569809 * 100, maxz - 0.9929947257041931 * 100), new _three.Vector3(maxx - 0.11909738183021545 * 100, maxy - 0.008999999612569809 * 100, maxz - 0.992994874715805 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, maxy - 0.008999999612569809 * 100, maxz - 0.9929945915937424 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, maxy - 0.008999999612569809 * 100, maxz - 0.9929950088262558 * 100), new _three.Vector3(minx, -1.5599653124809265e-08 * 100, minz), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, minz), new _three.Vector3(minx, maxy, minz), new _three.Vector3(maxx, maxy, minz), new _three.Vector3(maxx - 0.10429960489273071 * 100, -1.5832483768463135e-08 * 100, minz), new _three.Vector3(minx + 0.10429966449737549 * 100, -1.5832483768463135e-08 * 100, minz), new _three.Vector3(minx + 0.10429966449737549 * 100, maxy, minz), new _three.Vector3(minx, -1.5628756955266e-08 * 100, minz + 0.5012519359588623 * 100), new _three.Vector3(minx, -1.5657860785722733e-08 * 100, minz + 1.0025038719177246 * 100), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, minz + 0.5012525320053101 * 100), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, minz + 1.0025050640106201 * 100), new _three.Vector3(minx, maxy, minz + 0.5012519359588623 * 100), new _three.Vector3(minx, maxy, minz + 1.0025038719177246 * 100), new _three.Vector3(maxx, maxy, minz + 0.5012525320053101 * 100), new _three.Vector3(maxx, maxy, minz + 1.0025050640106201 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, -1.5832483768463135e-08 * 100, minz + 0.501252293586731 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, -1.5832483768463135e-08 * 100, minz + 1.0025046467781067 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, -1.5832483768463135e-08 * 100, minz + 0.5012521147727966 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, -1.5832483768463135e-08 * 100, minz + 1.0025042295455933 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, maxy, minz + 0.5012521147727966 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, maxy, minz + 1.0025042295455933 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, maxy, minz + 0.501252293586731 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, maxy, minz + 1.0025046467781067 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, -1.5832483768463135e-08 * 100, minz), new _three.Vector3(maxx - 0.11909729242324829 * 100, -1.5832483768463135e-08 * 100, minz), new _three.Vector3(minx + 0.11909735202789307 * 100, maxy, minz), new _three.Vector3(minx + 0.11909735202789307 * 100, -1.5832483768463135e-08 * 100, minz + 0.5012521743774414 * 100), new _three.Vector3(maxx - 0.11909729242324829 * 100, -1.5832483768463135e-08 * 100, minz + 0.5012522339820862 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, maxy, minz + 1.0025043686230788 * 100), new _three.Vector3(minx, -1.5629622041046787e-08 * 100, minz + 0.516154021024704 * 100), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, minz + 0.5161546468734741 * 100), new _three.Vector3(minx, maxy, minz + 0.516154021024704 * 100), new _three.Vector3(maxx, maxy, minz + 0.5161546468734741 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, -1.5832483768463135e-08 * 100, minz + 0.516154408454895 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, -1.5832483768463135e-08 * 100, minz + 0.5161541998386383 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, maxy, minz + 0.516154408454895 * 100), new _three.Vector3(maxx - 0.11909729242324829 * 100, -1.5832483768463135e-08 * 100, minz + 0.5161543190479279 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, -1.5832483768463135e-08 * 100, minz + 0.5161542594432831 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, maxy, minz + 0.5161542594432831 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, miny + 0.009999999776482582 * 100, minz), new _three.Vector3(minx + 0.10429966449737549 * 100, miny + 0.009999999776482582 * 100, minz), new _three.Vector3(maxx - 0.10429960489273071 * 100, miny + 0.009999999776482582 * 100, minz + 0.501252293586731 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, miny + 0.009999999776482582 * 100, minz + 1.0025046467781067 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, miny + 0.009999999776482582 * 100, minz + 0.5012521147727966 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, miny + 0.009999999776482582 * 100, minz + 1.0025042295455933 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, miny + 0.009999999776482582 * 100, minz), new _three.Vector3(maxx - 0.11909729242324829 * 100, miny + 0.009999999776482582 * 100, minz), new _three.Vector3(minx + 0.11909735202789307 * 100, miny + 0.009999999776482582 * 100, minz + 0.5012521743774414 * 100), new _three.Vector3(maxx - 0.11909729242324829 * 100, miny + 0.009999999776482582 * 100, minz + 0.5012522339820862 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, miny + 0.009999999776482582 * 100, minz + 0.516154408454895 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, miny + 0.009999999776482582 * 100, minz + 0.5161541998386383 * 100), new _three.Vector3(maxx - 0.11909729242324829 * 100, miny + 0.009999999776482582 * 100, minz + 0.5161543190479279 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, miny + 0.009999999776482582 * 100, minz + 0.5161542594432831 * 100), new _three.Vector3(maxx - 0.11909729242324829 * 100, -1.5832483768463135e-08 * 100, minz + 0.992994874715805 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, -1.5832483768463135e-08 * 100, minz + 0.9929947257041931 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, maxy, minz + 0.9929947257041931 * 100), new _three.Vector3(maxx - 0.11909738183021545 * 100, maxy, minz + 0.992994874715805 * 100), new _three.Vector3(minx, -1.565730833874568e-08 * 100, minz + 0.9929942488670349 * 100), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, minz + 0.9929954260587692 * 100), new _three.Vector3(minx, maxy, minz + 0.9929942488670349 * 100), new _three.Vector3(maxx, maxy, minz + 0.9929954260587692 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, -1.5832483768463135e-08 * 100, minz + 0.9929950088262558 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, -1.5832483768463135e-08 * 100, minz + 0.9929945915937424 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, maxy, minz + 0.9929950088262558 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, miny + 0.009999999776482582 * 100, minz + 0.9929950088262558 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, miny + 0.009999999776482582 * 100, minz + 0.9929945915937424 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, miny + 0.009999999776482582 * 100, minz + 1.0025043686231356 * 100), new _three.Vector3(maxx - 0.11909729242324829 * 100, miny + 0.009999999776482582 * 100, minz + 1.0025045077006212 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, maxy - 0.0004077646881341934 * 100, minz + 1.0025046467781067 * 100), new _three.Vector3(maxx - 0.11909729242324829 * 100, maxy - 0.0004077646881341934 * 100, minz + 1.0025045077006212 * 100), new _three.Vector3(maxx - 0.11909729242324829 * 100, miny + 0.009999999776482582 * 100, minz + 0.992994874715805 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, miny + 0.009999999776482582 * 100, minz + 0.9929947257041931 * 100), new _three.Vector3(maxx - 0.11909729242324829 * 100, maxy - 0.0004077646881341934 * 100, minz + 0.992994874715805 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, maxy - 0.0004077646881341934 * 100, minz + 0.9929950088262558 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, maxy, minz), new _three.Vector3(maxx - 0.11909729242324829 * 100, maxy, minz), new _three.Vector3(maxx - 0.11909738183021545 * 100, maxy, minz + 0.5012522339820862 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, maxy, minz + 0.5012521743774414 * 100), new _three.Vector3(maxx - 0.11909738183021545 * 100, maxy, minz + 1.0025045077005643 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, maxy, minz + 0.5161541998386383 * 100), new _three.Vector3(maxx - 0.11909738183021545 * 100, maxy, minz + 0.5161543190479279 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, maxy, minz + 0.9929945915937424 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, maxy - 0.008999999612569809 * 100, minz), new _three.Vector3(minx + 0.10429966449737549 * 100, maxy - 0.008999999612569809 * 100, minz), new _three.Vector3(minx + 0.10429966449737549 * 100, maxy - 0.008999999612569809 * 100, minz + 0.5012521147727966 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, maxy - 0.008999999612569809 * 100, minz + 1.0025042295455933 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, maxy - 0.008999999612569809 * 100, minz + 0.501252293586731 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, maxy - 0.008999999612569809 * 100, minz + 1.0025046467781067 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, maxy - 0.008999999612569809 * 100, minz), new _three.Vector3(maxx - 0.11909729242324829 * 100, maxy - 0.008999999612569809 * 100, minz), new _three.Vector3(maxx - 0.11909738183021545 * 100, maxy - 0.008999999612569809 * 100, minz + 0.5012522339820862 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, maxy - 0.008999999612569809 * 100, minz + 0.5012521743774414 * 100), new _three.Vector3(maxx - 0.11909738183021545 * 100, maxy - 0.008999999612569809 * 100, minz + 1.0025045077005643 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, maxy - 0.008999999612569809 * 100, minz + 1.0025043686230788 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, maxy - 0.008999999612569809 * 100, minz + 0.5161541998386383 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, maxy - 0.008999999612569809 * 100, minz + 0.516154408454895 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, maxy - 0.008999999612569809 * 100, minz + 0.5161542594432831 * 100), new _three.Vector3(maxx - 0.11909738183021545 * 100, maxy - 0.008999999612569809 * 100, minz + 0.5161543190479279 * 100), new _three.Vector3(minx + 0.11909735202789307 * 100, maxy - 0.008999999612569809 * 100, minz + 0.9929947257041931 * 100), new _three.Vector3(maxx - 0.11909738183021545 * 100, maxy - 0.008999999612569809 * 100, minz + 0.992994874715805 * 100), new _three.Vector3(minx + 0.10429966449737549 * 100, maxy - 0.008999999612569809 * 100, minz + 0.9929945915937424 * 100), new _three.Vector3(maxx - 0.10429960489273071 * 100, maxy - 0.008999999612569809 * 100, minz + 0.9929950088262558 * 100)];
+      var myfaces = [new _three.Face3(5, 0, 2), new _three.Face3(6, 5, 2), new _three.Face3(8, 1, 3), new _three.Face3(10, 8, 3), new _three.Face3(92, 47, 49), new _three.Face3(96, 92, 49), new _three.Face3(9, 2, 0), new _three.Face3(7, 9, 0), new _three.Face3(94, 48, 46), new _three.Face3(90, 94, 46), new _three.Face3(7, 0, 5), new _three.Face3(12, 7, 5), new _three.Face3(90, 46, 51), new _three.Face3(100, 90, 51), new _three.Face3(96, 49, 52), new _three.Face3(104, 96, 52), new _three.Face3(11, 4, 1), new _three.Face3(8, 11, 1), new _three.Face3(98, 50, 47), new _three.Face3(92, 98, 47), new _three.Face3(39, 25, 12), new _three.Face3(33, 39, 12), new _three.Face3(13, 6, 2), new _three.Face3(9, 13, 2), new _three.Face3(33, 12, 5), new _three.Face3(31, 33, 5), new _three.Face3(18, 15, 16), new _three.Face3(19, 18, 16), new _three.Face3(34, 15, 18), new _three.Face3(36, 34, 18), new _three.Face3(21, 8, 10), new _three.Face3(23, 21, 10), new _three.Face3(22, 9, 7), new _three.Face3(20, 22, 7), new _three.Face3(20, 7, 12), new _three.Face3(25, 20, 12), new _three.Face3(23, 10, 14), new _three.Face3(26, 23, 14), new _three.Face3(24, 11, 8), new _three.Face3(21, 24, 8), new _three.Face3(126, 100, 51), new _three.Face3(54, 126, 51), new _three.Face3(32, 11, 24), new _three.Face3(38, 32, 24), new _three.Face3(37, 19, 16), new _three.Face3(35, 37, 16), new _three.Face3(33, 31, 34), new _three.Face3(36, 33, 34), new _three.Face3(37, 35, 30), new _three.Face3(32, 37, 30), new _three.Face3(39, 33, 36), new _three.Face3(41, 39, 36), new _three.Face3(40, 37, 32), new _three.Face3(38, 40, 32), new _three.Face3(41, 36, 37), new _three.Face3(40, 41, 37), new _three.Face3(36, 18, 19), new _three.Face3(37, 36, 19), new _three.Face3(40, 27, 28), new _three.Face3(41, 40, 28), new _three.Face3(48, 22, 20), new _three.Face3(46, 48, 20), new _three.Face3(30, 4, 11), new _three.Face3(32, 30, 11), new _three.Face3(47, 21, 23), new _three.Face3(49, 47, 23), new _three.Face3(38, 24, 50), new _three.Face3(53, 38, 50), new _three.Face3(46, 20, 25), new _three.Face3(51, 46, 25), new _three.Face3(49, 23, 26), new _three.Face3(52, 49, 26), new _three.Face3(50, 24, 21), new _three.Face3(47, 50, 21), new _three.Face3(43, 28, 27), new _three.Face3(42, 43, 27), new _three.Face3(54, 51, 25), new _three.Face3(39, 54, 25), new _three.Face3(53, 50, 98), new _three.Face3(124, 53, 98), new _three.Face3(148, 56, 55), new _three.Face3(149, 148, 55), new _three.Face3(56, 148, 126), new _three.Face3(54, 56, 126), new _three.Face3(56, 43, 42), new _three.Face3(55, 56, 42), new _three.Face3(55, 53, 124), new _three.Face3(149, 55, 124), new _three.Face3(71, 60, 61), new _three.Face3(72, 71, 61), new _three.Face3(66, 30, 35), new _three.Face3(71, 66, 35), new _three.Face3(70, 34, 31), new _three.Face3(67, 70, 31), new _three.Face3(69, 66, 71), new _three.Face3(72, 69, 71), new _three.Face3(169, 81, 79), new _three.Face3(174, 169, 79), new _three.Face3(73, 70, 67), new _three.Face3(68, 73, 67), new _three.Face3(175, 78, 80), new _three.Face3(167, 175, 80), new _three.Face3(174, 79, 78), new _three.Face3(175, 174, 78), new _three.Face3(75, 69, 72), new _three.Face3(77, 75, 72), new _three.Face3(76, 73, 68), new _three.Face3(74, 76, 68), new _three.Face3(77, 72, 73), new _three.Face3(76, 77, 73), new _three.Face3(81, 75, 77), new _three.Face3(79, 81, 77), new _three.Face3(78, 76, 74), new _three.Face3(80, 78, 74), new _three.Face3(72, 61, 62), new _three.Face3(73, 72, 62), new _three.Face3(74, 63, 65), new _three.Face3(80, 74, 65), new _three.Face3(1, 4, 59), new _three.Face3(3, 1, 59), new _three.Face3(10, 3, 59), new _three.Face3(14, 10, 59), new _three.Face3(102, 65, 48), new _three.Face3(94, 102, 48), new _three.Face3(16, 15, 17), new _three.Face3(60, 16, 17), new _three.Face3(61, 60, 17), new _three.Face3(62, 61, 17), new _three.Face3(63, 13, 9), new _three.Face3(22, 63, 9), new _three.Face3(41, 28, 43), new _three.Face3(56, 41, 43), new _three.Face3(55, 42, 27), new _three.Face3(40, 55, 27), new _three.Face3(65, 63, 22), new _three.Face3(48, 65, 22), new _three.Face3(45, 64, 29), new _three.Face3(44, 45, 29), new _three.Face3(54, 39, 41), new _three.Face3(56, 54, 41), new _three.Face3(55, 40, 38), new _three.Face3(53, 55, 38), new _three.Face3(78, 44, 29), new _three.Face3(76, 78, 29), new _three.Face3(68, 13, 63), new _three.Face3(74, 68, 63), new _three.Face3(73, 62, 17), new _three.Face3(70, 73, 17), new _three.Face3(169, 104, 52), new _three.Face3(81, 169, 52), new _three.Face3(76, 29, 64), new _three.Face3(77, 76, 64), new _three.Face3(67, 6, 13), new _three.Face3(68, 67, 13), new _three.Face3(69, 14, 59), new _three.Face3(66, 69, 59), new _three.Face3(79, 45, 44), new _three.Face3(78, 79, 44), new _three.Face3(77, 64, 45), new _three.Face3(79, 77, 45), new _three.Face3(75, 26, 14), new _three.Face3(69, 75, 14), new _three.Face3(81, 52, 26), new _three.Face3(75, 81, 26), new _three.Face3(80, 65, 102), new _three.Face3(167, 80, 102), new _three.Face3(87, 88, 84), new _three.Face3(82, 87, 84), new _three.Face3(91, 95, 85), new _three.Face3(83, 91, 85), new _three.Face3(92, 96, 142), new _three.Face3(140, 92, 142), new _three.Face3(93, 89, 82), new _three.Face3(84, 93, 82), new _three.Face3(94, 90, 139), new _three.Face3(141, 94, 139), new _three.Face3(89, 99, 87), new _three.Face3(82, 89, 87), new _three.Face3(90, 100, 144), new _three.Face3(139, 90, 144), new _three.Face3(96, 104, 145), new _three.Face3(142, 96, 145), new _three.Face3(97, 91, 83), new _three.Face3(86, 97, 83), new _three.Face3(98, 92, 140), new _three.Face3(143, 98, 140), new _three.Face3(132, 125, 99), new _three.Face3(116, 132, 99), new _three.Face3(101, 93, 84), new _three.Face3(88, 101, 84), new _three.Face3(125, 122, 87), new _three.Face3(99, 125, 87), new _three.Face3(108, 109, 106), new _three.Face3(105, 108, 106), new _three.Face3(127, 129, 108), new _three.Face3(105, 127, 108), new _three.Face3(112, 114, 95), new _three.Face3(91, 112, 95), new _three.Face3(113, 111, 89), new _three.Face3(93, 113, 89), new _three.Face3(111, 116, 99), new _three.Face3(89, 111, 99), new _three.Face3(114, 117, 103), new _three.Face3(95, 114, 103), new _three.Face3(115, 112, 91), new _three.Face3(97, 115, 91), new _three.Face3(126, 147, 144), new _three.Face3(100, 126, 144), new _three.Face3(123, 131, 115), new _three.Face3(97, 123, 115), new _three.Face3(130, 128, 106), new _three.Face3(109, 130, 106), new _three.Face3(125, 129, 127), new _three.Face3(122, 125, 127), new _three.Face3(130, 123, 121), new _three.Face3(128, 130, 121), new _three.Face3(132, 134, 129), new _three.Face3(125, 132, 129), new _three.Face3(133, 131, 123), new _three.Face3(130, 133, 123), new _three.Face3(134, 133, 130), new _three.Face3(129, 134, 130), new _three.Face3(129, 130, 109), new _three.Face3(108, 129, 109), new _three.Face3(133, 134, 119), new _three.Face3(118, 133, 119), new _three.Face3(141, 139, 111), new _three.Face3(113, 141, 111), new _three.Face3(121, 123, 97), new _three.Face3(86, 121, 97), new _three.Face3(140, 142, 114), new _three.Face3(112, 140, 114), new _three.Face3(131, 146, 143), new _three.Face3(115, 131, 143), new _three.Face3(139, 144, 116), new _three.Face3(111, 139, 116), new _three.Face3(142, 145, 117), new _three.Face3(114, 142, 117), new _three.Face3(143, 140, 112), new _three.Face3(115, 143, 112), new _three.Face3(136, 135, 118), new _three.Face3(119, 136, 118), new _three.Face3(147, 132, 116), new _three.Face3(144, 147, 116), new _three.Face3(146, 124, 98), new _three.Face3(143, 146, 98), new _three.Face3(148, 149, 152), new _three.Face3(153, 148, 152), new _three.Face3(153, 147, 126), new _three.Face3(148, 153, 126), new _three.Face3(153, 152, 135), new _three.Face3(136, 153, 135), new _three.Face3(152, 149, 124), new _three.Face3(146, 152, 124), new _three.Face3(171, 172, 158), new _three.Face3(157, 171, 158), new _three.Face3(164, 171, 128), new _three.Face3(121, 164, 128), new _three.Face3(170, 165, 122), new _three.Face3(127, 170, 122), new _three.Face3(168, 172, 171), new _three.Face3(164, 168, 171), new _three.Face3(169, 174, 181), new _three.Face3(183, 169, 181), new _three.Face3(173, 166, 165), new _three.Face3(170, 173, 165), new _three.Face3(175, 167, 182), new _three.Face3(180, 175, 182), new _three.Face3(174, 175, 180), new _three.Face3(181, 174, 180), new _three.Face3(177, 179, 172), new _three.Face3(168, 177, 172), new _three.Face3(178, 176, 166), new _three.Face3(173, 178, 166), new _three.Face3(179, 178, 173), new _three.Face3(172, 179, 173), new _three.Face3(183, 181, 179), new _three.Face3(177, 183, 179), new _three.Face3(180, 182, 176), new _three.Face3(178, 180, 176), new _three.Face3(172, 173, 159), new _three.Face3(158, 172, 159), new _three.Face3(176, 182, 163), new _three.Face3(161, 176, 163), new _three.Face3(83, 85, 156), new _three.Face3(86, 83, 156), new _three.Face3(95, 103, 156), new _three.Face3(85, 95, 156), new _three.Face3(102, 94, 141), new _three.Face3(163, 102, 141), new _three.Face3(106, 157, 107), new _three.Face3(105, 106, 107), new _three.Face3(158, 159, 107), new _three.Face3(157, 158, 107), new _three.Face3(161, 113, 93), new _three.Face3(101, 161, 93), new _three.Face3(134, 153, 136), new _three.Face3(119, 134, 136), new _three.Face3(152, 133, 118), new _three.Face3(135, 152, 118), new _three.Face3(163, 141, 113), new _three.Face3(161, 163, 113), new _three.Face3(138, 137, 120), new _three.Face3(162, 138, 120), new _three.Face3(147, 153, 134), new _three.Face3(132, 147, 134), new _three.Face3(152, 146, 131), new _three.Face3(133, 152, 131), new _three.Face3(180, 178, 120), new _three.Face3(137, 180, 120), new _three.Face3(166, 176, 161), new _three.Face3(101, 166, 161), new _three.Face3(173, 170, 107), new _three.Face3(159, 173, 107), new _three.Face3(169, 183, 145), new _three.Face3(104, 169, 145), new _three.Face3(178, 179, 162), new _three.Face3(120, 178, 162), new _three.Face3(165, 166, 101), new _three.Face3(88, 165, 101), new _three.Face3(175, 174, 160), new _three.Face3(110, 175, 160), new _three.Face3(168, 164, 156), new _three.Face3(103, 168, 156), new _three.Face3(181, 180, 137), new _three.Face3(138, 181, 137), new _three.Face3(179, 181, 138), new _three.Face3(162, 179, 138), new _three.Face3(177, 168, 103), new _three.Face3(117, 177, 103), new _three.Face3(183, 177, 117), new _three.Face3(145, 183, 117), new _three.Face3(182, 167, 102), new _three.Face3(163, 182, 102)];
+      var normal_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333];
+      var glass_ids = [];
+      var i = 0;
+
+      for (i = 0; i < normal_ids.length; i++) {
+        myfaces[normal_ids[i]].materialIndex = this.__doorMaterialId;
+      }
+
+      for (i = 0; i < glass_ids.length; i++) {
+        myfaces[glass_ids[i]].materialIndex = this.__glassMaterialId;
+      }
+
+      return {
+        vertices: myvertex,
+        faces: myfaces,
+        widthFactor: wf,
+        depth: deep,
+        side: side
+      };
+    }
+  }]);
+
+  return ParametricDoorType3;
+}(_ParametricBaseDoor2.ParametricBaseDoor);
+
+exports.ParametricDoorType3 = ParametricDoorType3;
+},{"./ParametricBaseDoor":"scripts/parametrics/doors/ParametricBaseDoor.js","three":"../node_modules/three/build/three.module.js"}],"scripts/parametrics/doors/ParametricDoorType4.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ParametricDoorType4 = void 0;
+
+var _ParametricBaseDoor2 = require("./ParametricBaseDoor");
+
+var _three = require("three");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var ParametricDoorType4 = /*#__PURE__*/function (_ParametricBaseDoor) {
+  _inherits(ParametricDoorType4, _ParametricBaseDoor);
+
+  var _super = _createSuper(ParametricDoorType4);
+
+  function ParametricDoorType4(parameters) {
+    var _this;
+
+    _classCallCheck(this, ParametricDoorType4);
+
+    _this = _super.call(this, parameters);
+    _this.__doorType = 4;
+    return _this;
+  }
+  /**
+   * Based on the DoorType the below method will change
+   * This can be replaced by the appropriate door model class
+   * This method will change with logic based on the door model type
+   */
+
+
+  _createClass(ParametricDoorType4, [{
+    key: "__createForDoorModel",
+    value: function __createForDoorModel(frameWidth, openingDirection) {
+      var gap = 0.25; //0.002;
+
+      var sf = this.__frameSize;
+      var wf = frameWidth - sf * 2 - gap * 2;
+      var hf = this.__frameHeight / 2 - gap * 2;
+      var deep = this.__frameThickness * 0.5;
+      var side = 0,
+          minx = 0,
+          maxx = 0; // # Open to right or left
+
+      if (openingDirection == _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
+        side = 1;
+        minx = wf * -1;
+        maxx = 0.0;
+      } else {
+        side = -1;
+        minx = 0.0;
+        maxx = wf;
+      }
+
+      var miny = 0.0; //# locked
+
+      var maxy = deep;
+      var minz = -hf;
+      var maxz = hf - sf - gap;
+      var myvertex = [new _three.Vector3(minx, -1.57160684466362e-08 * 100, minz + 2.384185791015625e-06 * 100), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, minz), new _three.Vector3(minx, -1.5599653124809265e-08 * 100, maxz), new _three.Vector3(minx, -1.5599653124809265e-08 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(minx, -1.57160684466362e-08 * 100, minz + 0.2500007152557373 * 100), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, maxz), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.11968576163053513 * 100, -1.5599653124809265e-08 * 100, maxz), new _three.Vector3(maxx - 0.11968576163053513 * 100, -1.5599653124809265e-08 * 100, minz), new _three.Vector3(maxx - 0.11968576163053513 * 100, -1.5599653124809265e-08 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.11968576163053513 * 100, -1.5599653124809265e-08 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(minx + 0.12030857801437378 * 100, -1.5832483768463135e-08 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(minx + 0.12030857801437378 * 100, -1.5599653124809265e-08 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(minx + 0.12030857801437378 * 100, -1.5832483768463135e-08 * 100, minz), new _three.Vector3(minx + 0.12030857801437378 * 100, -1.5599653124809265e-08 * 100, maxz), new _three.Vector3(minx + 0.12030857801437378 * 100, -0.010000014677643776 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(minx + 0.12030857801437378 * 100, -0.010000014677643776 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(maxx - 0.11968576163053513 * 100, -0.010000014677643776 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.11968576163053513 * 100, -0.010000014677643776 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(maxx - 0.1353275030851364 * 100, -0.009388341568410397 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(maxx - 0.1353275030851364 * 100, -0.009388341568410397 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(minx + 0.13506758213043213 * 100, -0.009388341568410397 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(maxx - 0.1353275030851364 * 100, -0.008776669390499592 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(minx + 0.13506758213043213 * 100, -0.009388341568410397 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(maxx - 0.1353275030851364 * 100, -0.0003883419558405876 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(maxx - 0.1353275030851364 * 100, -0.0003883419558405876 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(minx + 0.13506758213043213 * 100, -0.0003883419558405876 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(maxx - 0.1353275030851364 * 100, miny + 0.010223344899713993 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(minx + 0.13506758213043213 * 100, -0.0003883419558405876 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(minx, maxy - 0.009999999776482582 * 100, minz + 2.384185791015625e-06 * 100), new _three.Vector3(maxx, maxy - 0.009999999776482582 * 100, minz), new _three.Vector3(minx, maxy - 0.009999999776482582 * 100, maxz), new _three.Vector3(minx, maxy - 0.009999999776482582 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(minx, maxy - 0.009999999776482582 * 100, minz + 0.2500007152557373 * 100), new _three.Vector3(maxx, maxy - 0.009999999776482582 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(maxx, maxy - 0.009999999776482582 * 100, maxz), new _three.Vector3(maxx, maxy - 0.009999999776482582 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.11968576908111572 * 100, maxy - 0.009999999776482582 * 100, maxz), new _three.Vector3(maxx - 0.11968576908111572 * 100, maxy - 0.009999999776482582 * 100, minz), new _three.Vector3(maxx - 0.11968576908111572 * 100, maxy - 0.009999999776482582 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.11968576908111572 * 100, maxy - 0.009999999776482582 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(minx + 0.12030857801437378 * 100, maxy - 0.009999999776482582 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(minx + 0.12030857801437378 * 100, maxy - 0.009999999776482582 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(minx + 0.12030857801437378 * 100, maxy - 0.009999999776482582 * 100, minz), new _three.Vector3(minx + 0.12030857801437378 * 100, maxy - 0.009999999776482582 * 100, maxz), new _three.Vector3(minx + 0.12030857801437378 * 100, maxy, maxz - 0.12999999523162842 * 100), new _three.Vector3(minx + 0.12030857801437378 * 100, maxy, minz + 0.25000011920928955 * 100), new _three.Vector3(maxx - 0.11968576908111572 * 100, maxy, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.11968576908111572 * 100, maxy, minz + 0.25000011920928955 * 100), new _three.Vector3(maxx - 0.1353275179862976 * 100, maxy - 0.0006116721779108047 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(maxx - 0.1353275179862976 * 100, maxy - 0.0006116721779108047 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(minx + 0.13506758213043213 * 100, maxy - 0.0006116721779108047 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(maxx - 0.1353275179862976 * 100, maxy - 0.0012233462184667587 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(minx + 0.13506758213043213 * 100, maxy - 0.0006116721779108047 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(maxx - 0.1353275179862976 * 100, maxy - 0.009611671790480614 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(maxx - 0.1353275179862976 * 100, maxy - 0.009611671790480614 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(minx + 0.13506758213043213 * 100, maxy - 0.009611671790480614 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(maxx - 0.1353275179862976 * 100, maxy - 0.010223345831036568 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(minx + 0.13506758213043213 * 100, maxy - 0.009611671790480614 * 100, maxz - 0.14747536182403564 * 100)];
+      var myfaces = [new _three.Face3(0, 4, 12), new _three.Face3(14, 0, 12), new _three.Face3(3, 2, 15), new _three.Face3(13, 3, 15), new _three.Face3(10, 8, 6), new _three.Face3(7, 10, 6), new _three.Face3(13, 15, 8), new _three.Face3(10, 13, 8), new _three.Face3(14, 12, 11), new _three.Face3(9, 14, 11), new _three.Face3(9, 11, 5), new _three.Face3(1, 9, 5), new _three.Face3(16, 13, 10), new _three.Face3(18, 16, 10), new _three.Face3(19, 11, 12), new _three.Face3(17, 19, 12), new _three.Face3(12, 4, 3), new _three.Face3(13, 12, 3), new _three.Face3(10, 7, 5), new _three.Face3(11, 10, 5), new _three.Face3(17, 19, 23), new _three.Face3(22, 17, 23), new _three.Face3(20, 19, 18), new _three.Face3(21, 20, 18), new _three.Face3(24, 16, 17), new _three.Face3(22, 24, 17), new _three.Face3(13, 16, 17), new _three.Face3(12, 13, 17), new _three.Face3(18, 10, 11), new _three.Face3(19, 18, 11), new _three.Face3(16, 18, 21), new _three.Face3(24, 16, 21), new _three.Face3(29, 24, 22), new _three.Face3(27, 29, 22), new _three.Face3(29, 24, 21), new _three.Face3(26, 29, 21), new _three.Face3(25, 20, 21), new _three.Face3(26, 25, 21), new _three.Face3(27, 22, 23), new _three.Face3(28, 27, 23), new _three.Face3(27, 28, 25), new _three.Face3(26, 29, 27), new _three.Face3(27, 25, 26), new _three.Face3(30, 34, 42), new _three.Face3(44, 30, 42), new _three.Face3(33, 32, 45), new _three.Face3(43, 33, 45), new _three.Face3(40, 38, 36), new _three.Face3(37, 40, 36), new _three.Face3(43, 45, 38), new _three.Face3(40, 43, 38), new _three.Face3(44, 42, 41), new _three.Face3(39, 44, 41), new _three.Face3(39, 41, 35), new _three.Face3(31, 39, 35), new _three.Face3(46, 43, 40), new _three.Face3(48, 46, 40), new _three.Face3(49, 41, 42), new _three.Face3(47, 49, 42), new _three.Face3(42, 34, 33), new _three.Face3(43, 42, 33), new _three.Face3(40, 37, 35), new _three.Face3(41, 40, 35), new _three.Face3(47, 49, 53), new _three.Face3(52, 47, 53), new _three.Face3(50, 49, 48), new _three.Face3(51, 50, 48), new _three.Face3(54, 46, 47), new _three.Face3(52, 54, 47), new _three.Face3(43, 46, 47), new _three.Face3(42, 43, 47), new _three.Face3(48, 40, 41), new _three.Face3(49, 48, 41), new _three.Face3(46, 48, 51), new _three.Face3(54, 46, 51), new _three.Face3(59, 54, 52), new _three.Face3(57, 59, 52), new _three.Face3(59, 54, 51), new _three.Face3(56, 59, 51), new _three.Face3(55, 50, 51), new _three.Face3(56, 55, 51), new _three.Face3(57, 52, 53), new _three.Face3(58, 57, 53), new _three.Face3(57, 58, 55), new _three.Face3(56, 59, 57), new _three.Face3(57, 55, 56), new _three.Face3(8, 6, 36), new _three.Face3(38, 8, 36), new _three.Face3(15, 8, 38), new _three.Face3(45, 15, 38), new _three.Face3(45, 32, 2), new _three.Face3(15, 45, 2), new _three.Face3(37, 36, 6), new _three.Face3(7, 37, 6), new _three.Face3(35, 37, 7), new _three.Face3(5, 35, 7), new _three.Face3(5, 1, 31), new _three.Face3(35, 5, 31), new _three.Face3(39, 31, 1), new _three.Face3(9, 39, 1), new _three.Face3(44, 39, 9), new _three.Face3(14, 44, 9), new _three.Face3(14, 0, 30), new _three.Face3(44, 14, 30), new _three.Face3(3, 4, 34), new _three.Face3(33, 3, 34), new _three.Face3(3, 2, 32), new _three.Face3(33, 3, 32), new _three.Face3(0, 4, 34), new _three.Face3(30, 0, 34)];
+      var normal_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109];
+      var glass_ids = [];
+      var i = 0;
+
+      for (i = 0; i < normal_ids.length; i++) {
+        myfaces[normal_ids[i]].materialIndex = this.__doorMaterialId;
+      }
+
+      for (i = 0; i < glass_ids.length; i++) {
+        myfaces[glass_ids[i]].materialIndex = this.__glassMaterialId;
+      }
+
+      return {
+        vertices: myvertex,
+        faces: myfaces,
+        widthFactor: wf,
+        depth: deep,
+        side: side
+      };
+    }
+  }]);
+
+  return ParametricDoorType4;
+}(_ParametricBaseDoor2.ParametricBaseDoor);
+
+exports.ParametricDoorType4 = ParametricDoorType4;
+},{"./ParametricBaseDoor":"scripts/parametrics/doors/ParametricBaseDoor.js","three":"../node_modules/three/build/three.module.js"}],"scripts/parametrics/doors/ParametricDoorType5.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ParametricDoorType5 = void 0;
+
+var _ParametricBaseDoor2 = require("./ParametricBaseDoor");
+
+var _three = require("three");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var ParametricDoorType5 = /*#__PURE__*/function (_ParametricBaseDoor) {
+  _inherits(ParametricDoorType5, _ParametricBaseDoor);
+
+  var _super = _createSuper(ParametricDoorType5);
+
+  function ParametricDoorType5(parameters) {
+    var _this;
+
+    _classCallCheck(this, ParametricDoorType5);
+
+    _this = _super.call(this, parameters);
+    _this.__doorType = 5;
+    return _this;
+  }
+  /**
+   * Based on the DoorType the below method will change
+   * This can be replaced by the appropriate door model class
+   * This method will change with logic based on the door model type
+   */
+
+
+  _createClass(ParametricDoorType5, [{
+    key: "__createForDoorModel",
+    value: function __createForDoorModel(frameWidth, openingDirection) {
+      var gap = 0.25; //0.002;
+
+      var sf = this.__frameSize;
+      var wf = frameWidth - sf * 2 - gap * 2;
+      var hf = this.__frameHeight / 2 - gap * 2;
+      var deep = this.__frameThickness * 0.5;
+      var side = 0,
+          minx = 0,
+          maxx = 0; // # Open to right or left
+
+      if (openingDirection == _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
+        side = 1;
+        minx = wf * -1;
+        maxx = 0.0;
+      } else {
+        side = -1;
+        minx = 0.0;
+        maxx = wf;
+      }
+
+      var miny = 0.0; //# locked
+
+      var maxy = deep;
+      var minz = -hf;
+      var maxz = hf - sf - gap;
+      var myvertex = [new _three.Vector3(minx, -1.57160684466362e-08 * 100, minz + 2.384185791015625e-06 * 100), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, minz), new _three.Vector3(minx, -1.5599653124809265e-08 * 100, maxz), new _three.Vector3(minx, -1.5599653124809265e-08 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(minx, -1.57160684466362e-08 * 100, minz + 0.2500007152557373 * 100), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, maxz), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.11968576163053513 * 100, -1.5599653124809265e-08 * 100, maxz), new _three.Vector3(maxx - 0.11968576163053513 * 100, -1.5599653124809265e-08 * 100, minz), new _three.Vector3(maxx - 0.11968576163053513 * 100, -1.5599653124809265e-08 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.11968576163053513 * 100, -1.5599653124809265e-08 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(minx + 0.12030857801437378 * 100, -1.5832483768463135e-08 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(minx + 0.12030857801437378 * 100, -1.5599653124809265e-08 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(minx + 0.12030857801437378 * 100, -1.5832483768463135e-08 * 100, minz), new _three.Vector3(minx + 0.12030857801437378 * 100, -1.5599653124809265e-08 * 100, maxz), new _three.Vector3(minx + 0.12030857801437378 * 100, -0.010000014677643776 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(minx + 0.12030857801437378 * 100, -0.010000014677643776 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(maxx - 0.11968576163053513 * 100, -0.010000014677643776 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.11968576163053513 * 100, -0.010000014677643776 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(maxx - 0.1353275030851364 * 100, -0.009388341568410397 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(maxx - 0.1353275030851364 * 100, -0.009388341568410397 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(minx + 0.13506758213043213 * 100, -0.009388341568410397 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(maxx - 0.1353275030851364 * 100, -0.008776669390499592 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(minx + 0.13506758213043213 * 100, -0.009388341568410397 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(maxx - 0.1353275030851364 * 100, -0.0003883419558405876 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(maxx - 0.1353275030851364 * 100, -0.0003883419558405876 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(minx + 0.13506758213043213 * 100, -0.0003883419558405876 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(maxx - 0.1353275030851364 * 100, miny + 0.010223344899713993 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(minx + 0.13506758213043213 * 100, -0.0003883419558405876 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(minx, maxy - 0.009999999776482582 * 100, minz + 2.384185791015625e-06 * 100), new _three.Vector3(maxx, maxy - 0.009999999776482582 * 100, minz), new _three.Vector3(minx, maxy - 0.009999999776482582 * 100, maxz), new _three.Vector3(minx, maxy - 0.009999999776482582 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(minx, maxy - 0.009999999776482582 * 100, minz + 0.2500007152557373 * 100), new _three.Vector3(maxx, maxy - 0.009999999776482582 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(maxx, maxy - 0.009999999776482582 * 100, maxz), new _three.Vector3(maxx, maxy - 0.009999999776482582 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.11968576908111572 * 100, maxy - 0.009999999776482582 * 100, maxz), new _three.Vector3(maxx - 0.11968576908111572 * 100, maxy - 0.009999999776482582 * 100, minz), new _three.Vector3(maxx - 0.11968576908111572 * 100, maxy - 0.009999999776482582 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.11968576908111572 * 100, maxy - 0.009999999776482582 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(minx + 0.12030857801437378 * 100, maxy - 0.009999999776482582 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(minx + 0.12030857801437378 * 100, maxy - 0.009999999776482582 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(minx + 0.12030857801437378 * 100, maxy - 0.009999999776482582 * 100, minz), new _three.Vector3(minx + 0.12030857801437378 * 100, maxy - 0.009999999776482582 * 100, maxz), new _three.Vector3(minx + 0.12030857801437378 * 100, maxy, maxz - 0.12999999523162842 * 100), new _three.Vector3(minx + 0.12030857801437378 * 100, maxy, minz + 0.25000011920928955 * 100), new _three.Vector3(maxx - 0.11968576908111572 * 100, maxy, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.11968576908111572 * 100, maxy, minz + 0.25000011920928955 * 100), new _three.Vector3(maxx - 0.1353275179862976 * 100, maxy - 0.0006116721779108047 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(maxx - 0.1353275179862976 * 100, maxy - 0.0006116721779108047 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(minx + 0.13506758213043213 * 100, maxy - 0.0006116721779108047 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(maxx - 0.1353275179862976 * 100, maxy - 0.0012233462184667587 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(minx + 0.13506758213043213 * 100, maxy - 0.0006116721779108047 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(maxx - 0.1353275179862976 * 100, maxy - 0.009611671790480614 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(maxx - 0.1353275179862976 * 100, maxy - 0.009611671790480614 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(minx + 0.13506758213043213 * 100, maxy - 0.009611671790480614 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(maxx - 0.1353275179862976 * 100, maxy - 0.010223345831036568 * 100, minz + 0.26250016689300537 * 100), new _three.Vector3(minx + 0.13506758213043213 * 100, maxy - 0.009611671790480614 * 100, maxz - 0.14747536182403564 * 100)];
+      var myfaces = [new _three.Face3(0, 4, 12), new _three.Face3(14, 0, 12), new _three.Face3(3, 2, 15), new _three.Face3(13, 3, 15), new _three.Face3(10, 8, 6), new _three.Face3(7, 10, 6), new _three.Face3(13, 15, 8), new _three.Face3(10, 13, 8), new _three.Face3(14, 12, 11), new _three.Face3(9, 14, 11), new _three.Face3(9, 11, 5), new _three.Face3(1, 9, 5), new _three.Face3(16, 13, 10), new _three.Face3(18, 16, 10), new _three.Face3(19, 11, 12), new _three.Face3(17, 19, 12), new _three.Face3(12, 4, 3), new _three.Face3(13, 12, 3), new _three.Face3(10, 7, 5), new _three.Face3(11, 10, 5), new _three.Face3(17, 19, 23), new _three.Face3(22, 17, 23), new _three.Face3(20, 19, 18), new _three.Face3(21, 20, 18), new _three.Face3(24, 16, 17), new _three.Face3(22, 24, 17), new _three.Face3(13, 16, 17), new _three.Face3(12, 13, 17), new _three.Face3(18, 10, 11), new _three.Face3(19, 18, 11), new _three.Face3(16, 18, 21), new _three.Face3(24, 16, 21), new _three.Face3(29, 24, 22), new _three.Face3(27, 29, 22), new _three.Face3(29, 24, 21), new _three.Face3(26, 29, 21), new _three.Face3(25, 20, 21), new _three.Face3(26, 25, 21), new _three.Face3(27, 22, 23), new _three.Face3(28, 27, 23), new _three.Face3(27, 28, 25), new _three.Face3(26, 29, 27), new _three.Face3(27, 25, 26), new _three.Face3(30, 34, 42), new _three.Face3(44, 30, 42), new _three.Face3(33, 32, 45), new _three.Face3(43, 33, 45), new _three.Face3(40, 38, 36), new _three.Face3(37, 40, 36), new _three.Face3(43, 45, 38), new _three.Face3(40, 43, 38), new _three.Face3(44, 42, 41), new _three.Face3(39, 44, 41), new _three.Face3(39, 41, 35), new _three.Face3(31, 39, 35), new _three.Face3(46, 43, 40), new _three.Face3(48, 46, 40), new _three.Face3(49, 41, 42), new _three.Face3(47, 49, 42), new _three.Face3(42, 34, 33), new _three.Face3(43, 42, 33), new _three.Face3(40, 37, 35), new _three.Face3(41, 40, 35), new _three.Face3(47, 49, 53), new _three.Face3(52, 47, 53), new _three.Face3(50, 49, 48), new _three.Face3(51, 50, 48), new _three.Face3(54, 46, 47), new _three.Face3(52, 54, 47), new _three.Face3(43, 46, 47), new _three.Face3(42, 43, 47), new _three.Face3(48, 40, 41), new _three.Face3(49, 48, 41), new _three.Face3(46, 48, 51), new _three.Face3(54, 46, 51), new _three.Face3(59, 54, 52), new _three.Face3(57, 59, 52), new _three.Face3(59, 54, 51), new _three.Face3(56, 59, 51), new _three.Face3(55, 50, 51), new _three.Face3(56, 55, 51), new _three.Face3(57, 52, 53), new _three.Face3(58, 57, 53), new _three.Face3(57, 58, 55), new _three.Face3(56, 59, 57), new _three.Face3(57, 55, 56), new _three.Face3(8, 6, 36), new _three.Face3(38, 8, 36), new _three.Face3(15, 8, 38), new _three.Face3(45, 15, 38), new _three.Face3(45, 32, 2), new _three.Face3(15, 45, 2), new _three.Face3(37, 36, 6), new _three.Face3(7, 37, 6), new _three.Face3(35, 37, 7), new _three.Face3(5, 35, 7), new _three.Face3(5, 1, 31), new _three.Face3(35, 5, 31), new _three.Face3(39, 31, 1), new _three.Face3(9, 39, 1), new _three.Face3(44, 39, 9), new _three.Face3(14, 44, 9), new _three.Face3(14, 0, 30), new _three.Face3(44, 14, 30), new _three.Face3(3, 4, 34), new _three.Face3(33, 3, 34), new _three.Face3(3, 2, 32), new _three.Face3(33, 3, 32), new _three.Face3(0, 4, 34), new _three.Face3(30, 0, 34)];
+      var normal_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109];
+      var glass_ids = [40, 41, 42, 83, 84, 85];
+      var i = 0;
+
+      for (i = 0; i < normal_ids.length; i++) {
+        myfaces[normal_ids[i]].materialIndex = this.__doorMaterialId;
+      }
+
+      for (i = 0; i < glass_ids.length; i++) {
+        myfaces[glass_ids[i]].materialIndex = this.__glassMaterialId;
+      }
+
+      return {
+        vertices: myvertex,
+        faces: myfaces,
+        widthFactor: wf,
+        depth: deep,
+        side: side
+      };
+    }
+  }]);
+
+  return ParametricDoorType5;
+}(_ParametricBaseDoor2.ParametricBaseDoor);
+
+exports.ParametricDoorType5 = ParametricDoorType5;
+},{"./ParametricBaseDoor":"scripts/parametrics/doors/ParametricBaseDoor.js","three":"../node_modules/three/build/three.module.js"}],"scripts/parametrics/doors/ParametricDoorType6.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ParametricDoorType6 = void 0;
+
+var _ParametricBaseDoor2 = require("./ParametricBaseDoor");
+
+var _three = require("three");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var ParametricDoorType6 = /*#__PURE__*/function (_ParametricBaseDoor) {
+  _inherits(ParametricDoorType6, _ParametricBaseDoor);
+
+  var _super = _createSuper(ParametricDoorType6);
+
+  function ParametricDoorType6(parameters) {
+    var _this;
+
+    _classCallCheck(this, ParametricDoorType6);
+
+    _this = _super.call(this, parameters);
+    _this.__doorType = 6;
+    return _this;
+  }
+  /**
+   * Based on the DoorType the below method will change
+   * This can be replaced by the appropriate door model class
+   * This method will change with logic based on the door model type
+   */
+
+
+  _createClass(ParametricDoorType6, [{
+    key: "__createForDoorModel",
+    value: function __createForDoorModel(frameWidth, openingDirection) {
+      var gap = 0.25; //0.002;
+
+      var sf = this.__frameSize;
+      var wf = frameWidth - sf * 2 - gap * 2;
+      var hf = this.__frameHeight / 2 - gap * 2;
+      var deep = this.__frameThickness * 0.5;
+      var side = 0,
+          minx = 0,
+          maxx = 0; // # Open to right or left
+
+      if (openingDirection == _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
+        side = 1;
+        minx = wf * -1;
+        maxx = 0.0;
+      } else {
+        side = -1;
+        minx = 0.0;
+        maxx = wf;
+      }
+
+      var miny = 0.0; //# locked
+
+      var maxy = deep;
+      var minz = -hf;
+      var maxz = hf - sf - gap;
+      var myvertex = [new _three.Vector3(minx, -1.57160684466362e-08 * 100, minz + 2.384185791015625e-06 * 100), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, minz), new _three.Vector3(minx, -1.5599653124809265e-08 * 100, maxz), new _three.Vector3(minx, -1.5599653124809265e-08 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(minx, -1.57160684466362e-08 * 100, minz + 0.2500007152557373 * 100), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, maxz), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.11609852313995361 * 100, -1.5599653124809265e-08 * 100, maxz), new _three.Vector3(maxx - 0.12357193231582642 * 100, -1.5599653124809265e-08 * 100, minz), new _three.Vector3(maxx - 0.11658430099487305 * 100, -1.5599653124809265e-08 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.12263774871826172 * 100, -1.5599653124809265e-08 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(minx, -1.57160684466362e-08 * 100, minz + 0.8700000941753387 * 100), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, minz + 0.8700000941753387 * 100), new _three.Vector3(maxx - 0.12076938152313232 * 100, -1.5599653124809265e-08 * 100, minz + 0.7500001192092896 * 100), new _three.Vector3(minx + 0.11735659837722778 * 100, -1.57160684466362e-08 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(minx + 0.12341010570526123 * 100, -1.5599653124809265e-08 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(minx + 0.11642247438430786 * 100, -1.57160684466362e-08 * 100, minz), new _three.Vector3(minx + 0.11967337131500244 * 100, -1.57160684466362e-08 * 100, minz + 0.8700000941753387 * 100), new _three.Vector3(minx, -1.57160684466362e-08 * 100, minz + 0.7500001192092896 * 100), new _three.Vector3(maxx - 0.12032097578048706 * 100, -1.5599653124809265e-08 * 100, minz + 0.8700000941753387 * 100), new _three.Vector3(minx + 0.12389582395553589 * 100, -1.5599653124809265e-08 * 100, maxz), new _three.Vector3(maxx, -1.5599653124809265e-08 * 100, minz + 0.7500001192092896 * 100), new _three.Vector3(minx + 0.11922496557235718 * 100, -1.57160684466362e-08 * 100, minz + 0.7500001192092896 * 100), new _three.Vector3(minx + 0.11922496557235718 * 100, -0.010000014677643776 * 100, minz + 0.7500001192092896 * 100), new _three.Vector3(minx + 0.12341010570526123 * 100, -0.010000014677643776 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.12032097578048706 * 100, -0.010000014677643776 * 100, minz + 0.8700000941753387 * 100), new _three.Vector3(minx + 0.11735659837722778 * 100, -0.010000014677643776 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(maxx - 0.11658430099487305 * 100, -0.010000014677643776 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.12263774871826172 * 100, -0.010000014677643776 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(minx + 0.11967337131500244 * 100, -0.010000014677643776 * 100, minz + 0.8700000941753387 * 100), new _three.Vector3(maxx - 0.12076938152313232 * 100, -0.010000014677643776 * 100, minz + 0.7500001192092896 * 100), new _three.Vector3(minx + 0.13388586044311523 * 100, -0.010000014677643776 * 100, minz + 0.7375001013278961 * 100), new _three.Vector3(minx + 0.1321108341217041 * 100, -0.010000014677643776 * 100, minz + 0.2625001072883606 * 100), new _three.Vector3(maxx - 0.1372986137866974 * 100, -0.010000014677643776 * 100, minz + 0.2625001072883606 * 100), new _three.Vector3(maxx - 0.13552364706993103 * 100, -0.010000014677643776 * 100, minz + 0.7375001013278961 * 100), new _three.Vector3(minx + 0.13802427053451538 * 100, -0.010000014677643776 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(maxx - 0.13493508100509644 * 100, -0.010000014677643776 * 100, minz + 0.8866067305207253 * 100), new _three.Vector3(maxx - 0.13138526678085327 * 100, -0.010000014677643776 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(minx + 0.13447439670562744 * 100, -0.010000014677643776 * 100, minz + 0.8866067305207253 * 100), new _three.Vector3(minx + 0.13388586044311523 * 100, -0.008776669390499592 * 100, minz + 0.7375001013278961 * 100), new _three.Vector3(minx + 0.1321108341217041 * 100, -0.008776669390499592 * 100, minz + 0.2625001072883606 * 100), new _three.Vector3(maxx - 0.1372986137866974 * 100, -0.008776669390499592 * 100, minz + 0.2625001072883606 * 100), new _three.Vector3(maxx - 0.13552364706993103 * 100, -0.008776669390499592 * 100, minz + 0.7375001013278961 * 100), new _three.Vector3(minx + 0.13802427053451538 * 100, -0.008776669390499592 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(maxx - 0.13493508100509644 * 100, -0.008776669390499592 * 100, minz + 0.8866067305207253 * 100), new _three.Vector3(maxx - 0.13138526678085327 * 100, -0.008776669390499592 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(minx + 0.13447439670562744 * 100, -0.008776669390499592 * 100, minz + 0.8866067305207253 * 100), new _three.Vector3(minx, maxy - 0.009999999776482582 * 100, minz + 2.384185791015625e-06 * 100), new _three.Vector3(maxx, maxy - 0.009999999776482582 * 100, minz), new _three.Vector3(minx, maxy - 0.009999999776482582 * 100, maxz), new _three.Vector3(minx, maxy - 0.009999999776482582 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(minx, maxy - 0.009999999776482582 * 100, minz + 0.2500007152557373 * 100), new _three.Vector3(maxx, maxy - 0.009999999776482582 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(maxx, maxy - 0.009999999776482582 * 100, maxz), new _three.Vector3(maxx, maxy - 0.009999999776482582 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.11609852313995361 * 100, maxy - 0.009999999776482582 * 100, maxz), new _three.Vector3(maxx - 0.12357193231582642 * 100, maxy - 0.009999999776482582 * 100, minz), new _three.Vector3(maxx - 0.11658430099487305 * 100, maxy - 0.009999999776482582 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.12263774871826172 * 100, maxy - 0.009999999776482582 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(minx, maxy - 0.009999999776482582 * 100, minz + 0.8700000941753387 * 100), new _three.Vector3(maxx, maxy - 0.009999999776482582 * 100, minz + 0.8700000941753387 * 100), new _three.Vector3(maxx - 0.12076938152313232 * 100, maxy - 0.009999999776482582 * 100, minz + 0.7500001192092896 * 100), new _three.Vector3(minx + 0.11735659837722778 * 100, maxy - 0.009999999776482582 * 100, minz + 0.25000011920928955 * 100), new _three.Vector3(minx + 0.12341010570526123 * 100, maxy - 0.009999999776482582 * 100, maxz - 0.12999999523162842 * 100), new _three.Vector3(minx + 0.11642247438430786 * 100, maxy - 0.009999999776482582 * 100, minz), new _three.Vector3(minx + 0.11967337131500244 * 100, maxy - 0.009999999776482582 * 100, minz + 0.8700000941753387 * 100), new _three.Vector3(minx, maxy - 0.009999999776482582 * 100, minz + 0.7500001192092896 * 100), new _three.Vector3(maxx - 0.12032097578048706 * 100, maxy - 0.009999999776482582 * 100, minz + 0.8700000941753387 * 100), new _three.Vector3(minx + 0.12389582395553589 * 100, maxy - 0.009999999776482582 * 100, maxz), new _three.Vector3(maxx, maxy - 0.009999999776482582 * 100, minz + 0.7500001192092896 * 100), new _three.Vector3(minx + 0.11922496557235718 * 100, maxy - 0.009999999776482582 * 100, minz + 0.7500001192092896 * 100), new _three.Vector3(minx + 0.11922496557235718 * 100, maxy, minz + 0.7500001192092896 * 100), new _three.Vector3(minx + 0.12341010570526123 * 100, maxy, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.12032097578048706 * 100, maxy, minz + 0.8700000941753387 * 100), new _three.Vector3(minx + 0.11735659837722778 * 100, maxy, minz + 0.25000011920928955 * 100), new _three.Vector3(maxx - 0.11658430099487305 * 100, maxy, maxz - 0.12999999523162842 * 100), new _three.Vector3(maxx - 0.12263774871826172 * 100, maxy, minz + 0.25000011920928955 * 100), new _three.Vector3(minx + 0.11967337131500244 * 100, maxy, minz + 0.8700000941753387 * 100), new _three.Vector3(maxx - 0.12076938152313232 * 100, maxy, minz + 0.7500001192092896 * 100), new _three.Vector3(minx + 0.13388586044311523 * 100, maxy, minz + 0.7375001013278961 * 100), new _three.Vector3(minx + 0.1321108341217041 * 100, maxy, minz + 0.2625001072883606 * 100), new _three.Vector3(maxx - 0.1372986137866974 * 100, maxy, minz + 0.2625001072883606 * 100), new _three.Vector3(maxx - 0.13552364706993103 * 100, maxy, minz + 0.7375001013278961 * 100), new _three.Vector3(minx + 0.13802427053451538 * 100, maxy, maxz - 0.14747536182403564 * 100), new _three.Vector3(maxx - 0.13493508100509644 * 100, maxy, minz + 0.8866067305207253 * 100), new _three.Vector3(maxx - 0.13138526678085327 * 100, maxy, maxz - 0.14747536182403564 * 100), new _three.Vector3(minx + 0.13447439670562744 * 100, maxy, minz + 0.8866067305207253 * 100), new _three.Vector3(minx + 0.13388586044311523 * 100, maxy - 0.0012233443558216095 * 100, minz + 0.7375001013278961 * 100), new _three.Vector3(minx + 0.1321108341217041 * 100, maxy - 0.0012233443558216095 * 100, minz + 0.2625001072883606 * 100), new _three.Vector3(maxx - 0.1372986137866974 * 100, maxy - 0.0012233443558216095 * 100, minz + 0.2625001072883606 * 100), new _three.Vector3(maxx - 0.13552364706993103 * 100, maxy - 0.0012233443558216095 * 100, minz + 0.7375001013278961 * 100), new _three.Vector3(minx + 0.13802427053451538 * 100, maxy - 0.0012233443558216095 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(maxx - 0.13493508100509644 * 100, maxy - 0.0012233443558216095 * 100, minz + 0.8866067305207253 * 100), new _three.Vector3(maxx - 0.13138526678085327 * 100, maxy - 0.0012233443558216095 * 100, maxz - 0.14747536182403564 * 100), new _three.Vector3(minx + 0.13447439670562744 * 100, maxy - 0.0012233443558216095 * 100, minz + 0.8866067305207253 * 100)];
+      var myfaces = [new _three.Face3(0, 4, 15), new _three.Face3(17, 0, 15), new _three.Face3(3, 2, 21), new _three.Face3(16, 3, 21), new _three.Face3(4, 19, 23), new _three.Face3(15, 4, 23), new _three.Face3(10, 8, 6), new _three.Face3(7, 10, 6), new _three.Face3(16, 21, 8), new _three.Face3(10, 16, 8), new _three.Face3(12, 3, 16), new _three.Face3(18, 12, 16), new _three.Face3(17, 15, 11), new _three.Face3(9, 17, 11), new _three.Face3(23, 18, 20), new _three.Face3(14, 23, 20), new _three.Face3(19, 12, 18), new _three.Face3(23, 19, 18), new _three.Face3(9, 11, 5), new _three.Face3(1, 9, 5), new _three.Face3(11, 14, 22), new _three.Face3(5, 11, 22), new _three.Face3(20, 10, 7), new _three.Face3(13, 20, 7), new _three.Face3(14, 20, 13), new _three.Face3(22, 14, 13), new _three.Face3(28, 10, 20), new _three.Face3(26, 28, 20), new _three.Face3(25, 16, 10), new _three.Face3(28, 25, 10), new _three.Face3(30, 18, 16), new _three.Face3(25, 30, 16), new _three.Face3(26, 20, 18), new _three.Face3(30, 26, 18), new _three.Face3(29, 11, 15), new _three.Face3(27, 29, 15), new _three.Face3(24, 23, 14), new _three.Face3(31, 24, 14), new _three.Face3(27, 15, 23), new _three.Face3(24, 27, 23), new _three.Face3(31, 14, 11), new _three.Face3(29, 31, 11), new _three.Face3(32, 24, 31), new _three.Face3(35, 32, 31), new _three.Face3(33, 27, 24), new _three.Face3(32, 33, 24), new _three.Face3(34, 29, 27), new _three.Face3(33, 34, 27), new _three.Face3(35, 31, 29), new _three.Face3(34, 35, 29), new _three.Face3(38, 28, 26), new _three.Face3(37, 38, 26), new _three.Face3(37, 26, 30), new _three.Face3(39, 37, 30), new _three.Face3(36, 25, 28), new _three.Face3(38, 36, 28), new _three.Face3(39, 30, 25), new _three.Face3(36, 39, 25), new _three.Face3(42, 34, 33), new _three.Face3(41, 42, 33), new _three.Face3(47, 39, 36), new _three.Face3(44, 47, 36), new _three.Face3(43, 35, 34), new _three.Face3(42, 43, 34), new _three.Face3(46, 38, 37), new _three.Face3(45, 46, 37), new _three.Face3(41, 33, 32), new _three.Face3(40, 41, 32), new _three.Face3(44, 36, 38), new _three.Face3(46, 44, 38), new _three.Face3(40, 32, 35), new _three.Face3(43, 40, 35), new _three.Face3(45, 37, 39), new _three.Face3(47, 45, 39), new _three.Face3(10, 20, 18), new _three.Face3(16, 10, 18), new _three.Face3(15, 23, 14), new _three.Face3(11, 15, 14), new _three.Face3(48, 52, 63), new _three.Face3(65, 48, 63), new _three.Face3(51, 50, 69), new _three.Face3(64, 51, 69), new _three.Face3(52, 67, 71), new _three.Face3(63, 52, 71), new _three.Face3(58, 56, 54), new _three.Face3(55, 58, 54), new _three.Face3(64, 69, 56), new _three.Face3(58, 64, 56), new _three.Face3(60, 51, 64), new _three.Face3(66, 60, 64), new _three.Face3(65, 63, 59), new _three.Face3(57, 65, 59), new _three.Face3(71, 66, 68), new _three.Face3(62, 71, 68), new _three.Face3(67, 60, 66), new _three.Face3(71, 67, 66), new _three.Face3(57, 59, 53), new _three.Face3(49, 57, 53), new _three.Face3(59, 62, 70), new _three.Face3(53, 59, 70), new _three.Face3(68, 58, 55), new _three.Face3(61, 68, 55), new _three.Face3(62, 68, 61), new _three.Face3(70, 62, 61), new _three.Face3(76, 58, 68), new _three.Face3(74, 76, 68), new _three.Face3(73, 64, 58), new _three.Face3(76, 73, 58), new _three.Face3(78, 66, 64), new _three.Face3(73, 78, 64), new _three.Face3(74, 68, 66), new _three.Face3(78, 74, 66), new _three.Face3(77, 59, 63), new _three.Face3(75, 77, 63), new _three.Face3(72, 71, 62), new _three.Face3(79, 72, 62), new _three.Face3(75, 63, 71), new _three.Face3(72, 75, 71), new _three.Face3(79, 62, 59), new _three.Face3(77, 79, 59), new _three.Face3(80, 72, 79), new _three.Face3(83, 80, 79), new _three.Face3(81, 75, 72), new _three.Face3(80, 81, 72), new _three.Face3(82, 77, 75), new _three.Face3(81, 82, 75), new _three.Face3(83, 79, 77), new _three.Face3(82, 83, 77), new _three.Face3(86, 76, 74), new _three.Face3(85, 86, 74), new _three.Face3(85, 74, 78), new _three.Face3(87, 85, 78), new _three.Face3(84, 73, 76), new _three.Face3(86, 84, 76), new _three.Face3(87, 78, 73), new _three.Face3(84, 87, 73), new _three.Face3(90, 82, 81), new _three.Face3(89, 90, 81), new _three.Face3(95, 87, 84), new _three.Face3(92, 95, 84), new _three.Face3(91, 83, 82), new _three.Face3(90, 91, 82), new _three.Face3(94, 86, 85), new _three.Face3(93, 94, 85), new _three.Face3(89, 81, 80), new _three.Face3(88, 89, 80), new _three.Face3(92, 84, 86), new _three.Face3(94, 92, 86), new _three.Face3(88, 80, 83), new _three.Face3(91, 88, 83), new _three.Face3(93, 85, 87), new _three.Face3(95, 93, 87), new _three.Face3(58, 68, 66), new _three.Face3(64, 58, 66), new _three.Face3(63, 71, 62), new _three.Face3(59, 63, 62), new _three.Face3(21, 2, 50), new _three.Face3(69, 21, 50), new _three.Face3(69, 56, 8), new _three.Face3(21, 69, 8), new _three.Face3(56, 54, 6), new _three.Face3(8, 56, 6), new _three.Face3(7, 6, 54), new _three.Face3(55, 7, 54), new _three.Face3(13, 7, 55), new _three.Face3(61, 13, 55), new _three.Face3(22, 13, 61), new _three.Face3(70, 22, 61), new _three.Face3(70, 53, 5), new _three.Face3(22, 70, 5), new _three.Face3(53, 49, 1), new _three.Face3(5, 53, 1), new _three.Face3(9, 1, 49), new _three.Face3(57, 9, 49), new _three.Face3(17, 9, 57), new _three.Face3(65, 17, 57), new _three.Face3(65, 48, 0), new _three.Face3(17, 65, 0), new _three.Face3(4, 0, 48), new _three.Face3(52, 4, 48), new _three.Face3(19, 4, 52), new _three.Face3(67, 19, 52), new _three.Face3(67, 60, 12), new _three.Face3(19, 67, 12), new _three.Face3(60, 51, 3), new _three.Face3(12, 60, 3), new _three.Face3(51, 50, 2), new _three.Face3(3, 51, 2)];
+      var normal_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187];
+      var glass_ids = [74, 75, 152, 153];
+      var i = 0;
+
+      for (i = 0; i < normal_ids.length; i++) {
+        myfaces[normal_ids[i]].materialIndex = this.__doorMaterialId;
+      }
+
+      for (i = 0; i < glass_ids.length; i++) {
+        myfaces[glass_ids[i]].materialIndex = this.__glassMaterialId;
+      }
+
+      return {
+        vertices: myvertex,
+        faces: myfaces,
+        widthFactor: wf,
+        depth: deep,
+        side: side
+      };
+    }
+  }]);
+
+  return ParametricDoorType6;
+}(_ParametricBaseDoor2.ParametricBaseDoor);
+
+exports.ParametricDoorType6 = ParametricDoorType6;
+},{"./ParametricBaseDoor":"scripts/parametrics/doors/ParametricBaseDoor.js","three":"../node_modules/three/build/three.module.js"}],"scripts/parametrics/doors/DoorFactory.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -42359,6 +42953,16 @@ exports.DoorFactory = exports.DOOR_TYPES = void 0;
 
 var _ParametricBaseDoor = require("./ParametricBaseDoor");
 
+var _ParametricDoorType = require("./ParametricDoorType2");
+
+var _ParametricDoorType2 = require("./ParametricDoorType3");
+
+var _ParametricDoorType3 = require("./ParametricDoorType4");
+
+var _ParametricDoorType4 = require("./ParametricDoorType5");
+
+var _ParametricDoorType5 = require("./ParametricDoorType6");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -42366,7 +42970,12 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 var DOOR_TYPES = {
-  1: _ParametricBaseDoor.ParametricBaseDoor
+  1: _ParametricBaseDoor.ParametricBaseDoor,
+  2: _ParametricDoorType.ParametricDoorType2,
+  3: _ParametricDoorType2.ParametricDoorType3,
+  4: _ParametricDoorType3.ParametricDoorType4,
+  5: _ParametricDoorType4.ParametricDoorType5,
+  6: _ParametricDoorType5.ParametricDoorType6
 };
 /** Factory class to create items. */
 
@@ -42390,7 +42999,7 @@ var DoorFactory = /*#__PURE__*/function () {
 }();
 
 exports.DoorFactory = DoorFactory;
-},{"./ParametricBaseDoor":"scripts/parametrics/doors/ParametricBaseDoor.js"}],"scripts/parametrics/ParametricFactory.js":[function(require,module,exports) {
+},{"./ParametricBaseDoor":"scripts/parametrics/doors/ParametricBaseDoor.js","./ParametricDoorType2":"scripts/parametrics/doors/ParametricDoorType2.js","./ParametricDoorType3":"scripts/parametrics/doors/ParametricDoorType3.js","./ParametricDoorType4":"scripts/parametrics/doors/ParametricDoorType4.js","./ParametricDoorType5":"scripts/parametrics/doors/ParametricDoorType5.js","./ParametricDoorType6":"scripts/parametrics/doors/ParametricDoorType6.js"}],"scripts/parametrics/ParametricFactory.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -42658,8 +43267,8 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
     }
   }, {
     key: "__addToAWall",
-    value: function __addToAWall(intersectingPlane) {
-      var wall = intersectingPlane.wall;
+    value: function __addToAWall(intersectingPlane, toWall) {
+      var wall = toWall ? toWall : intersectingPlane.wall;
 
       if (wall === undefined || !wall || wall === 'undefined') {
         return;
@@ -42709,7 +43318,7 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
     }
   }, {
     key: "snapToPoint",
-    value: function snapToPoint(point, normal, intersectingPlane) {
+    value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
       this.position = point;
     }
   }, {
@@ -42955,7 +43564,7 @@ var WallItem = /*#__PURE__*/function (_Item) {
 
   _createClass(WallItem, [{
     key: "snapToPoint",
-    value: function snapToPoint(point, normal, intersectingPlane) {
+    value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
       var normal2d = new _three.Vector2(normal.x, normal.z);
 
       var angle = _utils.Utils.angle(_item.UP_VECTOR, normal2d);
@@ -42973,7 +43582,7 @@ var WallItem = /*#__PURE__*/function (_Item) {
       this.position = point;
       this.rotation = new _three.Vector3(0, angle, 0);
 
-      this.__addToAWall(intersectingPlane);
+      this.__addToAWall(intersectingPlane, toWall, toFloor, toRoof);
     }
   }, {
     key: "__parametricGeometryUpdate",
@@ -43053,7 +43662,7 @@ var InWallItem = /*#__PURE__*/function (_WallItem) {
 
   _createClass(InWallItem, [{
     key: "snapToPoint",
-    value: function snapToPoint(point, normal, intersectingPlane) {
+    value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
       var normal2d = new _three.Vector2(normal.x, normal.z);
 
       var angle = _utils.Utils.angle(_item.UP_VECTOR, normal2d);
@@ -43061,7 +43670,7 @@ var InWallItem = /*#__PURE__*/function (_WallItem) {
       this.rotation = new _three.Vector3(0, angle, 0);
       this.position = point;
 
-      this.__addToAWall(intersectingPlane);
+      this.__addToAWall(intersectingPlane, toWall);
     }
   }]);
 
@@ -43129,7 +43738,7 @@ var InWallFloorItem = /*#__PURE__*/function (_InWallItem) {
 
   _createClass(InWallFloorItem, [{
     key: "snapToPoint",
-    value: function snapToPoint(point, normal, intersectingPlane) {
+    value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
       var normal2d = new _three.Vector2(normal.x, normal.z);
 
       var angle = _utils.Utils.angle(_item.UP_VECTOR, normal2d);
@@ -43139,7 +43748,7 @@ var InWallFloorItem = /*#__PURE__*/function (_InWallItem) {
       this.position = point;
       this.__currentWallNormal = normal.clone();
 
-      this.__addToAWall(intersectingPlane);
+      this.__addToAWall(intersectingPlane, toWall);
     }
   }, {
     key: "__parametricGeometryUpdate",
@@ -43223,7 +43832,7 @@ var WallFloorItem = /*#__PURE__*/function (_WallItem) {
 
   _createClass(WallFloorItem, [{
     key: "snapToPoint",
-    value: function snapToPoint(point, normal, intersectingPlane) {
+    value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
       var normal2d = new _three.Vector2(normal.x, normal.z);
 
       var angle = _utils.Utils.angle(_item.UP_VECTOR, normal2d);
@@ -43242,7 +43851,7 @@ var WallFloorItem = /*#__PURE__*/function (_WallItem) {
       this.rotation = new _three.Vector3(0, angle, 0);
       this.position = point;
 
-      this.__addToAWall(intersectingPlane);
+      this.__addToAWall(intersectingPlane, toWall);
     }
   }, {
     key: "__parametricGeometryUpdate",
@@ -46140,7 +46749,7 @@ var FloorItem = /*#__PURE__*/function (_Item) {
 
   _createClass(FloorItem, [{
     key: "snapToPoint",
-    value: function snapToPoint(point, normal, intersectingPlane) {
+    value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
       var normal2d = new _three.Vector2(normal.x, normal.z);
 
       var angle = _utils.Utils.angle(_item.UP_VECTOR, normal2d);
@@ -46269,7 +46878,7 @@ var RoofItem = /*#__PURE__*/function (_Item) {
 
   _createClass(RoofItem, [{
     key: "snapToPoint",
-    value: function snapToPoint(point, normal, intersectingPlane) {
+    value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
       point.y -= this.halfSize.y + 5;
       this.position = point;
     }
@@ -46531,8 +47140,24 @@ var Model = /*#__PURE__*/function (_EventDispatcher) {
      */
 
   }, {
+    key: "addItemByMetaData",
+    value: function addItemByMetaData(metadata) {
+      //TODO
+      this.dispatchEvent({
+        type: _events.EVENT_NEW_ITEM,
+        item: null
+      });
+    }
+  }, {
     key: "addItem",
-    value: function addItem(metadata) {}
+    value: function addItem(item) {
+      this.__roomItems.push(item);
+
+      this.dispatchEvent({
+        type: _events.EVENT_NEW_ITEM,
+        item: item
+      });
+    }
   }, {
     key: "roomItems",
     get: function get() {
@@ -47358,6 +47983,1678 @@ var MapControls = function (object, domElement) {
 exports.MapControls = MapControls;
 MapControls.prototype = Object.create(_threeModule.EventDispatcher.prototype);
 MapControls.prototype.constructor = MapControls;
+},{"../../../build/three.module.js":"../node_modules/three/build/three.module.js"}],"../node_modules/three/examples/jsm/exporters/GLTFExporter.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.GLTFExporter = void 0;
+
+var _threeModule = require("../../../build/three.module.js");
+
+/**
+ * @author fernandojsg / http://fernandojsg.com
+ * @author Don McCurdy / https://www.donmccurdy.com
+ * @author Takahiro / https://github.com/takahirox
+ */
+//------------------------------------------------------------------------------
+// Constants
+//------------------------------------------------------------------------------
+var WEBGL_CONSTANTS = {
+  POINTS: 0x0000,
+  LINES: 0x0001,
+  LINE_LOOP: 0x0002,
+  LINE_STRIP: 0x0003,
+  TRIANGLES: 0x0004,
+  TRIANGLE_STRIP: 0x0005,
+  TRIANGLE_FAN: 0x0006,
+  UNSIGNED_BYTE: 0x1401,
+  UNSIGNED_SHORT: 0x1403,
+  FLOAT: 0x1406,
+  UNSIGNED_INT: 0x1405,
+  ARRAY_BUFFER: 0x8892,
+  ELEMENT_ARRAY_BUFFER: 0x8893,
+  NEAREST: 0x2600,
+  LINEAR: 0x2601,
+  NEAREST_MIPMAP_NEAREST: 0x2700,
+  LINEAR_MIPMAP_NEAREST: 0x2701,
+  NEAREST_MIPMAP_LINEAR: 0x2702,
+  LINEAR_MIPMAP_LINEAR: 0x2703,
+  CLAMP_TO_EDGE: 33071,
+  MIRRORED_REPEAT: 33648,
+  REPEAT: 10497
+};
+var THREE_TO_WEBGL = {};
+THREE_TO_WEBGL[_threeModule.NearestFilter] = WEBGL_CONSTANTS.NEAREST;
+THREE_TO_WEBGL[_threeModule.NearestMipmapNearestFilter] = WEBGL_CONSTANTS.NEAREST_MIPMAP_NEAREST;
+THREE_TO_WEBGL[_threeModule.NearestMipmapLinearFilter] = WEBGL_CONSTANTS.NEAREST_MIPMAP_LINEAR;
+THREE_TO_WEBGL[_threeModule.LinearFilter] = WEBGL_CONSTANTS.LINEAR;
+THREE_TO_WEBGL[_threeModule.LinearMipmapNearestFilter] = WEBGL_CONSTANTS.LINEAR_MIPMAP_NEAREST;
+THREE_TO_WEBGL[_threeModule.LinearMipmapLinearFilter] = WEBGL_CONSTANTS.LINEAR_MIPMAP_LINEAR;
+THREE_TO_WEBGL[_threeModule.ClampToEdgeWrapping] = WEBGL_CONSTANTS.CLAMP_TO_EDGE;
+THREE_TO_WEBGL[_threeModule.RepeatWrapping] = WEBGL_CONSTANTS.REPEAT;
+THREE_TO_WEBGL[_threeModule.MirroredRepeatWrapping] = WEBGL_CONSTANTS.MIRRORED_REPEAT;
+var PATH_PROPERTIES = {
+  scale: 'scale',
+  position: 'translation',
+  quaternion: 'rotation',
+  morphTargetInfluences: 'weights'
+}; //------------------------------------------------------------------------------
+// GLTF Exporter
+//------------------------------------------------------------------------------
+
+var GLTFExporter = function () {};
+
+exports.GLTFExporter = GLTFExporter;
+GLTFExporter.prototype = {
+  constructor: GLTFExporter,
+
+  /**
+   * Parse scenes and generate GLTF output
+   * @param  {Scene or [THREE.Scenes]} input   Scene or Array of THREE.Scenes
+   * @param  {Function} onDone  Callback on completed
+   * @param  {Object} options options
+   */
+  parse: function (input, onDone, options) {
+    var DEFAULT_OPTIONS = {
+      binary: false,
+      trs: false,
+      onlyVisible: true,
+      truncateDrawRange: true,
+      embedImages: true,
+      maxTextureSize: Infinity,
+      animations: [],
+      forcePowerOfTwoTextures: false,
+      includeCustomExtensions: false
+    };
+    options = Object.assign({}, DEFAULT_OPTIONS, options);
+
+    if (options.animations.length > 0) {
+      // Only TRS properties, and not matrices, may be targeted by animation.
+      options.trs = true;
+    }
+
+    var outputJSON = {
+      asset: {
+        version: "2.0",
+        generator: "GLTFExporter"
+      }
+    };
+    var byteOffset = 0;
+    var buffers = [];
+    var pending = [];
+    var nodeMap = new Map();
+    var skins = [];
+    var extensionsUsed = {};
+    var cachedData = {
+      meshes: new Map(),
+      attributes: new Map(),
+      attributesNormalized: new Map(),
+      materials: new Map(),
+      textures: new Map(),
+      images: new Map()
+    };
+    var cachedCanvas;
+    var uids = new Map();
+    var uid = 0;
+    /**
+     * Assign and return a temporal unique id for an object
+     * especially which doesn't have .uuid
+     * @param  {Object} object
+     * @return {Integer}
+     */
+
+    function getUID(object) {
+      if (!uids.has(object)) uids.set(object, uid++);
+      return uids.get(object);
+    }
+    /**
+     * Compare two arrays
+     * @param  {Array} array1 Array 1 to compare
+     * @param  {Array} array2 Array 2 to compare
+     * @return {Boolean}        Returns true if both arrays are equal
+     */
+
+
+    function equalArray(array1, array2) {
+      return array1.length === array2.length && array1.every(function (element, index) {
+        return element === array2[index];
+      });
+    }
+    /**
+     * Converts a string to an ArrayBuffer.
+     * @param  {string} text
+     * @return {ArrayBuffer}
+     */
+
+
+    function stringToArrayBuffer(text) {
+      if (window.TextEncoder !== undefined) {
+        return new TextEncoder().encode(text).buffer;
+      }
+
+      var array = new Uint8Array(new ArrayBuffer(text.length));
+
+      for (var i = 0, il = text.length; i < il; i++) {
+        var value = text.charCodeAt(i); // Replacing multi-byte character with space(0x20).
+
+        array[i] = value > 0xFF ? 0x20 : value;
+      }
+
+      return array.buffer;
+    }
+    /**
+     * Get the min and max vectors from the given attribute
+     * @param  {BufferAttribute} attribute Attribute to find the min/max in range from start to start + count
+     * @param  {Integer} start
+     * @param  {Integer} count
+     * @return {Object} Object containing the `min` and `max` values (As an array of attribute.itemSize components)
+     */
+
+
+    function getMinMax(attribute, start, count) {
+      var output = {
+        min: new Array(attribute.itemSize).fill(Number.POSITIVE_INFINITY),
+        max: new Array(attribute.itemSize).fill(Number.NEGATIVE_INFINITY)
+      };
+
+      for (var i = start; i < start + count; i++) {
+        for (var a = 0; a < attribute.itemSize; a++) {
+          var value = attribute.array[i * attribute.itemSize + a];
+          output.min[a] = Math.min(output.min[a], value);
+          output.max[a] = Math.max(output.max[a], value);
+        }
+      }
+
+      return output;
+    }
+    /**
+     * Checks if image size is POT.
+     *
+     * @param {Image} image The image to be checked.
+     * @returns {Boolean} Returns true if image size is POT.
+     *
+     */
+
+
+    function isPowerOfTwo(image) {
+      return _threeModule.MathUtils.isPowerOfTwo(image.width) && _threeModule.MathUtils.isPowerOfTwo(image.height);
+    }
+    /**
+     * Checks if normal attribute values are normalized.
+     *
+     * @param {BufferAttribute} normal
+     * @returns {Boolean}
+     *
+     */
+
+
+    function isNormalizedNormalAttribute(normal) {
+      if (cachedData.attributesNormalized.has(normal)) {
+        return false;
+      }
+
+      var v = new _threeModule.Vector3();
+
+      for (var i = 0, il = normal.count; i < il; i++) {
+        // 0.0005 is from glTF-validator
+        if (Math.abs(v.fromArray(normal.array, i * 3).length() - 1.0) > 0.0005) return false;
+      }
+
+      return true;
+    }
+    /**
+     * Creates normalized normal buffer attribute.
+     *
+     * @param {BufferAttribute} normal
+     * @returns {BufferAttribute}
+     *
+     */
+
+
+    function createNormalizedNormalAttribute(normal) {
+      if (cachedData.attributesNormalized.has(normal)) {
+        return cachedData.attributesNormalized.get(normal);
+      }
+
+      var attribute = normal.clone();
+      var v = new _threeModule.Vector3();
+
+      for (var i = 0, il = attribute.count; i < il; i++) {
+        v.fromArray(attribute.array, i * 3);
+
+        if (v.x === 0 && v.y === 0 && v.z === 0) {
+          // if values can't be normalized set (1, 0, 0)
+          v.setX(1.0);
+        } else {
+          v.normalize();
+        }
+
+        v.toArray(attribute.array, i * 3);
+      }
+
+      cachedData.attributesNormalized.set(normal, attribute);
+      return attribute;
+    }
+    /**
+     * Get the required size + padding for a buffer, rounded to the next 4-byte boundary.
+     * https://github.com/KhronosGroup/glTF/tree/master/specification/2.0#data-alignment
+     *
+     * @param {Integer} bufferSize The size the original buffer.
+     * @returns {Integer} new buffer size with required padding.
+     *
+     */
+
+
+    function getPaddedBufferSize(bufferSize) {
+      return Math.ceil(bufferSize / 4) * 4;
+    }
+    /**
+     * Returns a buffer aligned to 4-byte boundary.
+     *
+     * @param {ArrayBuffer} arrayBuffer Buffer to pad
+     * @param {Integer} paddingByte (Optional)
+     * @returns {ArrayBuffer} The same buffer if it's already aligned to 4-byte boundary or a new buffer
+     */
+
+
+    function getPaddedArrayBuffer(arrayBuffer, paddingByte) {
+      paddingByte = paddingByte || 0;
+      var paddedLength = getPaddedBufferSize(arrayBuffer.byteLength);
+
+      if (paddedLength !== arrayBuffer.byteLength) {
+        var array = new Uint8Array(paddedLength);
+        array.set(new Uint8Array(arrayBuffer));
+
+        if (paddingByte !== 0) {
+          for (var i = arrayBuffer.byteLength; i < paddedLength; i++) {
+            array[i] = paddingByte;
+          }
+        }
+
+        return array.buffer;
+      }
+
+      return arrayBuffer;
+    }
+    /**
+     * Serializes a userData.
+     *
+     * @param {THREE.Object3D|THREE.Material} object
+     * @param {Object} gltfProperty
+     */
+
+
+    function serializeUserData(object, gltfProperty) {
+      if (Object.keys(object.userData).length === 0) {
+        return;
+      }
+
+      try {
+        var json = JSON.parse(JSON.stringify(object.userData));
+
+        if (options.includeCustomExtensions && json.gltfExtensions) {
+          if (gltfProperty.extensions === undefined) {
+            gltfProperty.extensions = {};
+          }
+
+          for (var extensionName in json.gltfExtensions) {
+            gltfProperty.extensions[extensionName] = json.gltfExtensions[extensionName];
+            extensionsUsed[extensionName] = true;
+          }
+
+          delete json.gltfExtensions;
+        }
+
+        if (Object.keys(json).length > 0) {
+          gltfProperty.extras = json;
+        }
+      } catch (error) {
+        console.warn('THREE.GLTFExporter: userData of \'' + object.name + '\' ' + 'won\'t be serialized because of JSON.stringify error - ' + error.message);
+      }
+    }
+    /**
+     * Applies a texture transform, if present, to the map definition. Requires
+     * the KHR_texture_transform extension.
+     */
+
+
+    function applyTextureTransform(mapDef, texture) {
+      var didTransform = false;
+      var transformDef = {};
+
+      if (texture.offset.x !== 0 || texture.offset.y !== 0) {
+        transformDef.offset = texture.offset.toArray();
+        didTransform = true;
+      }
+
+      if (texture.rotation !== 0) {
+        transformDef.rotation = texture.rotation;
+        didTransform = true;
+      }
+
+      if (texture.repeat.x !== 1 || texture.repeat.y !== 1) {
+        transformDef.scale = texture.repeat.toArray();
+        didTransform = true;
+      }
+
+      if (didTransform) {
+        mapDef.extensions = mapDef.extensions || {};
+        mapDef.extensions['KHR_texture_transform'] = transformDef;
+        extensionsUsed['KHR_texture_transform'] = true;
+      }
+    }
+    /**
+     * Process a buffer to append to the default one.
+     * @param  {ArrayBuffer} buffer
+     * @return {Integer}
+     */
+
+
+    function processBuffer(buffer) {
+      if (!outputJSON.buffers) {
+        outputJSON.buffers = [{
+          byteLength: 0
+        }];
+      } // All buffers are merged before export.
+
+
+      buffers.push(buffer);
+      return 0;
+    }
+    /**
+     * Process and generate a BufferView
+     * @param  {BufferAttribute} attribute
+     * @param  {number} componentType
+     * @param  {number} start
+     * @param  {number} count
+     * @param  {number} target (Optional) Target usage of the BufferView
+     * @return {Object}
+     */
+
+
+    function processBufferView(attribute, componentType, start, count, target) {
+      if (!outputJSON.bufferViews) {
+        outputJSON.bufferViews = [];
+      } // Create a new dataview and dump the attribute's array into it
+
+
+      var componentSize;
+
+      if (componentType === WEBGL_CONSTANTS.UNSIGNED_BYTE) {
+        componentSize = 1;
+      } else if (componentType === WEBGL_CONSTANTS.UNSIGNED_SHORT) {
+        componentSize = 2;
+      } else {
+        componentSize = 4;
+      }
+
+      var byteLength = getPaddedBufferSize(count * attribute.itemSize * componentSize);
+      var dataView = new DataView(new ArrayBuffer(byteLength));
+      var offset = 0;
+
+      for (var i = start; i < start + count; i++) {
+        for (var a = 0; a < attribute.itemSize; a++) {
+          var value;
+
+          if (attribute.itemSize > 4) {
+            // no support for interleaved data for itemSize > 4
+            value = attribute.array[i * attribute.itemSize + a];
+          } else {
+            if (a === 0) value = attribute.getX(i);else if (a === 1) value = attribute.getY(i);else if (a === 2) value = attribute.getZ(i);else if (a === 3) value = attribute.getW(i);
+          }
+
+          if (componentType === WEBGL_CONSTANTS.FLOAT) {
+            dataView.setFloat32(offset, value, true);
+          } else if (componentType === WEBGL_CONSTANTS.UNSIGNED_INT) {
+            dataView.setUint32(offset, value, true);
+          } else if (componentType === WEBGL_CONSTANTS.UNSIGNED_SHORT) {
+            dataView.setUint16(offset, value, true);
+          } else if (componentType === WEBGL_CONSTANTS.UNSIGNED_BYTE) {
+            dataView.setUint8(offset, value);
+          }
+
+          offset += componentSize;
+        }
+      }
+
+      var gltfBufferView = {
+        buffer: processBuffer(dataView.buffer),
+        byteOffset: byteOffset,
+        byteLength: byteLength
+      };
+      if (target !== undefined) gltfBufferView.target = target;
+
+      if (target === WEBGL_CONSTANTS.ARRAY_BUFFER) {
+        // Only define byteStride for vertex attributes.
+        gltfBufferView.byteStride = attribute.itemSize * componentSize;
+      }
+
+      byteOffset += byteLength;
+      outputJSON.bufferViews.push(gltfBufferView); // @TODO Merge bufferViews where possible.
+
+      var output = {
+        id: outputJSON.bufferViews.length - 1,
+        byteLength: 0
+      };
+      return output;
+    }
+    /**
+     * Process and generate a BufferView from an image Blob.
+     * @param {Blob} blob
+     * @return {Promise<Integer>}
+     */
+
+
+    function processBufferViewImage(blob) {
+      if (!outputJSON.bufferViews) {
+        outputJSON.bufferViews = [];
+      }
+
+      return new Promise(function (resolve) {
+        var reader = new window.FileReader();
+        reader.readAsArrayBuffer(blob);
+
+        reader.onloadend = function () {
+          var buffer = getPaddedArrayBuffer(reader.result);
+          var bufferView = {
+            buffer: processBuffer(buffer),
+            byteOffset: byteOffset,
+            byteLength: buffer.byteLength
+          };
+          byteOffset += buffer.byteLength;
+          outputJSON.bufferViews.push(bufferView);
+          resolve(outputJSON.bufferViews.length - 1);
+        };
+      });
+    }
+    /**
+     * Process attribute to generate an accessor
+     * @param  {BufferAttribute} attribute Attribute to process
+     * @param  {BufferGeometry} geometry (Optional) Geometry used for truncated draw range
+     * @param  {Integer} start (Optional)
+     * @param  {Integer} count (Optional)
+     * @return {Integer}           Index of the processed accessor on the "accessors" array
+     */
+
+
+    function processAccessor(attribute, geometry, start, count) {
+      var types = {
+        1: 'SCALAR',
+        2: 'VEC2',
+        3: 'VEC3',
+        4: 'VEC4',
+        16: 'MAT4'
+      };
+      var componentType; // Detect the component type of the attribute array (float, uint or ushort)
+
+      if (attribute.array.constructor === Float32Array) {
+        componentType = WEBGL_CONSTANTS.FLOAT;
+      } else if (attribute.array.constructor === Uint32Array) {
+        componentType = WEBGL_CONSTANTS.UNSIGNED_INT;
+      } else if (attribute.array.constructor === Uint16Array) {
+        componentType = WEBGL_CONSTANTS.UNSIGNED_SHORT;
+      } else if (attribute.array.constructor === Uint8Array) {
+        componentType = WEBGL_CONSTANTS.UNSIGNED_BYTE;
+      } else {
+        throw new Error('THREE.GLTFExporter: Unsupported bufferAttribute component type.');
+      }
+
+      if (start === undefined) start = 0;
+      if (count === undefined) count = attribute.count; // @TODO Indexed buffer geometry with drawRange not supported yet
+
+      if (options.truncateDrawRange && geometry !== undefined && geometry.index === null) {
+        var end = start + count;
+        var end2 = geometry.drawRange.count === Infinity ? attribute.count : geometry.drawRange.start + geometry.drawRange.count;
+        start = Math.max(start, geometry.drawRange.start);
+        count = Math.min(end, end2) - start;
+        if (count < 0) count = 0;
+      } // Skip creating an accessor if the attribute doesn't have data to export
+
+
+      if (count === 0) {
+        return null;
+      }
+
+      var minMax = getMinMax(attribute, start, count);
+      var bufferViewTarget; // If geometry isn't provided, don't infer the target usage of the bufferView. For
+      // animation samplers, target must not be set.
+
+      if (geometry !== undefined) {
+        bufferViewTarget = attribute === geometry.index ? WEBGL_CONSTANTS.ELEMENT_ARRAY_BUFFER : WEBGL_CONSTANTS.ARRAY_BUFFER;
+      }
+
+      var bufferView = processBufferView(attribute, componentType, start, count, bufferViewTarget);
+      var gltfAccessor = {
+        bufferView: bufferView.id,
+        byteOffset: bufferView.byteOffset,
+        componentType: componentType,
+        count: count,
+        max: minMax.max,
+        min: minMax.min,
+        type: types[attribute.itemSize]
+      };
+
+      if (attribute.normalized === true) {
+        gltfAccessor.normalized = true;
+      }
+
+      if (!outputJSON.accessors) {
+        outputJSON.accessors = [];
+      }
+
+      outputJSON.accessors.push(gltfAccessor);
+      return outputJSON.accessors.length - 1;
+    }
+    /**
+     * Process image
+     * @param  {Image} image to process
+     * @param  {Integer} format of the image (e.g. THREE.RGBFormat, RGBAFormat etc)
+     * @param  {Boolean} flipY before writing out the image
+     * @return {Integer}     Index of the processed texture in the "images" array
+     */
+
+
+    function processImage(image, format, flipY) {
+      if (!cachedData.images.has(image)) {
+        cachedData.images.set(image, {});
+      }
+
+      var cachedImages = cachedData.images.get(image);
+      var mimeType = format === _threeModule.RGBAFormat ? 'image/png' : 'image/jpeg';
+      var key = mimeType + ":flipY/" + flipY.toString();
+
+      if (cachedImages[key] !== undefined) {
+        return cachedImages[key];
+      }
+
+      if (!outputJSON.images) {
+        outputJSON.images = [];
+      }
+
+      var gltfImage = {
+        mimeType: mimeType
+      };
+
+      if (options.embedImages) {
+        var canvas = cachedCanvas = cachedCanvas || document.createElement('canvas');
+        canvas.width = Math.min(image.width, options.maxTextureSize);
+        canvas.height = Math.min(image.height, options.maxTextureSize);
+
+        if (options.forcePowerOfTwoTextures && !isPowerOfTwo(canvas)) {
+          console.warn('GLTFExporter: Resized non-power-of-two image.', image);
+          canvas.width = _threeModule.MathUtils.floorPowerOfTwo(canvas.width);
+          canvas.height = _threeModule.MathUtils.floorPowerOfTwo(canvas.height);
+        }
+
+        var ctx = canvas.getContext('2d');
+
+        if (flipY === true) {
+          ctx.translate(0, canvas.height);
+          ctx.scale(1, -1);
+        }
+
+        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+        if (options.binary === true) {
+          pending.push(new Promise(function (resolve) {
+            canvas.toBlob(function (blob) {
+              processBufferViewImage(blob).then(function (bufferViewIndex) {
+                gltfImage.bufferView = bufferViewIndex;
+                resolve();
+              });
+            }, mimeType);
+          }));
+        } else {
+          gltfImage.uri = canvas.toDataURL(mimeType);
+        }
+      } else {
+        gltfImage.uri = image.src;
+      }
+
+      outputJSON.images.push(gltfImage);
+      var index = outputJSON.images.length - 1;
+      cachedImages[key] = index;
+      return index;
+    }
+    /**
+     * Process sampler
+     * @param  {Texture} map Texture to process
+     * @return {Integer}     Index of the processed texture in the "samplers" array
+     */
+
+
+    function processSampler(map) {
+      if (!outputJSON.samplers) {
+        outputJSON.samplers = [];
+      }
+
+      var gltfSampler = {
+        magFilter: THREE_TO_WEBGL[map.magFilter],
+        minFilter: THREE_TO_WEBGL[map.minFilter],
+        wrapS: THREE_TO_WEBGL[map.wrapS],
+        wrapT: THREE_TO_WEBGL[map.wrapT]
+      };
+      outputJSON.samplers.push(gltfSampler);
+      return outputJSON.samplers.length - 1;
+    }
+    /**
+     * Process texture
+     * @param  {Texture} map Map to process
+     * @return {Integer}     Index of the processed texture in the "textures" array
+     */
+
+
+    function processTexture(map) {
+      if (cachedData.textures.has(map)) {
+        return cachedData.textures.get(map);
+      }
+
+      if (!outputJSON.textures) {
+        outputJSON.textures = [];
+      }
+
+      var gltfTexture = {
+        sampler: processSampler(map),
+        source: processImage(map.image, map.format, map.flipY)
+      };
+
+      if (map.name) {
+        gltfTexture.name = map.name;
+      }
+
+      outputJSON.textures.push(gltfTexture);
+      var index = outputJSON.textures.length - 1;
+      cachedData.textures.set(map, index);
+      return index;
+    }
+    /**
+     * Process material
+     * @param  {THREE.Material} material Material to process
+     * @return {Integer}      Index of the processed material in the "materials" array
+     */
+
+
+    function processMaterial(material) {
+      if (cachedData.materials.has(material)) {
+        return cachedData.materials.get(material);
+      }
+
+      if (material.isShaderMaterial) {
+        console.warn('GLTFExporter: THREE.ShaderMaterial not supported.');
+        return null;
+      }
+
+      if (!outputJSON.materials) {
+        outputJSON.materials = [];
+      } // @QUESTION Should we avoid including any attribute that has the default value?
+
+
+      var gltfMaterial = {
+        pbrMetallicRoughness: {}
+      };
+
+      if (material.isMeshBasicMaterial) {
+        gltfMaterial.extensions = {
+          KHR_materials_unlit: {}
+        };
+        extensionsUsed['KHR_materials_unlit'] = true;
+      } else if (material.isGLTFSpecularGlossinessMaterial) {
+        gltfMaterial.extensions = {
+          KHR_materials_pbrSpecularGlossiness: {}
+        };
+        extensionsUsed['KHR_materials_pbrSpecularGlossiness'] = true;
+      } else if (!material.isMeshStandardMaterial) {
+        console.warn('GLTFExporter: Use MeshStandardMaterial or MeshBasicMaterial for best results.');
+      } // pbrMetallicRoughness.baseColorFactor
+
+
+      var color = material.color.toArray().concat([material.opacity]);
+
+      if (!equalArray(color, [1, 1, 1, 1])) {
+        gltfMaterial.pbrMetallicRoughness.baseColorFactor = color;
+      }
+
+      if (material.isMeshStandardMaterial) {
+        gltfMaterial.pbrMetallicRoughness.metallicFactor = material.metalness;
+        gltfMaterial.pbrMetallicRoughness.roughnessFactor = material.roughness;
+      } else if (material.isMeshBasicMaterial) {
+        gltfMaterial.pbrMetallicRoughness.metallicFactor = 0.0;
+        gltfMaterial.pbrMetallicRoughness.roughnessFactor = 0.9;
+      } else {
+        gltfMaterial.pbrMetallicRoughness.metallicFactor = 0.5;
+        gltfMaterial.pbrMetallicRoughness.roughnessFactor = 0.5;
+      } // pbrSpecularGlossiness diffuse, specular and glossiness factor
+
+
+      if (material.isGLTFSpecularGlossinessMaterial) {
+        if (gltfMaterial.pbrMetallicRoughness.baseColorFactor) {
+          gltfMaterial.extensions.KHR_materials_pbrSpecularGlossiness.diffuseFactor = gltfMaterial.pbrMetallicRoughness.baseColorFactor;
+        }
+
+        var specularFactor = [1, 1, 1];
+        material.specular.toArray(specularFactor, 0);
+        gltfMaterial.extensions.KHR_materials_pbrSpecularGlossiness.specularFactor = specularFactor;
+        gltfMaterial.extensions.KHR_materials_pbrSpecularGlossiness.glossinessFactor = material.glossiness;
+      } // pbrMetallicRoughness.metallicRoughnessTexture
+
+
+      if (material.metalnessMap || material.roughnessMap) {
+        if (material.metalnessMap === material.roughnessMap) {
+          var metalRoughMapDef = {
+            index: processTexture(material.metalnessMap)
+          };
+          applyTextureTransform(metalRoughMapDef, material.metalnessMap);
+          gltfMaterial.pbrMetallicRoughness.metallicRoughnessTexture = metalRoughMapDef;
+        } else {
+          console.warn('THREE.GLTFExporter: Ignoring metalnessMap and roughnessMap because they are not the same Texture.');
+        }
+      } // pbrMetallicRoughness.baseColorTexture or pbrSpecularGlossiness diffuseTexture
+
+
+      if (material.map) {
+        var baseColorMapDef = {
+          index: processTexture(material.map)
+        };
+        applyTextureTransform(baseColorMapDef, material.map);
+
+        if (material.isGLTFSpecularGlossinessMaterial) {
+          gltfMaterial.extensions.KHR_materials_pbrSpecularGlossiness.diffuseTexture = baseColorMapDef;
+        }
+
+        gltfMaterial.pbrMetallicRoughness.baseColorTexture = baseColorMapDef;
+      } // pbrSpecularGlossiness specular map
+
+
+      if (material.isGLTFSpecularGlossinessMaterial && material.specularMap) {
+        var specularMapDef = {
+          index: processTexture(material.specularMap)
+        };
+        applyTextureTransform(specularMapDef, material.specularMap);
+        gltfMaterial.extensions.KHR_materials_pbrSpecularGlossiness.specularGlossinessTexture = specularMapDef;
+      }
+
+      if (material.emissive) {
+        // emissiveFactor
+        var emissive = material.emissive.clone().multiplyScalar(material.emissiveIntensity).toArray();
+
+        if (!equalArray(emissive, [0, 0, 0])) {
+          gltfMaterial.emissiveFactor = emissive;
+        } // emissiveTexture
+
+
+        if (material.emissiveMap) {
+          var emissiveMapDef = {
+            index: processTexture(material.emissiveMap)
+          };
+          applyTextureTransform(emissiveMapDef, material.emissiveMap);
+          gltfMaterial.emissiveTexture = emissiveMapDef;
+        }
+      } // normalTexture
+
+
+      if (material.normalMap) {
+        var normalMapDef = {
+          index: processTexture(material.normalMap)
+        };
+
+        if (material.normalScale && material.normalScale.x !== -1) {
+          if (material.normalScale.x !== material.normalScale.y) {
+            console.warn('THREE.GLTFExporter: Normal scale components are different, ignoring Y and exporting X.');
+          }
+
+          normalMapDef.scale = material.normalScale.x;
+        }
+
+        applyTextureTransform(normalMapDef, material.normalMap);
+        gltfMaterial.normalTexture = normalMapDef;
+      } // occlusionTexture
+
+
+      if (material.aoMap) {
+        var occlusionMapDef = {
+          index: processTexture(material.aoMap),
+          texCoord: 1
+        };
+
+        if (material.aoMapIntensity !== 1.0) {
+          occlusionMapDef.strength = material.aoMapIntensity;
+        }
+
+        applyTextureTransform(occlusionMapDef, material.aoMap);
+        gltfMaterial.occlusionTexture = occlusionMapDef;
+      } // alphaMode
+
+
+      if (material.transparent) {
+        gltfMaterial.alphaMode = 'BLEND';
+      } else {
+        if (material.alphaTest > 0.0) {
+          gltfMaterial.alphaMode = 'MASK';
+          gltfMaterial.alphaCutoff = material.alphaTest;
+        }
+      } // doubleSided
+
+
+      if (material.side === _threeModule.DoubleSide) {
+        gltfMaterial.doubleSided = true;
+      }
+
+      if (material.name !== '') {
+        gltfMaterial.name = material.name;
+      }
+
+      serializeUserData(material, gltfMaterial);
+      outputJSON.materials.push(gltfMaterial);
+      var index = outputJSON.materials.length - 1;
+      cachedData.materials.set(material, index);
+      return index;
+    }
+    /**
+     * Process mesh
+     * @param  {THREE.Mesh} mesh Mesh to process
+     * @return {Integer}      Index of the processed mesh in the "meshes" array
+     */
+
+
+    function processMesh(mesh) {
+      var meshCacheKeyParts = [mesh.geometry.uuid];
+
+      if (Array.isArray(mesh.material)) {
+        for (var i = 0, l = mesh.material.length; i < l; i++) {
+          meshCacheKeyParts.push(mesh.material[i].uuid);
+        }
+      } else {
+        meshCacheKeyParts.push(mesh.material.uuid);
+      }
+
+      var meshCacheKey = meshCacheKeyParts.join(':');
+
+      if (cachedData.meshes.has(meshCacheKey)) {
+        return cachedData.meshes.get(meshCacheKey);
+      }
+
+      var geometry = mesh.geometry;
+      var mode; // Use the correct mode
+
+      if (mesh.isLineSegments) {
+        mode = WEBGL_CONSTANTS.LINES;
+      } else if (mesh.isLineLoop) {
+        mode = WEBGL_CONSTANTS.LINE_LOOP;
+      } else if (mesh.isLine) {
+        mode = WEBGL_CONSTANTS.LINE_STRIP;
+      } else if (mesh.isPoints) {
+        mode = WEBGL_CONSTANTS.POINTS;
+      } else {
+        mode = mesh.material.wireframe ? WEBGL_CONSTANTS.LINES : WEBGL_CONSTANTS.TRIANGLES;
+      }
+
+      if (!geometry.isBufferGeometry) {
+        console.warn('GLTFExporter: Exporting THREE.Geometry will increase file size. Use BufferGeometry instead.');
+        geometry = new _threeModule.BufferGeometry().setFromObject(mesh);
+      }
+
+      var gltfMesh = {};
+      var attributes = {};
+      var primitives = [];
+      var targets = []; // Conversion between attributes names in threejs and gltf spec
+
+      var nameConversion = {
+        uv: 'TEXCOORD_0',
+        uv2: 'TEXCOORD_1',
+        color: 'COLOR_0',
+        skinWeight: 'WEIGHTS_0',
+        skinIndex: 'JOINTS_0'
+      };
+      var originalNormal = geometry.getAttribute('normal');
+
+      if (originalNormal !== undefined && !isNormalizedNormalAttribute(originalNormal)) {
+        console.warn('THREE.GLTFExporter: Creating normalized normal attribute from the non-normalized one.');
+        geometry.setAttribute('normal', createNormalizedNormalAttribute(originalNormal));
+      } // @QUESTION Detect if .vertexColors = true?
+      // For every attribute create an accessor
+
+
+      var modifiedAttribute = null;
+
+      for (var attributeName in geometry.attributes) {
+        // Ignore morph target attributes, which are exported later.
+        if (attributeName.substr(0, 5) === 'morph') continue;
+        var attribute = geometry.attributes[attributeName];
+        attributeName = nameConversion[attributeName] || attributeName.toUpperCase(); // Prefix all geometry attributes except the ones specifically
+        // listed in the spec; non-spec attributes are considered custom.
+
+        var validVertexAttributes = /^(POSITION|NORMAL|TANGENT|TEXCOORD_\d+|COLOR_\d+|JOINTS_\d+|WEIGHTS_\d+)$/;
+
+        if (!validVertexAttributes.test(attributeName)) {
+          attributeName = '_' + attributeName;
+        }
+
+        if (cachedData.attributes.has(getUID(attribute))) {
+          attributes[attributeName] = cachedData.attributes.get(getUID(attribute));
+          continue;
+        } // JOINTS_0 must be UNSIGNED_BYTE or UNSIGNED_SHORT.
+
+
+        modifiedAttribute = null;
+        var array = attribute.array;
+
+        if (attributeName === 'JOINTS_0' && !(array instanceof Uint16Array) && !(array instanceof Uint8Array)) {
+          console.warn('GLTFExporter: Attribute "skinIndex" converted to type UNSIGNED_SHORT.');
+          modifiedAttribute = new _threeModule.BufferAttribute(new Uint16Array(array), attribute.itemSize, attribute.normalized);
+        }
+
+        var accessor = processAccessor(modifiedAttribute || attribute, geometry);
+
+        if (accessor !== null) {
+          attributes[attributeName] = accessor;
+          cachedData.attributes.set(getUID(attribute), accessor);
+        }
+      }
+
+      if (originalNormal !== undefined) geometry.setAttribute('normal', originalNormal); // Skip if no exportable attributes found
+
+      if (Object.keys(attributes).length === 0) {
+        return null;
+      } // Morph targets
+
+
+      if (mesh.morphTargetInfluences !== undefined && mesh.morphTargetInfluences.length > 0) {
+        var weights = [];
+        var targetNames = [];
+        var reverseDictionary = {};
+
+        if (mesh.morphTargetDictionary !== undefined) {
+          for (var key in mesh.morphTargetDictionary) {
+            reverseDictionary[mesh.morphTargetDictionary[key]] = key;
+          }
+        }
+
+        for (var i = 0; i < mesh.morphTargetInfluences.length; ++i) {
+          var target = {};
+          var warned = false;
+
+          for (var attributeName in geometry.morphAttributes) {
+            // glTF 2.0 morph supports only POSITION/NORMAL/TANGENT.
+            // Three.js doesn't support TANGENT yet.
+            if (attributeName !== 'position' && attributeName !== 'normal') {
+              if (!warned) {
+                console.warn('GLTFExporter: Only POSITION and NORMAL morph are supported.');
+                warned = true;
+              }
+
+              continue;
+            }
+
+            var attribute = geometry.morphAttributes[attributeName][i];
+            var gltfAttributeName = attributeName.toUpperCase(); // Three.js morph attribute has absolute values while the one of glTF has relative values.
+            //
+            // glTF 2.0 Specification:
+            // https://github.com/KhronosGroup/glTF/tree/master/specification/2.0#morph-targets
+
+            var baseAttribute = geometry.attributes[attributeName];
+
+            if (cachedData.attributes.has(getUID(attribute))) {
+              target[gltfAttributeName] = cachedData.attributes.get(getUID(attribute));
+              continue;
+            } // Clones attribute not to override
+
+
+            var relativeAttribute = attribute.clone();
+
+            if (!geometry.morphTargetsRelative) {
+              for (var j = 0, jl = attribute.count; j < jl; j++) {
+                relativeAttribute.setXYZ(j, attribute.getX(j) - baseAttribute.getX(j), attribute.getY(j) - baseAttribute.getY(j), attribute.getZ(j) - baseAttribute.getZ(j));
+              }
+            }
+
+            target[gltfAttributeName] = processAccessor(relativeAttribute, geometry);
+            cachedData.attributes.set(getUID(baseAttribute), target[gltfAttributeName]);
+          }
+
+          targets.push(target);
+          weights.push(mesh.morphTargetInfluences[i]);
+          if (mesh.morphTargetDictionary !== undefined) targetNames.push(reverseDictionary[i]);
+        }
+
+        gltfMesh.weights = weights;
+
+        if (targetNames.length > 0) {
+          gltfMesh.extras = {};
+          gltfMesh.extras.targetNames = targetNames;
+        }
+      }
+
+      var isMultiMaterial = Array.isArray(mesh.material);
+      if (isMultiMaterial && geometry.groups.length === 0) return null;
+      var materials = isMultiMaterial ? mesh.material : [mesh.material];
+      var groups = isMultiMaterial ? geometry.groups : [{
+        materialIndex: 0,
+        start: undefined,
+        count: undefined
+      }];
+
+      for (var i = 0, il = groups.length; i < il; i++) {
+        var primitive = {
+          mode: mode,
+          attributes: attributes
+        };
+        serializeUserData(geometry, primitive);
+        if (targets.length > 0) primitive.targets = targets;
+
+        if (geometry.index !== null) {
+          var cacheKey = getUID(geometry.index);
+
+          if (groups[i].start !== undefined || groups[i].count !== undefined) {
+            cacheKey += ':' + groups[i].start + ':' + groups[i].count;
+          }
+
+          if (cachedData.attributes.has(cacheKey)) {
+            primitive.indices = cachedData.attributes.get(cacheKey);
+          } else {
+            primitive.indices = processAccessor(geometry.index, geometry, groups[i].start, groups[i].count);
+            cachedData.attributes.set(cacheKey, primitive.indices);
+          }
+
+          if (primitive.indices === null) delete primitive.indices;
+        }
+
+        var material = processMaterial(materials[groups[i].materialIndex]);
+
+        if (material !== null) {
+          primitive.material = material;
+        }
+
+        primitives.push(primitive);
+      }
+
+      gltfMesh.primitives = primitives;
+
+      if (!outputJSON.meshes) {
+        outputJSON.meshes = [];
+      }
+
+      outputJSON.meshes.push(gltfMesh);
+      var index = outputJSON.meshes.length - 1;
+      cachedData.meshes.set(meshCacheKey, index);
+      return index;
+    }
+    /**
+     * Process camera
+     * @param  {THREE.Camera} camera Camera to process
+     * @return {Integer}      Index of the processed mesh in the "camera" array
+     */
+
+
+    function processCamera(camera) {
+      if (!outputJSON.cameras) {
+        outputJSON.cameras = [];
+      }
+
+      var isOrtho = camera.isOrthographicCamera;
+      var gltfCamera = {
+        type: isOrtho ? 'orthographic' : 'perspective'
+      };
+
+      if (isOrtho) {
+        gltfCamera.orthographic = {
+          xmag: camera.right * 2,
+          ymag: camera.top * 2,
+          zfar: camera.far <= 0 ? 0.001 : camera.far,
+          znear: camera.near < 0 ? 0 : camera.near
+        };
+      } else {
+        gltfCamera.perspective = {
+          aspectRatio: camera.aspect,
+          yfov: _threeModule.MathUtils.degToRad(camera.fov),
+          zfar: camera.far <= 0 ? 0.001 : camera.far,
+          znear: camera.near < 0 ? 0 : camera.near
+        };
+      }
+
+      if (camera.name !== '') {
+        gltfCamera.name = camera.type;
+      }
+
+      outputJSON.cameras.push(gltfCamera);
+      return outputJSON.cameras.length - 1;
+    }
+    /**
+     * Creates glTF animation entry from AnimationClip object.
+     *
+     * Status:
+     * - Only properties listed in PATH_PROPERTIES may be animated.
+     *
+     * @param {THREE.AnimationClip} clip
+     * @param {THREE.Object3D} root
+     * @return {number}
+     */
+
+
+    function processAnimation(clip, root) {
+      if (!outputJSON.animations) {
+        outputJSON.animations = [];
+      }
+
+      clip = GLTFExporter.Utils.mergeMorphTargetTracks(clip.clone(), root);
+      var tracks = clip.tracks;
+      var channels = [];
+      var samplers = [];
+
+      for (var i = 0; i < tracks.length; ++i) {
+        var track = tracks[i];
+
+        var trackBinding = _threeModule.PropertyBinding.parseTrackName(track.name);
+
+        var trackNode = _threeModule.PropertyBinding.findNode(root, trackBinding.nodeName);
+
+        var trackProperty = PATH_PROPERTIES[trackBinding.propertyName];
+
+        if (trackBinding.objectName === 'bones') {
+          if (trackNode.isSkinnedMesh === true) {
+            trackNode = trackNode.skeleton.getBoneByName(trackBinding.objectIndex);
+          } else {
+            trackNode = undefined;
+          }
+        }
+
+        if (!trackNode || !trackProperty) {
+          console.warn('THREE.GLTFExporter: Could not export animation track "%s".', track.name);
+          return null;
+        }
+
+        var inputItemSize = 1;
+        var outputItemSize = track.values.length / track.times.length;
+
+        if (trackProperty === PATH_PROPERTIES.morphTargetInfluences) {
+          outputItemSize /= trackNode.morphTargetInfluences.length;
+        }
+
+        var interpolation; // @TODO export CubicInterpolant(InterpolateSmooth) as CUBICSPLINE
+        // Detecting glTF cubic spline interpolant by checking factory method's special property
+        // GLTFCubicSplineInterpolant is a custom interpolant and track doesn't return
+        // valid value from .getInterpolation().
+
+        if (track.createInterpolant.isInterpolantFactoryMethodGLTFCubicSpline === true) {
+          interpolation = 'CUBICSPLINE'; // itemSize of CUBICSPLINE keyframe is 9
+          // (VEC3 * 3: inTangent, splineVertex, and outTangent)
+          // but needs to be stored as VEC3 so dividing by 3 here.
+
+          outputItemSize /= 3;
+        } else if (track.getInterpolation() === _threeModule.InterpolateDiscrete) {
+          interpolation = 'STEP';
+        } else {
+          interpolation = 'LINEAR';
+        }
+
+        samplers.push({
+          input: processAccessor(new _threeModule.BufferAttribute(track.times, inputItemSize)),
+          output: processAccessor(new _threeModule.BufferAttribute(track.values, outputItemSize)),
+          interpolation: interpolation
+        });
+        channels.push({
+          sampler: samplers.length - 1,
+          target: {
+            node: nodeMap.get(trackNode),
+            path: trackProperty
+          }
+        });
+      }
+
+      outputJSON.animations.push({
+        name: clip.name || 'clip_' + outputJSON.animations.length,
+        samplers: samplers,
+        channels: channels
+      });
+      return outputJSON.animations.length - 1;
+    }
+
+    function processSkin(object) {
+      var node = outputJSON.nodes[nodeMap.get(object)];
+      var skeleton = object.skeleton;
+      if (skeleton === undefined) return null;
+      var rootJoint = object.skeleton.bones[0];
+      if (rootJoint === undefined) return null;
+      var joints = [];
+      var inverseBindMatrices = new Float32Array(skeleton.bones.length * 16);
+
+      for (var i = 0; i < skeleton.bones.length; ++i) {
+        joints.push(nodeMap.get(skeleton.bones[i]));
+        skeleton.boneInverses[i].toArray(inverseBindMatrices, i * 16);
+      }
+
+      if (outputJSON.skins === undefined) {
+        outputJSON.skins = [];
+      }
+
+      outputJSON.skins.push({
+        inverseBindMatrices: processAccessor(new _threeModule.BufferAttribute(inverseBindMatrices, 16)),
+        joints: joints,
+        skeleton: nodeMap.get(rootJoint)
+      });
+      var skinIndex = node.skin = outputJSON.skins.length - 1;
+      return skinIndex;
+    }
+
+    function processLight(light) {
+      var lightDef = {};
+      if (light.name) lightDef.name = light.name;
+      lightDef.color = light.color.toArray();
+      lightDef.intensity = light.intensity;
+
+      if (light.isDirectionalLight) {
+        lightDef.type = 'directional';
+      } else if (light.isPointLight) {
+        lightDef.type = 'point';
+        if (light.distance > 0) lightDef.range = light.distance;
+      } else if (light.isSpotLight) {
+        lightDef.type = 'spot';
+        if (light.distance > 0) lightDef.range = light.distance;
+        lightDef.spot = {};
+        lightDef.spot.innerConeAngle = (light.penumbra - 1.0) * light.angle * -1.0;
+        lightDef.spot.outerConeAngle = light.angle;
+      }
+
+      if (light.decay !== undefined && light.decay !== 2) {
+        console.warn('THREE.GLTFExporter: Light decay may be lost. glTF is physically-based, ' + 'and expects light.decay=2.');
+      }
+
+      if (light.target && (light.target.parent !== light || light.target.position.x !== 0 || light.target.position.y !== 0 || light.target.position.z !== -1)) {
+        console.warn('THREE.GLTFExporter: Light direction may be lost. For best results, ' + 'make light.target a child of the light with position 0,0,-1.');
+      }
+
+      var lights = outputJSON.extensions['KHR_lights_punctual'].lights;
+      lights.push(lightDef);
+      return lights.length - 1;
+    }
+    /**
+     * Process Object3D node
+     * @param  {THREE.Object3D} node Object3D to processNode
+     * @return {Integer}      Index of the node in the nodes list
+     */
+
+
+    function processNode(object) {
+      if (!outputJSON.nodes) {
+        outputJSON.nodes = [];
+      }
+
+      var gltfNode = {};
+
+      if (options.trs) {
+        var rotation = object.quaternion.toArray();
+        var position = object.position.toArray();
+        var scale = object.scale.toArray();
+
+        if (!equalArray(rotation, [0, 0, 0, 1])) {
+          gltfNode.rotation = rotation;
+        }
+
+        if (!equalArray(position, [0, 0, 0])) {
+          gltfNode.translation = position;
+        }
+
+        if (!equalArray(scale, [1, 1, 1])) {
+          gltfNode.scale = scale;
+        }
+      } else {
+        if (object.matrixAutoUpdate) {
+          object.updateMatrix();
+        }
+
+        if (!equalArray(object.matrix.elements, [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1])) {
+          gltfNode.matrix = object.matrix.elements;
+        }
+      } // We don't export empty strings name because it represents no-name in Three.js.
+
+
+      if (object.name !== '') {
+        gltfNode.name = String(object.name);
+      }
+
+      serializeUserData(object, gltfNode);
+
+      if (object.isMesh || object.isLine || object.isPoints) {
+        var mesh = processMesh(object);
+
+        if (mesh !== null) {
+          gltfNode.mesh = mesh;
+        }
+      } else if (object.isCamera) {
+        gltfNode.camera = processCamera(object);
+      } else if (object.isDirectionalLight || object.isPointLight || object.isSpotLight) {
+        if (!extensionsUsed['KHR_lights_punctual']) {
+          outputJSON.extensions = outputJSON.extensions || {};
+          outputJSON.extensions['KHR_lights_punctual'] = {
+            lights: []
+          };
+          extensionsUsed['KHR_lights_punctual'] = true;
+        }
+
+        gltfNode.extensions = gltfNode.extensions || {};
+        gltfNode.extensions['KHR_lights_punctual'] = {
+          light: processLight(object)
+        };
+      } else if (object.isLight) {
+        console.warn('THREE.GLTFExporter: Only directional, point, and spot lights are supported.', object);
+        return null;
+      }
+
+      if (object.isSkinnedMesh) {
+        skins.push(object);
+      }
+
+      if (object.children.length > 0) {
+        var children = [];
+
+        for (var i = 0, l = object.children.length; i < l; i++) {
+          var child = object.children[i];
+
+          if (child.visible || options.onlyVisible === false) {
+            var node = processNode(child);
+
+            if (node !== null) {
+              children.push(node);
+            }
+          }
+        }
+
+        if (children.length > 0) {
+          gltfNode.children = children;
+        }
+      }
+
+      outputJSON.nodes.push(gltfNode);
+      var nodeIndex = outputJSON.nodes.length - 1;
+      nodeMap.set(object, nodeIndex);
+      return nodeIndex;
+    }
+    /**
+     * Process Scene
+     * @param  {Scene} node Scene to process
+     */
+
+
+    function processScene(scene) {
+      if (!outputJSON.scenes) {
+        outputJSON.scenes = [];
+        outputJSON.scene = 0;
+      }
+
+      var gltfScene = {};
+
+      if (scene.name !== '') {
+        gltfScene.name = scene.name;
+      }
+
+      outputJSON.scenes.push(gltfScene);
+      var nodes = [];
+
+      for (var i = 0, l = scene.children.length; i < l; i++) {
+        var child = scene.children[i];
+
+        if (child.visible || options.onlyVisible === false) {
+          var node = processNode(child);
+
+          if (node !== null) {
+            nodes.push(node);
+          }
+        }
+      }
+
+      if (nodes.length > 0) {
+        gltfScene.nodes = nodes;
+      }
+
+      serializeUserData(scene, gltfScene);
+    }
+    /**
+     * Creates a Scene to hold a list of objects and parse it
+     * @param  {Array} objects List of objects to process
+     */
+
+
+    function processObjects(objects) {
+      var scene = new _threeModule.Scene();
+      scene.name = 'AuxScene';
+
+      for (var i = 0; i < objects.length; i++) {
+        // We push directly to children instead of calling `add` to prevent
+        // modify the .parent and break its original scene and hierarchy
+        scene.children.push(objects[i]);
+      }
+
+      processScene(scene);
+    }
+
+    function processInput(input) {
+      input = input instanceof Array ? input : [input];
+      var objectsWithoutScene = [];
+
+      for (var i = 0; i < input.length; i++) {
+        if (input[i] instanceof _threeModule.Scene) {
+          processScene(input[i]);
+        } else {
+          objectsWithoutScene.push(input[i]);
+        }
+      }
+
+      if (objectsWithoutScene.length > 0) {
+        processObjects(objectsWithoutScene);
+      }
+
+      for (var i = 0; i < skins.length; ++i) {
+        processSkin(skins[i]);
+      }
+
+      for (var i = 0; i < options.animations.length; ++i) {
+        processAnimation(options.animations[i], input[0]);
+      }
+    }
+
+    processInput(input);
+    Promise.all(pending).then(function () {
+      // Merge buffers.
+      var blob = new Blob(buffers, {
+        type: 'application/octet-stream'
+      }); // Declare extensions.
+
+      var extensionsUsedList = Object.keys(extensionsUsed);
+      if (extensionsUsedList.length > 0) outputJSON.extensionsUsed = extensionsUsedList; // Update bytelength of the single buffer.
+
+      if (outputJSON.buffers && outputJSON.buffers.length > 0) outputJSON.buffers[0].byteLength = blob.size;
+
+      if (options.binary === true) {
+        // https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#glb-file-format-specification
+        var GLB_HEADER_BYTES = 12;
+        var GLB_HEADER_MAGIC = 0x46546C67;
+        var GLB_VERSION = 2;
+        var GLB_CHUNK_PREFIX_BYTES = 8;
+        var GLB_CHUNK_TYPE_JSON = 0x4E4F534A;
+        var GLB_CHUNK_TYPE_BIN = 0x004E4942;
+        var reader = new window.FileReader();
+        reader.readAsArrayBuffer(blob);
+
+        reader.onloadend = function () {
+          // Binary chunk.
+          var binaryChunk = getPaddedArrayBuffer(reader.result);
+          var binaryChunkPrefix = new DataView(new ArrayBuffer(GLB_CHUNK_PREFIX_BYTES));
+          binaryChunkPrefix.setUint32(0, binaryChunk.byteLength, true);
+          binaryChunkPrefix.setUint32(4, GLB_CHUNK_TYPE_BIN, true); // JSON chunk.
+
+          var jsonChunk = getPaddedArrayBuffer(stringToArrayBuffer(JSON.stringify(outputJSON)), 0x20);
+          var jsonChunkPrefix = new DataView(new ArrayBuffer(GLB_CHUNK_PREFIX_BYTES));
+          jsonChunkPrefix.setUint32(0, jsonChunk.byteLength, true);
+          jsonChunkPrefix.setUint32(4, GLB_CHUNK_TYPE_JSON, true); // GLB header.
+
+          var header = new ArrayBuffer(GLB_HEADER_BYTES);
+          var headerView = new DataView(header);
+          headerView.setUint32(0, GLB_HEADER_MAGIC, true);
+          headerView.setUint32(4, GLB_VERSION, true);
+          var totalByteLength = GLB_HEADER_BYTES + jsonChunkPrefix.byteLength + jsonChunk.byteLength + binaryChunkPrefix.byteLength + binaryChunk.byteLength;
+          headerView.setUint32(8, totalByteLength, true);
+          var glbBlob = new Blob([header, jsonChunkPrefix, jsonChunk, binaryChunkPrefix, binaryChunk], {
+            type: 'application/octet-stream'
+          });
+          var glbReader = new window.FileReader();
+          glbReader.readAsArrayBuffer(glbBlob);
+
+          glbReader.onloadend = function () {
+            onDone(glbReader.result);
+          };
+        };
+      } else {
+        if (outputJSON.buffers && outputJSON.buffers.length > 0) {
+          var reader = new window.FileReader();
+          reader.readAsDataURL(blob);
+
+          reader.onloadend = function () {
+            var base64data = reader.result;
+            outputJSON.buffers[0].uri = base64data;
+            onDone(outputJSON);
+          };
+        } else {
+          onDone(outputJSON);
+        }
+      }
+    });
+  }
+};
+GLTFExporter.Utils = {
+  insertKeyframe: function (track, time) {
+    var tolerance = 0.001; // 1ms
+
+    var valueSize = track.getValueSize();
+    var times = new track.TimeBufferType(track.times.length + 1);
+    var values = new track.ValueBufferType(track.values.length + valueSize);
+    var interpolant = track.createInterpolant(new track.ValueBufferType(valueSize));
+    var index;
+
+    if (track.times.length === 0) {
+      times[0] = time;
+
+      for (var i = 0; i < valueSize; i++) {
+        values[i] = 0;
+      }
+
+      index = 0;
+    } else if (time < track.times[0]) {
+      if (Math.abs(track.times[0] - time) < tolerance) return 0;
+      times[0] = time;
+      times.set(track.times, 1);
+      values.set(interpolant.evaluate(time), 0);
+      values.set(track.values, valueSize);
+      index = 0;
+    } else if (time > track.times[track.times.length - 1]) {
+      if (Math.abs(track.times[track.times.length - 1] - time) < tolerance) {
+        return track.times.length - 1;
+      }
+
+      times[times.length - 1] = time;
+      times.set(track.times, 0);
+      values.set(track.values, 0);
+      values.set(interpolant.evaluate(time), track.values.length);
+      index = times.length - 1;
+    } else {
+      for (var i = 0; i < track.times.length; i++) {
+        if (Math.abs(track.times[i] - time) < tolerance) return i;
+
+        if (track.times[i] < time && track.times[i + 1] > time) {
+          times.set(track.times.slice(0, i + 1), 0);
+          times[i + 1] = time;
+          times.set(track.times.slice(i + 1), i + 2);
+          values.set(track.values.slice(0, (i + 1) * valueSize), 0);
+          values.set(interpolant.evaluate(time), (i + 1) * valueSize);
+          values.set(track.values.slice((i + 1) * valueSize), (i + 2) * valueSize);
+          index = i + 1;
+          break;
+        }
+      }
+    }
+
+    track.times = times;
+    track.values = values;
+    return index;
+  },
+  mergeMorphTargetTracks: function (clip, root) {
+    var tracks = [];
+    var mergedTracks = {};
+    var sourceTracks = clip.tracks;
+
+    for (var i = 0; i < sourceTracks.length; ++i) {
+      var sourceTrack = sourceTracks[i];
+
+      var sourceTrackBinding = _threeModule.PropertyBinding.parseTrackName(sourceTrack.name);
+
+      var sourceTrackNode = _threeModule.PropertyBinding.findNode(root, sourceTrackBinding.nodeName);
+
+      if (sourceTrackBinding.propertyName !== 'morphTargetInfluences' || sourceTrackBinding.propertyIndex === undefined) {
+        // Tracks that don't affect morph targets, or that affect all morph targets together, can be left as-is.
+        tracks.push(sourceTrack);
+        continue;
+      }
+
+      if (sourceTrack.createInterpolant !== sourceTrack.InterpolantFactoryMethodDiscrete && sourceTrack.createInterpolant !== sourceTrack.InterpolantFactoryMethodLinear) {
+        if (sourceTrack.createInterpolant.isInterpolantFactoryMethodGLTFCubicSpline) {
+          // This should never happen, because glTF morph target animations
+          // affect all targets already.
+          throw new Error('THREE.GLTFExporter: Cannot merge tracks with glTF CUBICSPLINE interpolation.');
+        }
+
+        console.warn('THREE.GLTFExporter: Morph target interpolation mode not yet supported. Using LINEAR instead.');
+        sourceTrack = sourceTrack.clone();
+        sourceTrack.setInterpolation(_threeModule.InterpolateLinear);
+      }
+
+      var targetCount = sourceTrackNode.morphTargetInfluences.length;
+      var targetIndex = sourceTrackNode.morphTargetDictionary[sourceTrackBinding.propertyIndex];
+
+      if (targetIndex === undefined) {
+        throw new Error('THREE.GLTFExporter: Morph target name not found: ' + sourceTrackBinding.propertyIndex);
+      }
+
+      var mergedTrack; // If this is the first time we've seen this object, create a new
+      // track to store merged keyframe data for each morph target.
+
+      if (mergedTracks[sourceTrackNode.uuid] === undefined) {
+        mergedTrack = sourceTrack.clone();
+        var values = new mergedTrack.ValueBufferType(targetCount * mergedTrack.times.length);
+
+        for (var j = 0; j < mergedTrack.times.length; j++) {
+          values[j * targetCount + targetIndex] = mergedTrack.values[j];
+        } // We need to take into consideration the intended target node
+        // of our original un-merged morphTarget animation.
+
+
+        mergedTrack.name = sourceTrackBinding.nodeName + '.morphTargetInfluences';
+        mergedTrack.values = values;
+        mergedTracks[sourceTrackNode.uuid] = mergedTrack;
+        tracks.push(mergedTrack);
+        continue;
+      }
+
+      var sourceInterpolant = sourceTrack.createInterpolant(new sourceTrack.ValueBufferType(1));
+      mergedTrack = mergedTracks[sourceTrackNode.uuid]; // For every existing keyframe of the merged track, write a (possibly
+      // interpolated) value from the source track.
+
+      for (var j = 0; j < mergedTrack.times.length; j++) {
+        mergedTrack.values[j * targetCount + targetIndex] = sourceInterpolant.evaluate(mergedTrack.times[j]);
+      } // For every existing keyframe of the source track, write a (possibly
+      // new) keyframe to the merged track. Values from the previous loop may
+      // be written again, but keyframes are de-duplicated.
+
+
+      for (var j = 0; j < sourceTrack.times.length; j++) {
+        var keyframeIndex = this.insertKeyframe(mergedTrack, sourceTrack.times[j]);
+        mergedTrack.values[keyframeIndex * targetCount + targetIndex] = sourceTrack.values[j];
+      }
+    }
+
+    clip.tracks = tracks;
+    return clip;
+  }
+};
 },{"../../../build/three.module.js":"../node_modules/three/build/three.module.js"}],"scripts/viewer3d/skybox.js":[function(require,module,exports) {
 "use strict";
 
@@ -56647,7 +58944,8 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
       var mLocal = new _three.Matrix4().getInverse(this.matrixWorld);
       this.__loadedItem.geometry = this.__itemModel.parametricClass.geometry;
       this.parent.needsUpdate = true;
-      this.__box = new _three.Box3().setFromObject(this.__loadedItem);
+      this.__box = this.__loadedItem.geometry.boundingBox.clone(); //new Box3().setFromObject(this.__loadedItem);
+
       this.__center = this.__box.getCenter(new _three.Vector3());
       this.__size = this.__box.getSize(new _three.Vector3());
 
@@ -56655,9 +58953,11 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
 
       var m = new _three.Matrix4();
       m = m.makeTranslation(-localCenter.x, -localCenter.y, -localCenter.z);
-      this.__boxhelper.geometry = new _three.EdgesGeometry(new _three.BoxBufferGeometry(this.__size.x, this.__size.y, this.__size.z));
+      this.__boxhelper.geometry = new _three.EdgesGeometry(new _three.BoxBufferGeometry(this.__size.x, this.__size.y, this.__size.z)); // this.__boxhelper.geometry.applyMatrix4(m);
 
-      this.__boxhelper.geometry.applyMatrix4(m);
+      this.__boxhelper.rotation.x = this.__itemModel.rotation.x;
+      this.__boxhelper.rotation.y = this.__itemModel.rotation.y;
+      this.__boxhelper.rotation.z = this.__itemModel.rotation.z;
     }
   }, {
     key: "__itemUpdated",
@@ -56788,10 +59088,10 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
 
         this.__itemModel.parametricClass.addEventListener(_events.EVENT_PARAMETRIC_GEOMETRY_UPATED, this.__parametricGeometryUpdateEvent);
 
-        this.__initializeChildItem();
+        this.__initializeChildItem(); // let axes = new AxesHelper(1000);
+        // this.add(axes);
 
-        var axes = new _three.AxesHelper(1000);
-        this.add(axes);
+
         this.dispatchEvent({
           type: _events.EVENT_ITEM_LOADED
         });
@@ -56970,10 +59270,18 @@ var DragRoomItemsControl3D = /*#__PURE__*/function (_EventDispatcher) {
       evt.preventDefault();
       evt = evt.changedTouches !== undefined ? evt.changedTouches[0] : evt;
       this.__intersections.length = 0;
+      var visibleDraggableItems = [];
 
-      this.__raycaster.setFromCamera(this.__mouse, this.__camera);
+      for (var i = 0; i < this.__draggableItems.length; i++) {
+        if (this.__draggableItems[i].visible) {
+          visibleDraggableItems.push(this.__draggableItems[i]);
+        }
+      }
 
-      this.__raycaster.intersectObjects(this.__draggableItems, false, this.__intersections);
+      this.__raycaster.setFromCamera(this.__mouse, this.__camera); // this.__raycaster.intersectObjects(this.__draggableItems, false, this.__intersections);
+
+
+      this.__raycaster.intersectObjects(visibleDraggableItems, false, this.__intersections);
 
       if (this.__intersections.length) {
         this.__selected = this.__transformGroup ? this.__draggableItems[0] : this.__intersections[0].object;
@@ -57028,12 +59336,16 @@ var DragRoomItemsControl3D = /*#__PURE__*/function (_EventDispatcher) {
         if (wallPlanesThatIntersect.length) {
           this.dispatchEvent({
             type: _events.EVENT_WALL_CLICKED,
-            item: wallPlanesThatIntersect[0].object.edge
+            item: wallPlanesThatIntersect[0].object.edge,
+            point: wallPlanesThatIntersect[0].point,
+            normal: wallPlanesThatIntersect[0].face.normal
           });
         } else if (floorPlanesThatIntersect.length) {
           this.dispatchEvent({
             type: _events.EVENT_ROOM_CLICKED,
-            item: floorPlanesThatIntersect[0].object.room
+            item: floorPlanesThatIntersect[0].object.room,
+            point: floorPlanesThatIntersect[0].point,
+            normal: floorPlanesThatIntersect[0].face.normal
           });
         }
       }
@@ -57053,7 +59365,7 @@ var DragRoomItemsControl3D = /*#__PURE__*/function (_EventDispatcher) {
 
       this.__raycaster.setFromCamera(this.__mouse, this.__camera);
 
-      if (this.__selected && this.__enabled) {
+      if (this.__selected && this.__enabled && this.__selected.visible) {
         //Check if the item has customIntersectionPlanes, otherwise move it freely
         if (!this.__selected.intersectionPlanes.length) {
           if (this.__raycaster.ray.intersectPlane(this.__plane, this.__intersection)) {
@@ -57190,6 +59502,8 @@ var _three = require("three");
 
 var _OrbitControls = require("three/examples/jsm/controls/OrbitControls.js");
 
+var _GLTFExporter = require("three/examples/jsm/exporters/GLTFExporter");
+
 var _events = require("../core/events.js");
 
 var _skybox = require("./skybox.js");
@@ -57203,8 +59517,6 @@ var _lights3d = require("./lights3d.js");
 var _Physical3DItem = require("./Physical3DItem.js");
 
 var _DragRoomItemsControl3D = require("./DragRoomItemsControl3D.js");
-
-var _three2 = require("three/build/three.module");
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -57279,6 +59591,7 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
     _this.floors3d = [];
     _this.__currentItemSelected = null;
     _this.needsUpdate = true;
+    _this.__newItemEvent = _this.__addNewItem.bind(_assertThisInitialized(_this));
     _this.__wallSelectedEvent = _this.__wallSelected.bind(_assertThisInitialized(_this));
     _this.__roomSelectedEvent = _this.__roomSelected.bind(_assertThisInitialized(_this));
     _this.__roomItemSelectedEvent = _this.__roomItemSelected.bind(_assertThisInitialized(_this));
@@ -57297,12 +59610,12 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
       var scope = this;
       _three.ImageUtils.crossOrigin = '';
       scope.camera = new _three.PerspectiveCamera(45, 10, scope.cameraNear, scope.cameraFar);
-      var cubeRenderTarget = new _three2.WebGLCubeRenderTarget(16, {
+      var cubeRenderTarget = new _three.WebGLCubeRenderTarget(16, {
         format: _three.RGBFormat,
         generateMipmaps: true,
         minFilter: _three.LinearMipmapLinearFilter
       });
-      scope.__environmentCamera = new _three2.CubeCamera(1, 100000, cubeRenderTarget);
+      scope.__environmentCamera = new _three.CubeCamera(1, 100000, cubeRenderTarget);
       scope.renderer = scope.getARenderer();
       scope.domElement.appendChild(scope.renderer.domElement);
       scope.lights = new _lights3d.Lights3D(this, scope.floorplan); // scope.dragcontrols = new DragControls(this.physicalRoomItems, scope.camera, scope.renderer.domElement);
@@ -57342,6 +59655,7 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
         scope.render();
       }
 
+      scope.model.addEventListener(_events.EVENT_NEW_ITEM, scope.__newItemEvent);
       scope.model.addEventListener(_events.EVENT_LOADED, function (evt) {
         return scope.addRoomItems(evt);
       });
@@ -57406,6 +59720,23 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
       }
 
       this.dispatchEvent(evt);
+    }
+  }, {
+    key: "__addNewItem",
+    value: function __addNewItem(evt) {
+      if (!evt.item) {
+        return;
+      }
+
+      var physicalRoomItem = new _Physical3DItem.Physical3DItem(evt.item);
+      this.add(physicalRoomItem);
+
+      this.__physicalRoomItems.push(physicalRoomItem);
+
+      this.__roomItemSelected({
+        type: _events.EVENT_ITEM_SELECTED,
+        item: physicalRoomItem
+      });
     }
   }, {
     key: "addRoomItems",
@@ -57518,6 +59849,18 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
       this.needsUpdate = false;
     }
   }, {
+    key: "exportSceneAsGTLF",
+    value: function exportSceneAsGTLF() {
+      var scope = this;
+      var exporter = new _GLTFExporter.GLTFExporter();
+      exporter.parse(this, function (gltf) {
+        scope.dispatchEvent({
+          type: _events.EVENT_GLTF_READY,
+          gltf: JSON.stringify(gltf)
+        });
+      });
+    }
+  }, {
     key: "forceRender",
     value: function forceRender() {
       var scope = this;
@@ -57565,7 +59908,7 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
 }(_three.Scene);
 
 exports.Viewer3D = Viewer3D;
-},{"three":"../node_modules/three/build/three.module.js","three/examples/jsm/controls/OrbitControls.js":"../node_modules/three/examples/jsm/controls/OrbitControls.js","../core/events.js":"scripts/core/events.js","./skybox.js":"scripts/viewer3d/skybox.js","./edge3d.js":"scripts/viewer3d/edge3d.js","./floor3d.js":"scripts/viewer3d/floor3d.js","./lights3d.js":"scripts/viewer3d/lights3d.js","./Physical3DItem.js":"scripts/viewer3d/Physical3DItem.js","./DragRoomItemsControl3D.js":"scripts/viewer3d/DragRoomItemsControl3D.js","three/build/three.module":"../node_modules/three/build/three.module.js"}],"../node_modules/es6-promise-polyfill/promise.js":[function(require,module,exports) {
+},{"three":"../node_modules/three/build/three.module.js","three/examples/jsm/controls/OrbitControls.js":"../node_modules/three/examples/jsm/controls/OrbitControls.js","three/examples/jsm/exporters/GLTFExporter":"../node_modules/three/examples/jsm/exporters/GLTFExporter.js","../core/events.js":"scripts/core/events.js","./skybox.js":"scripts/viewer3d/skybox.js","./edge3d.js":"scripts/viewer3d/edge3d.js","./floor3d.js":"scripts/viewer3d/floor3d.js","./lights3d.js":"scripts/viewer3d/lights3d.js","./Physical3DItem.js":"scripts/viewer3d/Physical3DItem.js","./DragRoomItemsControl3D.js":"scripts/viewer3d/DragRoomItemsControl3D.js"}],"../node_modules/es6-promise-polyfill/promise.js":[function(require,module,exports) {
 var global = arguments[3];
 var define;
 (function(global){
@@ -112425,6 +114768,8 @@ var _dimensioning = require("../core/dimensioning");
 
 var _events = require("../core/events");
 
+var _in_wall_floor_item = require("../items/in_wall_floor_item");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -112432,15 +114777,18 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 var RoomPlannerHelper = /*#__PURE__*/function () {
-  function RoomPlannerHelper(floorplan, roomplanner) {
+  function RoomPlannerHelper(model, floorplan, roomplanner) {
     _classCallCheck(this, RoomPlannerHelper);
 
+    this.__model = model;
     this.__floorplan = floorplan;
     this.__roomplanner = roomplanner;
     this.__wallThickness = _dimensioning.Dimensioning.cmToMeasureRaw(20);
     this.__cornerElevation = _dimensioning.Dimensioning.cmToMeasureRaw(250);
     this.__roomName = 'A New Room';
-    this.__selectedWall = null;
+    this.__selectedEdge = null;
+    this.__selectedEdgeNormal = null;
+    this.__selectedEdgePoint = null;
     this.__selectedItem = null;
     this.__selectedRoom = null;
     this.__wallTexturePack = null;
@@ -112468,7 +114816,9 @@ var RoomPlannerHelper = /*#__PURE__*/function () {
   }, {
     key: "__wallSelected",
     value: function __wallSelected(evt) {
-      this.__selectedWall = evt.item;
+      this.__selectedEdge = evt.item;
+      this.__selectedEdgeNormal = evt.normal;
+      this.__selectedEdgePoint = evt.point;
       this.__wallThickness = _dimensioning.Dimensioning.cmToMeasureRaw(evt.item.thickness);
     }
   }, {
@@ -112479,17 +114829,58 @@ var RoomPlannerHelper = /*#__PURE__*/function () {
     }
   }, {
     key: "__nothingSelected",
-    value: function __nothingSelected() {// this.__selectedWall = null;
+    value: function __nothingSelected() {// this.__selectedEdge = null;
       // this.__selectedRoom = null;
       // this.__selectedItem = null;
     }
   }, {
+    key: "addParametricDoorToCurrentWall",
+    value: function addParametricDoorToCurrentWall(doorType) {
+      if (!this.__selectedEdge) {
+        return;
+      }
+
+      var itemMetaData = {
+        itemName: "Parametric Door",
+        isParametric: true,
+        baseParametricType: "DOOR",
+        subParametricData: {
+          type: doorType,
+          frameColor: "#E7E7E7",
+          doorColor: "#E7E7E7",
+          doorHandleColor: '#F0F0F0',
+          glassColor: '#87CEEB',
+          frameWidth: 100,
+          frameHeight: 200,
+          frameSize: 5,
+          frameThickness: 20,
+          doorRatio: 0.5,
+          openDirection: "RIGHT",
+          handleType: "HANDLE_01"
+        },
+        itemType: 7,
+        position: [0, 0, 0],
+        rotation: [0, 0, 0],
+        scale: [1, 1, 1],
+        size: [100, 200, 20],
+        fixed: false,
+        resizable: false,
+        wall: this.__selectedEdge.id
+      };
+      var item = new _in_wall_floor_item.InWallFloorItem(itemMetaData, this.__model);
+
+      this.__model.addItem(item); // console.log(this.__selectedEdgePoint, this.__selectedEdgeNormal);
+
+
+      item.snapToPoint(this.__selectedEdgePoint, this.__selectedEdgeNormal, null, this.__selectedEdge.wall);
+    }
+  }, {
     key: "wallThickness",
     set: function set(value) {
-      if (this.__selectedWall) {
+      if (this.__selectedEdge) {
         var cms = _dimensioning.Dimensioning.cmFromMeasureRaw(value);
 
-        this.__selectedWall.thickness = cms;
+        this.__selectedEdge.thickness = cms;
         this.__wallThickness = value;
       }
     },
@@ -112528,8 +114919,8 @@ var RoomPlannerHelper = /*#__PURE__*/function () {
     set: function set(tpack) {
       this.__wallTexturePack = tpack;
 
-      if (this.__selectedWall) {
-        this.__selectedWall.setTextureMaps(tpack);
+      if (this.__selectedEdge) {
+        this.__selectedEdge.setTextureMaps(tpack);
       }
     }
   }, {
@@ -112562,7 +114953,7 @@ var RoomPlannerHelper = /*#__PURE__*/function () {
 }();
 
 exports.RoomPlannerHelper = RoomPlannerHelper;
-},{"../core/dimensioning":"scripts/core/dimensioning.js","../core/events":"scripts/core/events.js"}],"scripts/blueprint.js":[function(require,module,exports) {
+},{"../core/dimensioning":"scripts/core/dimensioning.js","../core/events":"scripts/core/events.js","../items/in_wall_floor_item":"scripts/items/in_wall_floor_item.js"}],"scripts/blueprint.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -112637,7 +115028,7 @@ var BlueprintJS = /*#__PURE__*/function () {
     this.roomplanner = new _Viewer3d.Viewer3D(this.model, options.viewer3d, this.options);
     this.configurationHelper = new _ConfigurationHelper.ConfigurationHelper();
     this.floorplanningHelper = null;
-    this.roomplanningHelper = new _RoomplannerHelper.RoomPlannerHelper(this.model.floorplan, this.roomplanner);
+    this.roomplanningHelper = new _RoomplannerHelper.RoomPlannerHelper(this.model, this.model.floorplan, this.roomplanner);
 
     if (!options.widget) {
       /**
@@ -112839,6 +115230,267 @@ module.exports = {
     "bumpmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_height.png"
   }
 };
+},{}],"parametrics_items.json":[function(require,module,exports) {
+module.exports = {
+  "floorplan": {
+    "version": "2.0.1a",
+    "corners": {
+      "71d4f128-ae80-3d58-9bd2-711c6ce6cdf2": {
+        "x": 0,
+        "y": 0,
+        "elevation": 2.5
+      },
+      "f90da5e3-9e0e-eba7-173d-eb0b071e838e": {
+        "x": 0,
+        "y": 5,
+        "elevation": 2.5
+      },
+      "da026c08-d76a-a944-8e7b-096b752da9ed": {
+        "x": 5,
+        "y": 5,
+        "elevation": 2.5
+      },
+      "4e3d65cb-54c0-0681-28bf-bddcc7bdb571": {
+        "x": 5,
+        "y": 0,
+        "elevation": 2.5
+      }
+    },
+    "walls": [{
+      "corner1": "71d4f128-ae80-3d58-9bd2-711c6ce6cdf2",
+      "corner2": "f90da5e3-9e0e-eba7-173d-eb0b071e838e",
+      "frontTexture": {
+        "color": "#FFFFFF",
+        "repeat": 300,
+        "normalmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_normal.jpg",
+        "roughnessmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_roughness.jpg",
+        "colormap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_basecolor.jpg",
+        "ambientmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_ambientOcclusion.jpg",
+        "bumpmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_height.png"
+      },
+      "backTexture": {
+        "repeat": 200,
+        "colormap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_basecolor.jpg",
+        "bumpmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_height.png",
+        "normalmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_normal.jpg",
+        "roughnessmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_roughness.jpg",
+        "ambientmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_ambientocclusion.jpg",
+        "color": "#FFFFFF"
+      },
+      "wallType": "STRAIGHT",
+      "a": {
+        "x": -176.77669529663686,
+        "y": 176.7766952966369
+      },
+      "b": {
+        "x": -176.7766952966369,
+        "y": 323.22330470336317
+      },
+      "thickness": 0.2
+    }, {
+      "corner1": "f90da5e3-9e0e-eba7-173d-eb0b071e838e",
+      "corner2": "da026c08-d76a-a944-8e7b-096b752da9ed",
+      "frontTexture": {
+        "color": "#FFFFFF",
+        "repeat": 300,
+        "normalmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_normal.jpg",
+        "roughnessmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_roughness.jpg",
+        "colormap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_basecolor.jpg",
+        "ambientmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_ambientOcclusion.jpg",
+        "bumpmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_height.png"
+      },
+      "backTexture": {
+        "repeat": 200,
+        "colormap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_basecolor.jpg",
+        "bumpmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_height.png",
+        "normalmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_normal.jpg",
+        "roughnessmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_roughness.jpg",
+        "ambientmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_ambientocclusion.jpg",
+        "color": "#FFFFFF"
+      },
+      "wallType": "STRAIGHT",
+      "a": {
+        "x": 176.7766952966369,
+        "y": 676.7766952966368
+      },
+      "b": {
+        "x": 323.22330470336317,
+        "y": 676.776695296637
+      },
+      "thickness": 0.2
+    }, {
+      "corner1": "da026c08-d76a-a944-8e7b-096b752da9ed",
+      "corner2": "4e3d65cb-54c0-0681-28bf-bddcc7bdb571",
+      "frontTexture": {
+        "color": "#FFFFFF",
+        "repeat": 300,
+        "normalmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_normal.jpg",
+        "roughnessmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_roughness.jpg",
+        "colormap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_basecolor.jpg",
+        "ambientmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_ambientOcclusion.jpg",
+        "bumpmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_height.png"
+      },
+      "backTexture": {
+        "repeat": 200,
+        "colormap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_basecolor.jpg",
+        "bumpmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_height.png",
+        "normalmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_normal.jpg",
+        "roughnessmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_roughness.jpg",
+        "ambientmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_ambientocclusion.jpg",
+        "color": "#FFFFFF"
+      },
+      "wallType": "STRAIGHT",
+      "a": {
+        "x": 676.7766952966368,
+        "y": 323.2233047033631
+      },
+      "b": {
+        "x": 676.776695296637,
+        "y": 176.77669529663686
+      },
+      "thickness": 0.2
+    }, {
+      "corner1": "4e3d65cb-54c0-0681-28bf-bddcc7bdb571",
+      "corner2": "71d4f128-ae80-3d58-9bd2-711c6ce6cdf2",
+      "frontTexture": {
+        "color": "#FFFFFF",
+        "repeat": 300,
+        "normalmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_normal.jpg",
+        "roughnessmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_roughness.jpg",
+        "colormap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_basecolor.jpg",
+        "ambientmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_ambientOcclusion.jpg",
+        "bumpmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_height.png"
+      },
+      "backTexture": {
+        "repeat": 200,
+        "colormap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_basecolor.jpg",
+        "bumpmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_height.png",
+        "normalmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_normal.jpg",
+        "roughnessmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_roughness.jpg",
+        "ambientmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_ambientocclusion.jpg",
+        "color": "#FFFFFF"
+      },
+      "wallType": "STRAIGHT",
+      "a": {
+        "x": 323.2233047033631,
+        "y": -176.77669529663686
+      },
+      "b": {
+        "x": 176.77669529663686,
+        "y": -176.7766952966369
+      },
+      "thickness": 0.2
+    }],
+    "rooms": {
+      "71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,4e3d65cb-54c0-0681-28bf-bddcc7bdb571,da026c08-d76a-a944-8e7b-096b752da9ed,f90da5e3-9e0e-eba7-173d-eb0b071e838e": {
+        "name": "Ashok's Room"
+      }
+    },
+    "wallTextures": [],
+    "floorTextures": {},
+    "newFloorTextures": {
+      "4e3d65cb-54c0-0681-28bf-bddcc7bdb571,71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,da026c08-d76a-a944-8e7b-096b752da9ed,f90da5e3-9e0e-eba7-173d-eb0b071e838e": {
+        "repeat": 100,
+        "roughnessmap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_roughness.jpg",
+        "ambientmap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_ambientOcclusion.jpg",
+        "normalmap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_normal.jpg",
+        "colormap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_basecolor.jpg",
+        "color": "#FFFFFF"
+      }
+    },
+    "carbonSheet": {},
+    "units": "m"
+  },
+  "items": [{
+    "id": "7d0b3e90-c315-e7a5-a6d9-594757d5b7e4",
+    "itemName": "An Item",
+    "itemType": 3,
+    "position": [10, 138.38790186348007, 185.34460161835352],
+    "rotation": [0, 1.5707963267948966, 0],
+    "scale": [1, 1, 1],
+    "size": [240, 100, 50],
+    "fixed": true,
+    "resizable": true,
+    "modelURL": "models/HollowCube.glb",
+    "isParametric": false,
+    "wall": "71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,f90da5e3-9e0e-eba7-173d-eb0b071e838e"
+  }, {
+    "itemName": "Lantern",
+    "itemType": 9,
+    "position": [224.46232602418777, 30, 65],
+    "rotation": [0, 0, 0],
+    "scale": [1, 1, 1],
+    "size": [240, 50, 100],
+    "fixed": false,
+    "resizable": false,
+    "modelURL": "models/Cube.glb",
+    "isParametric": false,
+    "wall": "4e3d65cb-54c0-0681-28bf-bddcc7bdb571,71d4f128-ae80-3d58-9bd2-711c6ce6cdf2"
+  }, {
+    "itemName": "Lantern",
+    "itemType": 4,
+    "position": [209.43984621295914, 220, 270.9912269855666],
+    "rotation": [0, 0, 0],
+    "scale": [1, 1, 1],
+    "size": [240, 50, 100],
+    "fixed": false,
+    "resizable": false,
+    "modelURL": "models/Cube.glb",
+    "isParametric": false
+  }, {
+    "itemName": "Parametric Door",
+    "isParametric": true,
+    "baseParametricType": "DOOR",
+    "subParametricData": {
+      "type": 6,
+      "frameColor": 15198183,
+      "doorColor": 15198183,
+      "doorHandleColor": 15790320,
+      "glassColor": 8900331,
+      "frameWidth": 100,
+      "frameHeight": 200,
+      "frameSize": 5,
+      "frameThickness": 20,
+      "doorRatio": 0.5,
+      "openDirection": "RIGHT",
+      "handleType": "HANDLE_01"
+    },
+    "itemType": 7,
+    "position": [252.10994952514463, 105, 10],
+    "rotation": [0, 0, 0],
+    "scale": [1, 1, 1],
+    "size": [100, 200, 20],
+    "fixed": false,
+    "resizable": false,
+    "wall": "4e3d65cb-54c0-0681-28bf-bddcc7bdb571,71d4f128-ae80-3d58-9bd2-711c6ce6cdf2"
+  }, {
+    "itemName": "Parametric Door",
+    "isParametric": true,
+    "baseParametricType": "DOOR",
+    "subParametricData": {
+      "type": 5,
+      "frameColor": 15198183,
+      "doorColor": 15198183,
+      "doorHandleColor": 15790320,
+      "glassColor": 8900331,
+      "frameWidth": 122,
+      "frameHeight": 208,
+      "frameSize": 10.9,
+      "frameThickness": 20,
+      "doorRatio": 0.5,
+      "openDirection": "RIGHT",
+      "handleType": "HANDLE_01"
+    },
+    "itemType": 7,
+    "position": [245.9620664305963, 109, 490],
+    "rotation": [0, 3.141592653589793, 0],
+    "scale": [1, 1, 1],
+    "size": [100, 200, 20],
+    "fixed": false,
+    "resizable": false,
+    "wall": "f90da5e3-9e0e-eba7-173d-eb0b071e838e,da026c08-d76a-a944-8e7b-096b752da9ed"
+  }]
+};
 },{}],"scripts/ParametricsInterface.js":[function(require,module,exports) {
 "use strict";
 
@@ -112956,6 +115608,8 @@ var floor_textures_json = _interopRequireWildcard(require("./floor_textures.json
 
 var wall_textures_json = _interopRequireWildcard(require("./wall_textures.json"));
 
+var default_room_json = _interopRequireWildcard(require("./parametrics_items.json"));
+
 var _dimensioning = require("./scripts/core/dimensioning.js");
 
 var _ParametricsInterface = require("./scripts/ParametricsInterface.js");
@@ -112966,11 +115620,11 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var default_room = JSON.stringify(default_room_json);
 var startY = 0;
 var panelWidths = 200;
-var uxInterfaceHeight = 230;
+var uxInterfaceHeight = 270;
 var subPanelsHeight = 460;
-var empty = '{"floorplan":{"version":"2.0.1a","corners":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2":{"x":0,"y":0,"elevation":2.5},"f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"x":0,"y":5,"elevation":2.5},"da026c08-d76a-a944-8e7b-096b752da9ed":{"x":5,"y":5,"elevation":2.5},"4e3d65cb-54c0-0681-28bf-bddcc7bdb571":{"x":5,"y":0,"elevation":2.5}},"walls":[{"corner1":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","corner2":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":-176.77669529663686,"y":176.7766952966369},"b":{"x":-176.7766952966369,"y":323.22330470336317}},{"corner1":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","corner2":"da026c08-d76a-a944-8e7b-096b752da9ed","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":176.7766952966369,"y":676.7766952966368},"b":{"x":323.22330470336317,"y":676.776695296637}},{"corner1":"da026c08-d76a-a944-8e7b-096b752da9ed","corner2":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":676.7766952966368,"y":323.2233047033631},"b":{"x":676.776695296637,"y":176.77669529663686}},{"corner1":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","corner2":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"wallType":"STRAIGHT","a":{"x":323.2233047033631,"y":-176.77669529663686},"b":{"x":176.77669529663686,"y":-176.7766952966369}}],"rooms":{"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,4e3d65cb-54c0-0681-28bf-bddcc7bdb571,da026c08-d76a-a944-8e7b-096b752da9ed,f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"name":"Ashok\'s Room"}},"wallTextures":[],"floorTextures":{},"newFloorTextures":{},"carbonSheet":{},"units":"m"},"items":[{"id":"7d0b3e90-c315-e7a5-a6d9-594757d5b7e4","itemName":"An Item","itemType":3,"position":[65.00000000000006,88.19608972775876,292.4379793118495],"rotation":[0,1.5707963267948966,0],"scale":[1,1,1],"size":[240,100,50],"fixed":true,"resizable":true,"modelURL":"models/HollowCube.glb"},{"itemName":"Lantern","itemType":9,"position":[435,30,265.8727998642687],"rotation":[0,-1.5707963267948966,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"},{"itemName":"Lantern","itemType":4,"position":[260.0256835276736,220,244.4952575168973],"rotation":[0,0,0],"scale":[1,1,1],"size":[240,50,100],"fixed":false,"resizable":false,"modelURL":"models/Cube.glb"}, {"itemName":"Parametric Door", "isParametric": true, "baseParametricType": "DOOR", "subParametricData": {"type": 1, "frameColor": "#00FF00", "doorColor": "#0000FF", "openDirection": "BOTH_SIDES"}, "itemType":7,"position":[100, 0, 0],"rotation":[0,0,0],"scale":[1,1,1],"size":[100,200,20], "fixed":false,"resizable":false}, {"itemName":"Parametric Door", "isParametric": true, "baseParametricType": "DOOR", "subParametricData": {"type": 1, "frameColor": "#FF0000", "doorColor": "#FF0000", "openDirection": "NO_DOORS"}, "itemType":7,"position":[100, 0, 0],"rotation":[0,0,0],"scale":[1,1,1],"size":[100,200,20], "fixed":false,"resizable":false}]}';
 var floor_textures = floor_textures_json['default'];
 var floor_texture_keys = Object.keys(floor_textures);
 var wall_textures = wall_textures_json['default'];
@@ -112989,6 +115643,33 @@ var settingsSelectedWall3D = null;
 var settingsViewer3d = null;
 var uxInterface = null;
 var parametricContextInterface = null;
+var doorsData = {
+  'Door Type 1': {
+    src: 'assets/doors/DoorType1.png',
+    type: 1
+  },
+  'Door Type 2': {
+    src: 'assets/doors/DoorType2.png',
+    type: 2
+  },
+  'Door Type 3': {
+    src: 'assets/doors/DoorType3.png',
+    type: 3
+  },
+  'Door Type 4': {
+    src: 'assets/doors/DoorType4.png',
+    type: 4
+  },
+  'Door Type 5': {
+    src: 'assets/doors/DoorType5.png',
+    type: 5
+  },
+  'Door Type 6': {
+    src: 'assets/doors/DoorType6.png',
+    type: 6
+  }
+};
+var doorTypes = Object.keys(doorsData);
 var opts = {
   viewer2d: {
     id: 'bp3djs-viewer2d',
@@ -113035,6 +115716,21 @@ function selectWallTexture(data) {
     settingsSelectedWall3D.setValue('Wall Texture:', wall_texture_pack.colormap);
     roomplanningHelper.wallTexturePack = wall_texture_pack;
   }
+}
+
+function selectDoorForWall(data) {
+  if (!data.index) {
+    data = settingsSelectedWall3D.getValue('Select Door');
+  }
+
+  var selectedDoor = doorsData[data.value];
+  settingsSelectedWall3D.setValue('Door Preview:', selectedDoor.src);
+}
+
+function addDoorForWall() {
+  var data = settingsSelectedWall3D.getValue('Select Door');
+  var selectedDoor = doorsData[data.value];
+  roomplanningHelper.addParametricDoorToCurrentWall(selectedDoor.type);
 }
 
 function switchViewer() {
@@ -113091,6 +115787,10 @@ function saveBlueprint3DDesign() {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
+}
+
+function saveBlueprint3D() {
+  blueprint3d.roomplanner.exportSceneAsGTLF();
 } // document.addEventListener('DOMContentLoaded', function() {
 
 
@@ -113169,7 +115869,19 @@ blueprint3d.roomplanner.addRoomplanListener(_events.EVENT_ROOM_CLICKED, function
     parametricContextInterface = null;
   }
 });
-blueprint3d.model.loadSerialized(empty);
+blueprint3d.roomplanner.addRoomplanListener(_events.EVENT_GLTF_READY, function (evt) {
+  var data = evt.gltf;
+  var a = window.document.createElement('a');
+  var blob = new Blob([data], {
+    type: 'text'
+  });
+  a.href = window.URL.createObjectURL(blob);
+  a.download = 'design.gltf';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+});
+blueprint3d.model.loadSerialized(default_room);
 
 if (!opts.widget) {
   uxInterface = _quicksettings.default.create(0, 0, 'BlueprintJS', app_parent);
@@ -113184,6 +115896,7 @@ if (!opts.widget) {
   uxInterface.addHTML('Current View', 'Floorplanning');
   uxInterface.addFileChooser("Load Design", "Load Design", ".blueprint3d", loadBlueprint3DDesign);
   uxInterface.addButton('Save Design', saveBlueprint3DDesign);
+  uxInterface.addButton('Export 3D Scene', saveBlueprint3D);
   settingsViewer2d.addButton('Draw Mode', switchViewer2DToDraw);
   settingsViewer2d.addButton('Move Mode', switchViewer2DToMove);
   settingsViewer2d.bindBoolean('snapToGrid', configurationHelper.snapToGrid, configurationHelper);
@@ -113212,7 +115925,10 @@ if (!opts.widget) {
   settingsSelectedWall3D.addDropDown('Wall Textures', wall_texture_keys, selectWallTexture);
   settingsSelectedWall3D.addImage('Wall Texture:', wall_textures[wall_texture_keys[0]].colormap, null);
   settingsSelectedWall3D.addButton('Apply', selectWallTexture);
-  settingsViewer3d.addHTML('Tips:', '<p>Click and drag to rotate the room in 360\xB0</p><p>Add room items (Coming soon)</p><p>Drag and Place items(pink boxes) in the room</p><p>There are 8 different types of items <ul><li>1: FloorItem</li> <li>2: WallItem</li> <li>3: InWallItem</li> <li>7: InWallFloorItem</li> <li>8: OnFloorItem</li> <li>9: WallFloorItem</li><li>0: Item</li> <li>4: RoofItem</li></ul></p>');
+  settingsSelectedWall3D.addDropDown('Select Door', doorTypes, selectDoorForWall);
+  settingsSelectedWall3D.addImage('Door Preview:', doorsData[doorTypes[0]].src, null);
+  settingsSelectedWall3D.addButton('Add', addDoorForWall);
+  settingsViewer3d.addHTML('Tips:', '<p>Click and drag to rotate the room in 360\xB0</p><p>Add room items <ul><li>Add parametric doors</li><li>Other items (Coming soon)</li></ul></p><p>Drag and Place items(pink boxes and parametric doors) in the room</p><p>There are 8 different types of items <ul><li>1: FloorItem</li> <li>2: WallItem</li> <li>3: InWallItem</li> <li>7: InWallFloorItem</li> <li>8: OnFloorItem</li> <li>9: WallFloorItem</li><li>0: Item</li> <li>4: RoofItem</li></ul></p>');
   uxInterface.setWidth(panelWidths);
   uxInterface.setHeight(uxInterfaceHeight);
   settingsViewer2d.setWidth(panelWidths);
@@ -113229,7 +115945,7 @@ if (!opts.widget) {
   settingsSelectedWall3D.hide();
   settingsSelectedRoom3D.hide();
 }
-},{"./scripts/blueprint.js":"scripts/blueprint.js","./scripts/core/events.js":"scripts/core/events.js","./scripts/core/configuration.js":"scripts/core/configuration.js","./scripts/core/constants.js":"scripts/core/constants.js","quicksettings":"../node_modules/quicksettings/quicksettings.min.js","./floor_textures.json":"floor_textures.json","./wall_textures.json":"wall_textures.json","./scripts/core/dimensioning.js":"scripts/core/dimensioning.js","./scripts/ParametricsInterface.js":"scripts/ParametricsInterface.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./scripts/blueprint.js":"scripts/blueprint.js","./scripts/core/events.js":"scripts/core/events.js","./scripts/core/configuration.js":"scripts/core/configuration.js","./scripts/core/constants.js":"scripts/core/constants.js","quicksettings":"../node_modules/quicksettings/quicksettings.min.js","./floor_textures.json":"floor_textures.json","./wall_textures.json":"wall_textures.json","./parametrics_items.json":"parametrics_items.json","./scripts/core/dimensioning.js":"scripts/core/dimensioning.js","./scripts/ParametricsInterface.js":"scripts/ParametricsInterface.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -113257,7 +115973,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "35583" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42017" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

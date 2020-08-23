@@ -138,8 +138,8 @@ export class Item extends EventDispatcher {
         }
     }
 
-    __addToAWall(intersectingPlane) {
-        let wall = intersectingPlane.wall;
+    __addToAWall(intersectingPlane, toWall) {
+        let wall = (toWall) ? toWall : intersectingPlane.wall;
         if (wall === undefined || !wall || wall === 'undefined') {
             return;
         }
@@ -177,7 +177,7 @@ export class Item extends EventDispatcher {
         this.__metadata = this.__getMetaData();
     }
 
-    snapToPoint(point, normal, intersectingPlane) {
+    snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
         this.position = point;
     }
 

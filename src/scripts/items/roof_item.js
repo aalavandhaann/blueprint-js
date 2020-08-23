@@ -9,7 +9,7 @@ export class RoofItem extends Item {
         this.__customIntersectionPlanes = this.__model.floorplan.roofPlanesForIntersection;
     }
 
-    snapToPoint(point, normal, intersectingPlane) {
+    snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
         point.y -= this.halfSize.y + 5;
         this.position = point;
     }

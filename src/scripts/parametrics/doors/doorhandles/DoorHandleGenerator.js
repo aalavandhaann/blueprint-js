@@ -7,20 +7,20 @@ import { Geometry, Matrix4, Vector3 } from 'three/build/three.module';
 
 export class DoorHandleGenerator {
 
-    static generate_handle(handleType, frontOrBack, doorSide, doorRatio, frame_width, frame_size, frame_thickness, doorOpenDirection) {
+    static generate_handle(handleType, frontOrBack, doorSide, doorRatio, frame_width, frame_size, frame_thickness, doorOpenDirection, materialId) {
         let handle = null;
         switch (handleType) {
             case 'HANDLE_01':
-                handle = DoorHandleGenerator.handle_model_01();
+                handle = DoorHandleGenerator.handle_model_01(materialId);
                 break;
             case 'HANDLE_02':
-                handle = DoorHandleGenerator.handle_model_02();
+                handle = DoorHandleGenerator.handle_model_02(materialId);
                 break;
             case 'HANDLE_03':
-                handle = DoorHandleGenerator.handle_model_03();
+                handle = DoorHandleGenerator.handle_model_03(materialId);
                 break;
             case 'HANDLE_04':
-                handle = DoorHandleGenerator.handle_model_04();
+                handle = DoorHandleGenerator.handle_model_04(materialId);
                 break;
         }
 
@@ -63,7 +63,7 @@ export class DoorHandleGenerator {
     //  ----------------------------------------------
     //  Handle model 01
     //  ----------------------------------------------
-    static handle_model_01() {
+    static handle_model_01(materialId = 4) {
         let geometry = new Geometry();
         let vertices = [];
         let faces = [];
@@ -72,7 +72,7 @@ export class DoorHandleGenerator {
         });
         Handle_01_faces.forEach((face) => {
             let face2 = face.clone();
-            face2.materialIndex = 4;
+            face2.materialIndex = materialId;
             faces.push(face2);
         });
         geometry.vertices = vertices;
@@ -83,7 +83,7 @@ export class DoorHandleGenerator {
         return geometry;
     }
 
-    static handle_model_02() {
+    static handle_model_02(materialId = 4) {
         let geometry = new Geometry();
         let vertices = [];
         let faces = [];
@@ -92,7 +92,7 @@ export class DoorHandleGenerator {
         });
         Handle_02_faces.forEach((face) => {
             let face2 = face.clone();
-            face2.materialIndex = 4;
+            face2.materialIndex = materialId;
             faces.push(face2);
         });
         geometry.vertices = vertices;
@@ -105,7 +105,7 @@ export class DoorHandleGenerator {
     }
 
 
-    static handle_model_03() {
+    static handle_model_03(materialId = 4) {
         let geometry = new Geometry();
 
         let vertices = [];
@@ -115,7 +115,7 @@ export class DoorHandleGenerator {
         });
         Handle_03_faces.forEach((face) => {
             let face2 = face.clone();
-            face2.materialIndex = 4;
+            face2.materialIndex = materialId;
             faces.push(face2);
         });
         geometry.vertices = vertices;
@@ -126,7 +126,7 @@ export class DoorHandleGenerator {
         return geometry;
     }
 
-    static handle_model_04() {
+    static handle_model_04(materialId = 4) {
         let geometry = new Geometry();
 
         let vertices = [];
@@ -136,7 +136,7 @@ export class DoorHandleGenerator {
         });
         Handle_04_faces.forEach((face) => {
             let face2 = face.clone();
-            face2.materialIndex = 4;
+            face2.materialIndex = materialId;
             faces.push(face2);
         });
         geometry.vertices = vertices;

@@ -1,4 +1,4 @@
-import { EVENT_LOADED, EVENT_LOADING, EVENT_ITEM_REMOVED } from '../core/events.js';
+import { EVENT_LOADED, EVENT_LOADING, EVENT_ITEM_REMOVED, EVENT_NEW_PARAMETRIC_ITEM, EVENT_NEW_ITEM } from '../core/events.js';
 import { EventDispatcher } from 'three';
 import { Floorplan } from './floorplan.js';
 import { Utils } from '../core/utils.js';
@@ -110,8 +110,13 @@ export class Model extends EventDispatcher {
      * @param fixed True if fixed.
      * @param newItemDefinitions - Object with position and 'edge' attribute if it is a wall item
      */
-    addItem(metadata) {
-
+    addItemByMetaData(metadata) {
+        //TODO
+        this.dispatchEvent({ type: EVENT_NEW_ITEM, item: null });
+    }
+    addItem(item) {
+        this.__roomItems.push(item);
+        this.dispatchEvent({ type: EVENT_NEW_ITEM, item: item });
     }
 
     get roomItems() {
