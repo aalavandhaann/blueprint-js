@@ -166,7 +166,7 @@ export class CornerGroupTransform2D extends Graphics {
         this.__center = this.__toPixels(this.__currentGroup.center.clone());
         this.__tl = this.__toPixels(this.__currentGroup.tl.clone());
         this.__br = this.__toPixels(this.__currentGroup.br.clone());
-        this.__ringRadius = Math.max(this.__size.x, this.__size.y);
+        this.__ringRadius = Math.max(this.__size.x, this.__size.y) * 0.75;
 
         this.position.x = this.__center.x;
         this.position.y = this.__center.y;

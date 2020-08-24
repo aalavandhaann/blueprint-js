@@ -114567,7 +114567,7 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics2) {
       this.__center = this.__toPixels(this.__currentGroup.center.clone());
       this.__tl = this.__toPixels(this.__currentGroup.tl.clone());
       this.__br = this.__toPixels(this.__currentGroup.br.clone());
-      this.__ringRadius = Math.max(this.__size.x, this.__size.y);
+      this.__ringRadius = Math.max(this.__size.x, this.__size.y) * 0.75;
       this.position.x = this.__center.x;
       this.position.y = this.__center.y;
       this.__rotateHandle.position.x = Math.cos(0) * this.__ringRadius;
@@ -116691,7 +116691,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42981" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "40119" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
