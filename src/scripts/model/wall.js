@@ -115,6 +115,10 @@ export class Wall extends EventDispatcher {
         this.__wallPlane2D = new Plane();
         this.__wallNormal2D = new Vector2();
 
+        this.__cornerMovedEvent = this.__cornerMoved.bind(this);
+        this.__cornerAttributesChangedEvent = this.__cornerAttributesChanged.bind(this);
+        this.__cornerDeletedEvent = this.__cornerDeleted.bind(this);
+
         //		this.start.addEventListener(EVENT_MOVED, ()=>{
         //			scope.updateControlVectors();
         //		});
@@ -142,6 +146,20 @@ export class Wall extends EventDispatcher {
         //     item.position = new Vector3(newPosition.x, item.position.y, newPosition.y);
         //     i++;
         // });
+    }
+
+    __cornerMoved() {
+        this.updateControlVectors();
+    }
+
+    __cornerAttributesChanged() {
+        this.__updateItemPositions();
+        this.dispatchEvent({ type: EVENT_MOVED, item: this, position: null });
+    }
+
+    __cornerDeleted(evt) {
+        this.addCornerMoveListener(evt.item, true);
+        this.remove();
     }
 
     addItem(item) {
@@ -187,24 +205,15 @@ export class Wall extends EventDispatcher {
     }
 
     addCornerMoveListener(corner, remove = false) {
-        let scope = this;
-
-        function moved() {
-            scope.updateControlVectors();
-        }
-
-        function cornerAttributesChanged() {
-            scope.__updateItemPositions();
-            scope.dispatchEvent({ type: EVENT_MOVED, item: scope, position: null });
-        }
-
         if (remove) {
-            corner.removeEventListener(EVENT_MOVED, moved);
-            corner.removeEventListener(EVENT_CORNER_ATTRIBUTES_CHANGED, cornerAttributesChanged);
+            corner.removeEventListener(EVENT_MOVED, this.__cornerMovedEvent);
+            corner.removeEventListener(EVENT_CORNER_ATTRIBUTES_CHANGED, this.__cornerAttributesChangedEvent);
+            corner.removeEventListener(EVENT_DELETED, this.__cornerDeletedEvent);
             return;
         }
-        corner.addEventListener(EVENT_MOVED, moved);
-        corner.addEventListener(EVENT_CORNER_ATTRIBUTES_CHANGED, cornerAttributesChanged);
+        corner.addEventListener(EVENT_MOVED, this.__cornerMovedEvent);
+        corner.addEventListener(EVENT_CORNER_ATTRIBUTES_CHANGED, this.__cornerAttributesChangedEvent);
+        corner.addEventListener(EVENT_DELETED, this.__cornerDeletedEvent);
     }
 
     projectOnWallPlane(pt2d) {
@@ -537,6 +546,11 @@ export class Wall extends EventDispatcher {
     remove() {
         this.start.detachWall(this);
         this.end.detachWall(this);
+
+        //Remove the listeners also
+        this.addCornerMoveListener(this.start, true);
+        this.addCornerMoveListener(this.end, true);
+
         this.dispatchEvent({ type: EVENT_DELETED, item: this });
         //this.deleted_callbacks.fire(this);
     }

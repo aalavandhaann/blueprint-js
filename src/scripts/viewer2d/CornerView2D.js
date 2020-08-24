@@ -1,8 +1,9 @@
 import { BaseFloorplanViewElement2D } from './BaseFloorplanViewElement2D.js';
 import { Dimensioning } from '../core/dimensioning.js';
-import { EVENT_MOVED } from '../core/events.js';
+import { EVENT_MOVED, EVENT_DELETED } from '../core/events.js';
 import { Point } from 'pixi.js';
 import { Configuration, snapTolerance, snapToGrid, dragOnlyX, dragOnlyY } from '../core/configuration.js';
+import { isMobile } from 'detect-touch-device';
 
 
 export class CornerView2D extends BaseFloorplanViewElement2D {
@@ -11,15 +12,22 @@ export class CornerView2D extends BaseFloorplanViewElement2D {
         this.__corner = corner;
         this.pivot.x = this.pivot.y = 0.5;
         this.__cornerUpdateEvent = this.__updateWithModel.bind(this);
+        this.__cornerDeletedEvent = this.__cornerDeleted.bind(this);
 
         this.__drawHoveredOffState();
 
         this.__corner.addEventListener(EVENT_MOVED, this.__cornerUpdateEvent);
+        this.__corner.addEventListener(EVENT_DELETED, this.__cornerDeletedEvent);
         this.__updateWithModel();
     }
 
     __drawCornerState(radius, borderColor, fillColor) {
         this.clear();
+        if (isMobile) {
+            this.beginFill(borderColor, 0.1);
+            this.drawCircle(0, 0, radius * 2.5);
+            this.endFill();
+        }
         this.beginFill(borderColor);
         this.drawCircle(0, 0, radius);
         this.endFill();
@@ -71,21 +79,23 @@ export class CornerView2D extends BaseFloorplanViewElement2D {
             if (!Configuration.getBooleanValue(dragOnlyX) && Configuration.getBooleanValue(dragOnlyY)) {
                 cmCo.x = this.__corner.location.x;
             }
-
-
             this.__corner.move(cmCo.x, cmCo.y);
         }
     }
 
-    remove() {
-        this.__corner.removeEventListener(EVENT_MOVED, this.__cornerUpdateEvent);
-        super.remove();
+    __cornerDeleted(evt) {
+        this.remove();
+        this.__corner = null;
     }
 
+    __removeFromFloorplan() {
+        this.__corner.remove();
+    }
 
-    removeFromFloorplan() {
-        this.remove();
-        this.__corner.removeAll();
+    remove() {
+        this.__corner.removeEventListener(EVENT_DELETED, this.__cornerDeletedEvent);
+        this.__corner.removeEventListener(EVENT_MOVED, this.__cornerUpdateEvent);
+        super.remove();
     }
 
     get corner() {

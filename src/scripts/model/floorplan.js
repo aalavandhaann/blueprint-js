@@ -13,6 +13,7 @@ import { HalfEdge } from './half_edge.js';
 import { Corner } from './corner.js';
 import { Wall } from './wall.js';
 import { Room } from './room.js';
+import { CornerGroups } from './cornergroups.js';
 
 /** */
 export const defaultFloorPlanTolerance = 10.0;
@@ -24,98 +25,95 @@ export const defaultFloorPlanTolerance = 10.0;
 export class Floorplan extends EventDispatcher {
     /** Constructs a floorplan. */
     constructor() {
-        super();
-        /**
-         * List of elements of Wall instance
-         * 
-         * @property {Wall[]} walls Array of walls
-         * @type {Wall[]}
-         */
-        this.walls = [];
-        /**
-         * List of elements of Corner instance
-         * 
-         * @property {Corner[]} corners array of corners
-         * @type {Corner[]}
-         */
-        this.corners = [];
+            super();
+            /**
+             * List of elements of Wall instance
+             * 
+             * @property {Wall[]} walls Array of walls
+             * @type {Wall[]}
+             */
+            this.walls = [];
+            /**
+             * List of elements of Corner instance
+             * 
+             * @property {Corner[]} corners array of corners
+             * @type {Corner[]}
+             */
+            this.corners = [];
 
-        /**
-         * List of elements of Room instance
-         * 
-         * @property {Room[]} walls Array of walls
-         * @type {Room[]}
-         */
-        this.rooms = [];
+            /**
+             * List of elements of Room instance
+             * 
+             * @property {Room[]} walls Array of walls
+             * @type {Room[]}
+             */
+            this.rooms = [];
 
-        this.__roofPlanesForIntersection = [];
-        this.__floorPlanesForIntersection = [];
-        this.__wallPlanesForIntersection = [];
+            this.__roofPlanesForIntersection = [];
+            this.__floorPlanesForIntersection = [];
+            this.__wallPlanesForIntersection = [];
 
-        /**
-         * An {@link Object} that stores the metadata of rooms like name
-         * 
-         * @property {Object} metaroomsdata stores the metadata of rooms like
-         *           name
-         * @type {Object}
-         */
-        this.metaroomsdata = {};
-        // List with reference to callback on a new wall insert event
-        /**
-         * @deprecated
-         */
-        this.new_wall_callbacks = [];
-        // List with reference to callbacks on a new corner insert event
-        /**
-         * @deprecated
-         */
-        this.new_corner_callbacks = [];
-        // List with reference to callbacks on redraw event
-        /**
-         * @deprecated
-         */
-        this.redraw_callbacks = [];
-        // List with reference to callbacks for updated_rooms event
-        /**
-         * @deprecated
-         */
-        this.updated_rooms = [];
-        // List with reference to callbacks for roomLoaded event
-        /**
-         * @deprecated
-         */
-        this.roomLoadedCallbacks = [];
+            /**
+             * An {@link Object} that stores the metadata of rooms like name
+             * 
+             * @property {Object} metaroomsdata stores the metadata of rooms like
+             *           name
+             * @type {Object}
+             */
+            this.metaroomsdata = {};
+            // List with reference to callback on a new wall insert event
+            /**
+             * @deprecated
+             */
+            this.new_wall_callbacks = [];
+            // List with reference to callbacks on a new corner insert event
+            /**
+             * @deprecated
+             */
+            this.new_corner_callbacks = [];
+            // List with reference to callbacks on redraw event
+            /**
+             * @deprecated
+             */
+            this.redraw_callbacks = [];
+            // List with reference to callbacks for updated_rooms event
+            /**
+             * @deprecated
+             */
+            this.updated_rooms = [];
+            // List with reference to callbacks for roomLoaded event
+            /**
+             * @deprecated
+             */
+            this.roomLoadedCallbacks = [];
 
-        this.floorTextures = {};
+            this.floorTextures = {};
+            /**
+             * The {@link CarbonSheet} that handles the background image to show in
+             * the 2D view
+             * 
+             * @property {CarbonSheet} _carbonSheet The carbonsheet instance
+             * @type {Object}
+             */
+            this._carbonSheet = null;
+
+            /**
+             * This is necessary to sometimes explicitly stop the floorplan from doing
+             * heavy computations
+             */
+            this.__updatesOn = true;
+
+            this.__cornerGroups = new CornerGroups(this);
+
+            this.__wallAttributesChangedEvent = this.__wallAttributesChanged.bind(this);
+            this.__wallDeletedEvent = this.__wallDeleted.bind(this);
+            this.__cornerAttributesChangedOrMovedEvent = this.__cornerAttributesChangedOrMoved.bind(this);
+            this.__cornerDeletedEvent = this.__cornerDeleted.bind(this);
+
+        }
         /**
-         * The {@link CarbonSheet} that handles the background image to show in
-         * the 2D view
-         * 
-         * @property {CarbonSheet} _carbonSheet The carbonsheet instance
-         * @type {Object}
+         * @return {HalfEdge[]} edges The array of {@link HalfEdge}
          */
-        this._carbonSheet = null;
-    }
-
-    /**
-     * @param {CarbonSheet}
-     *            val
-     */
-    set carbonSheet(val) {
-        this._carbonSheet = val;
-    }
-
-    /**
-     * @return {CarbonSheet} _carbonSheet reference to the instance of
-     *         {@link CarbonSheet}
-     */
-    get carbonSheet() {
-        return this._carbonSheet;
-    }
-
-    /**
-     * @return {HalfEdge[]} edges The array of {@link HalfEdge}
-     */
     wallEdges() {
         var edges = [];
         this.walls.forEach((wall) => {
@@ -127,6 +125,36 @@ export class Floorplan extends EventDispatcher {
             }
         });
         return edges;
+    }
+
+    __wallDeleted(evt) {
+        let wall = evt.item;
+        wall.removeEventListener(EVENT_DELETED, this.__wallDeletedEvent);
+        wall.removeEventListener(EVENT_WALL_ATTRIBUTES_CHANGED, this.__wallAttributesChangedEvent);
+        this.removeWall(wall);
+    }
+
+    __wallAttributesChanged(evt) {
+        this.dispatchEvent(evt);
+    }
+
+    __cornerDeleted(evt) {
+        let corner = evt.item;
+
+        corner.removeEventListener(EVENT_DELETED, this.__cornerDeletedEvent);
+        corner.removeEventListener(EVENT_CORNER_ATTRIBUTES_CHANGED, this.__cornerAttributesChangedOrMovedEvent);
+        corner.removeEventListener(EVENT_MOVED, this.__cornerAttributesChangedOrMovedEvent);
+
+        this.removeCorner(corner);
+        this.update();
+        this.dispatchEvent({ type: EVENT_DELETED, item: this });
+    }
+
+    __cornerAttributesChangedOrMoved(evt) {
+        this.dispatchEvent(evt);
+        let updateCorners = evt.item.adjacentCorners();
+        updateCorners.push(evt.item);
+        this.update(false, updateCorners);
     }
 
     /**
@@ -258,10 +286,13 @@ export class Floorplan extends EventDispatcher {
         var wall = new Wall(start, end, a, b);
 
         this.walls.push(wall);
-        wall.addEventListener(EVENT_DELETED, function(o) { scope.removeWall(o.item); });
-        wall.addEventListener(EVENT_WALL_ATTRIBUTES_CHANGED, function(o) {
-            scope.dispatchEvent(o);
-        });
+        // wall.addEventListener(EVENT_DELETED, function(o) { scope.removeWall(o.item); });
+        // wall.addEventListener(EVENT_WALL_ATTRIBUTES_CHANGED, function(o) {
+        //     scope.dispatchEvent(o);
+        // });
+
+        wall.addEventListener(EVENT_DELETED, this.__wallDeletedEvent);
+        wall.addEventListener(EVENT_WALL_ATTRIBUTES_CHANGED, this.__wallAttributesChangedEvent);
 
         this.dispatchEvent({ type: EVENT_NEW, item: this, newItem: wall });
         this.update();
@@ -295,26 +326,10 @@ export class Floorplan extends EventDispatcher {
         }
 
         this.corners.push(corner);
-        corner.addEventListener(EVENT_DELETED, function(o) {
-            scope.removeCorner(o.item);
-            scope.update();
-            scope.dispatchEvent({ type: EVENT_DELETED, item: scope });
-        });
-        corner.addEventListener(EVENT_CORNER_ATTRIBUTES_CHANGED, function(o) {
-            scope.dispatchEvent(o);
-            var updatecorners = o.item.adjacentCorners();
-            updatecorners.push(o.item);
-            scope.update(false, updatecorners);
-            //			scope.update(false);//For debug reasons
-        });
-        corner.addEventListener(EVENT_MOVED, function(o) {
-            scope.dispatchEvent(o);
-            var updatecorners = o.item.adjacentCorners();
-            updatecorners.push(o.item);
-            scope.update(false, updatecorners);
-            //			scope.update(false);//For debug reasons
-        });
 
+        corner.addEventListener(EVENT_DELETED, this.__cornerDeletedEvent);
+        corner.addEventListener(EVENT_CORNER_ATTRIBUTES_CHANGED, this.__cornerAttributesChangedOrMovedEvent);
+        corner.addEventListener(EVENT_MOVED, this.__cornerAttributesChangedOrMovedEvent);
         this.dispatchEvent({ type: EVENT_NEW, item: this, newItem: corner });
 
         // This code has been added by #0K. There should be an update whenever a
@@ -560,6 +575,7 @@ export class Floorplan extends EventDispatcher {
      */
     loadFloorplan(floorplan) {
         this.reset();
+        this.__updatesOn = false;
         var corners = {};
         if (floorplan == null || !('corners' in floorplan) || !('walls' in floorplan)) {
             return;
@@ -632,6 +648,7 @@ export class Floorplan extends EventDispatcher {
         if ('newFloorTextures' in floorplan) {
             this.floorTextures = floorplan.newFloorTextures;
         }
+        this.__updatesOn = true;
         this.metaroomsdata = floorplan.rooms;
         this.update();
         Configuration.setValue(configDimUnit, currentUnit);
@@ -804,23 +821,14 @@ export class Floorplan extends EventDispatcher {
         });
     }
 
-    get roofPlanesForIntersection() {
-        return this.__roofPlanesForIntersection;
-    }
-
-    get floorPlanesForIntersection() {
-        return this.__floorPlanesForIntersection;
-    }
-
-    get wallPlanesForIntersection() {
-        return this.__wallPlanesForIntersection;
-    }
-
     /**
      * Update the floorplan with new rooms, remove old rooms etc.
      * //Should include for , updatewalls=null, updaterooms=null
      */
     update(updateroomconfiguration = true, updatecorners = null) {
+        if (!this.__updatesOn) {
+            return;
+        }
         if (updatecorners != null) {
             //			console.log('UPDATE CORNER ANGLES ::: ', updatecorners.length);
             updatecorners.forEach((corner) => {
@@ -891,6 +899,7 @@ export class Floorplan extends EventDispatcher {
 
         this.assignOrphanEdges();
         this.updateFloorTextures();
+        this.__cornerGroups.update();
         this.dispatchEvent({ type: EVENT_UPDATED, item: this });
         this.dispatchEvent({ type: EVENT_NEW_ROOMS_ADDED, item: this });
     }
@@ -1012,6 +1021,38 @@ export class Floorplan extends EventDispatcher {
         // remove CW loops
         var uniqueCCWLoops = Utils.removeIf(uniqueLoops, Utils.isClockwise);
         return uniqueCCWLoops;
+    }
+
+    /**
+     * @param {CarbonSheet}
+     *            val
+     */
+    set carbonSheet(val) {
+        this._carbonSheet = val;
+    }
+
+    /**
+     * @return {CarbonSheet} _carbonSheet reference to the instance of
+     *         {@link CarbonSheet}
+     */
+    get carbonSheet() {
+        return this._carbonSheet;
+    }
+
+    get roofPlanesForIntersection() {
+        return this.__roofPlanesForIntersection;
+    }
+
+    get floorPlanesForIntersection() {
+        return this.__floorPlanesForIntersection;
+    }
+
+    get wallPlanesForIntersection() {
+        return this.__wallPlanesForIntersection;
+    }
+
+    get cornerGroups() {
+        return this.__cornerGroups;
     }
 }
 export default Floorplan;

@@ -79,6 +79,8 @@ export class Corner extends EventDispatcher {
          **/
         this.attachedRooms = [];
 
+        this.__hasBeenRemoved = false;
+
         this._angles = [];
         this._angleDirections = [];
         this._startAngles = [];
@@ -314,8 +316,8 @@ export class Corner extends EventDispatcher {
      * @emits {EVENT_DELETED}
      **/
     remove() {
+        this.__hasBeenRemoved = true;
         this.dispatchEvent({ type: EVENT_DELETED, item: this });
-        //      this.deleted_callbacks.fire(this);
     }
 
     /**
@@ -510,7 +512,13 @@ export class Corner extends EventDispatcher {
         Utils.removeValue(this.wallStarts, wall);
         Utils.removeValue(this.wallEnds, wall);
 
-        if (this.wallStarts.length === 0 && this.wallEnds.length === 0) {
+        /**
+         * If there are no walls connected to this corner then it is not 
+         * necessary to keep this corner around anymore as an orphan point.
+         * But ensure you check if this corner has already been removed. Otherwise
+         * it will be lead to recursion
+         */
+        if (this.wallStarts.length === 0 && this.wallEnds.length === 0 && !this.__hasBeenRemoved) {
             this.remove();
         }
     }

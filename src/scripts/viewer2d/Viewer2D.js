@@ -10,6 +10,7 @@ import { Dimensioning } from '../core/dimensioning';
 import { KeyboardListener2D } from './KeyboardManager2D';
 import { Configuration, snapToGrid, snapTolerance } from '../core/configuration';
 import { IS_TOUCH_DEVICE } from '../../DeviceInfo';
+import { CornerGroupTransform2D } from './CornerGroupTransform2D';
 
 export const floorplannerModes = { MOVE: 0, DRAW: 1 };
 
@@ -83,6 +84,8 @@ export class Viewer2D extends Application {
         this.__worldWidth = 3000;
         this.__worldHeight = 3000;
 
+        this.__groupTransformer = new CornerGroupTransform2D(this.__floorplan);
+
         this.__zoomedEvent = this.__zoomed.bind(this);
         this.__pannedEvent = this.__panned.bind(this);
         this.__selectionMonitorEvent = this.__selectionMonitor.bind(this);
@@ -120,9 +123,12 @@ export class Viewer2D extends Application {
         this.renderer.autoResize = true;
 
         this.__tempWall.visible = false;
+        this.__groupTransformer.visible = false;
         this.__floorplanContainer.addChild(this.__grid2d);
         this.__floorplanContainer.addChild(this.__tempWall);
         this.__floorplanContainer.addChild(origin);
+        this.__floorplanContainer.addChild(this.__groupTransformer);
+
 
         this.stage.addChild(this.__floorplanContainer);
         this.__canvasHolder.appendChild(this.view);
@@ -156,10 +162,14 @@ export class Viewer2D extends Application {
         this.__floorplanContainer.on('touchmove', this.__drawModeMouseMoveEvent);
 
         // this.__floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.__redrawFloorplan(evt));
+
+
         this.__floorplan.addEventListener(EVENT_NEW, this.__redrawFloorplanEvent);
         this.__floorplan.addEventListener(EVENT_DELETED, this.__redrawFloorplanEvent);
-        this.__floorplan.addEventListener(EVENT_LOADED, this.__redrawFloorplanEvent);
+        // this.__floorplan.addEventListener(EVENT_LOADED, this.__redrawFloorplanEvent);
         this.__floorplan.addEventListener(EVENT_NEW_ROOMS_ADDED, this.__redrawFloorplanEvent);
+
+
         window.addEventListener('resize', this.__windowResizeEvent);
         window.addEventListener('orientationchange', this.__windowResizeEvent);
     }
@@ -181,6 +191,7 @@ export class Viewer2D extends Application {
         switch (mode) {
             case floorplannerModes.DRAW:
                 this.__mode = floorplannerModes.DRAW;
+                this.__groupTransformer.visible = false;
                 this.__floorplanContainer.plugins.pause('drag');
                 for (let i = 0; i < this.__entities2D.length; i++) {
                     this.__entities2D[i].interactive = false;
@@ -281,6 +292,7 @@ export class Viewer2D extends Application {
     }
 
     __selectionMonitor(evt) {
+        this.__groupTransformer.visible = false;
         this.__eventDispatcher.dispatchEvent({ type: EVENT_NOTHING_2D_SELECTED });
         for (let i = 0; i < this.__entities2D.length; i++) {
             let entity = this.__entities2D[i];
@@ -292,13 +304,19 @@ export class Viewer2D extends Application {
             entity.selected = false;
         }
         if (evt.item) {
+            let item = null;
             if (evt.item instanceof WallView2D) {
-                this.__eventDispatcher.dispatchEvent({ type: EVENT_WALL_2D_CLICKED, item: evt.item.wall });
+                item = evt.item.wall;
+                this.__eventDispatcher.dispatchEvent({ type: EVENT_WALL_2D_CLICKED, item: evt.item.wall, entity: evt.item });
             } else if (evt.item instanceof CornerView2D) {
-                this.__eventDispatcher.dispatchEvent({ type: EVENT_CORNER_2D_CLICKED, item: evt.item.corner });
+                item = evt.item.corner;
+                this.__eventDispatcher.dispatchEvent({ type: EVENT_CORNER_2D_CLICKED, item: evt.item.corner, entity: evt.item });
             } else if (evt.item instanceof RoomView2D) {
-                this.__eventDispatcher.dispatchEvent({ type: EVENT_ROOM_2D_CLICKED, item: evt.item.room });
+                item = evt.item.room;
+                this.__eventDispatcher.dispatchEvent({ type: EVENT_ROOM_2D_CLICKED, item: evt.item.room, entity: evt.item });
             }
+            this.__groupTransformer.visible = true;
+            this.__groupTransformer.selected = item;
         }
     }
 
@@ -321,7 +339,6 @@ export class Viewer2D extends Application {
     }
 
     __redrawFloorplan() {
-
         var scope = this;
         let i = 0;
 

@@ -10,11 +10,21 @@ export class FloorPlannerHelper {
         this.__cornerElevation = Dimensioning.cmToMeasureRaw(250);
         this.__roomName = 'A New Room';
 
+        /**
+         * Store a reference to the model entities
+         */
         this.__selectedWall = null;
         this.__selectedCorner = null;
         this.__selectedRoom = null;
 
-        this.__nothingSelectedEvent = this.__nothingSelected.bind(this);
+        /**
+         * Store a reference to the viewer3d visual entities
+         */
+        this.__selectedWallEntity = null;
+        this.__selectedCornerEntity = null;
+        this.__selectedRoomEntity = null;
+
+        this.__nothingSelectedEvent = this.__resetSelections.bind(this);
         this.__cornerSelectedEvent = this.__cornerSelected.bind(this);
         this.__wallSelectedEvent = this.__wallSelected.bind(this);
         this.__roomSelectedEvent = this.__roomSelected.bind(this);
@@ -25,25 +35,49 @@ export class FloorPlannerHelper {
         this.__floorplanner.addFloorplanListener(EVENT_ROOM_2D_CLICKED, this.__roomSelectedEvent);
     }
 
+    __resetSelections() {
+        this.__selectedCorner = null;
+        this.__selectedWall = null;
+        this.__selectedRoom = null;
+        this.__selectedCornerEntity = null;
+        this.__selectedWallEntity = null;
+        this.__selectedRoomEntity = null;
+    }
+
     __cornerSelected(evt) {
+        this.__resetSelections();
         this.__selectedCorner = evt.item;
+        this.__selectedCornerEntity = evt.entity;
         this.__cornerElevation = Dimensioning.cmToMeasureRaw(this.__selectedCorner.elevation);
     }
 
     __wallSelected(evt) {
+        this.__resetSelections();
         this.__selectedWall = evt.item;
+        this.__selectedWallEntity = evt.entity;
         this.__wallThickness = Dimensioning.cmToMeasureRaw(evt.item.thickness);
     }
 
     __roomSelected(evt) {
+        this.__resetSelections();
         this.__selectedRoom = evt.item;
+        this.__selectedRoomEntity = evt.entity;
         this.__roomName = evt.item.name;
     }
 
     __nothingSelected() {
-        this.__selectedWall = null;
-        this.__selectedRoom = null;
-        this.__selectedCorner = null;
+        this.__resetSelections();
+    }
+
+    deleteCurrentItem() {
+        if (this.__selectedWall) {
+            this.__selectedWall.remove();
+            this.__resetSelections();
+        }
+        if (this.__selectedCorner) {
+            this.__selectedCorner.remove();
+            this.__resetSelections();
+        }
     }
 
     set wallThickness(value) {

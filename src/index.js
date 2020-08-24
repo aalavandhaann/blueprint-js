@@ -56,7 +56,7 @@ let opts = {
     viewer2d: {
         id: 'bp3djs-viewer2d',
         viewer2dOptions: {
-            'corner-radius': 7.5,
+            'corner-radius': 12.5,
             pannable: true,
             zoomable: true,
             dimlinecolor: '#3E0000',
@@ -182,17 +182,20 @@ blueprint3d.floorplanner.addFloorplanListener(EVENT_NOTHING_2D_SELECTED, functio
     settingsSelectedCorner.hide();
     settingsSelectedWall.hide();
     settingsSelectedRoom.hide();
+    settingsViewer2d.hideControl('Delete');
 });
 blueprint3d.floorplanner.addFloorplanListener(EVENT_CORNER_2D_CLICKED, function(evt) {
     settingsSelectedCorner.show();
     settingsSelectedWall.hide();
     settingsSelectedRoom.hide();
+    settingsViewer2d.showControl('Delete');
     settingsSelectedCorner.setValue('cornerElevation', Dimensioning.cmToMeasureRaw(evt.item.elevation));
 });
 blueprint3d.floorplanner.addFloorplanListener(EVENT_WALL_2D_CLICKED, function(evt) {
     settingsSelectedCorner.hide();
     settingsSelectedWall.show();
     settingsSelectedRoom.hide();
+    settingsViewer2d.showControl('Delete');
     settingsSelectedWall.setValue('wallThickness', Dimensioning.cmToMeasureRaw(evt.item.thickness));
 });
 blueprint3d.floorplanner.addFloorplanListener(EVENT_ROOM_2D_CLICKED, function(evt) {
@@ -276,6 +279,7 @@ if (!opts.widget) {
 
     settingsViewer2d.addButton('Draw Mode', switchViewer2DToDraw);
     settingsViewer2d.addButton('Move Mode', switchViewer2DToMove);
+    settingsViewer2d.addButton('Delete', floorplanningHelper.deleteCurrentItem.bind(floorplanningHelper));
 
     settingsViewer2d.bindBoolean('snapToGrid', configurationHelper.snapToGrid, configurationHelper);
     settingsViewer2d.bindBoolean('directionalDrag', configurationHelper.directionalDrag, configurationHelper);
@@ -319,6 +323,9 @@ if (!opts.widget) {
 
     uxInterface.setWidth(panelWidths);
     uxInterface.setHeight(uxInterfaceHeight);
+
+
+    settingsViewer2d.hideControl('Delete');
 
     settingsViewer2d.setWidth(panelWidths);
     settingsViewer3d.setWidth(panelWidths);

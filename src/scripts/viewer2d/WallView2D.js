@@ -4,6 +4,7 @@ import { Dimensioning } from '../core/dimensioning.js';
 import { Graphics, Text } from 'pixi.js';
 import { Vector3, Vector2, Color } from 'three';
 import { Configuration, snapToGrid, snapTolerance, dragOnlyX, dragOnlyY, directionalDrag } from '../core/configuration.js';
+import { isMobile } from 'detect-touch-device';
 
 export class WallDimensions2D extends Graphics {
     constructor(floorplan, options, wall) {
@@ -140,7 +141,7 @@ export class WallView2D extends BaseFloorplanViewElement2D {
         this.__options = options;
         this.__wall = wall;
         this.__wallUpdatedEvent = this.__drawUpdatedWall.bind(this);
-        this.__wallDeletedEvent = this.remove.bind(this);
+        this.__wallDeletedEvent = this.__wallDeleted.bind(this); //this.remove.bind(this);
         this.__info = new WallDimensions2D(floorplan, options, wall);
         this.viewDimensions = false;
         this.addChild(this.__info);
@@ -179,6 +180,22 @@ export class WallView2D extends BaseFloorplanViewElement2D {
             return [];
         }
         let points = [edge.exteriorStart(), edge.exteriorEnd(), edge.interiorEnd(), edge.interiorStart()];
+        if (isMobile) {
+            let pixelPoints = [];
+            let start = edge.getStart().location;
+            let end = edge.getEnd().location;
+            let origins = [start, end, end, start];
+            for (let i = 0; i < points.length; i++) {
+                let point = points[i];
+                let origin = origins[i];
+                let vect = point.clone().sub(origin);
+
+                vect = vect.multiplyScalar(3.0).add(origin);
+                let pixelPoint = new Vector2(Dimensioning.cmToPixel(vect.x), Dimensioning.cmToPixel(vect.y));
+                pixelPoints.push(pixelPoint);
+            }
+            return pixelPoints;
+        }
         for (let i = 0; i < points.length; i++) {
             points[i].x = Dimensioning.cmToPixel(points[i].x);
             points[i].y = Dimensioning.cmToPixel(points[i].y);
@@ -190,7 +207,7 @@ export class WallView2D extends BaseFloorplanViewElement2D {
         let points = this.__getPolygonCoordinates();
         this.clear();
         // this.beginFill(color, alpha);
-        this.beginFill(color, 0.1);
+        this.beginFill(color, 0.05); //
         for (let i = 0; i < points.length; i++) {
             let pt = points[i];
             if (i === 0) {
@@ -202,7 +219,7 @@ export class WallView2D extends BaseFloorplanViewElement2D {
         this.endFill();
 
         let cornerLine = this.__getCornerCoordinates();
-        this.lineStyle(Dimensioning.cmToPixel(this.__wall.thickness), color);
+        this.lineStyle(Dimensioning.cmToPixel(this.__wall.thickness), color, alpha, 0.5);
         this.moveTo(cornerLine[0].x, cornerLine[0].y);
         this.lineTo(cornerLine[1].x, cornerLine[1].y);
 
@@ -267,7 +284,15 @@ export class WallView2D extends BaseFloorplanViewElement2D {
             return;
         }
         this.__drawHoveredOffState();
+    }
 
+    __wallDeleted() {
+        this.remove();
+        this.__wall = null;
+    }
+
+    __removeFromFloorplan() {
+        this.__wall.remove();
     }
 
     remove() {
@@ -276,12 +301,6 @@ export class WallView2D extends BaseFloorplanViewElement2D {
         this.__wall.removeEventListener(EVENT_DELETED, this.__wallDeletedEvent);
         this.removeChild(this.__info);
         super.remove();
-    }
-
-    removeFromFloorplan() {
-        this.remove();
-        this.__wall.remove();
-        this.__wall = null;
     }
 
     get wall() {

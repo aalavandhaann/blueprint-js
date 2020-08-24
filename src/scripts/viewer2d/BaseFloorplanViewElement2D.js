@@ -38,7 +38,7 @@ export class BaseFloorplanViewElement2D extends Graphics {
 
     __keyListener(evt) {
         if (this.selected && evt.key === 'Delete') {
-            this.removeFromFloorplan();
+            this.__removeFromFloorplan();
         }
 
         if (evt.type === EVENT_KEY_PRESSED && evt.key === 'Shift') {
@@ -94,9 +94,19 @@ export class BaseFloorplanViewElement2D extends Graphics {
     }
 
     __dragMove(evt) {
-        if (this.__isDragging) {
-            evt.stopPropagation();
+            if (this.__isDragging) {
+                evt.stopPropagation();
+            }
         }
+        /**
+         * The below method is necessary if the remove event was
+         * triggered from within this view class. For example, this view
+         * class keeps listening to the delete key pressed. In such a case
+         * it is the job of this view class to call the "remove()" method of the
+         * associated method. 
+         */
+    __removeFromFloorplan() {
+        //Stub the sub-classes need to implement this functionality
     }
 
     remove() {
@@ -112,10 +122,6 @@ export class BaseFloorplanViewElement2D extends Graphics {
         if (this.parent) {
             this.parent.removeChild(this);
         }
-    }
-
-    removeFromFloorplan() {
-        //Stub the sub-classes need to implement this functionality
     }
 
     addFloorplanListener(type, listener) {

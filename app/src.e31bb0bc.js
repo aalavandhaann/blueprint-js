@@ -38492,6 +38492,7 @@ var Corner = /*#__PURE__*/function (_EventDispatcher) {
      **/
 
     _this.attachedRooms = [];
+    _this.__hasBeenRemoved = false;
     _this._angles = [];
     _this._angleDirections = [];
     _this._startAngles = [];
@@ -38681,10 +38682,11 @@ var Corner = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "remove",
     value: function remove() {
+      this.__hasBeenRemoved = true;
       this.dispatchEvent({
         type: _events.EVENT_DELETED,
         item: this
-      }); //      this.deleted_callbacks.fire(this);
+      });
     }
     /**
      * Removes all the connected corners and itself. This in essence removes all the walls({@link Wall}) this corner is connected to.
@@ -38933,8 +38935,15 @@ var Corner = /*#__PURE__*/function (_EventDispatcher) {
       _utils.Utils.removeValue(this.wallStarts, wall);
 
       _utils.Utils.removeValue(this.wallEnds, wall);
+      /**
+       * If there are no walls connected to this corner then it is not 
+       * necessary to keep this corner around anymore as an orphan point.
+       * But ensure you check if this corner has already been removed. Otherwise
+       * it will be lead to recursion
+       */
 
-      if (this.wallStarts.length === 0 && this.wallEnds.length === 0) {
+
+      if (this.wallStarts.length === 0 && this.wallEnds.length === 0 && !this.__hasBeenRemoved) {
         this.remove();
       }
     }
@@ -44038,7 +44047,10 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
     _this.action_callbacks = null;
     _this.__location = new _three.Vector2();
     _this.__wallPlane2D = new _three.Plane();
-    _this.__wallNormal2D = new _three.Vector2(); //		this.start.addEventListener(EVENT_MOVED, ()=>{
+    _this.__wallNormal2D = new _three.Vector2();
+    _this.__cornerMovedEvent = _this.__cornerMoved.bind(_assertThisInitialized(_this));
+    _this.__cornerAttributesChangedEvent = _this.__cornerAttributesChanged.bind(_assertThisInitialized(_this));
+    _this.__cornerDeletedEvent = _this.__cornerDeleted.bind(_assertThisInitialized(_this)); //		this.start.addEventListener(EVENT_MOVED, ()=>{
     //			scope.updateControlVectors();
     //		});
     //		this.end.addEventListener(EVENT_MOVED, ()=>{
@@ -44069,6 +44081,28 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
       //     item.position = new Vector3(newPosition.x, item.position.y, newPosition.y);
       //     i++;
       // });
+    }
+  }, {
+    key: "__cornerMoved",
+    value: function __cornerMoved() {
+      this.updateControlVectors();
+    }
+  }, {
+    key: "__cornerAttributesChanged",
+    value: function __cornerAttributesChanged() {
+      this.__updateItemPositions();
+
+      this.dispatchEvent({
+        type: _events.EVENT_MOVED,
+        item: this,
+        position: null
+      });
+    }
+  }, {
+    key: "__cornerDeleted",
+    value: function __cornerDeleted(evt) {
+      this.addCornerMoveListener(evt.item, true);
+      this.remove();
     }
   }, {
     key: "addItem",
@@ -44138,30 +44172,17 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
     key: "addCornerMoveListener",
     value: function addCornerMoveListener(corner) {
       var remove = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-      var scope = this;
-
-      function moved() {
-        scope.updateControlVectors();
-      }
-
-      function cornerAttributesChanged() {
-        scope.__updateItemPositions();
-
-        scope.dispatchEvent({
-          type: _events.EVENT_MOVED,
-          item: scope,
-          position: null
-        });
-      }
 
       if (remove) {
-        corner.removeEventListener(_events.EVENT_MOVED, moved);
-        corner.removeEventListener(_events.EVENT_CORNER_ATTRIBUTES_CHANGED, cornerAttributesChanged);
+        corner.removeEventListener(_events.EVENT_MOVED, this.__cornerMovedEvent);
+        corner.removeEventListener(_events.EVENT_CORNER_ATTRIBUTES_CHANGED, this.__cornerAttributesChangedEvent);
+        corner.removeEventListener(_events.EVENT_DELETED, this.__cornerDeletedEvent);
         return;
       }
 
-      corner.addEventListener(_events.EVENT_MOVED, moved);
-      corner.addEventListener(_events.EVENT_CORNER_ATTRIBUTES_CHANGED, cornerAttributesChanged);
+      corner.addEventListener(_events.EVENT_MOVED, this.__cornerMovedEvent);
+      corner.addEventListener(_events.EVENT_CORNER_ATTRIBUTES_CHANGED, this.__cornerAttributesChangedEvent);
+      corner.addEventListener(_events.EVENT_DELETED, this.__cornerDeletedEvent);
     }
   }, {
     key: "projectOnWallPlane",
@@ -44376,7 +44397,10 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
     key: "remove",
     value: function remove() {
       this.start.detachWall(this);
-      this.end.detachWall(this);
+      this.end.detachWall(this); //Remove the listeners also
+
+      this.addCornerMoveListener(this.start, true);
+      this.addCornerMoveListener(this.end, true);
       this.dispatchEvent({
         type: _events.EVENT_DELETED,
         item: this
@@ -45434,7 +45458,211 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
 exports.Room = Room;
 var _default = Room;
 exports.default = _default;
-},{"three":"../node_modules/three/build/three.module.js","../core/events.js":"scripts/core/events.js","../core/utils.js":"scripts/core/utils.js","../core/constants.js":"scripts/core/constants.js","./half_edge.js":"scripts/model/half_edge.js","three/build/three.module":"../node_modules/three/build/three.module.js"}],"scripts/model/floorplan.js":[function(require,module,exports) {
+},{"three":"../node_modules/three/build/three.module.js","../core/events.js":"scripts/core/events.js","../core/utils.js":"scripts/core/utils.js","../core/constants.js":"scripts/core/constants.js","./half_edge.js":"scripts/model/half_edge.js","three/build/three.module":"../node_modules/three/build/three.module.js"}],"scripts/model/cornergroups.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CornerGroups = exports.CornerGroup = void 0;
+
+var _utils = require("../core/utils");
+
+var _three = require("three/build/three.module");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var CornerGroup = /*#__PURE__*/function () {
+  /**
+   * 
+   * @param {Array} array of corners instances
+   */
+  function CornerGroup(corners) {
+    _classCallCheck(this, CornerGroup);
+
+    this.__corners = corners;
+    this.__size = new _three.Vector2();
+    this.__center = new _three.Vector2();
+    this.__tl = new _three.Vector2();
+    this.__br = new _three.Vector2();
+  }
+  /**
+   * update is quite a costly function. Call this explicitly
+   */
+
+
+  _createClass(CornerGroup, [{
+    key: "update",
+    value: function update() {
+      var minPoint = new _three.Vector2(Number.MAX_VALUE, Number.MAX_VALUE);
+      var maxPoint = new _three.Vector2(Number.MIN_VALUE, Number.MIN_VALUE);
+
+      for (var i = 0; i < this.__corners.length; i++) {
+        var corner = this.__corners[i];
+        minPoint.x = Math.min(minPoint.x, corner.location.x);
+        minPoint.y = Math.min(minPoint.y, corner.location.y);
+        maxPoint.x = Math.max(maxPoint.x, corner.location.x);
+        maxPoint.y = Math.max(maxPoint.y, corner.location.y);
+      }
+
+      this.__size = maxPoint.clone().sub(minPoint);
+      this.__center = this.__size.clone().multiplyScalar(0.5).add(minPoint);
+      this.__tl = minPoint.sub(this.__center);
+      this.__br = maxPoint.sub(this.__center);
+    }
+  }, {
+    key: "contains",
+    value: function contains(corner) {
+      for (var i = 0; i < this.__corners.length; i++) {
+        if (corner.id === this.__corners[i].id) {
+          return true;
+        }
+      }
+
+      return false; // return Utils.hasValue(this.__corners, corner);
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      this.__corners = [];
+    }
+  }, {
+    key: "corners",
+    get: function get() {
+      return this.__corners;
+    }
+  }, {
+    key: "tl",
+    get: function get() {
+      return this.__tl;
+    }
+  }, {
+    key: "br",
+    get: function get() {
+      return this.__br;
+    }
+  }, {
+    key: "size",
+    get: function get() {
+      return this.__size;
+    }
+  }, {
+    key: "center",
+    get: function get() {
+      return this.__center;
+    }
+  }]);
+
+  return CornerGroup;
+}();
+
+exports.CornerGroup = CornerGroup;
+
+var CornerGroups = /*#__PURE__*/function () {
+  /**
+   * 
+   * @param {Floorplan} floorplan
+   * @description A class that groups connected corners together and also helps to \
+   * to apply transformations on them
+   * 
+   */
+  function CornerGroups(floorplan) {
+    _classCallCheck(this, CornerGroups);
+
+    this.__groups = [];
+    this.__floorplan = floorplan;
+    this.update();
+  }
+
+  _createClass(CornerGroups, [{
+    key: "getContainingGroup",
+    value: function getContainingGroup(corner) {
+      for (var i = 0; i < this.__groups.length; i++) {
+        if (this.__groups[i].contains(corner)) {
+          return this.__groups[i];
+        }
+      }
+
+      return null;
+    }
+  }, {
+    key: "update",
+
+    /**
+     * @description - Determine heuristically the connected group of corners
+     */
+    value: function update() {
+      function tinyCornerGroups(corner, array) {
+        var adjacentCorners = corner.adjacentCorners(); //The below condition means this corner and its neighbors hasn't been analyzed
+
+        if (!array.includes(corner)) {
+          array.push(corner);
+
+          for (var j = 0; j < adjacentCorners.length; j++) {
+            array = tinyCornerGroups(adjacentCorners[j], array);
+          }
+        }
+
+        return array;
+      }
+
+      function tinyNotInArray(mainarray, subarray) {
+        for (var j = 0; j < mainarray.length; j++) {
+          if (!subarray.includes(mainarray[j])) {
+            return mainarray[j];
+          }
+        }
+
+        return null;
+      }
+
+      this.__groups.forEach(function (group) {
+        group.destroy();
+      });
+
+      this.__groups.length = 0;
+
+      if (!this.__floorplan.corners.length) {
+        return;
+      }
+
+      var firstCorner = this.__floorplan.corners[0];
+      var cornerGroups = [[]];
+      cornerGroups[0] = tinyCornerGroups(firstCorner, cornerGroups[0]);
+
+      while (cornerGroups.flat().length !== this.__floorplan.corners.length) {
+        var isolatedCorner = tinyNotInArray(this.__floorplan.corners, cornerGroups.flat());
+
+        if (isolatedCorner) {
+          var index = cornerGroups.push([]) - 1;
+          cornerGroups[index] = tinyCornerGroups(isolatedCorner, cornerGroups[index]);
+        } else {
+          break;
+        }
+      }
+
+      for (var i = 0; i < cornerGroups.length; i++) {
+        var cornerGroup = new CornerGroup(cornerGroups[i]);
+
+        this.__groups.push(cornerGroup);
+      }
+    }
+  }, {
+    key: "groups",
+    get: function get() {
+      return this.__groups;
+    }
+  }]);
+
+  return CornerGroups;
+}();
+
+exports.CornerGroups = CornerGroups;
+},{"../core/utils":"scripts/core/utils.js","three/build/three.module":"../node_modules/three/build/three.module.js"}],"scripts/model/floorplan.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -45463,6 +45691,8 @@ var _corner = require("./corner.js");
 var _wall = require("./wall.js");
 
 var _room = require("./room.js");
+
+var _cornergroups = require("./cornergroups.js");
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -45583,20 +45813,26 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
      */
 
     _this._carbonSheet = null;
+    /**
+     * This is necessary to sometimes explicitly stop the floorplan from doing
+     * heavy computations
+     */
+
+    _this.__updatesOn = true;
+    _this.__cornerGroups = new _cornergroups.CornerGroups(_assertThisInitialized(_this));
+    _this.__wallAttributesChangedEvent = _this.__wallAttributesChanged.bind(_assertThisInitialized(_this));
+    _this.__wallDeletedEvent = _this.__wallDeleted.bind(_assertThisInitialized(_this));
+    _this.__cornerAttributesChangedOrMovedEvent = _this.__cornerAttributesChangedOrMoved.bind(_assertThisInitialized(_this));
+    _this.__cornerDeletedEvent = _this.__cornerDeleted.bind(_assertThisInitialized(_this));
     return _this;
   }
   /**
-   * @param {CarbonSheet}
-   *            val
+   * @return {HalfEdge[]} edges The array of {@link HalfEdge}
    */
 
 
   _createClass(Floorplan, [{
     key: "wallEdges",
-
-    /**
-     * @return {HalfEdge[]} edges The array of {@link HalfEdge}
-     */
     value: function wallEdges() {
       var edges = [];
       this.walls.forEach(function (wall) {
@@ -45609,6 +45845,41 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
         }
       });
       return edges;
+    }
+  }, {
+    key: "__wallDeleted",
+    value: function __wallDeleted(evt) {
+      var wall = evt.item;
+      wall.removeEventListener(_events.EVENT_DELETED, this.__wallDeletedEvent);
+      wall.removeEventListener(_events.EVENT_WALL_ATTRIBUTES_CHANGED, this.__wallAttributesChangedEvent);
+      this.removeWall(wall);
+    }
+  }, {
+    key: "__wallAttributesChanged",
+    value: function __wallAttributesChanged(evt) {
+      this.dispatchEvent(evt);
+    }
+  }, {
+    key: "__cornerDeleted",
+    value: function __cornerDeleted(evt) {
+      var corner = evt.item;
+      corner.removeEventListener(_events.EVENT_DELETED, this.__cornerDeletedEvent);
+      corner.removeEventListener(_events.EVENT_CORNER_ATTRIBUTES_CHANGED, this.__cornerAttributesChangedOrMovedEvent);
+      corner.removeEventListener(_events.EVENT_MOVED, this.__cornerAttributesChangedOrMovedEvent);
+      this.removeCorner(corner);
+      this.update();
+      this.dispatchEvent({
+        type: _events.EVENT_DELETED,
+        item: this
+      });
+    }
+  }, {
+    key: "__cornerAttributesChangedOrMoved",
+    value: function __cornerAttributesChangedOrMoved(evt) {
+      this.dispatchEvent(evt);
+      var updateCorners = evt.item.adjacentCorners();
+      updateCorners.push(evt.item);
+      this.update(false, updateCorners);
     }
     /**
      * Returns the roof planes in the floorplan for intersection testing
@@ -45764,13 +46035,13 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
     value: function newWall(start, end, a, b) {
       var scope = this;
       var wall = new _wall.Wall(start, end, a, b);
-      this.walls.push(wall);
-      wall.addEventListener(_events.EVENT_DELETED, function (o) {
-        scope.removeWall(o.item);
-      });
-      wall.addEventListener(_events.EVENT_WALL_ATTRIBUTES_CHANGED, function (o) {
-        scope.dispatchEvent(o);
-      });
+      this.walls.push(wall); // wall.addEventListener(EVENT_DELETED, function(o) { scope.removeWall(o.item); });
+      // wall.addEventListener(EVENT_WALL_ATTRIBUTES_CHANGED, function(o) {
+      //     scope.dispatchEvent(o);
+      // });
+
+      wall.addEventListener(_events.EVENT_DELETED, this.__wallDeletedEvent);
+      wall.addEventListener(_events.EVENT_WALL_ATTRIBUTES_CHANGED, this.__wallAttributesChangedEvent);
       this.dispatchEvent({
         type: _events.EVENT_NEW,
         item: this,
@@ -45812,26 +46083,9 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
       }
 
       this.corners.push(corner);
-      corner.addEventListener(_events.EVENT_DELETED, function (o) {
-        scope.removeCorner(o.item);
-        scope.update();
-        scope.dispatchEvent({
-          type: _events.EVENT_DELETED,
-          item: scope
-        });
-      });
-      corner.addEventListener(_events.EVENT_CORNER_ATTRIBUTES_CHANGED, function (o) {
-        scope.dispatchEvent(o);
-        var updatecorners = o.item.adjacentCorners();
-        updatecorners.push(o.item);
-        scope.update(false, updatecorners); //			scope.update(false);//For debug reasons
-      });
-      corner.addEventListener(_events.EVENT_MOVED, function (o) {
-        scope.dispatchEvent(o);
-        var updatecorners = o.item.adjacentCorners();
-        updatecorners.push(o.item);
-        scope.update(false, updatecorners); //			scope.update(false);//For debug reasons
-      });
+      corner.addEventListener(_events.EVENT_DELETED, this.__cornerDeletedEvent);
+      corner.addEventListener(_events.EVENT_CORNER_ATTRIBUTES_CHANGED, this.__cornerAttributesChangedOrMovedEvent);
+      corner.addEventListener(_events.EVENT_MOVED, this.__cornerAttributesChangedOrMovedEvent);
       this.dispatchEvent({
         type: _events.EVENT_NEW,
         item: this,
@@ -46137,6 +46391,7 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
     key: "loadFloorplan",
     value: function loadFloorplan(floorplan) {
       this.reset();
+      this.__updatesOn = false;
       var corners = {};
 
       if (floorplan == null || !('corners' in floorplan) || !('walls' in floorplan)) {
@@ -46225,6 +46480,7 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
         this.floorTextures = floorplan.newFloorTextures;
       }
 
+      this.__updatesOn = true;
       this.metaroomsdata = floorplan.rooms;
       this.update();
 
@@ -46430,16 +46686,20 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
         }
       });
     }
-  }, {
-    key: "update",
-
     /**
      * Update the floorplan with new rooms, remove old rooms etc.
      * //Should include for , updatewalls=null, updaterooms=null
      */
+
+  }, {
+    key: "update",
     value: function update() {
       var updateroomconfiguration = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
       var updatecorners = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+      if (!this.__updatesOn) {
+        return;
+      }
 
       if (updatecorners != null) {
         //			console.log('UPDATE CORNER ANGLES ::: ', updatecorners.length);
@@ -46508,6 +46768,9 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
 
       this.assignOrphanEdges();
       this.updateFloorTextures();
+
+      this.__cornerGroups.update();
+
       this.dispatchEvent({
         type: _events.EVENT_UPDATED,
         item: this
@@ -46656,6 +46919,11 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
 
       return uniqueCCWLoops;
     }
+    /**
+     * @param {CarbonSheet}
+     *            val
+     */
+
   }, {
     key: "carbonSheet",
     set: function set(val) {
@@ -46684,6 +46952,11 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
     get: function get() {
       return this.__wallPlanesForIntersection;
     }
+  }, {
+    key: "cornerGroups",
+    get: function get() {
+      return this.__cornerGroups;
+    }
   }]);
 
   return Floorplan;
@@ -46692,7 +46965,7 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
 exports.Floorplan = Floorplan;
 var _default = Floorplan;
 exports.default = _default;
-},{"../core/events.js":"scripts/core/events.js","three":"../node_modules/three/build/three.module.js","../core/utils.js":"scripts/core/utils.js","../core/dimensioning.js":"scripts/core/dimensioning.js","../core/constants.js":"scripts/core/constants.js","../core/version.js":"scripts/core/version.js","../core/configuration.js":"scripts/core/configuration.js","./half_edge.js":"scripts/model/half_edge.js","./corner.js":"scripts/model/corner.js","./wall.js":"scripts/model/wall.js","./room.js":"scripts/model/room.js"}],"scripts/items/floor_item.js":[function(require,module,exports) {
+},{"../core/events.js":"scripts/core/events.js","three":"../node_modules/three/build/three.module.js","../core/utils.js":"scripts/core/utils.js","../core/dimensioning.js":"scripts/core/dimensioning.js","../core/constants.js":"scripts/core/constants.js","../core/version.js":"scripts/core/version.js","../core/configuration.js":"scripts/core/configuration.js","./half_edge.js":"scripts/model/half_edge.js","./corner.js":"scripts/model/corner.js","./wall.js":"scripts/model/wall.js","./room.js":"scripts/model/room.js","./cornergroups.js":"scripts/model/cornergroups.js"}],"scripts/items/floor_item.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -113011,7 +113284,7 @@ var BaseFloorplanViewElement2D = /*#__PURE__*/function (_Graphics) {
     key: "__keyListener",
     value: function __keyListener(evt) {
       if (this.selected && evt.key === 'Delete') {
-        this.removeFromFloorplan();
+        this.__removeFromFloorplan();
       }
 
       if (evt.type === _events.EVENT_KEY_PRESSED && evt.key === 'Shift') {
@@ -113083,6 +113356,18 @@ var BaseFloorplanViewElement2D = /*#__PURE__*/function (_Graphics) {
         evt.stopPropagation();
       }
     }
+    /**
+     * The below method is necessary if the remove event was
+     * triggered from within this view class. For example, this view
+     * class keeps listening to the delete key pressed. In such a case
+     * it is the job of this view class to call the "remove()" method of the
+     * associated method. 
+     */
+
+  }, {
+    key: "__removeFromFloorplan",
+    value: function __removeFromFloorplan() {//Stub the sub-classes need to implement this functionality
+    }
   }, {
     key: "remove",
     value: function remove() {
@@ -113102,10 +113387,6 @@ var BaseFloorplanViewElement2D = /*#__PURE__*/function (_Graphics) {
       if (this.parent) {
         this.parent.removeChild(this);
       }
-    }
-  }, {
-    key: "removeFromFloorplan",
-    value: function removeFromFloorplan() {//Stub the sub-classes need to implement this functionality
     }
   }, {
     key: "addFloorplanListener",
@@ -113147,7 +113428,40 @@ var BaseFloorplanViewElement2D = /*#__PURE__*/function (_Graphics) {
 }(_pixi.Graphics);
 
 exports.BaseFloorplanViewElement2D = BaseFloorplanViewElement2D;
-},{"three":"../node_modules/three/build/three.module.js","pixi.js":"../node_modules/pixi.js/lib/pixi.es.js","../core/events":"scripts/core/events.js","./KeyboardManager2D":"scripts/viewer2d/KeyboardManager2D.js"}],"scripts/viewer2d/CornerView2D.js":[function(require,module,exports) {
+},{"three":"../node_modules/three/build/three.module.js","pixi.js":"../node_modules/pixi.js/lib/pixi.es.js","../core/events":"scripts/core/events.js","./KeyboardManager2D":"scripts/viewer2d/KeyboardManager2D.js"}],"../node_modules/detect-touch-device/dist/index.js":[function(require,module,exports) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+function isdeviceTouchFriendly() {
+    var isMobile = false;
+    if (navigator !== null || navigator !== undefined) { }
+    if ("maxTouchPoints" in navigator) {
+        isMobile = navigator.maxTouchPoints > 0;
+    }
+    else if ("msMaxTouchPoints" in navigator) {
+        if (navigator !== null) {
+            isMobile = navigator.msMaxTouchPoints > 0;
+        }
+    }
+    else {
+        var mQ = window.matchMedia && matchMedia("(pointer:coarse)");
+        if (mQ && mQ.media === "(pointer:coarse)") {
+            isMobile = !!mQ.matches;
+        }
+        else if ('orientation' in window) {
+            isMobile = true; // deprecated, but good fallback
+        }
+        else {
+            // Only as a last resort, fall back to user agent sniffing
+            var UA = navigator.userAgent;
+            isMobile = (/\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
+                /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA));
+        }
+    }
+    return isMobile;
+}
+exports.isMobile = isdeviceTouchFriendly();
+
+},{}],"scripts/viewer2d/CornerView2D.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -113164,6 +113478,8 @@ var _events = require("../core/events.js");
 var _pixi = require("pixi.js");
 
 var _configuration = require("../core/configuration.js");
+
+var _detectTouchDevice = require("detect-touch-device");
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -113205,10 +113521,13 @@ var CornerView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
     _this.__corner = corner;
     _this.pivot.x = _this.pivot.y = 0.5;
     _this.__cornerUpdateEvent = _this.__updateWithModel.bind(_assertThisInitialized(_this));
+    _this.__cornerDeletedEvent = _this.__cornerDeleted.bind(_assertThisInitialized(_this));
 
     _this.__drawHoveredOffState();
 
     _this.__corner.addEventListener(_events.EVENT_MOVED, _this.__cornerUpdateEvent);
+
+    _this.__corner.addEventListener(_events.EVENT_DELETED, _this.__cornerDeletedEvent);
 
     _this.__updateWithModel();
 
@@ -113219,6 +113538,13 @@ var CornerView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
     key: "__drawCornerState",
     value: function __drawCornerState(radius, borderColor, fillColor) {
       this.clear();
+
+      if (_detectTouchDevice.isMobile) {
+        this.beginFill(borderColor, 0.1);
+        this.drawCircle(0, 0, radius * 2.5);
+        this.endFill();
+      }
+
       this.beginFill(borderColor);
       this.drawCircle(0, 0, radius);
       this.endFill();
@@ -113291,18 +113617,24 @@ var CornerView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
       }
     }
   }, {
+    key: "__cornerDeleted",
+    value: function __cornerDeleted(evt) {
+      this.remove();
+      this.__corner = null;
+    }
+  }, {
+    key: "__removeFromFloorplan",
+    value: function __removeFromFloorplan() {
+      this.__corner.remove();
+    }
+  }, {
     key: "remove",
     value: function remove() {
+      this.__corner.removeEventListener(_events.EVENT_DELETED, this.__cornerDeletedEvent);
+
       this.__corner.removeEventListener(_events.EVENT_MOVED, this.__cornerUpdateEvent);
 
       _get(_getPrototypeOf(CornerView2D.prototype), "remove", this).call(this);
-    }
-  }, {
-    key: "removeFromFloorplan",
-    value: function removeFromFloorplan() {
-      this.remove();
-
-      this.__corner.removeAll();
     }
   }, {
     key: "corner",
@@ -113315,7 +113647,7 @@ var CornerView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
 }(_BaseFloorplanViewElement2D.BaseFloorplanViewElement2D);
 
 exports.CornerView2D = CornerView2D;
-},{"./BaseFloorplanViewElement2D.js":"scripts/viewer2d/BaseFloorplanViewElement2D.js","../core/dimensioning.js":"scripts/core/dimensioning.js","../core/events.js":"scripts/core/events.js","pixi.js":"../node_modules/pixi.js/lib/pixi.es.js","../core/configuration.js":"scripts/core/configuration.js"}],"scripts/viewer2d/WallView2D.js":[function(require,module,exports) {
+},{"./BaseFloorplanViewElement2D.js":"scripts/viewer2d/BaseFloorplanViewElement2D.js","../core/dimensioning.js":"scripts/core/dimensioning.js","../core/events.js":"scripts/core/events.js","pixi.js":"../node_modules/pixi.js/lib/pixi.es.js","../core/configuration.js":"scripts/core/configuration.js","detect-touch-device":"../node_modules/detect-touch-device/dist/index.js"}],"scripts/viewer2d/WallView2D.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -113334,6 +113666,8 @@ var _pixi = require("pixi.js");
 var _three = require("three");
 
 var _configuration = require("../core/configuration.js");
+
+var _detectTouchDevice = require("detect-touch-device");
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -113566,7 +113900,8 @@ var WallView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
     _this2.__options = options;
     _this2.__wall = wall;
     _this2.__wallUpdatedEvent = _this2.__drawUpdatedWall.bind(_assertThisInitialized(_this2));
-    _this2.__wallDeletedEvent = _this2.remove.bind(_assertThisInitialized(_this2));
+    _this2.__wallDeletedEvent = _this2.__wallDeleted.bind(_assertThisInitialized(_this2)); //this.remove.bind(this);
+
     _this2.__info = new WallDimensions2D(floorplan, options, wall);
     _this2.viewDimensions = false;
 
@@ -113607,9 +113942,27 @@ var WallView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
 
       var points = [edge.exteriorStart(), edge.exteriorEnd(), edge.interiorEnd(), edge.interiorStart()];
 
-      for (var i = 0; i < points.length; i++) {
-        points[i].x = _dimensioning.Dimensioning.cmToPixel(points[i].x);
-        points[i].y = _dimensioning.Dimensioning.cmToPixel(points[i].y);
+      if (_detectTouchDevice.isMobile) {
+        var pixelPoints = [];
+        var start = edge.getStart().location;
+        var end = edge.getEnd().location;
+        var origins = [start, end, end, start];
+
+        for (var i = 0; i < points.length; i++) {
+          var point = points[i];
+          var origin = origins[i];
+          var vect = point.clone().sub(origin);
+          vect = vect.multiplyScalar(3.0).add(origin);
+          var pixelPoint = new _three.Vector2(_dimensioning.Dimensioning.cmToPixel(vect.x), _dimensioning.Dimensioning.cmToPixel(vect.y));
+          pixelPoints.push(pixelPoint);
+        }
+
+        return pixelPoints;
+      }
+
+      for (var _i = 0; _i < points.length; _i++) {
+        points[_i].x = _dimensioning.Dimensioning.cmToPixel(points[_i].x);
+        points[_i].y = _dimensioning.Dimensioning.cmToPixel(points[_i].y);
       }
 
       return points;
@@ -113624,7 +113977,7 @@ var WallView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
 
       this.clear(); // this.beginFill(color, alpha);
 
-      this.beginFill(color, 0.1);
+      this.beginFill(color, 0.05); //
 
       for (var i = 0; i < points.length; i++) {
         var pt = points[i];
@@ -113640,7 +113993,7 @@ var WallView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
 
       var cornerLine = this.__getCornerCoordinates();
 
-      this.lineStyle(_dimensioning.Dimensioning.cmToPixel(this.__wall.thickness), color);
+      this.lineStyle(_dimensioning.Dimensioning.cmToPixel(this.__wall.thickness), color, alpha, 0.5);
       this.moveTo(cornerLine[0].x, cornerLine[0].y);
       this.lineTo(cornerLine[1].x, cornerLine[1].y);
       this.lineStyle(1, 0xFFFFFF);
@@ -113724,6 +114077,17 @@ var WallView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
       this.__drawHoveredOffState();
     }
   }, {
+    key: "__wallDeleted",
+    value: function __wallDeleted() {
+      this.remove();
+      this.__wall = null;
+    }
+  }, {
+    key: "__removeFromFloorplan",
+    value: function __removeFromFloorplan() {
+      this.__wall.remove();
+    }
+  }, {
     key: "remove",
     value: function remove() {
       this.__wall.removeEventListener(_events.EVENT_MOVED, this.__wallUpdatedEvent);
@@ -113735,15 +114099,6 @@ var WallView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
       this.removeChild(this.__info);
 
       _get(_getPrototypeOf(WallView2D.prototype), "remove", this).call(this);
-    }
-  }, {
-    key: "removeFromFloorplan",
-    value: function removeFromFloorplan() {
-      this.remove();
-
-      this.__wall.remove();
-
-      this.__wall = null;
     }
   }, {
     key: "viewDimensions",
@@ -113779,7 +114134,7 @@ var WallView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
 }(_BaseFloorplanViewElement2D.BaseFloorplanViewElement2D);
 
 exports.WallView2D = WallView2D;
-},{"./BaseFloorplanViewElement2D.js":"scripts/viewer2d/BaseFloorplanViewElement2D.js","../core/events.js":"scripts/core/events.js","../core/dimensioning.js":"scripts/core/dimensioning.js","pixi.js":"../node_modules/pixi.js/lib/pixi.es.js","three":"../node_modules/three/build/three.module.js","../core/configuration.js":"scripts/core/configuration.js"}],"scripts/viewer2d/RoomView2D.js":[function(require,module,exports) {
+},{"./BaseFloorplanViewElement2D.js":"scripts/viewer2d/BaseFloorplanViewElement2D.js","../core/events.js":"scripts/core/events.js","../core/dimensioning.js":"scripts/core/dimensioning.js","pixi.js":"../node_modules/pixi.js/lib/pixi.es.js","three":"../node_modules/three/build/three.module.js","../core/configuration.js":"scripts/core/configuration.js","detect-touch-device":"../node_modules/detect-touch-device/dist/index.js"}],"scripts/viewer2d/RoomView2D.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -113959,7 +114314,300 @@ var RoomView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
 }(_BaseFloorplanViewElement2D.BaseFloorplanViewElement2D);
 
 exports.RoomView2D = RoomView2D;
-},{"./BaseFloorplanViewElement2D.js":"scripts/viewer2d/BaseFloorplanViewElement2D.js","../core/events.js":"scripts/core/events.js","../core/dimensioning.js":"scripts/core/dimensioning.js","../core/configuration.js":"scripts/core/configuration.js","three":"../node_modules/three/build/three.module.js","pixi.js":"../node_modules/pixi.js/lib/pixi.es.js"}],"scripts/viewer2d/Viewer2D.js":[function(require,module,exports) {
+},{"./BaseFloorplanViewElement2D.js":"scripts/viewer2d/BaseFloorplanViewElement2D.js","../core/events.js":"scripts/core/events.js","../core/dimensioning.js":"scripts/core/dimensioning.js","../core/configuration.js":"scripts/core/configuration.js","three":"../node_modules/three/build/three.module.js","pixi.js":"../node_modules/pixi.js/lib/pixi.es.js"}],"scripts/viewer2d/CornerGroupTransform2D.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CornerGroupTransform2D = void 0;
+
+var _pixi = require("pixi.js");
+
+var _corner = _interopRequireDefault(require("../model/corner"));
+
+var _wall = _interopRequireDefault(require("../model/wall"));
+
+var _room = _interopRequireDefault(require("../model/room"));
+
+var _dimensioning = require("../core/dimensioning");
+
+var _three = require("three");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var CornerGroupTransformBallView2D = /*#__PURE__*/function (_Graphics) {
+  _inherits(CornerGroupTransformBallView2D, _Graphics);
+
+  var _super = _createSuper(CornerGroupTransformBallView2D);
+
+  function CornerGroupTransformBallView2D(parameters) {
+    var _this;
+
+    _classCallCheck(this, CornerGroupTransformBallView2D);
+
+    _this = _super.call(this);
+    var opts = {
+      radius: 10,
+      outerColor: '#00FF00',
+      innerColor: '#FFFFFF'
+    };
+
+    if (parameters) {
+      for (var opt in opts) {
+        if (opts.hasOwnProperty(opt) && parameters.hasOwnProperty(opt)) {
+          opts[opt] = parameters[opt];
+        }
+      }
+    }
+
+    _this.interactive = true;
+    _this.buttonMode = true;
+    _this.__radius = opts.radius;
+    _this.__outerColor = opts.outerColor;
+    _this.__innerColor = opts.innerColor;
+
+    _this.__drawGradientBall();
+
+    return _this;
+  }
+
+  _createClass(CornerGroupTransformBallView2D, [{
+    key: "__drawGradientBall",
+    value: function __drawGradientBall() {
+      this.lineStyle(5, 0x000000, 0.7, 0.5);
+      this.drawCircle(this.__radius, this.__radius, this.__radius);
+      this.lineStyle(3, 0xFFFFFF, 0.7, 0.5);
+      this.drawCircle(this.__radius, this.__radius, this.__radius);
+      this.beginTextureFill(this.__getGradientTexture(this.__outerColor, this.__innerColor, this.__radius));
+      this.drawCircle(this.__radius, this.__radius, this.__radius);
+      this.pivot.set(this.__radius);
+    }
+  }, {
+    key: "__getGradientTexture",
+    value: function __getGradientTexture(fromColor, toColor, radius) {
+      var c = document.createElement("canvas");
+      var ctx = c.getContext("2d");
+      var x = radius;
+      var y = radius;
+      var xOffset = radius * 0.4;
+      var yOffset = -radius * 0.4; // Create gradient
+
+      var grd = ctx.createRadialGradient(x, y, radius, x + xOffset, y + yOffset, radius * 0.1);
+      grd.addColorStop(0, fromColor);
+      grd.addColorStop(1, toColor); // Fill with gradient
+
+      ctx.fillStyle = grd;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+      return new _pixi.Texture.from(c);
+    }
+  }]);
+
+  return CornerGroupTransformBallView2D;
+}(_pixi.Graphics);
+
+var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics2) {
+  _inherits(CornerGroupTransform2D, _Graphics2);
+
+  var _super2 = _createSuper(CornerGroupTransform2D);
+
+  function CornerGroupTransform2D(floorplan) {
+    var _this2;
+
+    _classCallCheck(this, CornerGroupTransform2D);
+
+    _this2 = _super2.call(this);
+    _this2.__floorplan = floorplan;
+    _this2.__groups = _this2.__floorplan.cornerGroups;
+    _this2.__rotateHandle = new CornerGroupTransformBallView2D();
+    _this2.__selected = null;
+    _this2.__currentGroup = null;
+    _this2.__size = null;
+    _this2.__center = null;
+    _this2.__tl = null;
+    _this2.__br = null;
+    _this2.__ringRadius = 0;
+    _this2.__isDragging = false;
+    _this2.__currentRadians = 0.0;
+    _this2.__mouseDownEvent = _this2.__dragStart.bind(_assertThisInitialized(_this2));
+    _this2.__mouseUpEvent = _this2.__dragEnd.bind(_assertThisInitialized(_this2));
+    _this2.__mouseMoveEvent = _this2.__dragMove.bind(_assertThisInitialized(_this2));
+    _this2.__mouseOverEvent = _this2.__mouseOver.bind(_assertThisInitialized(_this2));
+    _this2.__mouseOutEvent = _this2.__mouseOut.bind(_assertThisInitialized(_this2));
+    _this2.__mouseClickEvent = _this2.__click.bind(_assertThisInitialized(_this2));
+
+    _this2.__rotateHandle.on('mousedown', _this2.__mouseClickEvent).on('touchstart', _this2.__mouseClickEvent);
+
+    _this2.__rotateHandle.on('mouseupoutside', _this2.__mouseUpEvent).on('touchendoutside', _this2.__mouseUpEvent);
+
+    _this2.__rotateHandle.on('mouseup', _this2.__mouseUpEvent).on('touchend', _this2.__mouseUpEvent);
+
+    _this2.__rotateHandle.on('mousemove', _this2.__mouseMoveEvent).on('touchmove', _this2.__mouseMoveEvent);
+
+    _this2.__rotateHandle.on('mouseover', _this2.__mouseOverEvent).on('mouseout', _this2.__mouseOutEvent);
+
+    _this2.addChild(_this2.__rotateHandle);
+
+    return _this2;
+  }
+
+  _createClass(CornerGroupTransform2D, [{
+    key: "__click",
+    value: function __click(evt) {
+      this.__isDragging = true;
+
+      if (evt !== undefined) {
+        evt.stopPropagation();
+      }
+    }
+  }, {
+    key: "__mouseOver",
+    value: function __mouseOver(evt) {}
+  }, {
+    key: "__mouseOut",
+    value: function __mouseOut(evt) {
+      if (evt !== undefined) {
+        evt.stopPropagation();
+      }
+    }
+  }, {
+    key: "__dragStart",
+    value: function __dragStart(evt) {
+      this.__isDragging = true;
+      evt.stopPropagation();
+    }
+  }, {
+    key: "__dragEnd",
+    value: function __dragEnd(evt) {
+      this.__isDragging = false;
+      evt.stopPropagation();
+    }
+  }, {
+    key: "__dragMove",
+    value: function __dragMove(evt) {
+      if (this.__isDragging) {
+        var co = evt.data.getLocalPosition(this.parent);
+        var angle = Math.atan2(co.y, co.x);
+        this.__currentRadians = angle;
+        this.__rotateHandle.x = Math.cos(angle) * this.__ringRadius;
+        this.__rotateHandle.y = Math.sin(angle) * this.__ringRadius;
+
+        this.__drawTransformation();
+
+        evt.stopPropagation();
+      }
+    }
+  }, {
+    key: "__toPixels",
+    value: function __toPixels(vector) {
+      vector.x = _dimensioning.Dimensioning.cmToPixel(vector.x);
+      vector.y = _dimensioning.Dimensioning.cmToPixel(vector.y);
+      return vector;
+    }
+  }, {
+    key: "__drawRotationRing",
+    value: function __drawRotationRing() {
+      // this.clear();
+      this.lineStyle(20, 0x000000, 0.7, 0.5);
+      this.drawCircle(0, 0, this.__ringRadius);
+      this.lineStyle(10, 0xFFFFFF, 0.7, 0.5);
+      this.drawCircle(0, 0, this.__ringRadius);
+      this.lineStyle(5, 0x007070, 0.7, 0.5);
+      this.drawCircle(0, 0, this.__ringRadius);
+    }
+  }, {
+    key: "__drawTransformation",
+    value: function __drawTransformation() {
+      var m = new _three.Matrix4();
+      m.makeRotationAxis(new _three.Vector3(0, 0, 1), this.__currentRadians);
+      var rotatedTL = new _three.Vector3(this.__tl.x, this.__tl.y, 0).applyMatrix4(m);
+      var rotatedTR = new _three.Vector3(this.__br.x, this.__tl.y, 0).applyMatrix4(m);
+      var rotatedBR = new _three.Vector3(this.__br.x, this.__br.y, 0).applyMatrix4(m);
+      var rotatedBL = new _three.Vector3(this.__tl.x, this.__br.y, 0).applyMatrix4(m);
+      this.clear();
+      this.beginFill(0xCCCCCC, 0.4);
+      this.moveTo(rotatedTL.x, rotatedTL.y);
+      this.lineTo(rotatedTR.x, rotatedTR.y);
+      this.lineTo(rotatedBR.x, rotatedBR.y);
+      this.lineTo(rotatedBL.x, rotatedBL.y);
+      this.endFill();
+
+      this.__drawRotationRing();
+    }
+  }, {
+    key: "__updateTransformControls",
+    value: function __updateTransformControls() {
+      this.__currentGroup.update();
+
+      this.__size = this.__toPixels(this.__currentGroup.size.clone());
+      this.__center = this.__toPixels(this.__currentGroup.center.clone());
+      this.__tl = this.__toPixels(this.__currentGroup.tl.clone());
+      this.__br = this.__toPixels(this.__currentGroup.br.clone());
+      this.__ringRadius = Math.max(this.__size.x, this.__size.y);
+      this.position.x = this.__center.x;
+      this.position.y = this.__center.y;
+      this.__rotateHandle.position.x = Math.cos(0) * this.__ringRadius;
+      this.__rotateHandle.position.y = Math.sin(0) * this.__ringRadius;
+
+      this.__drawTransformation();
+    }
+  }, {
+    key: "selected",
+    get: function get() {
+      return this.__selected;
+    },
+    set: function set(instanceOfCornerOrWallOrRoom) {
+      this.__selected = instanceOfCornerOrWallOrRoom;
+
+      if (this.__selected) {
+        var corner = null;
+
+        if (instanceOfCornerOrWallOrRoom instanceof _corner.default) {
+          corner = instanceOfCornerOrWallOrRoom;
+        } else if (instanceOfCornerOrWallOrRoom instanceof _wall.default) {
+          corner = instanceOfCornerOrWallOrRoom.start;
+        } else if (instanceOfCornerOrWallOrRoom instanceof _room.default) {
+          corner = instanceOfCornerOrWallOrRoom.corners[0];
+        } else {
+          throw new Error('selected  can assigned with a Corner, Wall, Room or null. Unrecogonized datatype');
+        }
+
+        this.__currentGroup = this.__groups.getContainingGroup(corner);
+
+        this.__updateTransformControls();
+      }
+    }
+  }]);
+
+  return CornerGroupTransform2D;
+}(_pixi.Graphics);
+
+exports.CornerGroupTransform2D = CornerGroupTransform2D;
+},{"pixi.js":"../node_modules/pixi.js/lib/pixi.es.js","../model/corner":"scripts/model/corner.js","../model/wall":"scripts/model/wall.js","../model/room":"scripts/model/room.js","../core/dimensioning":"scripts/core/dimensioning.js","three":"../node_modules/three/build/three.module.js"}],"scripts/viewer2d/Viewer2D.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -113990,6 +114638,8 @@ var _KeyboardManager2D = require("./KeyboardManager2D");
 var _configuration = require("../core/configuration");
 
 var _DeviceInfo = require("../../DeviceInfo");
+
+var _CornerGroupTransform2D = require("./CornerGroupTransform2D");
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -114128,6 +114778,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
     _this2.__entities2D = [];
     _this2.__worldWidth = 3000;
     _this2.__worldHeight = 3000;
+    _this2.__groupTransformer = new _CornerGroupTransform2D.CornerGroupTransform2D(_this2.__floorplan);
     _this2.__zoomedEvent = _this2.__zoomed.bind(_assertThisInitialized(_this2));
     _this2.__pannedEvent = _this2.__panned.bind(_assertThisInitialized(_this2));
     _this2.__selectionMonitorEvent = _this2.__selectionMonitor.bind(_assertThisInitialized(_this2));
@@ -114161,12 +114812,15 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
     _this2.renderer.backgroundColor = 0xFFFFFF;
     _this2.renderer.autoResize = true;
     _this2.__tempWall.visible = false;
+    _this2.__groupTransformer.visible = false;
 
     _this2.__floorplanContainer.addChild(_this2.__grid2d);
 
     _this2.__floorplanContainer.addChild(_this2.__tempWall);
 
     _this2.__floorplanContainer.addChild(origin);
+
+    _this2.__floorplanContainer.addChild(_this2.__groupTransformer);
 
     _this2.stage.addChild(_this2.__floorplanContainer);
 
@@ -114208,9 +114862,8 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
 
     _this2.__floorplan.addEventListener(_events.EVENT_NEW, _this2.__redrawFloorplanEvent);
 
-    _this2.__floorplan.addEventListener(_events.EVENT_DELETED, _this2.__redrawFloorplanEvent);
+    _this2.__floorplan.addEventListener(_events.EVENT_DELETED, _this2.__redrawFloorplanEvent); // this.__floorplan.addEventListener(EVENT_LOADED, this.__redrawFloorplanEvent);
 
-    _this2.__floorplan.addEventListener(_events.EVENT_LOADED, _this2.__redrawFloorplanEvent);
 
     _this2.__floorplan.addEventListener(_events.EVENT_NEW_ROOMS_ADDED, _this2.__redrawFloorplanEvent);
 
@@ -114240,6 +114893,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
       switch (mode) {
         case floorplannerModes.DRAW:
           this.__mode = floorplannerModes.DRAW;
+          this.__groupTransformer.visible = false;
 
           this.__floorplanContainer.plugins.pause('drag');
 
@@ -114360,6 +115014,8 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
   }, {
     key: "__selectionMonitor",
     value: function __selectionMonitor(evt) {
+      this.__groupTransformer.visible = false;
+
       this.__eventDispatcher.dispatchEvent({
         type: _events.EVENT_NOTHING_2D_SELECTED
       });
@@ -114377,22 +115033,36 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
       }
 
       if (evt.item) {
+        var item = null;
+
         if (evt.item instanceof _WallView2D.WallView2D) {
+          item = evt.item.wall;
+
           this.__eventDispatcher.dispatchEvent({
             type: _events.EVENT_WALL_2D_CLICKED,
-            item: evt.item.wall
+            item: evt.item.wall,
+            entity: evt.item
           });
         } else if (evt.item instanceof _CornerView2D.CornerView2D) {
+          item = evt.item.corner;
+
           this.__eventDispatcher.dispatchEvent({
             type: _events.EVENT_CORNER_2D_CLICKED,
-            item: evt.item.corner
+            item: evt.item.corner,
+            entity: evt.item
           });
         } else if (evt.item instanceof _RoomView2D.RoomView2D) {
+          item = evt.item.room;
+
           this.__eventDispatcher.dispatchEvent({
             type: _events.EVENT_ROOM_2D_CLICKED,
-            item: evt.item.room
+            item: evt.item.room,
+            entity: evt.item
           });
         }
+
+        this.__groupTransformer.visible = true;
+        this.__groupTransformer.selected = item;
       }
     }
   }, {
@@ -114527,7 +115197,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
 }(_pixi.Application);
 
 exports.Viewer2D = Viewer2D;
-},{"pixi.js":"../node_modules/pixi.js/lib/pixi.es.js","pixi-viewport":"../node_modules/pixi-viewport/dist/viewport.es.js","three":"../node_modules/three/build/three.module.js","../core/events":"scripts/core/events.js","./Grid2d":"scripts/viewer2d/Grid2d.js","./CornerView2D":"scripts/viewer2d/CornerView2D.js","./WallView2D":"scripts/viewer2d/WallView2D.js","./RoomView2D":"scripts/viewer2d/RoomView2D.js","../core/dimensioning":"scripts/core/dimensioning.js","./KeyboardManager2D":"scripts/viewer2d/KeyboardManager2D.js","../core/configuration":"scripts/core/configuration.js","../../DeviceInfo":"DeviceInfo.js"}],"scripts/helpers/ConfigurationHelper.js":[function(require,module,exports) {
+},{"pixi.js":"../node_modules/pixi.js/lib/pixi.es.js","pixi-viewport":"../node_modules/pixi-viewport/dist/viewport.es.js","three":"../node_modules/three/build/three.module.js","../core/events":"scripts/core/events.js","./Grid2d":"scripts/viewer2d/Grid2d.js","./CornerView2D":"scripts/viewer2d/CornerView2D.js","./WallView2D":"scripts/viewer2d/WallView2D.js","./RoomView2D":"scripts/viewer2d/RoomView2D.js","../core/dimensioning":"scripts/core/dimensioning.js","./KeyboardManager2D":"scripts/viewer2d/KeyboardManager2D.js","../core/configuration":"scripts/core/configuration.js","../../DeviceInfo":"DeviceInfo.js","./CornerGroupTransform2D":"scripts/viewer2d/CornerGroupTransform2D.js"}],"scripts/helpers/ConfigurationHelper.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -114671,10 +115341,21 @@ var FloorPlannerHelper = /*#__PURE__*/function () {
     this.__wallThickness = _dimensioning.Dimensioning.cmToMeasureRaw(20);
     this.__cornerElevation = _dimensioning.Dimensioning.cmToMeasureRaw(250);
     this.__roomName = 'A New Room';
+    /**
+     * Store a reference to the model entities
+     */
+
     this.__selectedWall = null;
     this.__selectedCorner = null;
     this.__selectedRoom = null;
-    this.__nothingSelectedEvent = this.__nothingSelected.bind(this);
+    /**
+     * Store a reference to the viewer3d visual entities
+     */
+
+    this.__selectedWallEntity = null;
+    this.__selectedCornerEntity = null;
+    this.__selectedRoomEntity = null;
+    this.__nothingSelectedEvent = this.__resetSelections.bind(this);
     this.__cornerSelectedEvent = this.__cornerSelected.bind(this);
     this.__wallSelectedEvent = this.__wallSelected.bind(this);
     this.__roomSelectedEvent = this.__roomSelected.bind(this);
@@ -114689,29 +115370,61 @@ var FloorPlannerHelper = /*#__PURE__*/function () {
   }
 
   _createClass(FloorPlannerHelper, [{
+    key: "__resetSelections",
+    value: function __resetSelections() {
+      this.__selectedCorner = null;
+      this.__selectedWall = null;
+      this.__selectedRoom = null;
+      this.__selectedCornerEntity = null;
+      this.__selectedWallEntity = null;
+      this.__selectedRoomEntity = null;
+    }
+  }, {
     key: "__cornerSelected",
     value: function __cornerSelected(evt) {
+      this.__resetSelections();
+
       this.__selectedCorner = evt.item;
+      this.__selectedCornerEntity = evt.entity;
       this.__cornerElevation = _dimensioning.Dimensioning.cmToMeasureRaw(this.__selectedCorner.elevation);
     }
   }, {
     key: "__wallSelected",
     value: function __wallSelected(evt) {
+      this.__resetSelections();
+
       this.__selectedWall = evt.item;
+      this.__selectedWallEntity = evt.entity;
       this.__wallThickness = _dimensioning.Dimensioning.cmToMeasureRaw(evt.item.thickness);
     }
   }, {
     key: "__roomSelected",
     value: function __roomSelected(evt) {
+      this.__resetSelections();
+
       this.__selectedRoom = evt.item;
+      this.__selectedRoomEntity = evt.entity;
       this.__roomName = evt.item.name;
     }
   }, {
     key: "__nothingSelected",
     value: function __nothingSelected() {
-      this.__selectedWall = null;
-      this.__selectedRoom = null;
-      this.__selectedCorner = null;
+      this.__resetSelections();
+    }
+  }, {
+    key: "deleteCurrentItem",
+    value: function deleteCurrentItem() {
+      if (this.__selectedWall) {
+        this.__selectedWall.remove();
+
+        this.__resetSelections();
+      }
+
+      if (this.__selectedCorner) {
+        this.__selectedCorner.remove();
+
+        this.__resetSelections();
+      }
     }
   }, {
     key: "wallThickness",
@@ -115674,7 +116387,7 @@ var opts = {
   viewer2d: {
     id: 'bp3djs-viewer2d',
     viewer2dOptions: {
-      'corner-radius': 7.5,
+      'corner-radius': 12.5,
       pannable: true,
       zoomable: true,
       dimlinecolor: '#3E0000',
@@ -115809,17 +116522,20 @@ blueprint3d.floorplanner.addFloorplanListener(_events.EVENT_NOTHING_2D_SELECTED,
   settingsSelectedCorner.hide();
   settingsSelectedWall.hide();
   settingsSelectedRoom.hide();
+  settingsViewer2d.hideControl('Delete');
 });
 blueprint3d.floorplanner.addFloorplanListener(_events.EVENT_CORNER_2D_CLICKED, function (evt) {
   settingsSelectedCorner.show();
   settingsSelectedWall.hide();
   settingsSelectedRoom.hide();
+  settingsViewer2d.showControl('Delete');
   settingsSelectedCorner.setValue('cornerElevation', _dimensioning.Dimensioning.cmToMeasureRaw(evt.item.elevation));
 });
 blueprint3d.floorplanner.addFloorplanListener(_events.EVENT_WALL_2D_CLICKED, function (evt) {
   settingsSelectedCorner.hide();
   settingsSelectedWall.show();
   settingsSelectedRoom.hide();
+  settingsViewer2d.showControl('Delete');
   settingsSelectedWall.setValue('wallThickness', _dimensioning.Dimensioning.cmToMeasureRaw(evt.item.thickness));
 });
 blueprint3d.floorplanner.addFloorplanListener(_events.EVENT_ROOM_2D_CLICKED, function (evt) {
@@ -115899,6 +116615,7 @@ if (!opts.widget) {
   uxInterface.addButton('Export 3D Scene', saveBlueprint3D);
   settingsViewer2d.addButton('Draw Mode', switchViewer2DToDraw);
   settingsViewer2d.addButton('Move Mode', switchViewer2DToMove);
+  settingsViewer2d.addButton('Delete', floorplanningHelper.deleteCurrentItem.bind(floorplanningHelper));
   settingsViewer2d.bindBoolean('snapToGrid', configurationHelper.snapToGrid, configurationHelper);
   settingsViewer2d.bindBoolean('directionalDrag', configurationHelper.directionalDrag, configurationHelper);
   settingsViewer2d.bindBoolean('dragOnlyX', configurationHelper.dragOnlyX, configurationHelper);
@@ -115931,6 +116648,7 @@ if (!opts.widget) {
   settingsViewer3d.addHTML('Tips:', '<p>Click and drag to rotate the room in 360\xB0</p><p>Add room items <ul><li>Add parametric doors</li><li>Other items (Coming soon)</li></ul></p><p>Drag and Place items(pink boxes and parametric doors) in the room</p><p>There are 8 different types of items <ul><li>1: FloorItem</li> <li>2: WallItem</li> <li>3: InWallItem</li> <li>7: InWallFloorItem</li> <li>8: OnFloorItem</li> <li>9: WallFloorItem</li><li>0: Item</li> <li>4: RoofItem</li></ul></p>');
   uxInterface.setWidth(panelWidths);
   uxInterface.setHeight(uxInterfaceHeight);
+  settingsViewer2d.hideControl('Delete');
   settingsViewer2d.setWidth(panelWidths);
   settingsViewer3d.setWidth(panelWidths);
   settingsViewer2d.setHeight(subPanelsHeight);
@@ -115973,7 +116691,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42017" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42981" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

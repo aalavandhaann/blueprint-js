@@ -36,9 +36,10 @@
         "parcel-bundler": "^1.12.4"
     },
     "dependencies": {
-        "bezier-js": "^2.4.0",
         "@thi.ng/geom-hull": "0.0.27",
+        "bezier-js": "^2.4.0",
         "braces": "^2.3.2",
+        "detect-touch-device": "^1.1.5",
         "es6-enum": "^1.1.0",
         "gsap": "^3.5.0",
         "line-intersect": "^2.2.1",
