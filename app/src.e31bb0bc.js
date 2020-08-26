@@ -45536,11 +45536,7 @@ var CornerGroup = /*#__PURE__*/function () {
   }, {
     key: "__applyTransformations",
     value: function __applyTransformations(m4) {
-      var reset = this.__matrix.clone().getInverse(this.__matrix.clone()); // this.__applyTransformations(reset);
-
-
-      console.log('=================================================');
-      console.log('APPLY MATRIX 4 ', m4.elements, this.__corners.length);
+      var reset = this.__matrix.clone().getInverse(this.__matrix.clone());
 
       for (var i = 0; i < this.__corners.length; i++) {
         var location = this.__corners[i].location;
@@ -45549,8 +45545,6 @@ var CornerGroup = /*#__PURE__*/function () {
         location3 = location3.applyMatrix4(m4);
 
         this.__corners[i].move(location3.x, location3.y);
-
-        console.log(this.__corners[i].id);
       }
 
       var tl3 = new _three.Vector3(this.__tl.x, this.__tl.y, 0).applyMatrix4(m4);

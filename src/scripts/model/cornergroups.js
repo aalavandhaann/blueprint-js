@@ -54,16 +54,13 @@ export class CornerGroup {
 
     __applyTransformations(m4) {
         let reset = this.__matrix.clone().getInverse(this.__matrix.clone());
-        // this.__applyTransformations(reset);
-        console.log('=================================================');
-        console.log('APPLY MATRIX 4 ', m4.elements, this.__corners.length);
+
         for (let i = 0; i < this.__corners.length; i++) {
             let location = this.__corners[i].location;
             let location3 = new Vector3(location.x, location.y, 0);
             location3.applyMatrix4(reset);
             location3 = location3.applyMatrix4(m4);
             this.__corners[i].move(location3.x, location3.y);
-            console.log(this.__corners[i].id);
         }
         let tl3 = new Vector3(this.__tl.x, this.__tl.y, 0).applyMatrix4(m4);
         let tr3 = new Vector3(this.__tr.x, this.__tr.y, 0).applyMatrix4(m4);
