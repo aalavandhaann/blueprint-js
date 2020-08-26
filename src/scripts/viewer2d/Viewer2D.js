@@ -1,7 +1,7 @@
 import { Application, Graphics, Text } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import { Vector2, EventDispatcher } from 'three';
-import { EVENT_NEW, EVENT_DELETED, EVENT_LOADED, EVENT_2D_SELECTED, EVENT_NEW_ROOMS_ADDED, EVENT_KEY_RELEASED, EVENT_KEY_PRESSED, EVENT_WALL_2D_CLICKED, EVENT_CORNER_2D_CLICKED, EVENT_ROOM_2D_CLICKED, EVENT_NOTHING_2D_SELECTED } from '../core/events';
+import { EVENT_NEW, EVENT_DELETED, EVENT_LOADED, EVENT_2D_SELECTED, EVENT_NEW_ROOMS_ADDED, EVENT_KEY_RELEASED, EVENT_KEY_PRESSED, EVENT_WALL_2D_CLICKED, EVENT_CORNER_2D_CLICKED, EVENT_ROOM_2D_CLICKED, EVENT_NOTHING_2D_SELECTED, EVENT_MOVED } from '../core/events';
 import { Grid2D } from './Grid2d';
 import { CornerView2D } from './CornerView2D';
 import { WallView2D } from './WallView2D';
@@ -11,8 +11,9 @@ import { KeyboardListener2D } from './KeyboardManager2D';
 import { Configuration, snapToGrid, snapTolerance } from '../core/configuration';
 import { IS_TOUCH_DEVICE } from '../../DeviceInfo';
 import { CornerGroupTransform2D } from './CornerGroupTransform2D';
+import Room from '../model/room';
 
-export const floorplannerModes = { MOVE: 0, DRAW: 1 };
+export const floorplannerModes = { MOVE: 0, DRAW: 1, EDIT_ISLANDS: 2 };
 
 class TemporaryWall extends Graphics {
     constructor() {
@@ -83,12 +84,12 @@ export class Viewer2D extends Application {
 
         this.__worldWidth = 3000;
         this.__worldHeight = 3000;
-
-        this.__groupTransformer = new CornerGroupTransform2D(this.__floorplan);
+        this.__currentSelection = null;
 
         this.__zoomedEvent = this.__zoomed.bind(this);
         this.__pannedEvent = this.__panned.bind(this);
         this.__selectionMonitorEvent = this.__selectionMonitor.bind(this);
+        this.__cornerMovedEvent = this.__cornerMoved.bind(this);
 
         this.__drawModeMouseDownEvent = this.__drawModeMouseDown.bind(this);
         this.__drawModeMouseUpEvent = this.__drawModeMouseUp.bind(this);
@@ -112,10 +113,14 @@ export class Viewer2D extends Application {
         this.__keyboard.addEventListener(EVENT_KEY_PRESSED, this.__keyListenerEvent);
 
         let origin = new Graphics();
+        this.__floorplanElementsHolder = new Graphics();
+        this.__grid2d = new Grid2D(this.view, options);
+        this.__groupTransformer = new CornerGroupTransform2D(this.__floorplan);
+        this.__groupTransformer.visible = false;
+
+
         origin.beginFill(0xFF0000);
         origin.drawCircle(0, 0, 5);
-        this.__grid2d = new Grid2D(this.view, options);
-
 
         this.__floorplanContainer.position.set(window.innerWidth * 0.5, window.innerHeight * 0.5);
 
@@ -123,10 +128,11 @@ export class Viewer2D extends Application {
         this.renderer.autoResize = true;
 
         this.__tempWall.visible = false;
-        this.__groupTransformer.visible = false;
+
         this.__floorplanContainer.addChild(this.__grid2d);
         this.__floorplanContainer.addChild(this.__tempWall);
         this.__floorplanContainer.addChild(origin);
+        this.__floorplanContainer.addChild(this.__floorplanElementsHolder);
         this.__floorplanContainer.addChild(this.__groupTransformer);
 
 
@@ -191,7 +197,6 @@ export class Viewer2D extends Application {
         switch (mode) {
             case floorplannerModes.DRAW:
                 this.__mode = floorplannerModes.DRAW;
-                this.__groupTransformer.visible = false;
                 this.__floorplanContainer.plugins.pause('drag');
                 for (let i = 0; i < this.__entities2D.length; i++) {
                     this.__entities2D[i].interactive = false;
@@ -199,6 +204,25 @@ export class Viewer2D extends Application {
                 this.__changeCursorMode();
                 this.__tempWall.update();
                 this.__tempWall.visible = true;
+                this.__groupTransformer.visible = false;
+                break;
+            case floorplannerModes.EDIT_ISLANDS:
+                this.__mode = floorplannerModes.EDIT_ISLANDS;
+                if (this.__currentSelection instanceof Room) {
+                    this.__groupTransformer.visible = true;
+                    this.__groupTransformer.selected = this.__currentSelection;
+                } else {
+                    this.__groupTransformer.visible = false;
+                }
+
+                this.__floorplanContainer.plugins.pause('drag');
+                for (let i = 0; i < this.__corners2d.length; i++) {
+                    this.__corners2d[i].interactive = false;
+                }
+                for (let i = 0; i < this.__walls2d.length; i++) {
+                    this.__walls2d[i].interactive = false;
+                }
+                this.__changeCursorMode();
                 break;
             case floorplannerModes.MOVE:
                 this.__mode = floorplannerModes.MOVE;
@@ -206,6 +230,7 @@ export class Viewer2D extends Application {
                     this.__entities2D[i].interactive = true;
                 }
                 this.__tempWall.visible = false;
+                this.__groupTransformer.visible = false;
                 this.__lastNode = null;
                 this.__floorplanContainer.plugins.resume('drag');
                 this.__changeCursorMode();
@@ -291,7 +316,15 @@ export class Viewer2D extends Application {
         }
     }
 
+    __cornerMoved(evt) {
+        if (this.__mode === floorplannerModes.EDIT_ISLANDS) {
+            return;
+        }
+        this.__groupTransformer.visible = false;
+    }
+
     __selectionMonitor(evt) {
+        this.__currentSelection = null;
         this.__groupTransformer.visible = false;
         this.__eventDispatcher.dispatchEvent({ type: EVENT_NOTHING_2D_SELECTED });
         for (let i = 0; i < this.__entities2D.length; i++) {
@@ -315,8 +348,11 @@ export class Viewer2D extends Application {
                 item = evt.item.room;
                 this.__eventDispatcher.dispatchEvent({ type: EVENT_ROOM_2D_CLICKED, item: evt.item.room, entity: evt.item });
             }
-            this.__groupTransformer.visible = true;
-            this.__groupTransformer.selected = item;
+            if (this.__mode === floorplannerModes.EDIT_ISLANDS) {
+                this.__groupTransformer.visible = true;
+                this.__groupTransformer.selected = item;
+            }
+            this.__currentSelection = item;
         }
     }
 
@@ -358,7 +394,7 @@ export class Viewer2D extends Application {
         for (i = 0; i < rooms.length; i++) {
             let modelRoom = rooms[i];
             let roomView = new RoomView2D(this.__floorplan, this.__options, modelRoom);
-            this.__floorplanContainer.addChild(roomView);
+            this.__floorplanElementsHolder.addChild(roomView);
             this.__rooms2d.push(roomView);
             this.__entities2D.push(roomView);
             roomView.interactive = (this.__mode === floorplannerModes.MOVE);
@@ -367,7 +403,7 @@ export class Viewer2D extends Application {
         for (i = 0; i < this.__floorplan.walls.length; i++) {
             let modelWall = this.__floorplan.walls[i];
             let wallView = new WallView2D(this.__floorplan, this.__options, modelWall);
-            this.__floorplanContainer.addChild(wallView);
+            this.__floorplanElementsHolder.addChild(wallView);
             this.__walls2d.push(wallView);
             this.__entities2D.push(wallView);
             wallView.interactive = (this.__mode === floorplannerModes.MOVE);
@@ -376,11 +412,13 @@ export class Viewer2D extends Application {
         for (i = 0; i < this.__floorplan.corners.length; i++) {
             let modelCorner = this.__floorplan.corners[i];
             let cornerView = new CornerView2D(this.__floorplan, this.__options, modelCorner);
-            this.__floorplanContainer.addChild(cornerView);
+            this.__floorplanElementsHolder.addChild(cornerView);
             this.__corners2d.push(cornerView);
             this.__entities2D.push(cornerView);
             cornerView.interactive = (this.__mode === floorplannerModes.MOVE);
             cornerView.addFloorplanListener(EVENT_2D_SELECTED, this.__selectionMonitorEvent);
+            modelCorner.removeEventListener(EVENT_MOVED, this.__cornerMovedEvent);
+            modelCorner.addEventListener(EVENT_MOVED, this.__cornerMovedEvent);
         }
         this._handleWindowResize();
     }

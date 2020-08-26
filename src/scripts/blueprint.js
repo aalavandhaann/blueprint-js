@@ -93,6 +93,13 @@ class BlueprintJS {
         this.floorplanner.switchMode(floorplannerModes.MOVE);
     }
 
+    switchViewer2DToTransform(mode) {
+        if (this.options.widget) {
+            return;
+        }
+        this.floorplanner.switchMode(floorplannerModes.EDIT_ISLANDS);
+    }
+
     updateView3D() {
         this.viewer3d.needsUpdate = true;
     }

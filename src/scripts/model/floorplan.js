@@ -896,10 +896,11 @@ export class Floorplan extends EventDispatcher {
         this.__floorPlanesForIntersection.push.apply(this.__floorPlanesForIntersection, this.createFloorPlanes());
         this.__wallPlanesForIntersection.push.apply(this.__wallPlanesForIntersection, this.createWallEdgePlanes());
 
+        this.__cornerGroups.createGroups();
 
         this.assignOrphanEdges();
         this.updateFloorTextures();
-        this.__cornerGroups.update();
+
         this.dispatchEvent({ type: EVENT_UPDATED, item: this });
         this.dispatchEvent({ type: EVENT_NEW_ROOMS_ADDED, item: this });
     }

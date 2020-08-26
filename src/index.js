@@ -144,6 +144,10 @@ function switchViewer2DToMove() {
     blueprint3d.setViewer2DModeToMove();
 }
 
+function switchViewer2DToTransform() {
+    blueprint3d.switchViewer2DToTransform();
+}
+
 function loadBlueprint3DDesign(filedata) {
     let reader = new FileReader();
     reader.onload = function(event) {
@@ -279,6 +283,7 @@ if (!opts.widget) {
 
     settingsViewer2d.addButton('Draw Mode', switchViewer2DToDraw);
     settingsViewer2d.addButton('Move Mode', switchViewer2DToMove);
+    settingsViewer2d.addButton('Transform Mode', switchViewer2DToTransform);
     settingsViewer2d.addButton('Delete', floorplanningHelper.deleteCurrentItem.bind(floorplanningHelper));
 
     settingsViewer2d.bindBoolean('snapToGrid', configurationHelper.snapToGrid, configurationHelper);

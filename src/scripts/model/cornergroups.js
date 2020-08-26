@@ -1,5 +1,5 @@
-import { Utils } from "../core/utils";
-import { Matrix3, Vector2 } from "three/build/three.module";
+import { Vector2, Matrix4, Vector3 } from "three/build/three.module";
+import { EVENT_MOVED } from "../core/events";
 
 export class CornerGroup {
     /**
@@ -10,14 +10,27 @@ export class CornerGroup {
         this.__corners = corners;
         this.__size = new Vector2();
         this.__center = new Vector2();
-        this.__tl = new Vector2();
-        this.__br = new Vector2();
+        this.__tl = null;
+        this.__br = null;
+        this.__tr = null;
+        this.__bl = null;
+        this.__matrix = new Matrix4();
+        this.__cornerMovedEvent = this.__cornerMoved.bind(this);
+        this.__addCornerListeners();
+        this.__update();
     }
 
-    /**
-     * update is quite a costly function. Call this explicitly
-     */
-    update() {
+    __cornerMoved() {
+        this.__update();
+    }
+
+    __addCornerListeners() {
+        for (let i = 0; i < this.__corners.length; i++) {
+            this.__corners[i].addEventListener(EVENT_MOVED, this.__cornerMovedEvent);
+        }
+    }
+
+    __update() {
         let minPoint = new Vector2(Number.MAX_VALUE, Number.MAX_VALUE);
         let maxPoint = new Vector2(Number.MIN_VALUE, Number.MIN_VALUE);
 
@@ -34,7 +47,51 @@ export class CornerGroup {
         this.__center = this.__size.clone().multiplyScalar(0.5).add(minPoint);
         this.__tl = minPoint.sub(this.__center);
         this.__br = maxPoint.sub(this.__center);
+        this.__tr = new Vector2(this.__br.x, this.__tl.y);
+        this.__bl = new Vector2(this.__tl.x, this.__br.y);
+        this.__matrix = this.__matrix.identity();
+    }
 
+    __applyTransformations(m4) {
+        let reset = this.__matrix.clone().getInverse(this.__matrix.clone());
+        // this.__applyTransformations(reset);
+        console.log('=================================================');
+        console.log('APPLY MATRIX 4 ', m4.elements, this.__corners.length);
+        for (let i = 0; i < this.__corners.length; i++) {
+            let location = this.__corners[i].location;
+            let location3 = new Vector3(location.x, location.y, 0);
+            location3.applyMatrix4(reset);
+            location3 = location3.applyMatrix4(m4);
+            this.__corners[i].move(location3.x, location3.y);
+            console.log(this.__corners[i].id);
+        }
+        let tl3 = new Vector3(this.__tl.x, this.__tl.y, 0).applyMatrix4(m4);
+        let tr3 = new Vector3(this.__tr.x, this.__tr.y, 0).applyMatrix4(m4);
+        let br3 = new Vector3(this.__br.x, this.__br.y, 0).applyMatrix4(m4);
+        let bl3 = new Vector3(this.__bl.x, this.__bl.y, 0).applyMatrix4(m4);
+
+        this.__tl.x = tl3.x;
+        this.__tl.x = tl3.x;
+
+        this.__tr.x = tr3.x;
+        this.__tr.x = tr3.x;
+
+        this.__br.x = br3.x;
+        this.__br.x = br3.x;
+
+        this.__bl.x = bl3.x;
+        this.__bl.x = bl3.x;
+        this.__matrix = m4;
+    }
+
+    applyMatrix(matrix4) {
+        /**
+         * Reset matrix is undo the current matrix
+         * for sanity check if you multiply the inverse with itself you should get identity
+         */
+
+        // this.__matrix = matrix4;
+        this.__applyTransformations(matrix4);
     }
 
     contains(corner) {
@@ -48,7 +105,14 @@ export class CornerGroup {
     }
 
     destroy() {
+        for (let i = 0; i < this.__corners.length; i++) {
+            this.__corners[i].removeEventListener(EVENT_MOVED, this.__cornerMovedEvent);
+        }
         this.__corners = [];
+    }
+
+    get matrix() {
+        return this.__matrix;
     }
 
     get corners() {
@@ -83,7 +147,7 @@ export class CornerGroups {
     constructor(floorplan) {
         this.__groups = [];
         this.__floorplan = floorplan;
-        this.update();
+        this.createGroups();
     }
 
     getContainingGroup(corner) {
@@ -102,7 +166,7 @@ export class CornerGroups {
     /**
      * @description - Determine heuristically the connected group of corners
      */
-    update() {
+    createGroups() {
         function tinyCornerGroups(corner, array) {
             let adjacentCorners = corner.adjacentCorners();
             //The below condition means this corner and its neighbors hasn't been analyzed
