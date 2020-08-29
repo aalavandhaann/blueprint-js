@@ -44,7 +44,8 @@ export class RoomView2D extends BaseFloorplanViewElement2D {
 
     __drawUpdatedRoom() {
         this.__drawUpdatedLabel();
-        this.__mouseOut();
+        this.__drawPolygon();
+        this.__drawHoveredOffState();
     }
 
     __drawPolygon(color, alpha = 1.0) {

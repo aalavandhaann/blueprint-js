@@ -117,7 +117,7 @@ export class Viewer2D extends Application {
         this.__grid2d = new Grid2D(this.view, options);
         this.__groupTransformer = new CornerGroupTransform2D(this.__floorplan);
         this.__groupTransformer.visible = false;
-
+        this.__groupTransformer.selected = null;
 
         origin.beginFill(0xFF0000);
         origin.drawCircle(0, 0, 5);
@@ -205,6 +205,7 @@ export class Viewer2D extends Application {
                 this.__tempWall.update();
                 this.__tempWall.visible = true;
                 this.__groupTransformer.visible = false;
+                this.__groupTransformer.selected = null;
                 break;
             case floorplannerModes.EDIT_ISLANDS:
                 this.__mode = floorplannerModes.EDIT_ISLANDS;
@@ -213,6 +214,7 @@ export class Viewer2D extends Application {
                     this.__groupTransformer.selected = this.__currentSelection;
                 } else {
                     this.__groupTransformer.visible = false;
+                    this.__groupTransformer.selected = null;
                 }
 
                 this.__floorplanContainer.plugins.pause('drag');
@@ -231,6 +233,7 @@ export class Viewer2D extends Application {
                 }
                 this.__tempWall.visible = false;
                 this.__groupTransformer.visible = false;
+                this.__groupTransformer.selected = null;
                 this.__lastNode = null;
                 this.__floorplanContainer.plugins.resume('drag');
                 this.__changeCursorMode();
@@ -321,11 +324,13 @@ export class Viewer2D extends Application {
             return;
         }
         this.__groupTransformer.visible = false;
+        this.__groupTransformer.selected = null;
     }
 
     __selectionMonitor(evt) {
         this.__currentSelection = null;
         this.__groupTransformer.visible = false;
+        this.__groupTransformer.selected = null;
         this.__eventDispatcher.dispatchEvent({ type: EVENT_NOTHING_2D_SELECTED });
         for (let i = 0; i < this.__entities2D.length; i++) {
             let entity = this.__entities2D[i];

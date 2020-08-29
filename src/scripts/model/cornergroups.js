@@ -9,7 +9,10 @@ export class CornerGroup {
     constructor(corners) {
         this.__corners = corners;
         this.__size = new Vector2();
-        this.__center = new Vector2();
+        this.__center = null;
+        this.__currentCenter = new Vector2();
+        this.__deltaTranslation = new Vector2();
+        this.__radians = 0.0;
         this.__tl = null;
         this.__br = null;
         this.__tr = null;
@@ -21,7 +24,7 @@ export class CornerGroup {
     }
 
     __cornerMoved() {
-        this.__update();
+        // this.__update();
     }
 
     __addCornerListeners() {
@@ -44,51 +47,51 @@ export class CornerGroup {
         }
 
         this.__size = maxPoint.clone().sub(minPoint);
-        this.__center = this.__size.clone().multiplyScalar(0.5).add(minPoint);
-        this.__tl = minPoint.sub(this.__center);
-        this.__br = maxPoint.sub(this.__center);
-        this.__tr = new Vector2(this.__br.x, this.__tl.y);
-        this.__bl = new Vector2(this.__tl.x, this.__br.y);
+        if (!this.__center) {
+            this.__center = this.__size.clone().multiplyScalar(0.5).add(minPoint);
+        }
+        this.__currentCenter = this.__size.clone().multiplyScalar(0.5).add(minPoint);
         this.__matrix = this.__matrix.identity();
     }
 
-    __applyTransformations(m4) {
-        let reset = this.__matrix.clone().getInverse(this.__matrix.clone());
+    __applyTransformations(absolutePosition, absoluteRadians) {
+        let resetTranslation = new Matrix4().makeTranslation(-this.__deltaTranslation.x, -this.__deltaTranslation.y, 0);
+        let resetRotation = new Matrix4().makeRotationAxis(new Vector3(0, 0, 1), -this.__radians);
+
+        let delta = absolutePosition.clone().sub(this.__center);
+        let translation = new Matrix4().makeTranslation(delta.x, delta.y, 0);
+
+        let TReset = new Matrix4().makeTranslation(-this.__currentCenter.x, -this.__currentCenter.y, 0); //Translate to -origin of scaling
+        let TInvReset = new Matrix4().makeTranslation(this.__currentCenter.x, this.__currentCenter.y, 0); //Translate to origin of scaling (inverse)
+        resetRotation = TInvReset.multiply(resetRotation).multiply(TReset);
+
+
+        let T = new Matrix4().makeTranslation(-absolutePosition.x, -absolutePosition.y, 0); //Translate to -origin of scaling
+        let TInv = new Matrix4().makeTranslation(absolutePosition.x, absolutePosition.y, 0); //Translate to origin of scaling (inverse)
+        let rotation = new Matrix4().makeRotationAxis(new Vector3(0, 0, 1), absoluteRadians); //Calculate the current rotation matrix
+        rotation = TInv.multiply(rotation).multiply(T);
+
 
         for (let i = 0; i < this.__corners.length; i++) {
             let location = this.__corners[i].location;
             let location3 = new Vector3(location.x, location.y, 0);
-            location3.applyMatrix4(reset);
-            location3 = location3.applyMatrix4(m4);
+
+            location3.applyMatrix4(resetTranslation);
+            // location3.applyMatrix4(resetRotation);
+
+
+            // location3 = location3.applyMatrix4(rotation);
+            location3 = location3.applyMatrix4(translation);
             this.__corners[i].move(location3.x, location3.y);
         }
-        let tl3 = new Vector3(this.__tl.x, this.__tl.y, 0).applyMatrix4(m4);
-        let tr3 = new Vector3(this.__tr.x, this.__tr.y, 0).applyMatrix4(m4);
-        let br3 = new Vector3(this.__br.x, this.__br.y, 0).applyMatrix4(m4);
-        let bl3 = new Vector3(this.__bl.x, this.__bl.y, 0).applyMatrix4(m4);
-
-        this.__tl.x = tl3.x;
-        this.__tl.x = tl3.x;
-
-        this.__tr.x = tr3.x;
-        this.__tr.x = tr3.x;
-
-        this.__br.x = br3.x;
-        this.__br.x = br3.x;
-
-        this.__bl.x = bl3.x;
-        this.__bl.x = bl3.x;
-        this.__matrix = m4;
+        this.__deltaTranslation = delta;
+        this.__radians = absoluteRadians;
+        this.__currentCenter = absolutePosition;
     }
 
-    applyMatrix(matrix4) {
-        /**
-         * Reset matrix is undo the current matrix
-         * for sanity check if you multiply the inverse with itself you should get identity
-         */
-
+    applyTransformations(scale, radians, origin) {
         // this.__matrix = matrix4;
-        this.__applyTransformations(matrix4);
+        this.__applyTransformations(origin, radians);
     }
 
     contains(corner) {
@@ -114,14 +117,6 @@ export class CornerGroup {
 
     get corners() {
         return this.__corners;
-    }
-
-    get tl() {
-        return this.__tl;
-    }
-
-    get br() {
-        return this.__br;
     }
 
     get size() {

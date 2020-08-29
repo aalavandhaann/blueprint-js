@@ -45486,7 +45486,10 @@ var CornerGroup = /*#__PURE__*/function () {
 
     this.__corners = corners;
     this.__size = new _three.Vector2();
-    this.__center = new _three.Vector2();
+    this.__center = null;
+    this.__currentCenter = new _three.Vector2();
+    this.__deltaTranslation = new _three.Vector2();
+    this.__radians = 0.0;
     this.__tl = null;
     this.__br = null;
     this.__tr = null;
@@ -45501,8 +45504,7 @@ var CornerGroup = /*#__PURE__*/function () {
 
   _createClass(CornerGroup, [{
     key: "__cornerMoved",
-    value: function __cornerMoved() {
-      this.__update();
+    value: function __cornerMoved() {// this.__update();
     }
   }, {
     key: "__addCornerListeners",
@@ -45526,50 +45528,54 @@ var CornerGroup = /*#__PURE__*/function () {
       }
 
       this.__size = maxPoint.clone().sub(minPoint);
-      this.__center = this.__size.clone().multiplyScalar(0.5).add(minPoint);
-      this.__tl = minPoint.sub(this.__center);
-      this.__br = maxPoint.sub(this.__center);
-      this.__tr = new _three.Vector2(this.__br.x, this.__tl.y);
-      this.__bl = new _three.Vector2(this.__tl.x, this.__br.y);
+
+      if (!this.__center) {
+        this.__center = this.__size.clone().multiplyScalar(0.5).add(minPoint);
+      }
+
+      this.__currentCenter = this.__size.clone().multiplyScalar(0.5).add(minPoint);
       this.__matrix = this.__matrix.identity();
     }
   }, {
     key: "__applyTransformations",
-    value: function __applyTransformations(m4) {
-      var reset = this.__matrix.clone().getInverse(this.__matrix.clone());
+    value: function __applyTransformations(absolutePosition, absoluteRadians) {
+      var resetTranslation = new _three.Matrix4().makeTranslation(-this.__deltaTranslation.x, -this.__deltaTranslation.y, 0);
+      var resetRotation = new _three.Matrix4().makeRotationAxis(new _three.Vector3(0, 0, 1), -this.__radians);
+      var delta = absolutePosition.clone().sub(this.__center);
+      var translation = new _three.Matrix4().makeTranslation(delta.x, delta.y, 0);
+      var TReset = new _three.Matrix4().makeTranslation(-this.__currentCenter.x, -this.__currentCenter.y, 0); //Translate to -origin of scaling
+
+      var TInvReset = new _three.Matrix4().makeTranslation(this.__currentCenter.x, this.__currentCenter.y, 0); //Translate to origin of scaling (inverse)
+
+      resetRotation = TInvReset.multiply(resetRotation).multiply(TReset);
+      var T = new _three.Matrix4().makeTranslation(-absolutePosition.x, -absolutePosition.y, 0); //Translate to -origin of scaling
+
+      var TInv = new _three.Matrix4().makeTranslation(absolutePosition.x, absolutePosition.y, 0); //Translate to origin of scaling (inverse)
+
+      var rotation = new _three.Matrix4().makeRotationAxis(new _three.Vector3(0, 0, 1), absoluteRadians); //Calculate the current rotation matrix
+
+      rotation = TInv.multiply(rotation).multiply(T);
 
       for (var i = 0; i < this.__corners.length; i++) {
         var location = this.__corners[i].location;
         var location3 = new _three.Vector3(location.x, location.y, 0);
-        location3.applyMatrix4(reset);
-        location3 = location3.applyMatrix4(m4);
+        location3.applyMatrix4(resetTranslation); // location3.applyMatrix4(resetRotation);
+        // location3 = location3.applyMatrix4(rotation);
+
+        location3 = location3.applyMatrix4(translation);
 
         this.__corners[i].move(location3.x, location3.y);
       }
 
-      var tl3 = new _three.Vector3(this.__tl.x, this.__tl.y, 0).applyMatrix4(m4);
-      var tr3 = new _three.Vector3(this.__tr.x, this.__tr.y, 0).applyMatrix4(m4);
-      var br3 = new _three.Vector3(this.__br.x, this.__br.y, 0).applyMatrix4(m4);
-      var bl3 = new _three.Vector3(this.__bl.x, this.__bl.y, 0).applyMatrix4(m4);
-      this.__tl.x = tl3.x;
-      this.__tl.x = tl3.x;
-      this.__tr.x = tr3.x;
-      this.__tr.x = tr3.x;
-      this.__br.x = br3.x;
-      this.__br.x = br3.x;
-      this.__bl.x = bl3.x;
-      this.__bl.x = bl3.x;
-      this.__matrix = m4;
+      this.__deltaTranslation = delta;
+      this.__radians = absoluteRadians;
+      this.__currentCenter = absolutePosition;
     }
   }, {
-    key: "applyMatrix",
-    value: function applyMatrix(matrix4) {
-      /**
-       * Reset matrix is undo the current matrix
-       * for sanity check if you multiply the inverse with itself you should get identity
-       */
+    key: "applyTransformations",
+    value: function applyTransformations(scale, radians, origin) {
       // this.__matrix = matrix4;
-      this.__applyTransformations(matrix4);
+      this.__applyTransformations(origin, radians);
     }
   }, {
     key: "contains",
@@ -45600,16 +45606,6 @@ var CornerGroup = /*#__PURE__*/function () {
     key: "corners",
     get: function get() {
       return this.__corners;
-    }
-  }, {
-    key: "tl",
-    get: function get() {
-      return this.__tl;
-    }
-  }, {
-    key: "br",
-    get: function get() {
-      return this.__br;
     }
   }, {
     key: "size",
@@ -114314,7 +114310,9 @@ var RoomView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
     value: function __drawUpdatedRoom() {
       this.__drawUpdatedLabel();
 
-      this.__mouseOut();
+      this.__drawPolygon();
+
+      this.__drawHoveredOffState();
     }
   }, {
     key: "__drawPolygon",
@@ -114425,17 +114423,365 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-var CornerGroupScalePoint = /*#__PURE__*/function (_Graphics) {
-  _inherits(CornerGroupScalePoint, _Graphics);
+var CornerGroupRectangle = /*#__PURE__*/function (_Graphics) {
+  _inherits(CornerGroupRectangle, _Graphics);
 
-  var _super = _createSuper(CornerGroupScalePoint);
+  var _super = _createSuper(CornerGroupRectangle);
+
+  function CornerGroupRectangle(size, center) {
+    var _this;
+
+    _classCallCheck(this, CornerGroupRectangle);
+
+    _this = _super.call(this);
+    _this.__size = size.clone();
+    _this.__center = center.clone();
+
+    var halfSize = _this.__size.clone().multiplyScalar(0.5);
+
+    _this.__tl = _this.__center.clone().sub(halfSize);
+    _this.__br = _this.__center.clone().add(halfSize);
+    _this.__tr = new _three.Vector2(_this.__br.x, _this.__tl.x);
+    _this.__bl = new _three.Vector2(_this.__tl.x, _this.__br.x);
+    _this.__vertices = [_this.__tl, _this.__tr, _this.__br, _this.__bl];
+    _this.__originalSize = _this.__size.clone();
+    _this.__originalCenter = _this.__center.clone();
+    _this.__currentRadians = 0;
+    _this.__currentScaleMatrix = new _three.Matrix4(); //Keeps track of the absolute scaling
+
+    _this.__currentRotationMatrix = new _three.Matrix4(); //Keeps track of the absolute rotation
+
+    _this.__currentTranslationMatrix = new _three.Matrix4(); //Keeps track of translation
+
+    _this.__drawRectangle();
+
+    _this.__ticker = _pixi.Ticker.shared; // this.__ticker.add(this.__tick, this);
+
+    return _this;
+  }
+
+  _createClass(CornerGroupRectangle, [{
+    key: "translateByPosition",
+    value: function translateByPosition(position) {
+      var translateMatrix = new _three.Matrix4().makeTranslation(position.x, position.y, 0);
+
+      for (var i = 0; i < this.__vertices.length; i++) {
+        //Reset current Scaling
+        var co2 = this.__vertices[i].clone();
+
+        var co = new _three.Vector3(co2.x, co2.y, 0); // co = co.applyMatrix4(this.__currentRotationMatrix.clone().getInverse(this.__currentRotationMatrix.clone()));
+
+        co = co.applyMatrix4(translateMatrix);
+        this.__vertices[i].x = co.x;
+        this.__vertices[i].y = co.y;
+      }
+
+      this.__center.y = this.__tr.y - this.__tl.y;
+      this.__size.x = this.__tl.clone().sub(this.__tr).length();
+      this.__size.y = this.__tl.clone().sub(this.__bl).length();
+      this.__center = this.__br.clone().sub(this.__tl).multiplyScalar(0.5).add(this.__tl);
+
+      var delta = this.__center.clone().sub(this.__originalCenter);
+
+      this.__currentTranslationMatrix = new _three.Matrix4().makeTranslation(delta.x, delta.y, 0);
+
+      this.__drawRectangle();
+    }
+  }, {
+    key: "rotateByRadians",
+    value: function rotateByRadians(radians) {
+      var T = new _three.Matrix4().makeTranslation(-this.__center.x, -this.__center.y, 0);
+      var TInv = new _three.Matrix4().makeTranslation(this.__center.x, this.__center.y, 0);
+      var rotationMatrix = new _three.Matrix4().makeRotationAxis(new _three.Vector3(0, 0, 1), radians);
+      var rotationAboutOrigin = TInv.clone().multiply(rotationMatrix).multiply(T);
+      var resetRotation = new _three.Matrix4().makeRotationAxis(new _three.Vector3(0, 0, 1), -this.__currentRadians);
+      var resetRotationAboutOrigin = TInv.clone().multiply(resetRotation).multiply(T);
+
+      for (var i = 0; i < this.__vertices.length; i++) {
+        //Reset current Scaling
+        var co2 = this.__vertices[i].clone();
+
+        var co = new _three.Vector3(co2.x, co2.y, 0); // co = co.applyMatrix4(this.__currentRotationMatrix.clone().getInverse(this.__currentRotationMatrix.clone()));
+
+        co = co.applyMatrix4(resetRotationAboutOrigin);
+        co = co.applyMatrix4(rotationAboutOrigin);
+        this.__vertices[i].x = co.x;
+        this.__vertices[i].y = co.y;
+      }
+
+      this.__currentRotationMatrix = rotationAboutOrigin.clone();
+      this.__currentRadians = radians; // this.__center.x = this.__tr.x - this.__tl.x;
+
+      this.__center.y = this.__tr.y - this.__tl.y;
+      this.__size.x = this.__tl.clone().sub(this.__tr).length();
+      this.__size.y = this.__tl.clone().sub(this.__bl).length();
+      this.__center = this.__br.clone().sub(this.__tl).multiplyScalar(0.5).add(this.__tl);
+
+      this.__drawRectangle();
+    }
+  }, {
+    key: "scaleBySize",
+    value: function scaleBySize(newWidth, newHeight, origin) {
+      var scale = new _three.Vector2(newWidth / this.__size.x, newHeight / this.__size.y); //Origin - The origin about which transformations happen
+
+      var T = new _three.Matrix4().makeTranslation(-origin.x, -origin.y, 0); //Translate to -origin of scaling
+
+      var TInv = new _three.Matrix4().makeTranslation(origin.x, origin.y, 0); //Translate to origin of scaling (inverse)
+
+      var rotation = new _three.Matrix4().makeRotationAxis(new _three.Vector3(0, 0, 1), this.__currentRadians); //Calculate the current rotation matrix
+
+      var scaleMatrix = new _three.Matrix4().makeScale(scale.x, scale.y, 1); //Calculate the relative scaling to apply
+
+      var scaleAboutOrigin = TInv.clone().multiply(scaleMatrix).multiply(T); //Now scale about the origin. This matrix has no rotation so scaling along x,y
+
+      var rotateAboutOrigin = TInv.clone().multiply(rotation).multiply(T); //Now rotate about the origin. 
+
+      var resetRotationAboutOrigin = rotateAboutOrigin.clone().getInverse(rotateAboutOrigin.clone()); //Ensure to reset the rotation of currentRadians
+
+      /**
+       * The final transformation matrix is composition of matrices from right to left
+       * 1- So the first thing is reset the current rotation, 
+       * 2- Then apply scaling along normal x,y axis, 
+       * 3 -Finally apply the current rotation 
+       */
+
+      var transformMatrix = rotateAboutOrigin.clone().multiply(scaleAboutOrigin).multiply(resetRotationAboutOrigin);
+
+      for (var i = 0; i < this.__vertices.length; i++) {
+        var co2 = this.__vertices[i].clone();
+
+        var co = new _three.Vector3(co2.x, co2.y, 0);
+        co = co.applyMatrix4(transformMatrix);
+        this.__vertices[i].x = co.x;
+        this.__vertices[i].y = co.y;
+      }
+
+      this.__size.x = newWidth; //this.__tl.clone().sub(this.__tr).length();
+
+      this.__size.y = newHeight; //this.__tl.clone().sub(this.__bl).length();
+
+      this.__center = this.__br.clone().sub(this.__tl).multiplyScalar(0.5).add(this.__tl);
+
+      var delta = this.__center.clone().sub(this.__originalCenter);
+
+      this.__currentRotationMatrix = rotation.clone();
+      this.__currentScaleMatrix = this.__currentScaleMatrix.multiply(scaleMatrix);
+      this.__currentTranslationMatrix = new _three.Matrix4().makeTranslation(delta.x, delta.y, 0);
+
+      this.__drawRectangle();
+    }
+  }, {
+    key: "__tick",
+    value: function __tick() {
+      console.log('TICK TICK TICK');
+    }
+  }, {
+    key: "__drawRectangle",
+    value: function __drawRectangle() {
+      this.clear();
+      this.beginFill(0xCCCCCC, 0.5);
+      this.moveTo(this.__tl.x, this.__tl.y);
+      this.lineTo(this.__tr.x, this.__tr.y);
+      this.lineTo(this.__br.x, this.__br.y);
+      this.lineTo(this.__bl.x, this.__bl.y);
+      this.endFill(); // this.beginFill(0xFF0000, 1.0);
+      // this.drawCircle(this.__center.x, this.__center.y, 10);
+      // this.endFill();
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      this.__ticker.remove(this.__tick, this);
+
+      this.__ticker.destroy();
+    }
+  }, {
+    key: "tl",
+    get: function get() {
+      return this.__tl;
+    }
+  }, {
+    key: "tr",
+    get: function get() {
+      return this.__tr;
+    }
+  }, {
+    key: "br",
+    get: function get() {
+      return this.__br;
+    }
+  }, {
+    key: "bl",
+    get: function get() {
+      return this.__bl;
+    }
+  }, {
+    key: "size",
+    get: function get() {
+      return this.__size;
+    }
+  }, {
+    key: "center",
+    get: function get() {
+      return this.__center;
+    }
+  }, {
+    key: "rotationMatrix",
+    get: function get() {
+      return this.__currentRotationMatrix.clone();
+    }
+  }, {
+    key: "scalingMatrix",
+    get: function get() {
+      return this.__currentScaleMatrix;
+    }
+  }, {
+    key: "translationMatrix",
+    get: function get() {
+      return this.__currentTranslationMatrix;
+    }
+  }, {
+    key: "rotationRadians",
+    get: function get() {
+      return this.__currentRadians;
+    }
+  }, {
+    key: "origin",
+    get: function get() {
+      return this.__center;
+    }
+  }, {
+    key: "matrix4",
+    get: function get() {
+      var scale = new _three.Vector3().setFromMatrixScale(this.__currentScaleMatrix);
+      var rotation = new _three.Quaternion().setFromRotationMatrix(this.__currentRotationMatrix);
+      var translation = new _three.Vector3().setFromMatrixPosition(this.__currentTranslationMatrix);
+      var sMatrix = new _three.Matrix4().makeScale(scale.x, scale.y, 1);
+      var rMatrix = new _three.Matrix4().makeRotationFromQuaternion(rotation);
+      var tMatrix = new _three.Matrix4().makeTranslation(translation.x, translation.y, translation.z);
+      return rMatrix.multiply(sMatrix).multiply(tMatrix);
+    }
+  }]);
+
+  return CornerGroupRectangle;
+}(_pixi.Graphics);
+
+var CornerGroupTransformationPoint = /*#__PURE__*/function (_Sprite) {
+  _inherits(CornerGroupTransformationPoint, _Sprite);
+
+  var _super2 = _createSuper(CornerGroupTransformationPoint);
+
+  function CornerGroupTransformationPoint() {
+    var _this2;
+
+    var svg = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'icons/rotateGroup.svg';
+
+    _classCallCheck(this, CornerGroupTransformationPoint);
+
+    _this2 = _super2.call(this, new _pixi.Texture.from(svg));
+    _this2.__eventDispatcher = new _three.EventDispatcher();
+    _this2.__mouseUpEvent = _this2.__dragEnd.bind(_assertThisInitialized(_this2));
+    _this2.__mouseMoveEvent = _this2.__dragMove.bind(_assertThisInitialized(_this2));
+    _this2.__mouseOverEvent = _this2.__mouseOver.bind(_assertThisInitialized(_this2));
+    _this2.__mouseOutEvent = _this2.__mouseOut.bind(_assertThisInitialized(_this2));
+    _this2.__mouseDownEvent = _this2.__mouseDown.bind(_assertThisInitialized(_this2));
+
+    _this2.on('mousedown', _this2.__mouseDownEvent).on('touchstart', _this2.__mouseDownEvent);
+
+    _this2.on('mouseupoutside', _this2.__mouseUpEvent).on('touchendoutside', _this2.__mouseUpEvent);
+
+    _this2.on('mouseup', _this2.__mouseUpEvent).on('touchend', _this2.__mouseUpEvent);
+
+    _this2.on('mousemove', _this2.__mouseMoveEvent).on('touchmove', _this2.__mouseMoveEvent);
+
+    _this2.on('mouseover', _this2.__mouseOverEvent).on('mouseout', _this2.__mouseOutEvent);
+
+    _this2.interactive = true;
+    _this2.buttonMode = true;
+
+    _this2.scale.set(0.05, 0.05);
+
+    _this2.anchor.set(0.5);
+
+    return _this2;
+  }
+
+  _createClass(CornerGroupTransformationPoint, [{
+    key: "__mouseDown",
+    value: function __mouseDown(evt) {
+      evt.stopPropagation();
+      this.__isDragged = true;
+      var co = evt.data.getLocalPosition(this.parent);
+
+      this.__eventDispatcher.dispatchEvent({
+        type: 'DragStart',
+        position: co,
+        handle: this
+      });
+    }
+  }, {
+    key: "__mouseOver",
+    value: function __mouseOver(evt) {
+      evt.stopPropagation();
+    }
+  }, {
+    key: "__mouseOut",
+    value: function __mouseOut(evt) {
+      evt.stopPropagation();
+    }
+  }, {
+    key: "__dragEnd",
+    value: function __dragEnd(evt) {
+      evt.stopPropagation();
+      this.__isDragged = false;
+      var co = evt.data.getLocalPosition(this.parent);
+
+      this.__eventDispatcher.dispatchEvent({
+        type: 'DragEnd',
+        position: co,
+        handle: this
+      });
+    }
+  }, {
+    key: "__dragMove",
+    value: function __dragMove(evt) {
+      if (this.__isDragged) {
+        evt.stopPropagation();
+        var co = evt.data.getLocalPosition(this.parent);
+
+        this.__eventDispatcher.dispatchEvent({
+          type: 'DragMove',
+          position: co,
+          handle: this
+        });
+      }
+    }
+  }, {
+    key: "addFloorplanListener",
+    value: function addFloorplanListener(type, listener) {
+      this.__eventDispatcher.addEventListener(type, listener);
+    }
+  }, {
+    key: "removeFloorplanListener",
+    value: function removeFloorplanListener(type, listener) {
+      this.__eventDispatcher.removeEventListener(type, listener);
+    }
+  }]);
+
+  return CornerGroupTransformationPoint;
+}(_pixi.Sprite);
+
+var CornerGroupScalePoint = /*#__PURE__*/function (_Graphics2) {
+  _inherits(CornerGroupScalePoint, _Graphics2);
+
+  var _super3 = _createSuper(CornerGroupScalePoint);
 
   function CornerGroupScalePoint(index, parameters) {
-    var _this;
+    var _this3;
 
     _classCallCheck(this, CornerGroupScalePoint);
 
-    _this = _super.call(this);
+    _this3 = _super3.call(this);
     var opts = {
       radius: 10,
       outerColor: 0x00FF00,
@@ -114462,36 +114808,48 @@ var CornerGroupScalePoint = /*#__PURE__*/function (_Graphics) {
       }
     }
 
-    _this.id = _utils.Utils.guide();
-    _this.__index = index;
-    _this.__isDragged = false;
-    _this.__center = new _three.Vector2();
-    _this.__size = new _three.Vector2();
-    _this.__parameters = opts;
-    _this.__opposite = null;
-    _this.__eventDispatcher = new _three.EventDispatcher();
-    _this.__mouseUpEvent = _this.__dragEnd.bind(_assertThisInitialized(_this));
-    _this.__mouseMoveEvent = _this.__dragMove.bind(_assertThisInitialized(_this));
-    _this.__mouseOverEvent = _this.__mouseOver.bind(_assertThisInitialized(_this));
-    _this.__mouseOutEvent = _this.__mouseOut.bind(_assertThisInitialized(_this));
-    _this.__mouseDownEvent = _this.__mouseDown.bind(_assertThisInitialized(_this));
+    _this3.id = _utils.Utils.guide();
+    _this3.__index = index;
+    _this3.__isDragged = false;
+    _this3.__center = new _three.Vector2();
+    _this3.__size = new _three.Vector2();
+    _this3.__parameters = opts;
+    _this3.__parameters.move = new _three.Vector2(opts.move.x, opts.move.y);
+    _this3.__opposite = null;
+    _this3.__matrix4 = new _three.Matrix4();
+    _this3.__eventDispatcher = new _three.EventDispatcher();
+    _this3.__textfield = new _pixi.Text(_this3.__index, {
+      fontFamily: 'Arial',
+      fontSize: 12,
+      fill: 0x000000,
+      align: 'center'
+    });
+    _this3.__textfield.pivot.x = 3;
+    _this3.__textfield.pivot.y = 6;
+    _this3.__mouseUpEvent = _this3.__dragEnd.bind(_assertThisInitialized(_this3));
+    _this3.__mouseMoveEvent = _this3.__dragMove.bind(_assertThisInitialized(_this3));
+    _this3.__mouseOverEvent = _this3.__mouseOver.bind(_assertThisInitialized(_this3));
+    _this3.__mouseOutEvent = _this3.__mouseOut.bind(_assertThisInitialized(_this3));
+    _this3.__mouseDownEvent = _this3.__mouseDown.bind(_assertThisInitialized(_this3));
 
-    _this.on('mousedown', _this.__mouseDownEvent).on('touchstart', _this.__mouseDownEvent);
+    _this3.on('mousedown', _this3.__mouseDownEvent).on('touchstart', _this3.__mouseDownEvent);
 
-    _this.on('mouseupoutside', _this.__mouseUpEvent).on('touchendoutside', _this.__mouseUpEvent);
+    _this3.on('mouseupoutside', _this3.__mouseUpEvent).on('touchendoutside', _this3.__mouseUpEvent);
 
-    _this.on('mouseup', _this.__mouseUpEvent).on('touchend', _this.__mouseUpEvent);
+    _this3.on('mouseup', _this3.__mouseUpEvent).on('touchend', _this3.__mouseUpEvent);
 
-    _this.on('mousemove', _this.__mouseMoveEvent).on('touchmove', _this.__mouseMoveEvent);
+    _this3.on('mousemove', _this3.__mouseMoveEvent).on('touchmove', _this3.__mouseMoveEvent);
 
-    _this.on('mouseover', _this.__mouseOverEvent).on('mouseout', _this.__mouseOutEvent);
+    _this3.on('mouseover', _this3.__mouseOverEvent).on('mouseout', _this3.__mouseOutEvent);
 
-    _this.interactive = true;
-    _this.buttonMode = true;
+    _this3.interactive = true;
+    _this3.buttonMode = true;
 
-    _this.__drawPoint();
+    _this3.addChild(_this3.__textfield);
 
-    return _this;
+    _this3.__drawPoint();
+
+    return _this3;
   }
 
   _createClass(CornerGroupScalePoint, [{
@@ -114553,15 +114911,6 @@ var CornerGroupScalePoint = /*#__PURE__*/function (_Graphics) {
         evt.stopPropagation();
         var co = evt.data.getLocalPosition(this.parent);
 
-        if (this.move.x && !this.move.y || this.move.y && !this.move.x) {
-          var mousePosition = new _three.Vector2(co.x, co.y);
-          var start = new _three.Vector2(this.position.x, this.position.y);
-          var end = new _three.Vector2(this.opposite.position.x, this.opposite.position.y);
-          var vect = end.clone().sub(start);
-          var mouse2Start = mousePosition.sub(start);
-          co = vect.normalize().multiplyScalar(mouse2Start.length());
-        }
-
         this.__eventDispatcher.dispatchEvent({
           type: 'DragMove',
           position: co,
@@ -114589,6 +114938,11 @@ var CornerGroupScalePoint = /*#__PURE__*/function (_Graphics) {
       this.__eventDispatcher.removeEventListener(type, listener);
     }
   }, {
+    key: "location",
+    get: function get() {
+      return new _three.Vector2(this.position.x, this.position.y);
+    }
+  }, {
     key: "index",
     get: function get() {
       return this.__index;
@@ -114611,25 +114965,33 @@ var CornerGroupScalePoint = /*#__PURE__*/function (_Graphics) {
     get: function get() {
       return this.__parameters.offset;
     }
+  }, {
+    key: "matrix4",
+    get: function get() {
+      return this.__matrix4;
+    },
+    set: function set(mat) {
+      this.__matrix4 = mat.clone();
+    }
   }]);
 
   return CornerGroupScalePoint;
 }(_pixi.Graphics);
 
-var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics2) {
-  _inherits(CornerGroupTransform2D, _Graphics2);
+var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics3) {
+  _inherits(CornerGroupTransform2D, _Graphics3);
 
-  var _super2 = _createSuper(CornerGroupTransform2D);
+  var _super4 = _createSuper(CornerGroupTransform2D);
 
   function CornerGroupTransform2D(floorplan, parameters) {
-    var _this2;
+    var _this4;
 
     _classCallCheck(this, CornerGroupTransform2D);
 
-    _this2 = _super2.call(this);
+    _this4 = _super4.call(this);
     var opts = {
-      scale: true,
-      rotate: true,
+      scale: false,
+      rotate: false,
       translate: true
     };
 
@@ -114641,31 +115003,44 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics2) {
       }
     }
 
-    _this2.__parameters = opts;
-    _this2.__floorplan = floorplan;
-    _this2.__groups = _this2.__floorplan.cornerGroups;
-    _this2.__currentGroup = null;
-    _this2.__transformOrigin = new _three.Vector3();
-    _this2.__currentRadians = 0.0;
-    _this2.__currentWidth = 100;
-    _this2.__currentHeight = 100;
-    _this2.__currentScaleMatrix = new _three.Matrix4();
-    _this2.__currentRotationMatrix = new _three.Matrix4();
-    _this2.__currentTranslationMatrix = new _three.Matrix4();
-    _this2.__originalPositions = [];
-    _this2.__size = null;
-    _this2.__center = null;
-    _this2.__scalingHandles = [];
-    _this2.__scaleHandleDragStartEvent = _this2.__scaleHandleDragStart.bind(_assertThisInitialized(_this2));
-    _this2.__scaleHandleDragEndEvent = _this2.__scaleHandleDragEnd.bind(_assertThisInitialized(_this2));
-    _this2.__scaleHandleDragMoveEvent = _this2.__scaleHandleDragMove.bind(_assertThisInitialized(_this2));
+    _this4.__parameters = opts;
+    _this4.__floorplan = floorplan;
+    _this4.__groups = _this4.__floorplan.cornerGroups;
+    _this4.__currentGroup = null;
+    _this4.__originalPositions = [];
+    _this4.__size = null;
+    _this4.__center = null;
+    _this4.__scalingHandles = [];
+    _this4.__rotateHandle = new CornerGroupTransformationPoint();
+    _this4.__translateHandle = new CornerGroupTransformationPoint('icons/translateGroup.svg');
+    _this4.__resizer = null;
+    _this4.__scaleHandleDragStartEvent = _this4.__scaleHandleDragStart.bind(_assertThisInitialized(_this4));
+    _this4.__scaleHandleDragEndEvent = _this4.__scaleHandleDragEnd.bind(_assertThisInitialized(_this4));
+    _this4.__scaleHandleDragMoveEvent = _this4.__scaleHandleDragMove.bind(_assertThisInitialized(_this4));
+    _this4.__rotateHandleDragMoveEvent = _this4.__rotateHandleDragMove.bind(_assertThisInitialized(_this4));
+    _this4.__rotateHandleDragEndEvent = _this4.__rotateHandleDragEnd.bind(_assertThisInitialized(_this4));
 
-    if (_this2.__parameters.scale) {
-      _this2.__createScalingHandles();
+    if (_this4.__parameters.scale) {
+      _this4.__createScalingHandles();
     }
 
-    _this2.__tempDebugIndex = 0;
-    return _this2;
+    if (_this4.__parameters.rotate) {
+      _this4.__rotateHandle.addFloorplanListener('DragMove', _this4.__rotateHandleDragMoveEvent);
+
+      _this4.__rotateHandle.addFloorplanListener('DragEnd', _this4.__rotateHandleDragEndEvent);
+
+      _this4.addChild(_this4.__rotateHandle);
+    }
+
+    if (_this4.__parameters.translate) {
+      _this4.__translateHandle.addFloorplanListener('DragMove', _this4.__rotateHandleDragMoveEvent);
+
+      _this4.__translateHandle.addFloorplanListener('DragEnd', _this4.__rotateHandleDragEndEvent);
+
+      _this4.addChild(_this4.__translateHandle);
+    }
+
+    return _this4;
   }
   /**
    * array of handles
@@ -114691,6 +115066,7 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics2) {
       var yTransform = 0;
       var xOffsets = [-0.5, 0.0, 0.5, 0.5, 0.5, 0, -0.5, -0.5];
       var yOffsets = [-0.5, -0.5, -0.5, 0.0, 0.5, 0.5, 0.5, -0.0];
+      var resizerIndices = [0, -1, 1, -1, 2, -1, 3, -1];
 
       for (; i < totalHandles; i++) {
         var xMove = 1;
@@ -114724,115 +115100,105 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics2) {
       for (i = 0; i < totalHandles; i++) {
         var _handle = this.__scalingHandles[i];
         var oppositeIndex = (i + 4) % totalHandles;
+        _handle.extraIndex = resizerIndices[i];
         _handle.opposite = this.__scalingHandles[oppositeIndex];
       }
     }
   }, {
-    key: "__applyAllTransformsMatrix",
-    value: function __applyAllTransformsMatrix() {
-      var allTransformsMatrix = this.__currentRotationMatrix.clone().multiply(this.__currentScaleMatrix).multiply(this.__currentTranslationMatrix);
-    }
-  }, {
-    key: "__applyRotationMatrix",
-    value: function __applyRotationMatrix(radians, originPoint) {
-      var apply = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-      var originForRotation = new _three.Vector3(originPoint.x, originPoint.y, 0);
-      var originTRotation = new _three.Matrix4().makeTranslation(-originForRotation.x, -originForRotation.y, 0);
-      var originTInverseRotation = new _three.Matrix4().makeTranslation(originForRotation.x, originForRotation.y, 0);
-      var rotation = new _three.Matrix4().makeRotationAxis(new _three.Vector3(0, 0, 1), radians);
-      var transformMatrix = originTInverseRotation.clone().multiply(rotation.multiply(originTRotation));
-
-      var reset = this.__currentRotationMatrix.clone().getInverse(this.__currentRotationMatrix); //.multiply(this.__currentRotationMatrix);
-
-
-      if (apply) {
-        for (var i = 0; i < this.__scalingHandles.length; i++) {
-          var handle2 = this.__scalingHandles[i];
-          var usePosition = handle2.position.clone();
-          var p3 = new _three.Vector3(usePosition.x, usePosition.y, 0);
-          p3.applyMatrix4(reset);
-          p3.applyMatrix4(transformMatrix);
-          handle2.position.x = p3.x;
-          handle2.position.y = p3.y;
-        }
-
-        this.__currentRotationMatrix = transformMatrix;
-      }
-
-      return transformMatrix;
-    }
-    /**
-     * 
-     * @param {Number} newWidth - An absolute value( no negative)
-     * @param {*} newHeight - An absolute value( no negative) 
-     */
-
-  }, {
-    key: "__applyScalingMatrix",
-    value: function __applyScalingMatrix(newWidth, newHeight, originPoint) {
-      var originForScale = new _three.Vector3(originPoint.x, originPoint.y, 0);
-      var scale = new _three.Vector2(newWidth / this.__currentWidth, newHeight / this.__currentHeight);
-      var originTScale = new _three.Matrix4().makeTranslation(-originForScale.x, -originForScale.y, 0);
-      var originTInverseScale = new _three.Matrix4().makeTranslation(originForScale.x, originForScale.y, 0);
-      var scaling = new _three.Matrix4().makeScale(scale.x, scale.y, 1);
-      var transformMatrix = originTInverseScale.clone().multiply(scaling.multiply(originTScale));
-
-      var reset = this.__currentScaleMatrix.clone().getInverse(this.__currentScaleMatrix); //.multiply(this.__currentRotationMatrix);
-
-
-      this.__currentWidth = newWidth;
-      this.__currentHeight = newHeight;
-
-      for (var i = 0; i < this.__scalingHandles.length; i++) {
-        var handle2 = this.__scalingHandles[i];
-        var usePosition = handle2.position.clone();
-        var p3 = new _three.Vector3(usePosition.x, usePosition.y, 0); // p3.applyMatrix4(reset);
-
-        p3.applyMatrix4(transformMatrix);
-        handle2.position.x = p3.x;
-        handle2.position.y = p3.y;
-      }
-
-      this.__currentScaleMatrix = transformMatrix;
-      return transformMatrix;
-    }
-  }, {
     key: "__scaleHandleDragStart",
-    value: function __scaleHandleDragStart(evt) {
-      this.__tempDebugIndex += 1;
-    }
+    value: function __scaleHandleDragStart(evt) {}
   }, {
     key: "__scaleHandleDragMove",
     value: function __scaleHandleDragMove(evt) {
-      var co = new _three.Vector2(evt.position.x, evt.position.y);
+      var co = new _three.Vector3(evt.position.x, evt.position.y, 0);
       var handle = evt.handle;
       var opposite = evt.opposite;
-      var start = new _three.Vector3(co.x, co.y, 0);
-      var end = new _three.Vector3(opposite.position.x, opposite.position.y, 0);
-      start = start.applyMatrix4(this.__currentRotationMatrix);
-      end = end.applyMatrix4(this.__currentRotationMatrix);
-      var vect = end.clone().sub(start);
-      var originForScale = new _three.Vector3(end.x, end.y, 0);
-      vect.x = handle.move.x ? Math.abs(vect.x) : this.__currentWidth;
-      vect.y = handle.move.y ? Math.abs(vect.y) : this.__currentHeight; // this.__applyScalingMatrix(Math.abs(vect.x), Math.abs(vect.y), originForScale);
+      var opposite3 = new _three.Vector3(opposite.location.x, opposite.location.y, 0);
+      var vect = opposite3.clone().sub(co);
+      var sizeX = this.__resizer.size.x;
+      var sizeY = this.__resizer.size.y;
 
-      var radians = Math.atan2(co.y - this.__center.y, co.x - this.__center.x);
+      if (handle.move.x && handle.move.y) {
+        var hVect = null;
+        var vVect = null;
+        var co2 = new _three.Vector2(evt.position.x, evt.position.y);
 
-      var matrix = this.__applyRotationMatrix(radians, this.__center);
+        switch (handle.extraIndex) {
+          case 0:
+            hVect = co2.clone().sub(this.__resizer.tr.clone());
+            vVect = co2.clone().sub(this.__resizer.bl.clone());
+            break;
 
-      var floorplanMatrix = this.__applyRotationMatrix(radians, this.__currentGroup.center, false);
+          case 1:
+            hVect = co2.clone().sub(this.__resizer.tl.clone());
+            vVect = co2.clone().sub(this.__resizer.br.clone());
+            break;
 
-      this.__currentGroup.applyMatrix(floorplanMatrix);
+          case 2:
+            hVect = co2.clone().sub(this.__resizer.bl.clone());
+            vVect = co2.clone().sub(this.__resizer.tr.clone());
+            break;
+
+          default:
+            hVect = co2.clone().sub(this.__resizer.br.clone());
+            vVect = co2.clone().sub(this.__resizer.tl.clone());
+            break;
+        }
+
+        sizeX = hVect.length(); //vect.length(); //
+
+        sizeY = vVect.length(); //vect.length(); //
+      } else if (handle.move.x) {
+        sizeX = vect.length();
+      } else if (handle.move.y) {
+        sizeY = vect.length();
+      }
+
+      this.__resizer.scaleBySize(sizeX, sizeY, opposite.location);
+
+      this.__setControlsPosition();
     }
   }, {
     key: "__scaleHandleDragEnd",
-    value: function __scaleHandleDragEnd(evt) {}
+    value: function __scaleHandleDragEnd(evt) {
+      // let matrix = this.__resizer.scalingMatrix.clone().multiply(this.__resizer.rotationMatrix);
+      this.__setControlsPosition();
+
+      this.__updateMatrixOfGroup();
+    }
   }, {
-    key: "__setRadians",
-    value: function __setRadians(angle) {
-      this.__currentRadians = angle;
-      this.__rotateHandle.x = Math.cos(angle) * this.__ringRadius;
-      this.__rotateHandle.y = Math.sin(angle) * this.__ringRadius;
+    key: "__rotateHandleDragMove",
+    value: function __rotateHandleDragMove(evt) {
+      var handle = evt.handle;
+
+      if (handle === this.__rotateHandle) {
+        var co = new _three.Vector2(evt.position.x, evt.position.y);
+        var vect = co.sub(this.__resizer.center);
+        var radians = Math.atan2(vect.y, vect.x);
+
+        this.__resizer.rotateByRadians(radians);
+      } else if (handle === this.__translateHandle) {
+        var _co = new _three.Vector2(evt.position.x, evt.position.y);
+
+        var delta = _co.sub(this.__resizer.center);
+
+        this.__resizer.translateByPosition(delta);
+      }
+
+      this.__setControlsPosition();
+    }
+  }, {
+    key: "__rotateHandleDragEnd",
+    value: function __rotateHandleDragEnd(evt) {
+      this.__updateMatrixOfGroup();
+    }
+  }, {
+    key: "__updateMatrixOfGroup",
+    value: function __updateMatrixOfGroup() {
+      var matrix = this.__resizer.matrix4;
+      var scale = new _three.Vector3().setFromMatrixScale(matrix);
+
+      this.__currentGroup.applyTransformations(scale, this.__resizer.rotationRadians, this.__toUnits(this.__resizer.origin.clone()));
     }
   }, {
     key: "__toPixels",
@@ -114842,15 +115208,46 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics2) {
       return vector;
     }
   }, {
-    key: "__setScalingHandlesPosition",
-    value: function __setScalingHandlesPosition() {
+    key: "__toUnits",
+    value: function __toUnits(pixels) {
+      pixels.x = _dimensioning.Dimensioning.pixelToCm(pixels.x);
+      pixels.y = _dimensioning.Dimensioning.pixelToCm(pixels.y);
+      return pixels;
+    }
+  }, {
+    key: "__setControlsPosition",
+    value: function __setControlsPosition() {
       if (this.__parameters.scale) {
+        var center = this.__resizer.center;
+
+        var horizontal = this.__resizer.tr.clone().sub(this.__resizer.tl);
+
+        var vertical = this.__resizer.bl.clone().sub(this.__resizer.tl);
+
         for (var i = 0; i < this.__scalingHandles.length; i++) {
           var handle = this.__scalingHandles[i];
-          handle.updateCenterAndSize(this.__center, this.__size);
+          var hvect = horizontal.clone().multiplyScalar(handle.offset.x);
+          var vvect = vertical.clone().multiplyScalar(handle.offset.y);
+          var vect = hvect.add(vvect);
+          var position = center.clone().add(vect);
+          handle.position.set(position.x, position.y); // handle.updateCenterAndSize(center, size);
 
           this.__originalPositions.push(new _three.Vector2(handle.position.x, handle.position.y));
         }
+      }
+
+      if (this.__parameters.rotate) {
+        var midPoint = this.__resizer.br.clone().sub(this.__resizer.tr).multiplyScalar(0.5).add(this.__resizer.tr);
+
+        var direction = this.__resizer.bl.clone().sub(this.__resizer.br).normalize().negate();
+
+        var _position = midPoint.add(direction.multiplyScalar(50));
+
+        this.__rotateHandle.position.set(_position.x, _position.y);
+      }
+
+      if (this.__parameters.translate) {
+        this.__translateHandle.position.set(this.__resizer.center.x, this.__resizer.center.y);
       }
     }
   }, {
@@ -114861,12 +115258,17 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics2) {
       this.__center = this.__toPixels(this.__currentGroup.center.clone());
       this.__matrix = this.__currentGroup.matrix.clone();
 
-      this.__setScalingHandlesPosition();
+      if (this.__resizer) {
+        this.__resizer.destroy();
 
-      this.__currentWidth = this.__size.x;
-      this.__currentHeight = this.__size.y;
-      this.__currentScaleMatrix = this.__applyScalingMatrix(this.__currentWidth, this.__currentHeight, this.__center);
-      this.__currentRotationMatrix = this.__applyRotationMatrix(0, this.__center); // this.__applyAllTransformsMatrix();
+        this.removeChild(this.__resizer);
+      }
+
+      this.__resizer = new CornerGroupRectangle(this.__size, this.__center); // this.__resizer.position.set(this.__center.x, this.__center.y);
+
+      this.addChild(this.__resizer);
+
+      this.__setControlsPosition();
     }
   }, {
     key: "selected",
@@ -114892,6 +115294,10 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics2) {
         this.__currentGroup = this.__groups.getContainingGroup(corner);
 
         this.__updateTransformControls();
+      } else {
+        if (this.__resizer) {
+          this.__resizer.destroy();
+        }
       }
     }
   }]);
@@ -115106,6 +115512,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
     _this2.__grid2d = new _Grid2d.Grid2D(_this2.view, options);
     _this2.__groupTransformer = new _CornerGroupTransform2D.CornerGroupTransform2D(_this2.__floorplan);
     _this2.__groupTransformer.visible = false;
+    _this2.__groupTransformer.selected = null;
     origin.beginFill(0xFF0000);
     origin.drawCircle(0, 0, 5);
 
@@ -115209,6 +115616,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
 
           this.__tempWall.visible = true;
           this.__groupTransformer.visible = false;
+          this.__groupTransformer.selected = null;
           break;
 
         case floorplannerModes.EDIT_ISLANDS:
@@ -115219,6 +115627,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
             this.__groupTransformer.selected = this.__currentSelection;
           } else {
             this.__groupTransformer.visible = false;
+            this.__groupTransformer.selected = null;
           }
 
           this.__floorplanContainer.plugins.pause('drag');
@@ -115244,6 +115653,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
 
           this.__tempWall.visible = false;
           this.__groupTransformer.visible = false;
+          this.__groupTransformer.selected = null;
           this.__lastNode = null;
 
           this.__floorplanContainer.plugins.resume('drag');
@@ -115347,12 +115757,14 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
       }
 
       this.__groupTransformer.visible = false;
+      this.__groupTransformer.selected = null;
     }
   }, {
     key: "__selectionMonitor",
     value: function __selectionMonitor(evt) {
       this.__currentSelection = null;
       this.__groupTransformer.visible = false;
+      this.__groupTransformer.selected = null;
 
       this.__eventDispatcher.dispatchEvent({
         type: _events.EVENT_NOTHING_2D_SELECTED
@@ -117049,7 +117461,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42193" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "33121" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

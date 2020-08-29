@@ -1,4 +1,4 @@
-import { Graphics, utils as pixiutils, Matrix } from "pixi.js";
+import { Graphics, utils as pixiutils, Text, Ticker, Texture, Sprite } from "pixi.js";
 import Corner from "../model/corner";
 import Wall from "../model/wall";
 import Room from "../model/room";
@@ -6,6 +6,266 @@ import { Dimensioning } from "../core/dimensioning";
 import { Matrix4, Vector3, Vector2, EventDispatcher, Quaternion } from "three";
 import { Utils } from "../core/utils";
 
+
+class CornerGroupRectangle extends Graphics {
+    constructor(size, center) {
+        super();
+        this.__size = size.clone();
+        this.__center = center.clone();
+        let halfSize = this.__size.clone().multiplyScalar(0.5);
+        this.__tl = this.__center.clone().sub(halfSize);
+        this.__br = this.__center.clone().add(halfSize);
+        this.__tr = new Vector2(this.__br.x, this.__tl.x);
+        this.__bl = new Vector2(this.__tl.x, this.__br.x);
+
+        this.__vertices = [this.__tl, this.__tr, this.__br, this.__bl];
+
+        this.__originalSize = this.__size.clone();
+        this.__originalCenter = this.__center.clone();
+        this.__currentRadians = 0;
+
+        this.__currentScaleMatrix = new Matrix4(); //Keeps track of the absolute scaling
+        this.__currentRotationMatrix = new Matrix4(); //Keeps track of the absolute rotation
+        this.__currentTranslationMatrix = new Matrix4(); //Keeps track of translation
+
+        this.__drawRectangle();
+        this.__ticker = Ticker.shared;
+        // this.__ticker.add(this.__tick, this);
+    }
+
+    translateByPosition(position) {
+        let translateMatrix = new Matrix4().makeTranslation(position.x, position.y, 0);
+        for (let i = 0; i < this.__vertices.length; i++) {
+            //Reset current Scaling
+            let co2 = this.__vertices[i].clone();
+            let co = new Vector3(co2.x, co2.y, 0);
+            // co = co.applyMatrix4(this.__currentRotationMatrix.clone().getInverse(this.__currentRotationMatrix.clone()));
+            co = co.applyMatrix4(translateMatrix);
+            this.__vertices[i].x = co.x;
+            this.__vertices[i].y = co.y;
+        }
+        this.__center.y = this.__tr.y - this.__tl.y;
+        this.__size.x = this.__tl.clone().sub(this.__tr).length();
+        this.__size.y = this.__tl.clone().sub(this.__bl).length();
+        this.__center = this.__br.clone().sub(this.__tl).multiplyScalar(0.5).add(this.__tl);
+        let delta = this.__center.clone().sub(this.__originalCenter);
+        this.__currentTranslationMatrix = new Matrix4().makeTranslation(delta.x, delta.y, 0);
+        this.__drawRectangle();
+    }
+
+    rotateByRadians(radians) {
+        let T = new Matrix4().makeTranslation(-this.__center.x, -this.__center.y, 0);
+        let TInv = new Matrix4().makeTranslation(this.__center.x, this.__center.y, 0);
+
+        let rotationMatrix = new Matrix4().makeRotationAxis(new Vector3(0, 0, 1), radians);
+        let rotationAboutOrigin = TInv.clone().multiply(rotationMatrix).multiply(T);
+
+        let resetRotation = new Matrix4().makeRotationAxis(new Vector3(0, 0, 1), -this.__currentRadians);
+        let resetRotationAboutOrigin = TInv.clone().multiply(resetRotation).multiply(T);
+
+        for (let i = 0; i < this.__vertices.length; i++) {
+            //Reset current Scaling
+            let co2 = this.__vertices[i].clone();
+            let co = new Vector3(co2.x, co2.y, 0);
+            // co = co.applyMatrix4(this.__currentRotationMatrix.clone().getInverse(this.__currentRotationMatrix.clone()));
+            co = co.applyMatrix4(resetRotationAboutOrigin);
+            co = co.applyMatrix4(rotationAboutOrigin);
+            this.__vertices[i].x = co.x;
+            this.__vertices[i].y = co.y;
+        }
+
+        this.__currentRotationMatrix = rotationAboutOrigin.clone();
+        this.__currentRadians = radians;
+        // this.__center.x = this.__tr.x - this.__tl.x;
+        this.__center.y = this.__tr.y - this.__tl.y;
+        this.__size.x = this.__tl.clone().sub(this.__tr).length();
+        this.__size.y = this.__tl.clone().sub(this.__bl).length();
+        this.__center = this.__br.clone().sub(this.__tl).multiplyScalar(0.5).add(this.__tl);
+        this.__drawRectangle();
+    }
+
+    scaleBySize(newWidth, newHeight, origin) {
+        let scale = new Vector2(newWidth / this.__size.x, newHeight / this.__size.y);
+        //Origin - The origin about which transformations happen
+        let T = new Matrix4().makeTranslation(-origin.x, -origin.y, 0); //Translate to -origin of scaling
+        let TInv = new Matrix4().makeTranslation(origin.x, origin.y, 0); //Translate to origin of scaling (inverse)
+
+
+        let rotation = new Matrix4().makeRotationAxis(new Vector3(0, 0, 1), this.__currentRadians); //Calculate the current rotation matrix
+        let scaleMatrix = new Matrix4().makeScale(scale.x, scale.y, 1); //Calculate the relative scaling to apply
+
+        let scaleAboutOrigin = TInv.clone().multiply(scaleMatrix).multiply(T); //Now scale about the origin. This matrix has no rotation so scaling along x,y
+        let rotateAboutOrigin = TInv.clone().multiply(rotation).multiply(T); //Now rotate about the origin. 
+        let resetRotationAboutOrigin = rotateAboutOrigin.clone().getInverse(rotateAboutOrigin.clone()); //Ensure to reset the rotation of currentRadians
+
+        /**
+         * The final transformation matrix is composition of matrices from right to left
+         * 1- So the first thing is reset the current rotation, 
+         * 2- Then apply scaling along normal x,y axis, 
+         * 3 -Finally apply the current rotation 
+         */
+        let transformMatrix = rotateAboutOrigin.clone().multiply(scaleAboutOrigin).multiply(resetRotationAboutOrigin);
+
+        for (let i = 0; i < this.__vertices.length; i++) {
+            let co2 = this.__vertices[i].clone();
+            let co = new Vector3(co2.x, co2.y, 0);
+            co = co.applyMatrix4(transformMatrix);
+            this.__vertices[i].x = co.x;
+            this.__vertices[i].y = co.y;
+        }
+        this.__size.x = newWidth; //this.__tl.clone().sub(this.__tr).length();
+        this.__size.y = newHeight; //this.__tl.clone().sub(this.__bl).length();
+        this.__center = this.__br.clone().sub(this.__tl).multiplyScalar(0.5).add(this.__tl);
+
+        let delta = this.__center.clone().sub(this.__originalCenter);
+        this.__currentRotationMatrix = rotation.clone();
+        this.__currentScaleMatrix = this.__currentScaleMatrix.multiply(scaleMatrix);
+        this.__currentTranslationMatrix = new Matrix4().makeTranslation(delta.x, delta.y, 0);
+
+        this.__drawRectangle();
+    }
+
+    __tick() {
+        console.log('TICK TICK TICK');
+    }
+
+    __drawRectangle() {
+        this.clear();
+        this.beginFill(0xCCCCCC, 0.5);
+        this.moveTo(this.__tl.x, this.__tl.y);
+        this.lineTo(this.__tr.x, this.__tr.y);
+        this.lineTo(this.__br.x, this.__br.y);
+        this.lineTo(this.__bl.x, this.__bl.y);
+        this.endFill();
+
+        // this.beginFill(0xFF0000, 1.0);
+        // this.drawCircle(this.__center.x, this.__center.y, 10);
+        // this.endFill();
+    }
+
+    destroy() {
+        this.__ticker.remove(this.__tick, this);
+        this.__ticker.destroy();
+    }
+
+    get tl() {
+        return this.__tl;
+    }
+
+    get tr() {
+        return this.__tr;
+    }
+
+    get br() {
+        return this.__br;
+    }
+
+    get bl() {
+        return this.__bl;
+    }
+
+    get size() {
+        return this.__size;
+    }
+
+    get center() {
+        return this.__center;
+    }
+
+    get rotationMatrix() {
+        return this.__currentRotationMatrix.clone();
+    }
+
+    get scalingMatrix() {
+        return this.__currentScaleMatrix;
+    }
+
+    get translationMatrix() {
+        return this.__currentTranslationMatrix;
+    }
+
+    get rotationRadians() {
+        return this.__currentRadians;
+    }
+
+    get origin() {
+        return this.__center;
+    }
+
+    get matrix4() {
+        let scale = new Vector3().setFromMatrixScale(this.__currentScaleMatrix);
+        let rotation = new Quaternion().setFromRotationMatrix(this.__currentRotationMatrix);
+        let translation = new Vector3().setFromMatrixPosition(this.__currentTranslationMatrix);
+        let sMatrix = new Matrix4().makeScale(scale.x, scale.y, 1);
+        let rMatrix = new Matrix4().makeRotationFromQuaternion(rotation);
+        let tMatrix = new Matrix4().makeTranslation(translation.x, translation.y, translation.z);
+        return rMatrix.multiply(sMatrix).multiply(tMatrix);
+    }
+}
+
+
+class CornerGroupTransformationPoint extends Sprite {
+    constructor(svg = 'icons/rotateGroup.svg') {
+        super(new Texture.from(svg));
+        this.__eventDispatcher = new EventDispatcher();
+
+        this.__mouseUpEvent = this.__dragEnd.bind(this);
+        this.__mouseMoveEvent = this.__dragMove.bind(this);
+        this.__mouseOverEvent = this.__mouseOver.bind(this);
+        this.__mouseOutEvent = this.__mouseOut.bind(this);
+        this.__mouseDownEvent = this.__mouseDown.bind(this);
+
+
+        this.on('mousedown', this.__mouseDownEvent).on('touchstart', this.__mouseDownEvent);
+        this.on('mouseupoutside', this.__mouseUpEvent).on('touchendoutside', this.__mouseUpEvent);
+        this.on('mouseup', this.__mouseUpEvent).on('touchend', this.__mouseUpEvent);
+        this.on('mousemove', this.__mouseMoveEvent).on('touchmove', this.__mouseMoveEvent);
+        this.on('mouseover', this.__mouseOverEvent).on('mouseout', this.__mouseOutEvent);
+
+        this.interactive = true;
+        this.buttonMode = true;
+        this.scale.set(0.05, 0.05);
+        this.anchor.set(0.5);
+    }
+
+    __mouseDown(evt) {
+        evt.stopPropagation();
+        this.__isDragged = true;
+        let co = evt.data.getLocalPosition(this.parent);
+        this.__eventDispatcher.dispatchEvent({ type: 'DragStart', position: co, handle: this });
+    }
+
+    __mouseOver(evt) {
+        evt.stopPropagation();
+    }
+
+    __mouseOut(evt) {
+        evt.stopPropagation();
+    }
+
+    __dragEnd(evt) {
+        evt.stopPropagation();
+        this.__isDragged = false;
+        let co = evt.data.getLocalPosition(this.parent);
+        this.__eventDispatcher.dispatchEvent({ type: 'DragEnd', position: co, handle: this });
+    }
+
+    __dragMove(evt) {
+        if (this.__isDragged) {
+            evt.stopPropagation();
+            let co = evt.data.getLocalPosition(this.parent);
+            this.__eventDispatcher.dispatchEvent({ type: 'DragMove', position: co, handle: this });
+        }
+    }
+
+    addFloorplanListener(type, listener) {
+        this.__eventDispatcher.addEventListener(type, listener);
+    }
+
+    removeFloorplanListener(type, listener) {
+        this.__eventDispatcher.removeEventListener(type, listener);
+    }
+}
 class CornerGroupScalePoint extends Graphics {
     constructor(index, parameters) {
         super();
@@ -26,8 +286,14 @@ class CornerGroupScalePoint extends Graphics {
         this.__center = new Vector2();
         this.__size = new Vector2();
         this.__parameters = opts;
+        this.__parameters.move = new Vector2(opts.move.x, opts.move.y);
         this.__opposite = null;
+        this.__matrix4 = new Matrix4();
         this.__eventDispatcher = new EventDispatcher();
+
+        this.__textfield = new Text(this.__index, { fontFamily: 'Arial', fontSize: 12, fill: 0x000000, align: 'center' });
+        this.__textfield.pivot.x = 3;
+        this.__textfield.pivot.y = 6;
 
         this.__mouseUpEvent = this.__dragEnd.bind(this);
         this.__mouseMoveEvent = this.__dragMove.bind(this);
@@ -44,6 +310,8 @@ class CornerGroupScalePoint extends Graphics {
 
         this.interactive = true;
         this.buttonMode = true;
+
+        this.addChild(this.__textfield);
         this.__drawPoint();
     }
 
@@ -89,14 +357,6 @@ class CornerGroupScalePoint extends Graphics {
         if (this.__isDragged) {
             evt.stopPropagation();
             let co = evt.data.getLocalPosition(this.parent);
-            if (this.move.x && !this.move.y || (this.move.y && !this.move.x)) {
-                let mousePosition = new Vector2(co.x, co.y);
-                let start = new Vector2(this.position.x, this.position.y);
-                let end = new Vector2(this.opposite.position.x, this.opposite.position.y);
-                let vect = end.clone().sub(start);
-                let mouse2Start = mousePosition.sub(start);
-                co = vect.normalize().multiplyScalar(mouse2Start.length());
-            }
             this.__eventDispatcher.dispatchEvent({ type: 'DragMove', position: co, handle: this, opposite: this.opposite });
         }
     }
@@ -114,6 +374,10 @@ class CornerGroupScalePoint extends Graphics {
 
     removeFloorplanListener(type, listener) {
         this.__eventDispatcher.removeEventListener(type, listener);
+    }
+
+    get location() {
+        return new Vector2(this.position.x, this.position.y);
     }
 
     get index() {
@@ -134,12 +398,20 @@ class CornerGroupScalePoint extends Graphics {
     get offset() {
         return this.__parameters.offset;
     }
+
+    get matrix4() {
+        return this.__matrix4;
+    }
+
+    set matrix4(mat) {
+        this.__matrix4 = mat.clone();
+    }
 }
 
 export class CornerGroupTransform2D extends Graphics {
     constructor(floorplan, parameters) {
         super();
-        var opts = { scale: true, rotate: true, translate: true };
+        var opts = { scale: false, rotate: false, translate: true };
         if (parameters) {
             for (var opt in opts) {
                 if (opts.hasOwnProperty(opt) && parameters.hasOwnProperty(opt)) {
@@ -147,32 +419,42 @@ export class CornerGroupTransform2D extends Graphics {
                 }
             }
         }
+
         this.__parameters = opts;
         this.__floorplan = floorplan;
         this.__groups = this.__floorplan.cornerGroups;
         this.__currentGroup = null;
-        this.__transformOrigin = new Vector3();
 
-        this.__currentRadians = 0.0;
-        this.__currentWidth = 100;
-        this.__currentHeight = 100;
-
-        this.__currentScaleMatrix = new Matrix4();
-        this.__currentRotationMatrix = new Matrix4();
-        this.__currentTranslationMatrix = new Matrix4();
 
         this.__originalPositions = [];
         this.__size = null;
         this.__center = null;
         this.__scalingHandles = [];
+        this.__rotateHandle = new CornerGroupTransformationPoint();
+        this.__translateHandle = new CornerGroupTransformationPoint('icons/translateGroup.svg');
+
+        this.__resizer = null;
+
+
         this.__scaleHandleDragStartEvent = this.__scaleHandleDragStart.bind(this);
         this.__scaleHandleDragEndEvent = this.__scaleHandleDragEnd.bind(this);
         this.__scaleHandleDragMoveEvent = this.__scaleHandleDragMove.bind(this);
+        this.__rotateHandleDragMoveEvent = this.__rotateHandleDragMove.bind(this);
+        this.__rotateHandleDragEndEvent = this.__rotateHandleDragEnd.bind(this);
+
         if (this.__parameters.scale) {
             this.__createScalingHandles();
         }
-
-        this.__tempDebugIndex = 0;
+        if (this.__parameters.rotate) {
+            this.__rotateHandle.addFloorplanListener('DragMove', this.__rotateHandleDragMoveEvent);
+            this.__rotateHandle.addFloorplanListener('DragEnd', this.__rotateHandleDragEndEvent);
+            this.addChild(this.__rotateHandle);
+        }
+        if (this.__parameters.translate) {
+            this.__translateHandle.addFloorplanListener('DragMove', this.__rotateHandleDragMoveEvent);
+            this.__translateHandle.addFloorplanListener('DragEnd', this.__rotateHandleDragEndEvent);
+            this.addChild(this.__translateHandle);
+        }
     }
 
     /**
@@ -195,6 +477,7 @@ export class CornerGroupTransform2D extends Graphics {
         let yTransform = 0;
         let xOffsets = [-0.5, 0.0, 0.5, 0.5, 0.5, 0, -0.5, -0.5];
         let yOffsets = [-0.5, -0.5, -0.5, 0.0, 0.5, 0.5, 0.5, -0.0];
+        let resizerIndices = [0, -1, 1, -1, 2, -1, 3, -1];
         for (; i < totalHandles; i++) {
             let xMove = 1;
             let yMove = 1;
@@ -215,113 +498,84 @@ export class CornerGroupTransform2D extends Graphics {
         for (i = 0; i < totalHandles; i++) {
             let handle = this.__scalingHandles[i];
             let oppositeIndex = (i + 4) % totalHandles;
+            handle.extraIndex = resizerIndices[i];
             handle.opposite = this.__scalingHandles[oppositeIndex];
         }
     }
 
-    __applyAllTransformsMatrix() {
-        let allTransformsMatrix = this.__currentRotationMatrix.clone().multiply(this.__currentScaleMatrix).multiply(this.__currentTranslationMatrix);
 
-    }
-
-    __applyRotationMatrix(radians, originPoint, apply = true) {
-        let originForRotation = new Vector3(originPoint.x, originPoint.y, 0);
-        let originTRotation = new Matrix4().makeTranslation(-originForRotation.x, -originForRotation.y, 0);
-        let originTInverseRotation = new Matrix4().makeTranslation(originForRotation.x, originForRotation.y, 0);
-
-        let rotation = new Matrix4().makeRotationAxis(new Vector3(0, 0, 1), radians);
-        let transformMatrix = originTInverseRotation.clone().multiply(rotation.multiply(originTRotation));
-        let reset = this.__currentRotationMatrix.clone().getInverse(this.__currentRotationMatrix); //.multiply(this.__currentRotationMatrix);
-
-        if (apply) {
-            for (let i = 0; i < this.__scalingHandles.length; i++) {
-                let handle2 = this.__scalingHandles[i];
-                let usePosition = handle2.position.clone();
-                let p3 = new Vector3(usePosition.x, usePosition.y, 0);
-                p3.applyMatrix4(reset);
-                p3.applyMatrix4(transformMatrix);
-                handle2.position.x = p3.x;
-                handle2.position.y = p3.y;
-            }
-            this.__currentRotationMatrix = transformMatrix;
-        }
-        return transformMatrix;
-    }
-
-    /**
-     * 
-     * @param {Number} newWidth - An absolute value( no negative)
-     * @param {*} newHeight - An absolute value( no negative) 
-     */
-    __applyScalingMatrix(newWidth, newHeight, originPoint) {
-        let originForScale = new Vector3(originPoint.x, originPoint.y, 0);
-        let scale = new Vector2(newWidth / this.__currentWidth, newHeight / this.__currentHeight);
-
-        let originTScale = new Matrix4().makeTranslation(-originForScale.x, -originForScale.y, 0);
-        let originTInverseScale = new Matrix4().makeTranslation(originForScale.x, originForScale.y, 0);
-
-        let scaling = new Matrix4().makeScale(scale.x, scale.y, 1);
-        let transformMatrix = originTInverseScale.clone().multiply(scaling.multiply(originTScale));
-        let reset = this.__currentScaleMatrix.clone().getInverse(this.__currentScaleMatrix); //.multiply(this.__currentRotationMatrix);
-
-        this.__currentWidth = newWidth;
-        this.__currentHeight = newHeight;
-
-        for (let i = 0; i < this.__scalingHandles.length; i++) {
-            let handle2 = this.__scalingHandles[i];
-            let usePosition = handle2.position.clone();
-            let p3 = new Vector3(usePosition.x, usePosition.y, 0);
-            // p3.applyMatrix4(reset);
-            p3.applyMatrix4(transformMatrix);
-            handle2.position.x = p3.x;
-            handle2.position.y = p3.y;
-        }
-        this.__currentScaleMatrix = transformMatrix;
-        return transformMatrix;
-    }
-
-
-    __scaleHandleDragStart(evt) {
-        this.__tempDebugIndex += 1;
-    }
+    __scaleHandleDragStart(evt) {}
 
     __scaleHandleDragMove(evt) {
-        let co = new Vector2(evt.position.x, evt.position.y);
+        let co = new Vector3(evt.position.x, evt.position.y, 0);
         let handle = evt.handle;
         let opposite = evt.opposite;
-
-        let start = new Vector3(co.x, co.y, 0);
-        let end = new Vector3(opposite.position.x, opposite.position.y, 0);
-
-
-        start = start.applyMatrix4(this.__currentRotationMatrix);
-        end = end.applyMatrix4(this.__currentRotationMatrix);
-
-        let vect = end.clone().sub(start);
-
-        let originForScale = new Vector3(end.x, end.y, 0);
-        vect.x = (handle.move.x) ? Math.abs(vect.x) : this.__currentWidth;
-        vect.y = (handle.move.y) ? Math.abs(vect.y) : this.__currentHeight;
-
-        // this.__applyScalingMatrix(Math.abs(vect.x), Math.abs(vect.y), originForScale);
-
-        let radians = Math.atan2(co.y - this.__center.y, co.x - this.__center.x);
-        let matrix = this.__applyRotationMatrix(radians, this.__center);
-        let floorplanMatrix = this.__applyRotationMatrix(radians, this.__currentGroup.center, false);
-        this.__currentGroup.applyMatrix(floorplanMatrix);
-
-
+        let opposite3 = new Vector3(opposite.location.x, opposite.location.y, 0);
+        let vect = opposite3.clone().sub(co);
+        let sizeX = this.__resizer.size.x;
+        let sizeY = this.__resizer.size.y;
+        if (handle.move.x && handle.move.y) {
+            let hVect = null;
+            let vVect = null;
+            let co2 = new Vector2(evt.position.x, evt.position.y);
+            switch (handle.extraIndex) {
+                case 0:
+                    hVect = co2.clone().sub(this.__resizer.tr.clone());
+                    vVect = co2.clone().sub(this.__resizer.bl.clone());
+                    break;
+                case 1:
+                    hVect = co2.clone().sub(this.__resizer.tl.clone());
+                    vVect = co2.clone().sub(this.__resizer.br.clone());
+                    break;
+                case 2:
+                    hVect = co2.clone().sub(this.__resizer.bl.clone());
+                    vVect = co2.clone().sub(this.__resizer.tr.clone());
+                    break;
+                default:
+                    hVect = co2.clone().sub(this.__resizer.br.clone());
+                    vVect = co2.clone().sub(this.__resizer.tl.clone());
+                    break;
+            }
+            sizeX = hVect.length(); //vect.length(); //
+            sizeY = vVect.length(); //vect.length(); //
+        } else if (handle.move.x) {
+            sizeX = vect.length();
+        } else if (handle.move.y) {
+            sizeY = vect.length();
+        }
+        this.__resizer.scaleBySize(sizeX, sizeY, opposite.location);
+        this.__setControlsPosition();
     }
 
     __scaleHandleDragEnd(evt) {
-
+        // let matrix = this.__resizer.scalingMatrix.clone().multiply(this.__resizer.rotationMatrix);
+        this.__setControlsPosition();
+        this.__updateMatrixOfGroup();
     }
 
+    __rotateHandleDragMove(evt) {
+        let handle = evt.handle;
+        if (handle === this.__rotateHandle) {
+            let co = new Vector2(evt.position.x, evt.position.y);
+            let vect = co.sub(this.__resizer.center);
+            let radians = Math.atan2(vect.y, vect.x);
+            this.__resizer.rotateByRadians(radians);
+        } else if (handle === this.__translateHandle) {
+            let co = new Vector2(evt.position.x, evt.position.y);
+            let delta = co.sub(this.__resizer.center);
+            this.__resizer.translateByPosition(delta);
+        }
+        this.__setControlsPosition();
+    }
 
-    __setRadians(angle) {
-        this.__currentRadians = angle;
-        this.__rotateHandle.x = Math.cos(angle) * this.__ringRadius;
-        this.__rotateHandle.y = Math.sin(angle) * this.__ringRadius;
+    __rotateHandleDragEnd(evt) {
+        this.__updateMatrixOfGroup();
+    }
+
+    __updateMatrixOfGroup() {
+        let matrix = this.__resizer.matrix4;
+        let scale = new Vector3().setFromMatrixScale(matrix);
+        this.__currentGroup.applyTransformations(scale, this.__resizer.rotationRadians, this.__toUnits(this.__resizer.origin.clone()));
     }
 
     __toPixels(vector) {
@@ -330,13 +584,38 @@ export class CornerGroupTransform2D extends Graphics {
         return vector;
     }
 
-    __setScalingHandlesPosition() {
+    __toUnits(pixels) {
+        pixels.x = Dimensioning.pixelToCm(pixels.x);
+        pixels.y = Dimensioning.pixelToCm(pixels.y);
+        return pixels;
+    }
+
+    __setControlsPosition() {
         if (this.__parameters.scale) {
+            let center = this.__resizer.center;
+            let horizontal = this.__resizer.tr.clone().sub(this.__resizer.tl);
+            let vertical = this.__resizer.bl.clone().sub(this.__resizer.tl);
             for (let i = 0; i < this.__scalingHandles.length; i++) {
                 let handle = this.__scalingHandles[i];
-                handle.updateCenterAndSize(this.__center, this.__size);
+                let hvect = horizontal.clone().multiplyScalar(handle.offset.x);
+                let vvect = vertical.clone().multiplyScalar(handle.offset.y);
+                let vect = hvect.add(vvect);
+                let position = center.clone().add(vect);
+                handle.position.set(position.x, position.y);
+                // handle.updateCenterAndSize(center, size);
                 this.__originalPositions.push(new Vector2(handle.position.x, handle.position.y));
             }
+        }
+
+        if (this.__parameters.rotate) {
+            let midPoint = this.__resizer.br.clone().sub(this.__resizer.tr).multiplyScalar(0.5).add(this.__resizer.tr);
+            let direction = this.__resizer.bl.clone().sub(this.__resizer.br).normalize().negate();
+            let position = midPoint.add(direction.multiplyScalar(50));
+            this.__rotateHandle.position.set(position.x, position.y);
+        }
+
+        if (this.__parameters.translate) {
+            this.__translateHandle.position.set(this.__resizer.center.x, this.__resizer.center.y);
         }
     }
 
@@ -346,16 +625,16 @@ export class CornerGroupTransform2D extends Graphics {
         this.__center = this.__toPixels(this.__currentGroup.center.clone());
         this.__matrix = this.__currentGroup.matrix.clone();
 
-        this.__setScalingHandlesPosition();
+        if (this.__resizer) {
+            this.__resizer.destroy();
+            this.removeChild(this.__resizer);
+        }
 
-        this.__currentWidth = this.__size.x;
-        this.__currentHeight = this.__size.y;
+        this.__resizer = new CornerGroupRectangle(this.__size, this.__center);
+        // this.__resizer.position.set(this.__center.x, this.__center.y);
+        this.addChild(this.__resizer);
 
-        this.__currentScaleMatrix = this.__applyScalingMatrix(this.__currentWidth, this.__currentHeight, this.__center);
-        this.__currentRotationMatrix = this.__applyRotationMatrix(0, this.__center);
-
-        // this.__applyAllTransformsMatrix();
-
+        this.__setControlsPosition();
     }
 
     get selected() {
@@ -376,6 +655,10 @@ export class CornerGroupTransform2D extends Graphics {
             }
             this.__currentGroup = this.__groups.getContainingGroup(corner);
             this.__updateTransformControls();
+        } else {
+            if (this.__resizer) {
+                this.__resizer.destroy();
+            }
         }
     }
 }
