@@ -43388,8 +43388,6 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
       if (!this.__currentWall.hasEventListener(_events.EVENT_MOVED, this.__followWallEvent)) {
         this.__currentWall.addEventListener(_events.EVENT_MOVED, this.__followWallEvent);
       }
-
-      console.log('WALL SNAP POINT ::: ', this.__currentWallSnapPoint);
     }
     /** */
 
@@ -45266,7 +45264,7 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
     key: "updateInteriorCorners",
     value: function updateInteriorCorners() {
       var minB = new _three.Vector2(Number.MAX_VALUE, Number.MAX_VALUE);
-      var maxB = new _three.Vector2(Number.MIN_VALUE, Number.MIN_VALUE);
+      var maxB = new _three.Vector2(-Number.MAX_VALUE, -Number.MAX_VALUE);
       var edge = this.edgePointer;
       var iterateWhile = true;
       this.interiorCorners = [];
@@ -45674,7 +45672,7 @@ var CornerGroup = /*#__PURE__*/function () {
     value: function __update() {
       this.__originalCornerPositions = [];
       var minPoint = new _three.Vector2(Number.MAX_VALUE, Number.MAX_VALUE);
-      var maxPoint = new _three.Vector2(Number.MIN_VALUE, Number.MIN_VALUE);
+      var maxPoint = new _three.Vector2(-Number.MAX_VALUE, -Number.MAX_VALUE);
 
       for (var i = 0; i < this.__corners.length; i++) {
         var corner = this.__corners[i];
@@ -45686,11 +45684,13 @@ var CornerGroup = /*#__PURE__*/function () {
         this.__originalCornerPositions.push(corner.location.clone());
       }
 
+      this.__minPoint = minPoint.clone();
+      this.__maxPoint = maxPoint.clone();
       this.__size = maxPoint.clone().sub(minPoint);
+      this.__size.x = Math.abs(this.__size.x);
+      this.__size.y = Math.abs(this.__size.y); // if (!this.__center) {
 
-      if (!this.__center) {
-        this.__center = this.__size.clone().multiplyScalar(0.5).add(minPoint);
-      }
+      this.__center = this.__size.clone().multiplyScalar(0.5).add(minPoint); // }
 
       this.__currentCenter = this.__size.clone().multiplyScalar(0.5).add(minPoint);
       this.__matrix = this.__matrix.identity();
@@ -45734,6 +45734,11 @@ var CornerGroup = /*#__PURE__*/function () {
       return false; // return Utils.hasValue(this.__corners, corner);
     }
   }, {
+    key: "update",
+    value: function update() {
+      this.__update();
+    }
+  }, {
     key: "destroy",
     value: function destroy() {
       for (var i = 0; i < this.__corners.length; i++) {
@@ -45755,12 +45760,12 @@ var CornerGroup = /*#__PURE__*/function () {
   }, {
     key: "size",
     get: function get() {
-      return this.__size;
+      return this.__size.clone();
     }
   }, {
     key: "center",
     get: function get() {
-      return this.__center;
+      return this.__center.clone();
     }
   }]);
 
@@ -46805,7 +46810,7 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
     key: "getSize3",
     value: function getSize3() {
       var size2D = this.getDimensions();
-      var size3D = new _three.Vector3(size2D.x, size2D.z, Number.MIN_VALUE);
+      var size3D = new _three.Vector3(size2D.x, size2D.z, -Number.MAX_VALUE);
 
       for (var i = 0; i < this.corners.length; i++) {
         var corner = this.corners[i];
@@ -114635,8 +114640,8 @@ var CornerGroupRectangle = /*#__PURE__*/function (_Graphics) {
 
     _this.__tl = _this.__center.clone().sub(halfSize);
     _this.__br = _this.__center.clone().add(halfSize);
-    _this.__tr = new _three.Vector2(_this.__br.x, _this.__tl.x);
-    _this.__bl = new _three.Vector2(_this.__tl.x, _this.__br.x);
+    _this.__tr = new _three.Vector2(_this.__br.x, _this.__tl.y);
+    _this.__bl = new _three.Vector2(_this.__tl.x, _this.__br.y);
     _this.__vertices = [_this.__tl, _this.__tr, _this.__br, _this.__bl];
     _this.__originalSize = _this.__size.clone();
     _this.__originalCenter = _this.__center.clone();
@@ -115470,6 +115475,10 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics3) {
       return this.__selected;
     },
     set: function set(instanceOfCornerOrWallOrRoom) {
+      if (this.__currentGroup) {
+        this.__currentGroup.update();
+      }
+
       this.__selected = instanceOfCornerOrWallOrRoom;
 
       if (this.__selected) {
@@ -117664,7 +117673,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "33293" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "33329" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

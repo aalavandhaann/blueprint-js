@@ -175,7 +175,6 @@ export class Item extends EventDispatcher {
         if (!this.__currentWall.hasEventListener(EVENT_MOVED, this.__followWallEvent)) {
             this.__currentWall.addEventListener(EVENT_MOVED, this.__followWallEvent);
         }
-        console.log('WALL SNAP POINT ::: ', this.__currentWallSnapPoint);
     }
 
     /** */

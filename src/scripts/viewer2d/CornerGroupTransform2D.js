@@ -15,8 +15,8 @@ class CornerGroupRectangle extends Graphics {
         let halfSize = this.__size.clone().multiplyScalar(0.5);
         this.__tl = this.__center.clone().sub(halfSize);
         this.__br = this.__center.clone().add(halfSize);
-        this.__tr = new Vector2(this.__br.x, this.__tl.x);
-        this.__bl = new Vector2(this.__tl.x, this.__br.x);
+        this.__tr = new Vector2(this.__br.x, this.__tl.y);
+        this.__bl = new Vector2(this.__tl.x, this.__br.y);
 
         this.__vertices = [this.__tl, this.__tr, this.__br, this.__bl];
 
@@ -633,7 +633,6 @@ export class CornerGroupTransform2D extends Graphics {
         this.__resizer = new CornerGroupRectangle(this.__size, this.__center);
         // this.__resizer.position.set(this.__center.x, this.__center.y);
         this.addChild(this.__resizer);
-
         this.__setControlsPosition();
     }
 
@@ -641,6 +640,9 @@ export class CornerGroupTransform2D extends Graphics {
         return this.__selected;
     }
     set selected(instanceOfCornerOrWallOrRoom) {
+        if (this.__currentGroup) {
+            this.__currentGroup.update();
+        }
         this.__selected = instanceOfCornerOrWallOrRoom;
         if (this.__selected) {
             let corner = null;

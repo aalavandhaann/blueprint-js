@@ -742,7 +742,7 @@ export class Floorplan extends EventDispatcher {
 
     getSize3() {
         let size2D = this.getDimensions();
-        let size3D = new Vector3(size2D.x, size2D.z, Number.MIN_VALUE);
+        let size3D = new Vector3(size2D.x, size2D.z, -Number.MAX_VALUE);
         for (let i = 0; i < this.corners.length; i++) {
             let corner = this.corners[i];
             size3D.z = Math.max(size3D.z, corner.elevation);

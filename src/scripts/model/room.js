@@ -352,7 +352,7 @@ export class Room extends EventDispatcher {
 
     updateInteriorCorners() {
         let minB = new Vector2(Number.MAX_VALUE, Number.MAX_VALUE);
-        let maxB = new Vector2(Number.MIN_VALUE, Number.MIN_VALUE);
+        let maxB = new Vector2(-Number.MAX_VALUE, -Number.MAX_VALUE);
         let edge = this.edgePointer;
         let iterateWhile = true;
         this.interiorCorners = [];

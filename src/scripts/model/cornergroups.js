@@ -37,7 +37,7 @@ export class CornerGroup {
     __update() {
         this.__originalCornerPositions = [];
         let minPoint = new Vector2(Number.MAX_VALUE, Number.MAX_VALUE);
-        let maxPoint = new Vector2(Number.MIN_VALUE, Number.MIN_VALUE);
+        let maxPoint = new Vector2(-Number.MAX_VALUE, -Number.MAX_VALUE);
 
         for (let i = 0; i < this.__corners.length; i++) {
             let corner = this.__corners[i];
@@ -48,11 +48,14 @@ export class CornerGroup {
             maxPoint.y = Math.max(maxPoint.y, corner.location.y);
             this.__originalCornerPositions.push(corner.location.clone());
         }
-
+        this.__minPoint = minPoint.clone();
+        this.__maxPoint = maxPoint.clone();
         this.__size = maxPoint.clone().sub(minPoint);
-        if (!this.__center) {
-            this.__center = this.__size.clone().multiplyScalar(0.5).add(minPoint);
-        }
+        this.__size.x = Math.abs(this.__size.x);
+        this.__size.y = Math.abs(this.__size.y);
+        // if (!this.__center) {
+        this.__center = this.__size.clone().multiplyScalar(0.5).add(minPoint);
+        // }
         this.__currentCenter = this.__size.clone().multiplyScalar(0.5).add(minPoint);
         this.__matrix = this.__matrix.identity();
     }
@@ -89,6 +92,10 @@ export class CornerGroup {
         // return Utils.hasValue(this.__corners, corner);
     }
 
+    update() {
+        this.__update();
+    }
+
     destroy() {
         for (let i = 0; i < this.__corners.length; i++) {
             this.__corners[i].removeEventListener(EVENT_MOVED, this.__cornerMovedEvent);
@@ -105,11 +112,11 @@ export class CornerGroup {
     }
 
     get size() {
-        return this.__size;
+        return this.__size.clone();
     }
 
     get center() {
-        return this.__center;
+        return this.__center.clone();
     }
 
 }
