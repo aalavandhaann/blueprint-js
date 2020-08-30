@@ -150,6 +150,7 @@ export class Wall extends EventDispatcher {
 
     __cornerMoved() {
         this.updateControlVectors();
+        this.dispatchEvent({ type: EVENT_MOVED, item: this, position: null });
     }
 
     __cornerAttributesChanged() {
@@ -165,22 +166,14 @@ export class Wall extends EventDispatcher {
     addItem(item) {
         if (item instanceof InWallItem || item instanceof InWallFloorItem) {
             if (!Utils.hasValue(this.__inWallItems, item)) {
-                let vect = this.end.location.clone().sub(this.start.location);
-                let itemVect = item.position2d.clone().sub(this.start.location);
-                let ratio = itemVect.length() / vect.length();
                 this.__inWallItems.push(item);
-                this.__inWallItemsSnappedRatios.push(ratio);
             }
             this.dispatchEvent({ type: EVENT_MOVED, item: this, position: null });
         }
 
         if (item instanceof WallItem || item instanceof WallFloorItem) {
             if (!Utils.hasValue(this.__onWallItems, item)) {
-                let vect = this.end.location.clone().sub(this.start.location);
-                let itemVect = item.position2d.clone().sub(this.start.location);
-                let ratio = itemVect.length() / vect.length();
                 this.__onWallItems.push(item);
-                this.__onWallItemsSnappedRatios.push(ratio);
             }
         }
     }
@@ -188,18 +181,13 @@ export class Wall extends EventDispatcher {
     removeItem(item) {
         if (item instanceof InWallItem || item instanceof InWallFloorItem) {
             if (Utils.hasValue(this.__inWallItems, item)) {
-                let i = Utils.removeValue(this.__inWallItems, item);
-                let snappedPositionRatio = this.__inWallItemsSnappedRatios[i];
-                Utils.removeValue(this.__inWallItemsSnappedRatios, snappedPositionRatio);
+                Utils.removeValue(this.__inWallItems, item);
                 this.dispatchEvent({ type: EVENT_MOVED, item: this, position: null });
             }
         }
-
         if (item instanceof WallItem || item instanceof WallFloorItem) {
             if (Utils.hasValue(this.__onWallItems, item)) {
-                let i = Utils.removeValue(this.__onWallItems, item);
-                let snappedPositionRatio = this.__onWallItemsSnappedRatios[i];
-                Utils.removeValue(this.__onWallItemsSnappedRatios, snappedPositionRatio);
+                Utils.removeValue(this.__onWallItems, item);
             }
         }
     }

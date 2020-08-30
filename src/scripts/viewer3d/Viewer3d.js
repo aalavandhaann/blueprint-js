@@ -3,7 +3,7 @@ import { PCFSoftShadowMap, WebGLCubeRenderTarget, CubeCamera } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter';
 
-import { EVENT_UPDATED, EVENT_LOADED, EVENT_ITEM_SELECTED, EVENT_ITEM_MOVE, EVENT_ITEM_MOVE_FINISH, EVENT_NO_ITEM_SELECTED, EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED, EVENT_GLTF_READY, EVENT_NEW_ITEM } from '../core/events.js';
+import { EVENT_UPDATED, EVENT_LOADED, EVENT_ITEM_SELECTED, EVENT_ITEM_MOVE, EVENT_ITEM_MOVE_FINISH, EVENT_NO_ITEM_SELECTED, EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED, EVENT_GLTF_READY, EVENT_NEW_ITEM, EVENT_NEW_ROOMS_ADDED } from '../core/events.js';
 // import { EVENT_NEW, EVENT_DELETED } from '../core/events.js';
 
 import { Skybox } from './skybox.js';
@@ -113,8 +113,12 @@ export class Viewer3D extends Scene {
         }
 
         scope.model.addEventListener(EVENT_NEW_ITEM, scope.__newItemEvent);
-        scope.model.addEventListener(EVENT_LOADED, (evt) => scope.addRoomItems(evt));
-        scope.floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.addWalls(evt));
+        // scope.model.addEventListener(EVENT_LOADED, (evt) => scope.addRoomItems(evt));
+        // scope.floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.addWalls(evt));
+
+        scope.model.addEventListener(EVENT_LOADED, scope.addRoomItems.bind(scope));
+        // scope.floorplan.addEventListener(EVENT_UPDATED, scope.addWalls.bind(scope));
+        scope.floorplan.addEventListener(EVENT_NEW_ROOMS_ADDED, scope.addWalls.bind(scope));
         this.controls.addEventListener('change', () => { scope.needsUpdate = true; });
 
 
@@ -195,6 +199,7 @@ export class Viewer3D extends Scene {
     }
 
     addWalls() {
+        console.log('CREATE WALLS');
         let scope = this;
         let i = 0;
 

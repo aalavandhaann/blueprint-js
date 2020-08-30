@@ -118,7 +118,7 @@ export class Corner extends EventDispatcher {
     }
 
     set location(xy) {
-        this._co.x = xy.x
+        this._co.x = xy.x;
         this._co.y = xy.y;
         this.x = xy.x;
         this.y = xy.y;

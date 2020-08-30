@@ -411,7 +411,7 @@ class CornerGroupScalePoint extends Graphics {
 export class CornerGroupTransform2D extends Graphics {
     constructor(floorplan, parameters) {
         super();
-        var opts = { scale: false, rotate: false, translate: true };
+        var opts = { scale: true, rotate: true, translate: true };
         if (parameters) {
             for (var opt in opts) {
                 if (opts.hasOwnProperty(opt) && parameters.hasOwnProperty(opt)) {

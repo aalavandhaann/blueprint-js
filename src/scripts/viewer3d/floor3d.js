@@ -1,5 +1,5 @@
 import { EventDispatcher, TextureLoader, RepeatWrapping, MeshBasicMaterial, FrontSide, DoubleSide, Vector2, Vector3, Face3, Geometry, Shape, ShapeGeometry, Mesh } from 'three';
-import { EVENT_CHANGED, EVENT_UPDATE_TEXTURES } from '../core/events.js';
+import { EVENT_CHANGED, EVENT_UPDATE_TEXTURES, EVENT_ROOM_ATTRIBUTES_CHANGED } from '../core/events.js';
 import { Configuration, configWallHeight } from '../core/configuration.js';
 import { BufferGeometry } from 'three/build/three.module';
 import { FloorMaterial3D } from '../materials/FloorMaterial3D.js';
@@ -17,10 +17,12 @@ export class Floor3D extends EventDispatcher {
         this.__updateReflectionsEvent = this.__updateReflections.bind(this);
 
         this.__floorMaterial3D = null;
-        this.init();
+
+        this.room.addEventListener(EVENT_ROOM_ATTRIBUTES_CHANGED, this.changedevent);
         this.room.addEventListener(EVENT_CHANGED, this.changedevent);
         this.room.addEventListener(EVENT_UPDATE_TEXTURES, this.__materialChangedEvent);
         this.controls.addEventListener('change', this.__updateReflectionsEvent);
+        this.init();
     }
 
     __updateReflections() {

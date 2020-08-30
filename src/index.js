@@ -4,11 +4,15 @@ import { Configuration, configDimUnit } from './scripts/core/configuration.js';
 import { dimMeter } from './scripts/core/constants.js';
 import QuickSettings from 'quicksettings';
 
+import { Dimensioning } from './scripts/core/dimensioning.js';
+import { ParametricsInterface } from './scripts/ParametricsInterface.js';
+
 import * as floor_textures_json from './floor_textures.json';
 import * as wall_textures_json from './wall_textures.json';
 import * as default_room_json from './parametrics_items.json';
-import { Dimensioning } from './scripts/core/dimensioning.js';
-import { ParametricsInterface } from './scripts/ParametricsInterface.js';
+// import * as default_room_json from './empty_room.json';
+
+
 
 
 let default_room = JSON.stringify(default_room_json);

@@ -107,7 +107,7 @@ export class RoomPlannerHelper {
         let item = new InWallFloorItem(itemMetaData, this.__model);
         this.__model.addItem(item);
         // console.log(this.__selectedEdgePoint, this.__selectedEdgeNormal);
-        item.snapToPoint(this.__selectedEdgePoint, this.__selectedEdgeNormal, null, this.__selectedEdge.wall);
+        item.snapToWall(this.__selectedEdgePoint, this.__selectedEdge.wall, this.__selectedEdge);
     }
 
     set wallThickness(value) {

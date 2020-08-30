@@ -131,7 +131,13 @@ export class DragRoomItemsControl3D extends EventDispatcher {
                     this.__intersection = intersectionData.point;
                     let location = intersectionData.point;
                     let normal = intersectionData.face.normal;
-                    this.__selected.snapToPoint(location, normal, intersectionData.object);
+                    let intersectingPlane = intersectionData.object;
+                    let edgePlane = intersectionData.object.edge;
+                    let wall = intersectionData.object.wall;
+                    this.__selected.snapToPoint(location, normal, intersectingPlane);
+                    // if (this.__selected.itemModel.isWallDependent) {
+                    //     this.__selected.snapToWall(location, wall, edgePlane);
+                    // }
                 }
 
             }

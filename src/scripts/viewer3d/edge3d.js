@@ -1,4 +1,4 @@
-import { EventDispatcher, Vector2, Vector3, MeshBasicMaterial, FrontSide, DoubleSide, BackSide, Shape, Path, ShapeGeometry, Mesh, Geometry, Face3, } from 'three';
+import { EventDispatcher, Vector2, Vector3, MeshBasicMaterial, FrontSide, DoubleSide, BackSide, Shape, Path, ShapeGeometry, Mesh, Geometry, Face3, Box3 } from 'three';
 // import { SubdivisionModifier } from 'three/examples/jsm/modifiers/SubdivisionModifier';
 import { Utils } from '../core/utils.js';
 import { EVENT_REDRAW, EVENT_UPDATE_TEXTURES } from '../core/events.js';
@@ -71,13 +71,6 @@ export class Edge3D extends EventDispatcher {
         this.__showAll();
     }
 
-    remove() {
-        this.edge.removeEventListener(EVENT_UPDATE_TEXTURES, this.__updateTexturePackEvent);
-        this.edge.removeEventListener(EVENT_REDRAW, this.redrawevent);
-        this.controls.removeEventListener('change', this.visibilityevent);
-        this.removeFromScene();
-    }
-
     init() {
         this.edge.addEventListener(EVENT_UPDATE_TEXTURES, this.__updateTexturePackEvent);
         this.edge.addEventListener(EVENT_REDRAW, this.redrawevent);
@@ -96,7 +89,7 @@ export class Edge3D extends EventDispatcher {
     }
 
     removeFromScene() {
-        var scope = this;
+        let scope = this;
         scope.planes.forEach((plane) => {
             scope.scene.remove(plane);
         });
@@ -110,8 +103,15 @@ export class Edge3D extends EventDispatcher {
         scope.basePlanes = [];
     }
 
+    remove() {
+        this.edge.removeEventListener(EVENT_UPDATE_TEXTURES, this.__updateTexturePackEvent);
+        this.edge.removeEventListener(EVENT_REDRAW, this.redrawevent);
+        this.controls.removeEventListener('change', this.visibilityevent);
+        this.removeFromScene();
+    }
+
     addToScene() {
-        var scope = this;
+        let scope = this;
         this.planes.forEach((plane) => {
             scope.scene.add(plane);
         });
@@ -125,7 +125,7 @@ export class Edge3D extends EventDispatcher {
     }
 
     showAll() {
-        var scope = this;
+        let scope = this;
         scope.visible = true;
         scope.planes.forEach((plane) => {
             plane.material.transparent = !scope.visible;
@@ -142,7 +142,7 @@ export class Edge3D extends EventDispatcher {
     }
 
     switchWireframe(flag) {
-        var scope = this;
+        let scope = this;
         scope.visible = true;
         scope.planes.forEach((plane) => {
             plane.material.wireframe = flag;
@@ -150,23 +150,23 @@ export class Edge3D extends EventDispatcher {
     }
 
     updateVisibility() {
-        var scope = this;
+        let scope = this;
         // finds the normal from the specified edge
-        var start = scope.edge.interiorStart();
-        var end = scope.edge.interiorEnd();
-        var x = end.x - start.x;
-        var y = end.y - start.y;
+        let start = scope.edge.interiorStart();
+        let end = scope.edge.interiorEnd();
+        let x = end.x - start.x;
+        let y = end.y - start.y;
         // rotate 90 degrees CCW
-        var normal = new Vector3(-y, 0, x);
+        let normal = new Vector3(-y, 0, x);
         normal.normalize();
 
         // setup camera: scope.controls.object refers to the camera of the scene
-        var position = scope.controls.object.position.clone();
-        var focus = new Vector3((start.x + end.x) / 2.0, 0, (start.y + end.y) / 2.0);
-        var direction = position.sub(focus).normalize();
+        let position = scope.controls.object.position.clone();
+        let focus = new Vector3((start.x + end.x) / 2.0, 0, (start.y + end.y) / 2.0);
+        let direction = position.sub(focus).normalize();
 
         // find dot
-        var dot = normal.dot(direction);
+        let dot = normal.dot(direction);
         // update visible
         scope.visible = (dot >= 0);
         // show or hide planes
@@ -179,7 +179,7 @@ export class Edge3D extends EventDispatcher {
     }
 
     updateObjectVisibility() {
-        var scope = this;
+        let scope = this;
 
         function itemVisibility(item, visibility) {
             if (scope.front) {
@@ -210,8 +210,8 @@ export class Edge3D extends EventDispatcher {
     }
 
     updatePlanes() {
-        var extStartCorner = this.edge.getStart();
-        var extEndCorner = this.edge.getEnd();
+        let extStartCorner = this.edge.getStart();
+        let extEndCorner = this.edge.getEnd();
 
         if (extStartCorner == null || extEndCorner == null) {
             return;
@@ -222,7 +222,7 @@ export class Edge3D extends EventDispatcher {
         let exteriorStart = this.edge.exteriorStart();
         let exteriorEnd = this.edge.exteriorEnd();
 
-        var fillerMaterial = new MeshBasicMaterial({
+        let fillerMaterial = new MeshBasicMaterial({
             color: this.fillerColor,
             side: DoubleSide,
             // map: this.texture,
@@ -257,54 +257,61 @@ export class Edge3D extends EventDispatcher {
 
     // start, end have x and y attributes (i.e. corners)
     makeWall(start, end, transform, invTransform, material) {
-        var v1 = this.toVec3(start);
-        var v2 = this.toVec3(end);
-        var v3 = v2.clone();
-        var v4 = v1.clone();
-
+        let v1 = this.toVec3(start);
+        let v2 = this.toVec3(end);
+        let v3 = v2.clone();
+        let v4 = v1.clone();
         v3.y = this.edge.getEnd().elevation;
         v4.y = this.edge.getStart().elevation;
 
         //		v3.y = this.wall.getClosestCorner(end).elevation;
         //		v4.y = this.wall.getClosestCorner(start).elevation;
 
-        var points = [v1.clone(), v2.clone(), v3.clone(), v4.clone()];
+        let points = [v1.clone(), v2.clone(), v3.clone(), v4.clone()];
         points.forEach((p) => {
             p.applyMatrix4(transform);
         });
 
-        var spoints = [new Vector2(points[0].x, points[0].y), new Vector2(points[1].x, points[1].y), new Vector2(points[2].x, points[2].y), new Vector2(points[3].x, points[3].y)];
-        var shape = new Shape(spoints);
+        let spoints = [new Vector2(points[0].x, points[0].y), new Vector2(points[1].x, points[1].y), new Vector2(points[2].x, points[2].y), new Vector2(points[3].x, points[3].y)];
+        let shape = new Shape(spoints);
+        let wallInteriorMin = new Vector3(Math.min(v1.x, v2.x, v3.x, v4.x), Math.min(v1.y, v2.y, v3.y, v4.y), Math.min(v1.z, v2.z, v3.z, v4.z));
+        let wallInteriorMax = new Vector3(Math.max(v1.x, v2.x, v3.x, v4.x), Math.max(v1.y, v2.y, v3.y, v4.y), Math.max(v1.z, v2.z, v3.z, v4.z));
+        let wallInteriorBox = new Box3(wallInteriorMin, wallInteriorMax);
+
         // add holes for each wall item
-        // this.wall.items.forEach((item) => {
-        this.wall.inWallItems.forEach((item) => {
-            var pos = item.position.clone();
+        for (let i = 0; i < this.wall.inWallItems.length; i++) {
+            let item = this.wall.inWallItems[i];
+            let pos = item.position.clone();
+            let halfSize = item.halfSize.clone();
+            let min = halfSize.clone().negate();
+            let max = halfSize.clone();
+            let holePoints = null;
+            let itemBox = new Box3(min.clone().add(pos), max.clone().add(pos));
+
             pos.applyMatrix4(transform);
-            var halfSize = item.halfSize;
-            var min = halfSize.clone().multiplyScalar(-1);
-            var max = halfSize.clone();
             min.add(pos);
             max.add(pos);
-
-            var holePoints = [new Vector2(min.x, min.y), new Vector2(max.x, min.y), new Vector2(max.x, max.y), new Vector2(min.x, max.y)];
+            // if (wallInteriorBox.containsBox(itemBox)) {
+            holePoints = [new Vector2(min.x, min.y), new Vector2(max.x, min.y), new Vector2(max.x, max.y), new Vector2(min.x, max.y)];
             shape.holes.push(new Path(holePoints));
-        });
+            // }
+        }
 
-        var geometry = new ShapeGeometry(shape);
+        let geometry = new ShapeGeometry(shape);
         geometry.vertices.forEach((v) => {
             v.applyMatrix4(invTransform);
         });
 
         // make UVs
-        var totalDistance = this.edge.interiorDistance(); //Utils.distance(new Vector2(v1.x, v1.z), new Vector2(v2.x, v2.z));
+        let totalDistance = this.edge.interiorDistance(); //Utils.distance(new Vector2(v1.x, v1.z), new Vector2(v2.x, v2.z));
 
-        var height = this.wall.height;
+        let height = this.wall.height;
         geometry.faceVertexUvs[0] = [];
 
         geometry.faces.forEach((face) => {
-            var vertA = geometry.vertices[face.a];
-            var vertB = geometry.vertices[face.b];
-            var vertC = geometry.vertices[face.c];
+            let vertA = geometry.vertices[face.a];
+            let vertB = geometry.vertices[face.b];
+            let vertC = geometry.vertices[face.c];
             geometry.faceVertexUvs[0].push([vertexToUv(vertA), vertexToUv(vertB), vertexToUv(vertC)]);
         });
 
@@ -313,8 +320,8 @@ export class Edge3D extends EventDispatcher {
         geometry.computeVertexNormals();
 
         function vertexToUv(vertex) {
-            var x = Utils.distance(new Vector2(v1.x, v1.z), new Vector2(vertex.x, vertex.z)) / totalDistance;
-            var y = vertex.y / height;
+            let x = Utils.distance(new Vector2(v1.x, v1.z), new Vector2(vertex.x, vertex.z)) / totalDistance;
+            let y = vertex.y / height;
             return new Vector2(x, y);
         }
 
@@ -322,56 +329,51 @@ export class Edge3D extends EventDispatcher {
         // geometry = subdivider.modify(geometry);
 
 
-        var mesh = new Mesh(geometry, material);
+        let mesh = new Mesh(geometry, material);
         mesh.name = 'wall';
         return mesh;
     }
 
     buildSideFillter(p1, p2, height, color) {
-        var points = [this.toVec3(p1), this.toVec3(p2), this.toVec3(p2, height), this.toVec3(p1, height)];
+        let points = [this.toVec3(p1), this.toVec3(p2), this.toVec3(p2, height), this.toVec3(p1, height)];
 
-        var geometry = new Geometry();
+        let geometry = new Geometry();
         points.forEach((p) => {
             geometry.vertices.push(p);
         });
         geometry.faces.push(new Face3(0, 1, 2));
         geometry.faces.push(new Face3(0, 2, 3));
 
-        var fillerMaterial = new MeshBasicMaterial({ color: color, side: DoubleSide });
-        var filler = new Mesh(geometry, fillerMaterial);
+        let fillerMaterial = new MeshBasicMaterial({ color: color, side: DoubleSide });
+        let filler = new Mesh(geometry, fillerMaterial);
         return filler;
     }
 
     buildFillerVaryingHeights(edge, side, color) {
-        var a = this.toVec3(edge.exteriorStart(), this.edge.getStart().elevation);
-        var b = this.toVec3(edge.exteriorEnd(), this.edge.getEnd().elevation);
-        var c = this.toVec3(edge.interiorEnd(), this.edge.getEnd().elevation);
-        var d = this.toVec3(edge.interiorStart(), this.edge.getStart().elevation);
-
-        //		var a = this.toVec3(edge.exteriorStart(), this.wall.getClosestCorner(edge.exteriorStart()).elevation);
-        //		var b = this.toVec3(edge.exteriorEnd(), this.wall.getClosestCorner(edge.exteriorEnd()).elevation);
-        //		var c = this.toVec3(edge.interiorEnd(), this.wall.getClosestCorner(edge.interiorEnd()).elevation);
-        //		var d = this.toVec3(edge.interiorStart(), this.wall.getClosestCorner(edge.interiorStart()).elevation);
+        let a = this.toVec3(edge.exteriorStart(), this.edge.getStart().elevation);
+        let b = this.toVec3(edge.exteriorEnd(), this.edge.getEnd().elevation);
+        let c = this.toVec3(edge.interiorEnd(), this.edge.getEnd().elevation);
+        let d = this.toVec3(edge.interiorStart(), this.edge.getStart().elevation);
 
 
-        var fillerMaterial = new MeshBasicMaterial({ color: color, side: side });
+        let fillerMaterial = new MeshBasicMaterial({ color: color, side: side });
 
-        var geometry = new Geometry();
+        let geometry = new Geometry();
         geometry.vertices.push(a, b, c, d);
         geometry.faces.push(new Face3(0, 1, 2));
         geometry.faces.push(new Face3(0, 2, 3));
 
-        var filler = new Mesh(geometry, fillerMaterial);
+        let filler = new Mesh(geometry, fillerMaterial);
         return filler;
     }
 
     buildFillerUniformHeight(edge, height, side, color) {
-        var points = [this.toVec2(edge.exteriorStart()), this.toVec2(edge.exteriorEnd()), this.toVec2(edge.interiorEnd()), this.toVec2(edge.interiorStart())];
+        let points = [this.toVec2(edge.exteriorStart()), this.toVec2(edge.exteriorEnd()), this.toVec2(edge.interiorEnd()), this.toVec2(edge.interiorStart())];
 
-        var fillerMaterial = new MeshBasicMaterial({ color: color, side: side });
-        var shape = new Shape(points);
-        var geometry = new ShapeGeometry(shape);
-        var filler = new Mesh(geometry, fillerMaterial);
+        let fillerMaterial = new MeshBasicMaterial({ color: color, side: side });
+        let shape = new Shape(points);
+        let geometry = new ShapeGeometry(shape);
+        let filler = new Mesh(geometry, fillerMaterial);
         filler.rotation.set(Math.PI / 2, 0, 0);
         filler.position.y = height;
         return filler;

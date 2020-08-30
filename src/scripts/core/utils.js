@@ -1,4 +1,4 @@
-import { Vector2 } from 'three';
+import { Vector3, Vector2 } from 'three';
 import { Math as THREEMath } from 'three';
 import { checkIntersection } from 'line-intersect';
 
@@ -384,6 +384,42 @@ export class Utils {
         return Utils.removeIf(array, function(el) {
             return Utils.hasValue(subArray, el);
         });
+    }
+
+    static point2Dto3D(point2D, elevation = 0) {
+        return new Vector3(point2D.x, elevation, point2D.y);
+    }
+
+    static point3Dto2D(point2D) {
+        return new Vector2(point2D.x, point2D.z);
+    }
+
+    static barycentricFromCartesian(triangle, point) {
+        //Vector ab
+        let ab = triangle[1].clone().sub(triangle[0]);
+        let ac = triangle[2].clone().sub(triangle[0]);
+        let ap = point.clone().sub(triangle[0]);
+
+        let dotAB = ab.dot(ab);
+        let dotAC = ac.dot(ac);
+        let dotABAC = ac.dot(ab);
+        let dotAPAB = ap.dot(ab);
+        let dotAPAC = ap.dot(ac);
+
+        //Area of triangle ABC
+        let areaABAC = (dotAB * dotAC) - (dotABAC * dotABAC);
+        let v = ((dotAC * dotAPAB) - (dotABAC * dotAPAC)) / areaABAC;
+        let w = ((dotAB * dotAPAC) - (dotABAC * dotAPAB)) / areaABAC;
+        let u = 1.0 - v - w;
+        return new Vector3(u, v, w);
+    }
+
+    static cartesianFromBarycenter(triangle, uvw) {
+        let a = triangle[0].clone();
+        let b = triangle[1].clone();
+        let c = triangle[2].clone();
+        let cartesian = a.multiplyScalar(uvw.x).add(b.multiplyScalar(uvw.y).add(c.multiplyScalar(uvw.z)));
+        return cartesian;
     }
 }
 

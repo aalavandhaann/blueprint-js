@@ -1,5 +1,5 @@
 import { EventDispatcher, Vector3, Vector2 } from 'three';
-import { EVENT_UPDATED, EVENT_PARAMETRIC_GEOMETRY_UPATED } from '../core/events';
+import { EVENT_UPDATED, EVENT_PARAMETRIC_GEOMETRY_UPATED, EVENT_MOVED } from '../core/events';
 import { Utils } from '../core/utils';
 import { BASE_PARAMETRIC_TYPES, ParametricFactory } from '../parametrics/ParametricFactory';
 
@@ -55,6 +55,7 @@ export class Item extends EventDispatcher {
         this.__frontVisible = false;
         this.__backVisible = false;
         this.__visible = true;
+        this.__offlineUpdate = false;
 
         this.__isParametric = false;
         this.__baseParametricType = BASE_PARAMETRIC_TYPES.DOOR;
@@ -65,7 +66,9 @@ export class Item extends EventDispatcher {
         this.__currentFloor = null;
         this.__currentWallNormal = null;
         this.__currentWallSnapPoint = null;
+        this.__isWallDependent = false;
 
+        this.__followWallEvent = this.__followWall.bind(this);
         this.__parametricGeometryUpdateEvent = this.__parametricGeometryUpdate.bind(this);
 
         this.castShadow = false;
@@ -90,18 +93,6 @@ export class Item extends EventDispatcher {
             this.__halfSize = this.__size.clone().multiplyScalar(0.5);
         }
 
-        if (this.__metadata.wall) {
-            let walls = this.__model.floorplan.walls;
-            for (let i = 0; i < walls.length; i++) {
-                let wall = walls[i];
-                if (wall.id === this.__metadata.wall) {
-                    wall.addItem(this);
-                    this.__currentWall = wall;
-                    break;
-                }
-            }
-        }
-
         if (this.__metadata.isParametric) {
             this.__isParametric = this.__metadata.isParametric;
             switch (this.__metadata.baseParametricType) {
@@ -124,7 +115,22 @@ export class Item extends EventDispatcher {
             this.__parametricClass.addEventListener(EVENT_PARAMETRIC_GEOMETRY_UPATED, this.__parametricGeometryUpdateEvent);
 
         } else {
-            this.__metadata.isParametric = false;
+            this.__isParametric = false;
+        }
+
+        if (this.__metadata.wall) {
+            let walls = this.__model.floorplan.walls;
+            for (let i = 0; i < walls.length; i++) {
+                let wall = walls[i];
+                if (wall.id === this.__metadata.wall) {
+                    let wallEdge = (this.__metadata.wallSide == 'front') ? wall.frontEdge : wall.backEdge;
+                    let wallSurfacePoint = this.__metadata.wallSurfacePoint;
+                    this.__currentWallSnapPoint = new Vector3(wallSurfacePoint[0], wallSurfacePoint[1], wallSurfacePoint[2]);
+                    0
+                    this.__addToAWall(wall, wallEdge);
+                    break;
+                }
+            }
         }
     }
 
@@ -138,17 +144,38 @@ export class Item extends EventDispatcher {
         }
     }
 
-    __addToAWall(intersectingPlane, toWall) {
-        let wall = (toWall) ? toWall : intersectingPlane.wall;
-        if (wall === undefined || !wall || wall === 'undefined') {
+    __followWall(evt) {
+        if (this.__isWallDependent && this.__currentWall && !this.__offlineUpdate) {
+            this.__currentWallSnapPoint = Utils.cartesianFromBarycenter(this.__currentWallEdge.vertices, this.__barycentricLocation);
+            this.snapToWall(this.__currentWallSnapPoint, this.__currentWall, this.__currentWallEdge);
+        }
+    }
+
+    __addToAWall(toWall, toWallEdge) {
+        if (toWall === undefined || !toWall || toWall === 'undefined') {
             return;
         }
-        if (this.__currentWall && this.__currentWall !== wall) {
+        // if (this.__currentWall && this.__currentWall !== toWall) {
+        if (this.__currentWall && this.__currentWall !== toWall) {
+            this.__currentWall.removeEventListener(EVENT_MOVED, this.__followWallEvent);
             this.__currentWall.removeItem(this);
         }
-        wall.addItem(this);
-        this.__currentWall = wall;
+
+        let barycentricUVW = Utils.barycentricFromCartesian(toWallEdge.vertices, this.__currentWallSnapPoint);
+        this.__currentWall = toWall;
+        this.__currentWallEdge = toWallEdge;
+        this.__barycentricLocation = barycentricUVW.clone();
+
         this.__metadata.wall = this.__currentWall.id;
+        this.__metadata.wallSide = (toWallEdge.front) ? 'front' : 'back';
+        this.__metadata.wallSurfacePoint = [this.__currentWallSnapPoint.x, this.__currentWallSnapPoint.y, this.__currentWallSnapPoint.z];
+        this.__offlineUpdate = true; //Really important as it will lead to a lot of recursion
+        this.__currentWall.addItem(this); //This causes wall to dispatch event_moved triggering followWall, which will trigger this method again
+        this.__offlineUpdate = false; //Really important as it will lead to a lot of recursion
+        if (!this.__currentWall.hasEventListener(EVENT_MOVED, this.__followWallEvent)) {
+            this.__currentWall.addEventListener(EVENT_MOVED, this.__followWallEvent);
+        }
+        console.log('WALL SNAP POINT ::: ', this.__currentWallSnapPoint);
     }
 
     /** */
@@ -180,6 +207,9 @@ export class Item extends EventDispatcher {
     snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
         this.position = point;
     }
+
+    snapToWall(point, wall, wallEdge) {}
+
 
     get id() {
         return this.__id;
@@ -323,5 +353,13 @@ export class Item extends EventDispatcher {
 
     get intersectionPlanes() {
         return this.__customIntersectionPlanes;
+    }
+
+    get isWallDependent() {
+        return this.__isWallDependent;
+    }
+
+    get offlineUpdate() {
+        return this.__offlineUpdate;
     }
 }

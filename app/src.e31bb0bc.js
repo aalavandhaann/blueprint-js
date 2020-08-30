@@ -37368,6 +37368,45 @@ var Utils = /*#__PURE__*/function () {
         return Utils.hasValue(subArray, el);
       });
     }
+  }, {
+    key: "point2Dto3D",
+    value: function point2Dto3D(point2D) {
+      var elevation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+      return new _three.Vector3(point2D.x, elevation, point2D.y);
+    }
+  }, {
+    key: "point3Dto2D",
+    value: function point3Dto2D(point2D) {
+      return new _three.Vector2(point2D.x, point2D.z);
+    }
+  }, {
+    key: "barycentricFromCartesian",
+    value: function barycentricFromCartesian(triangle, point) {
+      //Vector ab
+      var ab = triangle[1].clone().sub(triangle[0]);
+      var ac = triangle[2].clone().sub(triangle[0]);
+      var ap = point.clone().sub(triangle[0]);
+      var dotAB = ab.dot(ab);
+      var dotAC = ac.dot(ac);
+      var dotABAC = ac.dot(ab);
+      var dotAPAB = ap.dot(ab);
+      var dotAPAC = ap.dot(ac); //Area of triangle ABC
+
+      var areaABAC = dotAB * dotAC - dotABAC * dotABAC;
+      var v = (dotAC * dotAPAB - dotABAC * dotAPAC) / areaABAC;
+      var w = (dotAB * dotAPAC - dotABAC * dotAPAB) / areaABAC;
+      var u = 1.0 - v - w;
+      return new _three.Vector3(u, v, w);
+    }
+  }, {
+    key: "cartesianFromBarycenter",
+    value: function cartesianFromBarycenter(triangle, uvw) {
+      var a = triangle[0].clone();
+      var b = triangle[1].clone();
+      var c = triangle[2].clone();
+      var cartesian = a.multiplyScalar(uvw.x).add(b.multiplyScalar(uvw.y).add(c.multiplyScalar(uvw.z)));
+      return cartesian;
+    }
   }]);
 
   return Utils;
@@ -37862,8 +37901,13 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
      */
 
     _this.front = front || false;
+    _this.__vertices = null;
+    _this.__normal = null; //new Vector3(0, 0, 0);
+
     _this.offset = wall.thickness / 2.0;
     _this.height = wall.height;
+    _this.__wallMovedEvent = _this.__wallMoved.bind(_assertThisInitialized(_this));
+    _this.__wallUpdatedEvent = _this.__wallUpdated.bind(_assertThisInitialized(_this));
 
     if (_this.front) {
       _this.wall.frontEdge = _assertThisInitialized(_this);
@@ -37871,18 +37915,28 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
       _this.wall.backEdge = _assertThisInitialized(_this);
     }
 
-    var scope = _assertThisInitialized(_this);
+    _this.wall.addEventListener(_events.EVENT_MOVED, _this.__wallMovedEvent);
 
-    _this.wall.addEventListener(_events.EVENT_MOVED, function () {
+    _this.wall.addEventListener(_events.EVENT_UPDATED, _this.__wallUpdatedEvent);
+
+    return _this;
+  }
+
+  _createClass(HalfEdge, [{
+    key: "__wallMoved",
+    value: function __wallMoved(evt) {
+      var scope = this;
       scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
       scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
       scope.dispatchEvent({
         type: _events.EVENT_REDRAW,
         item: scope
       });
-    });
-
-    _this.wall.addEventListener(_events.EVENT_UPDATED, function () {
+    }
+  }, {
+    key: "__wallUpdated",
+    value: function __wallUpdated(evt) {
+      var scope = this;
       scope.offset = scope.wall.thickness * 0.5;
       scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
       scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
@@ -37890,17 +37944,13 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
         type: _events.EVENT_REDRAW,
         item: scope
       });
-    });
+    }
+    /**
+     * Two separate textures are used for the walls. Based on which side of the wall this {HalfEdge} refers the texture is returned
+     * @return {Object} front/back Two separate textures are used for the walls. Based on which side of the wall this {@link HalfEdge} refers the texture is returned
+     */
 
-    return _this;
-  }
-  /**
-   * Two separate textures are used for the walls. Based on which side of the wall this {HalfEdge} refers the texture is returned
-   * @return {Object} front/back Two separate textures are used for the walls. Based on which side of the wall this {@link HalfEdge} refers the texture is returned
-   */
-
-
-  _createClass(HalfEdge, [{
+  }, {
     key: "getTexture",
     value: function getTexture() {
       if (this.front) {
@@ -37996,11 +38046,17 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
       var v1 = this.transformCorner(this.interiorStart());
       var v2 = this.transformCorner(this.interiorEnd());
       var v3 = v2.clone();
-      var v4 = v1.clone(); // v3.y = this.wall.height;
+      var v4 = v1.clone();
+      var ab = null;
+      var ac = null; // v3.y = this.wall.height;
       // v4.y = this.wall.height;
 
       v3.y = this.wall.startElevation;
       v4.y = this.wall.endElevation;
+      ab = v2.clone().sub(v1);
+      ac = v3.clone().sub(v1);
+      this.__vertices = [v1, v2, v3, v4];
+      this.__normal = ab.cross(ac).normalize();
       geometry.vertices = [v1, v2, v3, v4];
       geometry.faces.push(new _three.Face3(0, 1, 2));
       geometry.faces.push(new _three.Face3(0, 2, 3));
@@ -38355,6 +38411,16 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
       }; //new Vector2(vx * scalar, vy * scalar);
 
       return halfAngleVector;
+    }
+  }, {
+    key: "vertices",
+    get: function get() {
+      return this.__vertices;
+    }
+  }, {
+    key: "normal",
+    get: function get() {
+      return this.__normal;
     }
   }]);
 
@@ -43174,6 +43240,7 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
     _this.__frontVisible = false;
     _this.__backVisible = false;
     _this.__visible = true;
+    _this.__offlineUpdate = false;
     _this.__isParametric = false;
     _this.__baseParametricType = _ParametricFactory.BASE_PARAMETRIC_TYPES.DOOR;
     _this.__subParametricType = 1;
@@ -43182,6 +43249,8 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
     _this.__currentFloor = null;
     _this.__currentWallNormal = null;
     _this.__currentWallSnapPoint = null;
+    _this.__isWallDependent = false;
+    _this.__followWallEvent = _this.__followWall.bind(_assertThisInitialized(_this));
     _this.__parametricGeometryUpdateEvent = _this.__parametricGeometryUpdate.bind(_assertThisInitialized(_this));
     _this.castShadow = false;
     _this.receiveShadow = false;
@@ -43214,20 +43283,6 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
         this.__halfSize = this.__size.clone().multiplyScalar(0.5);
       }
 
-      if (this.__metadata.wall) {
-        var walls = this.__model.floorplan.walls;
-
-        for (var i = 0; i < walls.length; i++) {
-          var wall = walls[i];
-
-          if (wall.id === this.__metadata.wall) {
-            wall.addItem(this);
-            this.__currentWall = wall;
-            break;
-          }
-        }
-      }
-
       if (this.__metadata.isParametric) {
         this.__isParametric = this.__metadata.isParametric;
 
@@ -43257,7 +43312,26 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
 
         this.__parametricClass.addEventListener(_events.EVENT_PARAMETRIC_GEOMETRY_UPATED, this.__parametricGeometryUpdateEvent);
       } else {
-        this.__metadata.isParametric = false;
+        this.__isParametric = false;
+      }
+
+      if (this.__metadata.wall) {
+        var walls = this.__model.floorplan.walls;
+
+        for (var i = 0; i < walls.length; i++) {
+          var wall = walls[i];
+
+          if (wall.id === this.__metadata.wall) {
+            var wallEdge = this.__metadata.wallSide == 'front' ? wall.frontEdge : wall.backEdge;
+            var wallSurfacePoint = this.__metadata.wallSurfacePoint;
+            this.__currentWallSnapPoint = new _three.Vector3(wallSurfacePoint[0], wallSurfacePoint[1], wallSurfacePoint[2]);
+            0;
+
+            this.__addToAWall(wall, wallEdge);
+
+            break;
+          }
+        }
       }
     }
   }, {
@@ -43275,21 +43349,47 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
       }
     }
   }, {
-    key: "__addToAWall",
-    value: function __addToAWall(intersectingPlane, toWall) {
-      var wall = toWall ? toWall : intersectingPlane.wall;
-
-      if (wall === undefined || !wall || wall === 'undefined') {
-        return;
+    key: "__followWall",
+    value: function __followWall(evt) {
+      if (this.__isWallDependent && this.__currentWall && !this.__offlineUpdate) {
+        this.__currentWallSnapPoint = _utils.Utils.cartesianFromBarycenter(this.__currentWallEdge.vertices, this.__barycentricLocation);
+        this.snapToWall(this.__currentWallSnapPoint, this.__currentWall, this.__currentWallEdge);
       }
+    }
+  }, {
+    key: "__addToAWall",
+    value: function __addToAWall(toWall, toWallEdge) {
+      if (toWall === undefined || !toWall || toWall === 'undefined') {
+        return;
+      } // if (this.__currentWall && this.__currentWall !== toWall) {
 
-      if (this.__currentWall && this.__currentWall !== wall) {
+
+      if (this.__currentWall && this.__currentWall !== toWall) {
+        this.__currentWall.removeEventListener(_events.EVENT_MOVED, this.__followWallEvent);
+
         this.__currentWall.removeItem(this);
       }
 
-      wall.addItem(this);
-      this.__currentWall = wall;
+      var barycentricUVW = _utils.Utils.barycentricFromCartesian(toWallEdge.vertices, this.__currentWallSnapPoint);
+
+      this.__currentWall = toWall;
+      this.__currentWallEdge = toWallEdge;
+      this.__barycentricLocation = barycentricUVW.clone();
       this.__metadata.wall = this.__currentWall.id;
+      this.__metadata.wallSide = toWallEdge.front ? 'front' : 'back';
+      this.__metadata.wallSurfacePoint = [this.__currentWallSnapPoint.x, this.__currentWallSnapPoint.y, this.__currentWallSnapPoint.z];
+      this.__offlineUpdate = true; //Really important as it will lead to a lot of recursion
+
+      this.__currentWall.addItem(this); //This causes wall to dispatch event_moved triggering followWall, which will trigger this method again
+
+
+      this.__offlineUpdate = false; //Really important as it will lead to a lot of recursion
+
+      if (!this.__currentWall.hasEventListener(_events.EVENT_MOVED, this.__followWallEvent)) {
+        this.__currentWall.addEventListener(_events.EVENT_MOVED, this.__followWallEvent);
+      }
+
+      console.log('WALL SNAP POINT ::: ', this.__currentWallSnapPoint);
     }
     /** */
 
@@ -43330,6 +43430,9 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
     value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
       this.position = point;
     }
+  }, {
+    key: "snapToWall",
+    value: function snapToWall(point, wall, wallEdge) {}
   }, {
     key: "id",
     get: function get() {
@@ -43504,6 +43607,16 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
     get: function get() {
       return this.__customIntersectionPlanes;
     }
+  }, {
+    key: "isWallDependent",
+    get: function get() {
+      return this.__isWallDependent;
+    }
+  }, {
+    key: "offlineUpdate",
+    get: function get() {
+      return this.__offlineUpdate;
+    }
   }]);
 
   return Item;
@@ -43564,6 +43677,7 @@ var WallItem = /*#__PURE__*/function (_Item) {
     _classCallCheck(this, WallItem);
 
     _this = _super.call(this, model, metadata, id);
+    _this.__isWallDependent = true;
     _this.__boundToFloor = false;
     _this.__allowRotate = false;
     _this.__freePosition = false;
@@ -43574,24 +43688,44 @@ var WallItem = /*#__PURE__*/function (_Item) {
   _createClass(WallItem, [{
     key: "snapToPoint",
     value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
+      this.snapToWall(point, intersectingPlane.wall, intersectingPlane.edge); // let normal2d = new Vector2(normal.x, normal.z);
+      // let angle = Utils.angle(UP_VECTOR, normal2d);
+      // let rotatedSize = this.halfSize.clone();
+      // rotatedSize.applyAxisAngle(UP_VECTOR, angle);
+      // // The below needs to done so the size is always positive
+      // // The rotation of size might lead to negative values based on the angle of rotation
+      // rotatedSize.x = Math.abs(rotatedSize.x);
+      // rotatedSize.y = Math.abs(rotatedSize.y);
+      // rotatedSize.z = Math.abs(rotatedSize.z);
+      // this.__currentWallNormal = normal.clone();
+      // this.__currentWallSnapPoint = point.clone();
+      // point = point.clone().add(normal.clone().multiplyScalar(this.halfSize.z + (intersectingPlane.edge.wall.thickness * 0.25)));
+      // this.position = point;
+      // this.rotation = new Vector3(0, angle, 0);
+      // this.__addToAWall(intersectingPlane, toWall, toFloor, toRoof);
+    }
+  }, {
+    key: "snapToWall",
+    value: function snapToWall(point, wall, wallEdge) {
+      _get(_getPrototypeOf(WallItem.prototype), "snapToWall", this).call(this, point, wall, wallEdge);
+
+      var normal = wallEdge.normal;
       var normal2d = new _three.Vector2(normal.x, normal.z);
 
       var angle = _utils.Utils.angle(_item.UP_VECTOR, normal2d);
 
-      var rotatedSize = this.halfSize.clone();
-      rotatedSize.applyAxisAngle(_item.UP_VECTOR, angle); // The below needs to done so the size is always positive
-      // The rotation of size might lead to negative values based on the angle of rotation
-
-      rotatedSize.x = Math.abs(rotatedSize.x);
-      rotatedSize.y = Math.abs(rotatedSize.y);
-      rotatedSize.z = Math.abs(rotatedSize.z);
       this.__currentWallNormal = normal.clone();
       this.__currentWallSnapPoint = point.clone();
-      point = point.clone().add(normal.clone().multiplyScalar(this.halfSize.z + intersectingPlane.edge.wall.thickness * 0.25));
+      point = point.clone().add(normal.clone().multiplyScalar(this.halfSize.z + wall.thickness * 0.25));
       this.position = point;
       this.rotation = new _three.Vector3(0, angle, 0);
 
-      this.__addToAWall(intersectingPlane, toWall, toFloor, toRoof);
+      this.__addToAWall(wall, wallEdge);
+    }
+  }, {
+    key: "__followWall",
+    value: function __followWall(evt) {
+      _get(_getPrototypeOf(WallItem.prototype), "__followWall", this).call(this, evt);
     }
   }, {
     key: "__parametricGeometryUpdate",
@@ -43672,14 +43806,25 @@ var InWallItem = /*#__PURE__*/function (_WallItem) {
   _createClass(InWallItem, [{
     key: "snapToPoint",
     value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
+      this.snapToWall(point, intersectingPlane.wall, intersectingPlane.edge); // let normal2d = new Vector2(normal.x, normal.z);
+      // let angle = Utils.angle(UP_VECTOR, normal2d);
+      // this.rotation = new Vector3(0, angle, 0);
+      // this.position = point;
+      // this.__addToAWall(intersectingPlane, toWall);
+    }
+  }, {
+    key: "snapToWall",
+    value: function snapToWall(point, wall, wallEdge) {
+      var normal = wallEdge.normal;
       var normal2d = new _three.Vector2(normal.x, normal.z);
 
       var angle = _utils.Utils.angle(_item.UP_VECTOR, normal2d);
 
       this.rotation = new _three.Vector3(0, angle, 0);
       this.position = point;
+      this.__currentWallSnapPoint = point.clone();
 
-      this.__addToAWall(intersectingPlane, toWall);
+      this.__addToAWall(wall, wallEdge);
     }
   }]);
 
@@ -43748,6 +43893,18 @@ var InWallFloorItem = /*#__PURE__*/function (_InWallItem) {
   _createClass(InWallFloorItem, [{
     key: "snapToPoint",
     value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
+      this.snapToWall(point, intersectingPlane.wall, intersectingPlane.edge); // let normal2d = new Vector2(normal.x, normal.z);
+      // let angle = Utils.angle(UP_VECTOR, normal2d);
+      // this.rotation = new Vector3(0, angle, 0);
+      // point.y = this.halfSize.y + 5;
+      // this.position = point;
+      // this.__currentWallNormal = normal.clone();
+      // this.__addToAWall(intersectingPlane, toWall);
+    }
+  }, {
+    key: "snapToWall",
+    value: function snapToWall(point, wall, wallEdge) {
+      var normal = wallEdge.normal;
       var normal2d = new _three.Vector2(normal.x, normal.z);
 
       var angle = _utils.Utils.angle(_item.UP_VECTOR, normal2d);
@@ -43755,9 +43912,10 @@ var InWallFloorItem = /*#__PURE__*/function (_InWallItem) {
       this.rotation = new _three.Vector3(0, angle, 0);
       point.y = this.halfSize.y + 5;
       this.position = point;
+      this.__currentWallSnapPoint = point.clone();
       this.__currentWallNormal = normal.clone();
 
-      this.__addToAWall(intersectingPlane, toWall);
+      this.__addToAWall(wall, wallEdge);
     }
   }, {
     key: "__parametricGeometryUpdate",
@@ -43842,25 +44000,39 @@ var WallFloorItem = /*#__PURE__*/function (_WallItem) {
   _createClass(WallFloorItem, [{
     key: "snapToPoint",
     value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
+      this.snapToWall(point, intersectingPlane.wall, intersectingPlane.edge); // let normal2d = new Vector2(normal.x, normal.z);
+      // let angle = Utils.angle(UP_VECTOR, normal2d);
+      // let rotatedSize = this.halfSize.clone();
+      // rotatedSize.applyAxisAngle(UP_VECTOR, angle);
+      // // The below needs to done so the size is always positive
+      // // The rotation of size might lead to negative values based on the angle of rotation
+      // rotatedSize.x = Math.abs(rotatedSize.x);
+      // rotatedSize.y = Math.abs(rotatedSize.y);
+      // rotatedSize.z = Math.abs(rotatedSize.z);
+      // this.__currentWallNormal = normal.clone();
+      // this.__currentWallSnapPoint = point.clone();
+      // point = point.clone().add(normal.clone().multiplyScalar(this.halfSize.z + (intersectingPlane.edge.wall.thickness * 0.25)));
+      // point.y = this.halfSize.y + 5;
+      // this.rotation = new Vector3(0, angle, 0);
+      // this.position = point;
+      // this.__addToAWall(intersectingPlane, toWall);
+    }
+  }, {
+    key: "snapToWall",
+    value: function snapToWall(point, wall, wallEdge) {
+      var normal = wallEdge.normal;
       var normal2d = new _three.Vector2(normal.x, normal.z);
 
       var angle = _utils.Utils.angle(_item.UP_VECTOR, normal2d);
 
-      var rotatedSize = this.halfSize.clone();
-      rotatedSize.applyAxisAngle(_item.UP_VECTOR, angle); // The below needs to done so the size is always positive
-      // The rotation of size might lead to negative values based on the angle of rotation
-
-      rotatedSize.x = Math.abs(rotatedSize.x);
-      rotatedSize.y = Math.abs(rotatedSize.y);
-      rotatedSize.z = Math.abs(rotatedSize.z);
       this.__currentWallNormal = normal.clone();
       this.__currentWallSnapPoint = point.clone();
-      point = point.clone().add(normal.clone().multiplyScalar(this.halfSize.z + intersectingPlane.edge.wall.thickness * 0.25));
+      point = point.clone().add(normal.clone().multiplyScalar(this.halfSize.z + wall.thickness * 0.25));
       point.y = this.halfSize.y + 5;
       this.rotation = new _three.Vector3(0, angle, 0);
       this.position = point;
 
-      this.__addToAWall(intersectingPlane, toWall);
+      this.__addToAWall(wall, wallEdge);
     }
   }, {
     key: "__parametricGeometryUpdate",
@@ -44086,6 +44258,11 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
     key: "__cornerMoved",
     value: function __cornerMoved() {
       this.updateControlVectors();
+      this.dispatchEvent({
+        type: _events.EVENT_MOVED,
+        item: this,
+        position: null
+      });
     }
   }, {
     key: "__cornerAttributesChanged",
@@ -44109,13 +44286,7 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
     value: function addItem(item) {
       if (item instanceof _in_wall_item.InWallItem || item instanceof _in_wall_floor_item.InWallFloorItem) {
         if (!_utils.Utils.hasValue(this.__inWallItems, item)) {
-          var vect = this.end.location.clone().sub(this.start.location);
-          var itemVect = item.position2d.clone().sub(this.start.location);
-          var ratio = itemVect.length() / vect.length();
-
           this.__inWallItems.push(item);
-
-          this.__inWallItemsSnappedRatios.push(ratio);
         }
 
         this.dispatchEvent({
@@ -44127,15 +44298,7 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
 
       if (item instanceof _wall_item.WallItem || item instanceof _wall_floor_item.WallFloorItem) {
         if (!_utils.Utils.hasValue(this.__onWallItems, item)) {
-          var _vect = this.end.location.clone().sub(this.start.location);
-
-          var _itemVect = item.position2d.clone().sub(this.start.location);
-
-          var _ratio = _itemVect.length() / _vect.length();
-
           this.__onWallItems.push(item);
-
-          this.__onWallItemsSnappedRatios.push(_ratio);
         }
       }
     }
@@ -44144,11 +44307,7 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
     value: function removeItem(item) {
       if (item instanceof _in_wall_item.InWallItem || item instanceof _in_wall_floor_item.InWallFloorItem) {
         if (_utils.Utils.hasValue(this.__inWallItems, item)) {
-          var i = _utils.Utils.removeValue(this.__inWallItems, item);
-
-          var snappedPositionRatio = this.__inWallItemsSnappedRatios[i];
-
-          _utils.Utils.removeValue(this.__inWallItemsSnappedRatios, snappedPositionRatio);
+          _utils.Utils.removeValue(this.__inWallItems, item);
 
           this.dispatchEvent({
             type: _events.EVENT_MOVED,
@@ -44160,11 +44319,7 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
 
       if (item instanceof _wall_item.WallItem || item instanceof _wall_floor_item.WallFloorItem) {
         if (_utils.Utils.hasValue(this.__onWallItems, item)) {
-          var _i = _utils.Utils.removeValue(this.__onWallItems, item);
-
-          var _snappedPositionRatio = this.__onWallItemsSnappedRatios[_i];
-
-          _utils.Utils.removeValue(this.__onWallItemsSnappedRatios, _snappedPositionRatio);
+          _utils.Utils.removeValue(this.__onWallItems, item);
         }
       }
     }
@@ -45490,6 +45645,7 @@ var CornerGroup = /*#__PURE__*/function () {
     this.__currentCenter = new _three.Vector2();
     this.__deltaTranslation = new _three.Vector2();
     this.__radians = 0.0;
+    this.__originalCornerPositions = null;
     this.__tl = null;
     this.__br = null;
     this.__tr = null;
@@ -45516,6 +45672,7 @@ var CornerGroup = /*#__PURE__*/function () {
   }, {
     key: "__update",
     value: function __update() {
+      this.__originalCornerPositions = [];
       var minPoint = new _three.Vector2(Number.MAX_VALUE, Number.MAX_VALUE);
       var maxPoint = new _three.Vector2(Number.MIN_VALUE, Number.MIN_VALUE);
 
@@ -45525,6 +45682,8 @@ var CornerGroup = /*#__PURE__*/function () {
         minPoint.y = Math.min(minPoint.y, corner.location.y);
         maxPoint.x = Math.max(maxPoint.x, corner.location.x);
         maxPoint.y = Math.max(maxPoint.y, corner.location.y);
+
+        this.__originalCornerPositions.push(corner.location.clone());
       }
 
       this.__size = maxPoint.clone().sub(minPoint);
@@ -45538,44 +45697,30 @@ var CornerGroup = /*#__PURE__*/function () {
     }
   }, {
     key: "__applyTransformations",
-    value: function __applyTransformations(absolutePosition, absoluteRadians) {
-      var resetTranslation = new _three.Matrix4().makeTranslation(-this.__deltaTranslation.x, -this.__deltaTranslation.y, 0);
-      var resetRotation = new _three.Matrix4().makeRotationAxis(new _three.Vector3(0, 0, 1), -this.__radians);
-      var delta = absolutePosition.clone().sub(this.__center);
-      var translation = new _three.Matrix4().makeTranslation(delta.x, delta.y, 0);
-      var TReset = new _three.Matrix4().makeTranslation(-this.__currentCenter.x, -this.__currentCenter.y, 0); //Translate to -origin of scaling
+    value: function __applyTransformations(scale, radians, origin) {
+      var translation = origin.clone().sub(this.__center);
+      var translationMatrix = new _three.Matrix4().makeTranslation(translation.x, translation.y, 0);
+      var T = new _three.Matrix4().makeTranslation(-origin.x, -origin.y, 0); //Translate to -origin of scaling
 
-      var TInvReset = new _three.Matrix4().makeTranslation(this.__currentCenter.x, this.__currentCenter.y, 0); //Translate to origin of scaling (inverse)
+      var TInv = new _three.Matrix4().makeTranslation(origin.x, origin.y, 0); //Translate to origin of scaling (inverse)
 
-      resetRotation = TInvReset.multiply(resetRotation).multiply(TReset);
-      var T = new _three.Matrix4().makeTranslation(-absolutePosition.x, -absolutePosition.y, 0); //Translate to -origin of scaling
-
-      var TInv = new _three.Matrix4().makeTranslation(absolutePosition.x, absolutePosition.y, 0); //Translate to origin of scaling (inverse)
-
-      var rotation = new _three.Matrix4().makeRotationAxis(new _three.Vector3(0, 0, 1), absoluteRadians); //Calculate the current rotation matrix
-
-      rotation = TInv.multiply(rotation).multiply(T);
+      var rotationMatrix = TInv.clone().multiply(new _three.Matrix4().makeRotationAxis(new _three.Vector3(0, 0, 1), radians)).multiply(T);
+      var scaleMatrix = TInv.clone().multiply(new _three.Matrix4().makeScale(scale.x, scale.y, 1)).multiply(T);
+      var transformMatrix = rotationMatrix.multiply(scaleMatrix).multiply(translationMatrix);
 
       for (var i = 0; i < this.__corners.length; i++) {
-        var location = this.__corners[i].location;
-        var location3 = new _three.Vector3(location.x, location.y, 0);
-        location3.applyMatrix4(resetTranslation); // location3.applyMatrix4(resetRotation);
-        // location3 = location3.applyMatrix4(rotation);
+        var location = this.__originalCornerPositions[i].clone();
 
-        location3 = location3.applyMatrix4(translation);
+        var location3 = new _three.Vector3(location.x, location.y, 0);
+        location3.applyMatrix4(transformMatrix);
 
         this.__corners[i].move(location3.x, location3.y);
       }
-
-      this.__deltaTranslation = delta;
-      this.__radians = absoluteRadians;
-      this.__currentCenter = absolutePosition;
     }
   }, {
     key: "applyTransformations",
     value: function applyTransformations(scale, radians, origin) {
-      // this.__matrix = matrix4;
-      this.__applyTransformations(origin, radians);
+      this.__applyTransformations(scale, radians, origin);
     }
   }, {
     key: "contains",
@@ -50574,14 +50719,6 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
       this.__showAll();
     }
   }, {
-    key: "remove",
-    value: function remove() {
-      this.edge.removeEventListener(_events.EVENT_UPDATE_TEXTURES, this.__updateTexturePackEvent);
-      this.edge.removeEventListener(_events.EVENT_REDRAW, this.redrawevent);
-      this.controls.removeEventListener('change', this.visibilityevent);
-      this.removeFromScene();
-    }
-  }, {
     key: "init",
     value: function init() {
       this.edge.addEventListener(_events.EVENT_UPDATE_TEXTURES, this.__updateTexturePackEvent);
@@ -50614,6 +50751,14 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
       });
       scope.planes = [];
       scope.basePlanes = [];
+    }
+  }, {
+    key: "remove",
+    value: function remove() {
+      this.edge.removeEventListener(_events.EVENT_UPDATE_TEXTURES, this.__updateTexturePackEvent);
+      this.edge.removeEventListener(_events.EVENT_REDRAW, this.redrawevent);
+      this.controls.removeEventListener('change', this.visibilityevent);
+      this.removeFromScene();
     }
   }, {
     key: "addToScene",
@@ -50780,20 +50925,27 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
         p.applyMatrix4(transform);
       });
       var spoints = [new _three.Vector2(points[0].x, points[0].y), new _three.Vector2(points[1].x, points[1].y), new _three.Vector2(points[2].x, points[2].y), new _three.Vector2(points[3].x, points[3].y)];
-      var shape = new _three.Shape(spoints); // add holes for each wall item
-      // this.wall.items.forEach((item) => {
+      var shape = new _three.Shape(spoints);
+      var wallInteriorMin = new _three.Vector3(Math.min(v1.x, v2.x, v3.x, v4.x), Math.min(v1.y, v2.y, v3.y, v4.y), Math.min(v1.z, v2.z, v3.z, v4.z));
+      var wallInteriorMax = new _three.Vector3(Math.max(v1.x, v2.x, v3.x, v4.x), Math.max(v1.y, v2.y, v3.y, v4.y), Math.max(v1.z, v2.z, v3.z, v4.z));
+      var wallInteriorBox = new _three.Box3(wallInteriorMin, wallInteriorMax); // add holes for each wall item
 
-      this.wall.inWallItems.forEach(function (item) {
+      for (var i = 0; i < this.wall.inWallItems.length; i++) {
+        var item = this.wall.inWallItems[i];
         var pos = item.position.clone();
-        pos.applyMatrix4(transform);
-        var halfSize = item.halfSize;
-        var min = halfSize.clone().multiplyScalar(-1);
+        var halfSize = item.halfSize.clone();
+        var min = halfSize.clone().negate();
         var max = halfSize.clone();
+        var holePoints = null;
+        var itemBox = new _three.Box3(min.clone().add(pos), max.clone().add(pos));
+        pos.applyMatrix4(transform);
         min.add(pos);
-        max.add(pos);
-        var holePoints = [new _three.Vector2(min.x, min.y), new _three.Vector2(max.x, min.y), new _three.Vector2(max.x, max.y), new _three.Vector2(min.x, max.y)];
-        shape.holes.push(new _three.Path(holePoints));
-      });
+        max.add(pos); // if (wallInteriorBox.containsBox(itemBox)) {
+
+        holePoints = [new _three.Vector2(min.x, min.y), new _three.Vector2(max.x, min.y), new _three.Vector2(max.x, max.y), new _three.Vector2(min.x, max.y)];
+        shape.holes.push(new _three.Path(holePoints)); // }
+      }
+
       var geometry = new _three.ShapeGeometry(shape);
       geometry.vertices.forEach(function (v) {
         v.applyMatrix4(invTransform);
@@ -50848,11 +51000,7 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
       var a = this.toVec3(edge.exteriorStart(), this.edge.getStart().elevation);
       var b = this.toVec3(edge.exteriorEnd(), this.edge.getEnd().elevation);
       var c = this.toVec3(edge.interiorEnd(), this.edge.getEnd().elevation);
-      var d = this.toVec3(edge.interiorStart(), this.edge.getStart().elevation); //		var a = this.toVec3(edge.exteriorStart(), this.wall.getClosestCorner(edge.exteriorStart()).elevation);
-      //		var b = this.toVec3(edge.exteriorEnd(), this.wall.getClosestCorner(edge.exteriorEnd()).elevation);
-      //		var c = this.toVec3(edge.interiorEnd(), this.wall.getClosestCorner(edge.interiorEnd()).elevation);
-      //		var d = this.toVec3(edge.interiorStart(), this.wall.getClosestCorner(edge.interiorStart()).elevation);
-
+      var d = this.toVec3(edge.interiorStart(), this.edge.getStart().elevation);
       var fillerMaterial = new _three.MeshBasicMaterial({
         color: color,
         side: side
@@ -51001,13 +51149,15 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
     _this.__updateReflectionsEvent = _this.__updateReflections.bind(_assertThisInitialized(_this));
     _this.__floorMaterial3D = null;
 
-    _this.init();
+    _this.room.addEventListener(_events.EVENT_ROOM_ATTRIBUTES_CHANGED, _this.changedevent);
 
     _this.room.addEventListener(_events.EVENT_CHANGED, _this.changedevent);
 
     _this.room.addEventListener(_events.EVENT_UPDATE_TEXTURES, _this.__materialChangedEvent);
 
     _this.controls.addEventListener('change', _this.__updateReflectionsEvent);
+
+    _this.init();
 
     return _this;
   }
@@ -59301,7 +59451,8 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
 
       function __tinyUpdate() {
         scope.parent.needsUpdate = true;
-      }
+      } // if (!this.__itemModel.offlineUpdate) {
+
 
       if (evt.property === 'position') {
         _gsap.default.to(this.position, {
@@ -59352,7 +59503,16 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
           duration: duration,
           z: this.__itemModel.rotation.z
         });
-      }
+      } // } else {
+      //     if (evt.property === 'position') {
+      //         this.position.set(this.__itemModel.position.x, this.__itemModel.position.y, this.__itemModel.position.z);
+      //     }
+      //     if (evt.property === 'rotation') {
+      //         this.__loadedItem.rotation.set(this.__itemModel.rotation.x, this.__itemModel.rotation.y, this.__itemModel.rotation.z);
+      //         this.__boxhelper.rotation.set(this.__itemModel.rotation.x, this.__itemModel.rotation.y, this.__itemModel.rotation.z);
+      //     }
+      // }
+
 
       if (evt.property === 'visible') {
         this.visible = this.__itemModel.visible;
@@ -59444,6 +59604,11 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
       this.__itemModel.snapToPoint(coordinate3d, normal, intersectingPlane);
     }
   }, {
+    key: "snapToWall",
+    value: function snapToWall(coordinate3d, wall, wallEdge) {
+      this.__itemModel.snapToWall(coordinate3d, wall, wallEdge);
+    }
+  }, {
     key: "selected",
     get: function get() {
       return this.__selected;
@@ -59474,6 +59639,29 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
 
   return Physical3DItem;
 }(_three.Mesh);
+/**
+export class Physical3DItem {
+    constructor(itemModel) {
+        console.log(this);
+        return new Proxy(new Physical3DItemNonProxy(itemModel), {
+            get(target, name, receiver) {
+                console.log('USING REFLECT.GET ', target);
+                if (!Reflect.has(target, name) && !Reflect.has(target.itemModel, name)) {
+                    return undefined;
+                }
+                if (Reflect.has(target, name)) {
+                    return Reflect.get(target, name);
+                }
+                if (Reflect.has(target.itemModel, name)) {
+                    return Reflect.get(target.itemModel, name);
+                }
+                return undefined;
+            }
+        });
+    }
+}
+ */
+
 
 exports.Physical3DItem = Physical3DItem;
 },{"three":"../node_modules/three/build/three.module.js","three/examples/jsm/loaders/GLTFLoader":"../node_modules/three/examples/jsm/loaders/GLTFLoader.js","../core/events":"scripts/core/events.js","gsap":"../node_modules/gsap/index.js"}],"DeviceInfo.js":[function(require,module,exports) {
@@ -59717,8 +59905,14 @@ var DragRoomItemsControl3D = /*#__PURE__*/function (_EventDispatcher) {
             this.__intersection = intersectionData.point;
             var _location = intersectionData.point;
             var normal = intersectionData.face.normal;
+            var intersectingPlane = intersectionData.object;
+            var edgePlane = intersectionData.object.edge;
+            var wall = intersectionData.object.wall;
 
-            this.__selected.snapToPoint(_location, normal, intersectionData.object);
+            this.__selected.snapToPoint(_location, normal, intersectingPlane); // if (this.__selected.itemModel.isWallDependent) {
+            //     this.__selected.snapToWall(location, wall, edgePlane);
+            // }
+
           }
         }
 
@@ -59989,13 +60183,12 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
         scope.render();
       }
 
-      scope.model.addEventListener(_events.EVENT_NEW_ITEM, scope.__newItemEvent);
-      scope.model.addEventListener(_events.EVENT_LOADED, function (evt) {
-        return scope.addRoomItems(evt);
-      });
-      scope.floorplan.addEventListener(_events.EVENT_UPDATED, function (evt) {
-        return scope.addWalls(evt);
-      });
+      scope.model.addEventListener(_events.EVENT_NEW_ITEM, scope.__newItemEvent); // scope.model.addEventListener(EVENT_LOADED, (evt) => scope.addRoomItems(evt));
+      // scope.floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.addWalls(evt));
+
+      scope.model.addEventListener(_events.EVENT_LOADED, scope.addRoomItems.bind(scope)); // scope.floorplan.addEventListener(EVENT_UPDATED, scope.addWalls.bind(scope));
+
+      scope.floorplan.addEventListener(_events.EVENT_NEW_ROOMS_ADDED, scope.addWalls.bind(scope));
       this.controls.addEventListener('change', function () {
         scope.needsUpdate = true;
       });
@@ -60097,6 +60290,7 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
   }, {
     key: "addWalls",
     value: function addWalls() {
+      console.log('CREATE WALLS');
       var scope = this;
       var i = 0; // clear scene
 
@@ -114990,8 +115184,8 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics3) {
 
     _this4 = _super4.call(this);
     var opts = {
-      scale: false,
-      rotate: false,
+      scale: true,
+      rotate: true,
       translate: true
     };
 
@@ -116341,7 +116535,7 @@ var RoomPlannerHelper = /*#__PURE__*/function () {
       this.__model.addItem(item); // console.log(this.__selectedEdgePoint, this.__selectedEdgeNormal);
 
 
-      item.snapToPoint(this.__selectedEdgePoint, this.__selectedEdgeNormal, null, this.__selectedEdge.wall);
+      item.snapToWall(this.__selectedEdgePoint, this.__selectedEdge.wall, this.__selectedEdge);
     }
   }, {
     key: "wallThickness",
@@ -116578,7 +116772,107 @@ exports.BlueprintJS = BlueprintJS;
 },{"./core/configuration":"scripts/core/configuration.js","./core/constants":"scripts/core/constants.js","./model/model":"scripts/model/model.js","./viewer3d/Viewer3d":"scripts/viewer3d/Viewer3d.js","./viewer2d/Viewer2D":"scripts/viewer2d/Viewer2D.js","./helpers/ConfigurationHelper":"scripts/helpers/ConfigurationHelper.js","./helpers/FloorplannerHelper":"scripts/helpers/FloorplannerHelper.js","./helpers/RoomplannerHelper":"scripts/helpers/RoomplannerHelper.js"}],"../node_modules/quicksettings/quicksettings.min.js":[function(require,module,exports) {
 var define;
 !function(){function a(a,b){var d=c("div",null,"qs_label",b);return d.innerHTML=a,d}function b(a,b,d,e){var f=c("input",b,d,e);return f.type=a,f}function c(a,b,c,d){var e=document.createElement(a);if(e)return e.id=b,c&&(e.className=c),d&&d.appendChild(e),e}function d(){return navigator.userAgent.indexOf("rv:11")!=-1||navigator.userAgent.indexOf("MSIE")!=-1}function e(){var a=navigator.userAgent.toLowerCase();return!(a.indexOf("chrome")>-1||a.indexOf("firefox")>-1||a.indexOf("epiphany")>-1)&&a.indexOf("safari/")>-1}function f(){var a=navigator.userAgent.toLowerCase();return a.indexOf("edge")>-1}function g(){var a=document.createElement("style");a.innerText=i,document.head.appendChild(a),h=!0}var h=!1,i=".qs_main{background-color:#dddddd;text-align:left;position:absolute;width:200px;font:12px sans-serif;box-shadow:5px 5px 8px rgba(0,0,0,0.35);user-select:none;-webkit-user-select:none;color:#000000;border:none}.qs_content{background-color:#cccccc;overflow-y:auto}.qs_title_bar{background-color:#eeeeee;user-select:none;-webkit-user-select:none;cursor:pointer;padding:5px;font-weight:bold;border:none;color:#000000}.qs_container{margin:5px;padding:5px;background-color:#eeeeee;border:none;position:relative}.qs_container_selected{border:none;background-color:#ffffff}.qs_range{-webkit-appearance:none;-moz-appearance:none;width:100%;height:17px;padding:0;margin:0;background-color:transparent;border:none;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}.qs_range:focus{outline:none;border:none}.qs_range::-webkit-slider-runnable-track{width:100%;height:15px;cursor:pointer;background:#cccccc;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0}.qs_range:focus::-webkit-slider-runnable-track{background:#cccccc}.qs_range::-webkit-slider-thumb{-webkit-appearance:none;height:15px;width:15px;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0;background:#999999;cursor:pointer;margin-top:0}.qs_range::-moz-range-track{width:100%;height:15px;cursor:pointer;background:#cccccc;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0}.qs_range::-moz-range-thumb{height:15px;width:15px;border:none;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0;background:#999999;cursor:pointer}.qs_range::-ms-track{width:100%;height:15px;cursor:pointer;visibility:hidden;background:transparent}.qs_range::-ms-thumb{height:15px;width:15px;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0;background:#999999;cursor:pointer;border:none}.qs_range::-ms-fill-lower{background:#cccccc;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0}.qs_range:focus::-ms-fill-lower{background:#cccccc}.qs_range::-ms-fill-upper{background:#cccccc;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0}.qs_range:focus::-ms-fill-upper{background:#cccccc}.qs_button{background-color:#f6f6f6;color:#000000;height:30px;border:1px solid #aaaaaa;font:12px sans-serif}.qs_button:active{background-color:#ffffff;border:1px solid #aaaaaa}.qs_button:focus{border:1px solid #aaaaaa;outline:none}.qs_checkbox{cursor:pointer}.qs_checkbox input{position:absolute;left:-99999px}.qs_checkbox span{height:16px;width:100%;display:block;text-indent:20px;background:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAALklEQVQ4T2OcOXPmfwYKACPIgLS0NLKMmDVrFsOoAaNhMJoOGBioFwZkZUWoJgApdFaxjUM1YwAAAABJRU5ErkJggg==') no-repeat}.qs_checkbox input:checked+span{background:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAvElEQVQ4T63Tyw2EIBAA0OFKBxBL40wDRovAUACcKc1IB1zZDAkG18GYZTmSmafzgTnnMgwchoDWGlJKheGcP3JtnPceCqCUAmttSZznuYtgchsXQrgC+77DNE0kUpPbmBOoJaBOIVQylnqWgAAeKhDve/AN+EaklJBzhhgjWRoJVGTbNjiOowAIret6a+4jYIwpX8aDwLIs74C2D0IIYIyVP6Gm898m9kbVm85ljHUTf16k4VUefkwDrxk+zoUEwCt0GbUAAAAASUVORK5CYII=') no-repeat}.qs_checkbox_label{position:absolute;top:7px;left:30px}.qs_label{margin-bottom:3px;user-select:none;-webkit-user-select:none;cursor:default;font:12px sans-serif}.qs_text_input{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;width:100%;padding:0 0 0 5px;height:24px;border:1px inset #ffffff;background-color:#ffffff;color:#000000;font-size:12px}.qs_text_input:focus{outline:none;background:#ffffff;border:1px inset #ffffff}.qs_select{background:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAp0lEQVRIS+2SsQ3FIAwF7RVYhA5mgQFhFuhYhJKWL0eKxI8SGylKZ0p4+OBsHGNM+HChAiS7qkgyBKrovaLeOxhjbgtxZ+cFtgelFMg5QwgBvPd/EO5sDbKAlBLUWo/8CjmL075zDmKMj6rEKbpCqBL9aqc4ZUQAhVbInBMQUXz5Vg/WfxOktXZsWWtZLds9uIqlqaH1NFV3jdhSJA47E1CAaE8ViYp+wGiWMZ/T+cgAAAAASUVORK5CYII=') no-repeat right #f6f6f6;-webkit-appearance:none;-moz-appearance:none;appearance:none;color:#000000;width:100%;height:24px;border:1px solid #aaaaaa;-webkit-border-radius:0;-moz-border-radius:0;border-radius:0;padding:0 5px;-moz-outline:none;font-size:14px}.qs_select option{font-size:14px}.qs_select::-ms-expand{display:none}.qs_select:focus{outline:none}.qs_number{height:24px}.qs_image{width:100%}.qs_progress{width:100%;height:15px;background-color:#cccccc;border:none;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}.qs_progress_value{height:100%;background-color:#999999}.qs_textarea{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;resize:vertical;width:100%;padding:3px 5px;border:1px inset #ffffff;background-color:#ffffff;color:#000000;font-size:12px}.qs_textarea:focus{outline:none;background:#ffffff;border:1px inset #ffffff}.qs_color{position:absolute;left:-999999px}.qs_color_label{width:100%;height:20px;display:block;border:1px solid #aaaaaa;cursor:pointer;padding:0 0 0 5px;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}.qs_file_chooser{position:absolute;left:-999999px}.qs_file_chooser_label{background-color:#f6f6f6;color:#000000;height:30px;border:1px solid #aaaaaa;font:12px sans-serif;width:100%;display:block;cursor:pointer;padding:7px;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",j={_version:"2.1",_topZ:1,_panel:null,_titleBar:null,_content:null,_startX:0,_startY:0,_hidden:!1,_collapsed:!1,_controls:null,_keyCode:-1,_draggable:!0,_collapsible:!0,_globalChangeHandler:null,useExtStyleSheet:function(){h=!0},create:function(a,b,c,d){var e=Object.create(this);return e._init(a,b,c,d),e},destroy:function(){this._panel.parentElement&&this._panel.parentElement.removeChild(this._panel);for(var a in this)this[a]=null},_init:function(a,b,c,d){h||g(),this._bindHandlers(),this._createPanel(a,b,d),this._createTitleBar(c||"QuickSettings"),this._createContent()},_bindHandlers:function(){this._startDrag=this._startDrag.bind(this),this._drag=this._drag.bind(this),this._endDrag=this._endDrag.bind(this),this._doubleClickTitle=this._doubleClickTitle.bind(this),this._onKeyUp=this._onKeyUp.bind(this)},getValuesAsJSON:function(a){var b={};for(var c in this._controls)this._controls[c].getValue&&(b[c]=this._controls[c].getValue());return a&&(b=JSON.stringify(b)),b},setValuesFromJSON:function(a){"string"==typeof a&&(a=JSON.parse(a));for(var b in a)this._controls[b].setValue&&this._controls[b].setValue(a[b]);return this},saveInLocalStorage:function(a){return this._localStorageName=a,this._readFromLocalStorage(a),this},clearLocalStorage:function(a){return localStorage.removeItem(a),this},_saveInLocalStorage:function(a){localStorage.setItem(a,this.getValuesAsJSON(!0))},_readFromLocalStorage:function(a){var b=localStorage.getItem(a);b&&this.setValuesFromJSON(b)},_createPanel:function(a,b,d){this._panel=c("div",null,"qs_main",d||document.body),this._panel.style.zIndex=++j._topZ,this.setPosition(a||0,b||0),this._controls={}},_createTitleBar:function(a){this._titleBar=c("div",null,"qs_title_bar",this._panel),this._titleBar.textContent=a,this._titleBar.addEventListener("mousedown",this._startDrag),this._titleBar.addEventListener("dblclick",this._doubleClickTitle)},_createContent:function(){this._content=c("div",null,"qs_content",this._panel)},_createContainer:function(){var a=c("div",null,"qs_container");return a.addEventListener("focus",function(){this.className+=" qs_container_selected"},!0),a.addEventListener("blur",function(){var a=this.className.indexOf(" qs_container_selected");a>-1&&(this.className=this.className.substr(0,a))},!0),this._content.appendChild(a),a},setPosition:function(a,b){return this._panel.style.left=a+"px",this._panel.style.top=Math.max(b,0)+"px",this},setSize:function(a,b){return this._panel.style.width=a+"px",this._content.style.width=a+"px",this._content.style.height=b-this._titleBar.offsetHeight+"px",this},setWidth:function(a){return this._panel.style.width=a+"px",this._content.style.width=a+"px",this},setHeight:function(a){return this._content.style.height=a-this._titleBar.offsetHeight+"px",this},setDraggable:function(a){return this._draggable=a,this._draggable||this._collapsible?this._titleBar.style.cursor="pointer":this._titleBar.style.cursor="default",this},_startDrag:function(a){this._draggable&&(this._panel.style.zIndex=++j._topZ,document.addEventListener("mousemove",this._drag),document.addEventListener("mouseup",this._endDrag),this._startX=a.clientX,this._startY=a.clientY),a.preventDefault()},_drag:function(a){var b=parseInt(this._panel.style.left),c=parseInt(this._panel.style.top),d=a.clientX,e=a.clientY;this.setPosition(b+d-this._startX,c+e-this._startY),this._startX=d,this._startY=e,a.preventDefault()},_endDrag:function(a){document.removeEventListener("mousemove",this._drag),document.removeEventListener("mouseup",this._endDrag),a.preventDefault()},setGlobalChangeHandler:function(a){return this._globalChangeHandler=a,this},_callGCH:function(){this._localStorageName&&this._saveInLocalStorage(this._localStorageName),this._globalChangeHandler&&this._globalChangeHandler()},hide:function(){return this._panel.style.visibility="hidden",this._hidden=!0,this},show:function(){return this._panel.style.visibility="visible",this._panel.style.zIndex=++j._topZ,this._hidden=!1,this},toggleVisibility:function(){return this._hidden?this.show():this.hide(),this},setCollapsible:function(a){return this._collapsible=a,this._draggable||this._collapsible?this._titleBar.style.cursor="pointer":this._titleBar.style.cursor="default",this},collapse:function(){return this._panel.removeChild(this._content),this._collapsed=!0,this},expand:function(){return this._panel.appendChild(this._content),this._collapsed=!1,this},toggleCollapsed:function(){return this._collapsed?this.expand():this.collapse(),this},setKey:function(a){return this._keyCode=a.toUpperCase().charCodeAt(0),document.body.addEventListener("keyup",this.onKeyUp),this},_onKeyUp:function(a){a.keyCode===this._keyCode&&this.toggleVisibility()},_doubleClickTitle:function(){this._collapsible&&this.toggleCollapsed()},removeControl:function(a){if(this._controls[a])var b=this._controls[a].container;return b&&b.parentElement&&b.parentElement.removeChild(b),this._controls[a]=null,this},enableControl:function(a){return this._controls[a]&&(this._controls[a].control.disabled=!1),this},disableControl:function(a){return this._controls[a]&&(this._controls[a].control.disabled=!0),this},hideControl:function(a){return this._controls[a]&&(this._controls[a].container.style.display="none"),this},showControl:function(a){return this._controls[a]&&(this._controls[a].container.style.display="block"),this},overrideStyle:function(a,b,c){return this._controls[a]&&(this._controls[a].control.style[b]=c),this},hideTitle:function(a){var b=this._controls[a].label;return b&&(b.style.display="none"),this},showTitle:function(a){var b=this._controls[a].label;return b&&(b.style.display="block"),this},hideAllTitles:function(){for(var a in this._controls){var b=this._controls[a].label;b&&(b.style.display="none")}return this},showAllTitles:function(){for(var a in this._controls){var b=this._controls[a].label;b&&(b.style.display="block")}return this},getValue:function(a){return this._controls[a].getValue()},setValue:function(a,b){return this._controls[a].setValue(b),this._callGCH(),this},addBoolean:function(a,d,e){var f=this._createContainer(),g=c("label",null,"qs_checkbox_label",f);g.textContent=a,g.setAttribute("for",a);var h=c("label",null,"qs_checkbox",f);h.setAttribute("for",a);var i=b("checkbox",a,null,h);i.checked=d;c("span",null,null,h);this._controls[a]={container:f,control:i,getValue:function(){return this.control.checked},setValue:function(a){this.control.checked=a,e&&e(a)}};var j=this;return i.addEventListener("change",function(){e&&e(i.checked),j._callGCH()}),this},bindBoolean:function(a,b,c){return this.addBoolean(a,b,function(b){c[a]=b})},addButton:function(a,c){var d=this._createContainer(),e=b("button",a,"qs_button",d);e.value=a,this._controls[a]={container:d,control:e};var f=this;return e.addEventListener("click",function(){c&&c(e),f._callGCH()}),this},addColor:function(g,h,i){if(e()||f()||d())return this.addText(g,h,i);var j=this._createContainer(),k=a("<b>"+g+":</b> "+h,j),l=b("color",g,"qs_color",j);l.value=h||"#ff0000";var m=c("label",null,"qs_color_label",j);m.setAttribute("for",g),m.style.backgroundColor=l.value,this._controls[g]={container:j,control:l,colorLabel:m,label:k,title:g,getValue:function(){return this.control.value},setValue:function(a){this.control.value=a,this.colorLabel.style.backgroundColor=l.value,this.label.innerHTML="<b>"+this.title+":</b> "+this.control.value,i&&i(a)}};var n=this;return l.addEventListener("input",function(){k.innerHTML="<b>"+g+":</b> "+l.value,m.style.backgroundColor=l.value,i&&i(l.value),n._callGCH()}),this},bindColor:function(a,b,c){return this.addColor(a,b,function(b){c[a]=b})},addDate:function(c,e,f){var g;if(e instanceof Date){var h=e.getFullYear(),i=e.getMonth()+1;i<10&&(i="0"+i);var j=e.getDate();g=h+"-"+i+"-"+j}else g=e;if(d())return this.addText(c,g,f);var k=this._createContainer(),l=a("<b>"+c+"</b>",k),m=b("date",c,"qs_text_input",k);m.value=g||"",this._controls[c]={container:k,control:m,label:l,getValue:function(){return this.control.value},setValue:function(a){var b;if(a instanceof Date){var c=a.getFullYear(),d=a.getMonth()+1;d<10&&(d="0"+d);var e=a.getDate();e<10&&(e="0"+e),b=c+"-"+d+"-"+e}else b=a;this.control.value=b||"",f&&f(b)}};var n=this;return m.addEventListener("input",function(){f&&f(m.value),n._callGCH()}),this},bindDate:function(a,b,c){return this.addDate(a,b,function(b){c[a]=b})},addDropDown:function(b,d,e){for(var f=this._createContainer(),g=a("<b>"+b+"</b>",f),h=c("select",null,"qs_select",f),i=0;i<d.length;i++){var j=c("option");j.label=d[i],j.innerText=d[i],h.add(j)}var k=this;return h.addEventListener("change",function(){var a=h.selectedIndex,b=h.options;e&&e({index:a,value:b[a].label}),k._callGCH()}),this._controls[b]={container:f,control:h,label:g,getValue:function(){var a=this.control.selectedIndex;return{index:a,value:this.control.options[a].label}},setValue:function(a){var b;b=null!=a.index?a.index:a;var c=this.control.options;this.control.selectedIndex=b,e&&e({index:b,value:c[b].label})}},this},bindDropDown:function(a,b,c){return this.addDropDown(a,b,function(b){c[a]=b.value})},addElement:function(b,c){var d=this._createContainer(),e=a("<b>"+b+"</b>",d);return d.appendChild(c),this._controls[b]={container:d,label:e},this},addFileChooser:function(d,e,f,g){var h=this._createContainer(),i=a("<b>"+d+"</b>",h),j=b("file",d,"qs_file_chooser",h);f&&(j.accept=f);var k=c("label",null,"qs_file_chooser_label",h);k.setAttribute("for",d),k.textContent=e||"Choose a file...",this._controls[d]={container:h,control:j,label:i,getValue:function(){return this.control.files[0]}};var l=this;return j.addEventListener("change",function(){j.files&&j.files.length&&(k.textContent=j.files[0].name,g&&g(j.files[0]),l._callGCH())}),this},addHTML:function(b,d){var e=this._createContainer(),f=a("<b>"+b+":</b> ",e),g=c("div",null,null,e);return g.innerHTML=d,this._controls[b]={label:f,control:g,getValue:function(){return this.control.innerHTML},setValue:function(a){this.control.innerHTML=a}},this},addImage:function(b,d){var e=this._createContainer(),f=a("<b>"+b+"</b>",e);return img=c("img",null,"qs_image",e),img.src=d,this._controls[b]={container:e,control:img,label:f,getValue:function(){return this.control.src},setValue:function(a){this.control.src=a}},this},addRange:function(a,b,c,d,e,f){return this._addNumber("range",a,b,c,d,e,f)},addNumber:function(a,b,c,d,e,f){return this._addNumber("number",a,b,c,d,e,f)},_addNumber:function(c,e,f,g,h,i,j){var k=this._createContainer(),l=a("",k),m="range"===c?"qs_range":"qs_text_input qs_number",n=b(c,e,m,k);n.min=f||0,n.max=g||100,n.step=i||1,n.value=h||0,l.innerHTML="<b>"+e+":</b> "+n.value,this._controls[e]={container:k,control:n,label:l,title:e,callback:j,getValue:function(){return parseFloat(this.control.value)},setValue:function(a){this.control.value=a,this.label.innerHTML="<b>"+this.title+":</b> "+this.control.value,j&&j(parseFloat(a))}};var o="input";"range"===c&&d()&&(o="change");var p=this;return n.addEventListener(o,function(){l.innerHTML="<b>"+e+":</b> "+n.value,j&&j(parseFloat(n.value)),p._callGCH()}),this},bindRange:function(a,b,c,d,e,f){return this.addRange(a,b,c,d,e,function(b){f[a]=b})},bindNumber:function(a,b,c,d,e,f){return this.addNumber(a,b,c,d,e,function(b){f[a]=b})},setRangeParameters:function(a,b,c,d){return this.setNumberParameters(a,b,c,d)},setNumberParameters:function(a,b,c,d){var e=this._controls[a],f=e.control.value;return e.control.min=b,e.control.max=c,e.control.step=d,e.control.value!==f&&e.callback&&e.callback(e.control.value),this},addPassword:function(a,b,c){return this._addText("password",a,b,c)},bindPassword:function(a,b,c){return this.addPassword(a,b,function(b){c[a]=b})},addProgressBar:function(b,d,e,f){var g=this._createContainer(),h=a("",g),i=c("div",null,"qs_progress",g),j=c("div",null,"qs_progress_value",i);return j.style.width=e/d*100+"%","numbers"===f?h.innerHTML="<b>"+b+":</b> "+e+" / "+d:"percent"===f?h.innerHTML="<b>"+b+":</b> "+Math.round(e/d*100)+"%":h.innerHTML="<b>"+b+"</b>",this._controls[b]={container:g,control:i,valueDiv:j,valueDisplay:f,label:h,value:e,max:d,title:b,getValue:function(){return this.value},setValue:function(a){this.value=Math.max(0,Math.min(a,this.max)),this.valueDiv.style.width=this.value/this.max*100+"%","numbers"===this.valueDisplay?this.label.innerHTML="<b>"+this.title+":</b> "+this.value+" / "+this.max:"percent"===this.valueDisplay&&(this.label.innerHTML="<b>"+this.title+":</b> "+Math.round(this.value/this.max*100)+"%")}},this},setProgressMax:function(a,b){var c=this._controls[a];return c.max=b,c.value=Math.min(c.value,c.max),c.valueDiv.style.width=c.value/c.max*100+"%","numbers"===c.valueDisplay?c.label.innerHTML="<b>"+c.title+":</b> "+c.value+" / "+c.max:"percent"===c.valueDisplay?c.label.innerHTML="<b>"+c.title+":</b> "+Math.round(c.value/c.max*100)+"%":c.label.innerHTML="<b>"+c.title+"</b>",this},addText:function(a,b,c){return this._addText("text",a,b,c)},_addText:function(d,e,f,g){var h,i=this._createContainer(),j=a("<b>"+e+"</b>",i);"textarea"===d?(h=c("textarea",e,"qs_textarea",i),h.rows=5):h=b(d,e,"qs_text_input",i),h.value=f||"",this._controls[e]={container:i,control:h,label:j,getValue:function(){return this.control.value},setValue:function(a){this.control.value=a,g&&g(a)}};var k=this;return h.addEventListener("input",function(){g&&g(h.value),k._callGCH()}),this},bindText:function(a,b,c){return this.addText(a,b,function(b){c[a]=b})},addTextArea:function(a,b,c){return this._addText("textarea",a,b,c)},setTextAreaRows:function(a,b){return this._controls[a].control.rows=b,this},bindTextArea:function(a,b,c){return this.addTextArea(a,b,function(b){c[a]=b})},addTime:function(c,e,f){var g;if(e instanceof Date){var h=e.getHours();h<10&&(h="0"+h);var i=e.getMinutes();i<10&&(i="0"+i);var j=e.getSeconds();j<10&&(j="0"+j),g=h+":"+i+":"+j}else g=e;if(d())return this.addText(c,g,f);var k=this._createContainer(),l=a("<b>"+c+"</b>",k),m=b("time",c,"qs_text_input",k);m.value=g||"",this._controls[c]={container:k,control:m,label:l,getValue:function(){return this.control.value},setValue:function(a){var b;if(a instanceof Date){var c=a.getHours();c<10&&(c="0"+c);var d=a.getMinutes();d<10&&(d="0"+d);var e=a.getSeconds();e<10&&(e="0"+e),b=c+":"+d+":"+e}else b=a;this.control.value=b||"",f&&f(b)}};var n=this;return m.addEventListener("input",function(){f&&f(m.value),n._callGCH()}),this},bindTime:function(a,b,c){return this.addTime(a,b,function(b){c[a]=b})}};"object"==typeof exports&&"object"==typeof module?module.exports=j:"function"==typeof define&&define.amd?define(j):window.QuickSettings=j}();
-},{}],"floor_textures.json":[function(require,module,exports) {
+},{}],"scripts/ParametricsInterface.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ParametricsInterface = void 0;
+
+var _quicksettings = _interopRequireDefault(require("quicksettings"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var ParametricsInterface = /*#__PURE__*/function () {
+  function ParametricsInterface(parametricDataClass, viewer3D) {
+    var x = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+    var y = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+    var appParent = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : null;
+
+    _classCallCheck(this, ParametricsInterface);
+
+    this.__parametricDataClass = parametricDataClass;
+    this.__viewer3D = viewer3D;
+    this.__settings = _quicksettings.default.create(x, y, "Parametric Item: ".concat(parametricDataClass.name), appParent);
+
+    this.__constructUI();
+  }
+
+  _createClass(ParametricsInterface, [{
+    key: "__constructUI",
+    value: function __constructUI() {
+      var _this = this;
+
+      var parameters = this.__parametricDataClass.parameters;
+      var parametricsClass = this.__parametricDataClass;
+      var viewer3D = this.__viewer3D;
+
+      var _loop = function _loop(opt) {
+        var property = parameters[opt];
+
+        switch (property.type) {
+          case 'color':
+            _this.__settings.addColor(opt, parametricsClass[opt], function (value) {
+              parametricsClass[opt] = value;
+              viewer3D.needsUpdate = true;
+            });
+
+            break;
+
+          case 'number':
+            _this.__settings.addNumber(opt, 10, 5000, parametricsClass[opt], 1, function (value) {
+              parametricsClass[opt] = value;
+              viewer3D.needsUpdate = true;
+            });
+
+            break;
+
+          case 'range':
+            _this.__settings.addRange(opt, property.min, property.max, parametricsClass[opt], property.step, function (value) {
+              parametricsClass[opt] = value;
+              viewer3D.needsUpdate = true;
+            });
+
+            break;
+
+          case 'choice':
+            _this.__settings.addDropDown(opt, property.value, function (item) {
+              parametricsClass[opt] = item.value;
+              viewer3D.needsUpdate = true;
+            });
+
+            break;
+
+          default:
+            console.log('YET TO IMPLEMENT');
+        }
+      };
+
+      for (var opt in parameters) {
+        _loop(opt);
+      }
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      if (this.__settings) {
+        this.__settings.destroy();
+      }
+    }
+  }]);
+
+  return ParametricsInterface;
+}();
+
+exports.ParametricsInterface = ParametricsInterface;
+},{"quicksettings":"../node_modules/quicksettings/quicksettings.min.js"}],"floor_textures.json":[function(require,module,exports) {
 module.exports = {
   "Stylized_Stone_Floor_001": {
     "repeat": 100,
@@ -116891,7 +117185,9 @@ module.exports = {
     "resizable": true,
     "modelURL": "models/HollowCube.glb",
     "isParametric": false,
-    "wall": "71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,f90da5e3-9e0e-eba7-173d-eb0b071e838e"
+    "wall": "71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,f90da5e3-9e0e-eba7-173d-eb0b071e838e",
+    "wallSide": "back",
+    "wallSurfacePoint": [10, 138.38790186348007, 185.34460161835352]
   }, {
     "itemName": "Lantern",
     "itemType": 9,
@@ -116903,9 +117199,11 @@ module.exports = {
     "resizable": false,
     "modelURL": "models/Cube.glb",
     "isParametric": false,
-    "wall": "4e3d65cb-54c0-0681-28bf-bddcc7bdb571,71d4f128-ae80-3d58-9bd2-711c6ce6cdf2"
+    "wall": "4e3d65cb-54c0-0681-28bf-bddcc7bdb571,71d4f128-ae80-3d58-9bd2-711c6ce6cdf2",
+    "wallSide": "back",
+    "wallSurfacePoint": [224.46232602418777, 30, 10]
   }, {
-    "itemName": "Lantern",
+    "itemName": "Lantern 02",
     "itemType": 4,
     "position": [209.43984621295914, 220, 270.9912269855666],
     "rotation": [0, 0, 0],
@@ -116916,7 +117214,7 @@ module.exports = {
     "modelURL": "models/Cube.glb",
     "isParametric": false
   }, {
-    "itemName": "Parametric Door",
+    "itemName": "Parametric Door 01",
     "isParametric": true,
     "baseParametricType": "DOOR",
     "subParametricData": {
@@ -116940,9 +117238,11 @@ module.exports = {
     "size": [100, 200, 20],
     "fixed": false,
     "resizable": false,
-    "wall": "4e3d65cb-54c0-0681-28bf-bddcc7bdb571,71d4f128-ae80-3d58-9bd2-711c6ce6cdf2"
+    "wall": "4e3d65cb-54c0-0681-28bf-bddcc7bdb571,71d4f128-ae80-3d58-9bd2-711c6ce6cdf2",
+    "wallSide": "back",
+    "wallSurfacePoint": [252.10994952514463, 105, 10]
   }, {
-    "itemName": "Parametric Door",
+    "itemName": "Parametric Door 02",
     "isParametric": true,
     "baseParametricType": "DOOR",
     "subParametricData": {
@@ -116966,110 +117266,12 @@ module.exports = {
     "size": [100, 200, 20],
     "fixed": false,
     "resizable": false,
-    "wall": "f90da5e3-9e0e-eba7-173d-eb0b071e838e,da026c08-d76a-a944-8e7b-096b752da9ed"
+    "wall": "f90da5e3-9e0e-eba7-173d-eb0b071e838e,da026c08-d76a-a944-8e7b-096b752da9ed",
+    "wallSide": "back",
+    "wallSurfacePoint": [245.9620664305963, 109, 490]
   }]
 };
-},{}],"scripts/ParametricsInterface.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.ParametricsInterface = void 0;
-
-var _quicksettings = _interopRequireDefault(require("quicksettings"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var ParametricsInterface = /*#__PURE__*/function () {
-  function ParametricsInterface(parametricDataClass, viewer3D) {
-    var x = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-    var y = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-    var appParent = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : null;
-
-    _classCallCheck(this, ParametricsInterface);
-
-    this.__parametricDataClass = parametricDataClass;
-    this.__viewer3D = viewer3D;
-    this.__settings = _quicksettings.default.create(x, y, "Parametric Item: ".concat(parametricDataClass.name), appParent);
-
-    this.__constructUI();
-  }
-
-  _createClass(ParametricsInterface, [{
-    key: "__constructUI",
-    value: function __constructUI() {
-      var _this = this;
-
-      var parameters = this.__parametricDataClass.parameters;
-      var parametricsClass = this.__parametricDataClass;
-      var viewer3D = this.__viewer3D;
-
-      var _loop = function _loop(opt) {
-        var property = parameters[opt];
-
-        switch (property.type) {
-          case 'color':
-            _this.__settings.addColor(opt, parametricsClass[opt], function (value) {
-              parametricsClass[opt] = value;
-              viewer3D.needsUpdate = true;
-            });
-
-            break;
-
-          case 'number':
-            _this.__settings.addNumber(opt, 10, 5000, parametricsClass[opt], 1, function (value) {
-              parametricsClass[opt] = value;
-              viewer3D.needsUpdate = true;
-            });
-
-            break;
-
-          case 'range':
-            _this.__settings.addRange(opt, property.min, property.max, parametricsClass[opt], property.step, function (value) {
-              parametricsClass[opt] = value;
-              viewer3D.needsUpdate = true;
-            });
-
-            break;
-
-          case 'choice':
-            _this.__settings.addDropDown(opt, property.value, function (item) {
-              parametricsClass[opt] = item.value;
-              viewer3D.needsUpdate = true;
-            });
-
-            break;
-
-          default:
-            console.log('YET TO IMPLEMENT');
-        }
-      };
-
-      for (var opt in parameters) {
-        _loop(opt);
-      }
-    }
-  }, {
-    key: "destroy",
-    value: function destroy() {
-      if (this.__settings) {
-        this.__settings.destroy();
-      }
-    }
-  }]);
-
-  return ParametricsInterface;
-}();
-
-exports.ParametricsInterface = ParametricsInterface;
-},{"quicksettings":"../node_modules/quicksettings/quicksettings.min.js"}],"index.js":[function(require,module,exports) {
+},{}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _blueprint = require("./scripts/blueprint.js");
@@ -117082,15 +117284,15 @@ var _constants = require("./scripts/core/constants.js");
 
 var _quicksettings = _interopRequireDefault(require("quicksettings"));
 
+var _dimensioning = require("./scripts/core/dimensioning.js");
+
+var _ParametricsInterface = require("./scripts/ParametricsInterface.js");
+
 var floor_textures_json = _interopRequireWildcard(require("./floor_textures.json"));
 
 var wall_textures_json = _interopRequireWildcard(require("./wall_textures.json"));
 
 var default_room_json = _interopRequireWildcard(require("./parametrics_items.json"));
-
-var _dimensioning = require("./scripts/core/dimensioning.js");
-
-var _ParametricsInterface = require("./scripts/ParametricsInterface.js");
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
@@ -117098,6 +117300,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// import * as default_room_json from './empty_room.json';
 var default_room = JSON.stringify(default_room_json);
 var startY = 0;
 var panelWidths = 200;
@@ -117433,7 +117636,7 @@ if (!opts.widget) {
   settingsSelectedWall3D.hide();
   settingsSelectedRoom3D.hide();
 }
-},{"./scripts/blueprint.js":"scripts/blueprint.js","./scripts/core/events.js":"scripts/core/events.js","./scripts/core/configuration.js":"scripts/core/configuration.js","./scripts/core/constants.js":"scripts/core/constants.js","quicksettings":"../node_modules/quicksettings/quicksettings.min.js","./floor_textures.json":"floor_textures.json","./wall_textures.json":"wall_textures.json","./parametrics_items.json":"parametrics_items.json","./scripts/core/dimensioning.js":"scripts/core/dimensioning.js","./scripts/ParametricsInterface.js":"scripts/ParametricsInterface.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./scripts/blueprint.js":"scripts/blueprint.js","./scripts/core/events.js":"scripts/core/events.js","./scripts/core/configuration.js":"scripts/core/configuration.js","./scripts/core/constants.js":"scripts/core/constants.js","quicksettings":"../node_modules/quicksettings/quicksettings.min.js","./scripts/core/dimensioning.js":"scripts/core/dimensioning.js","./scripts/ParametricsInterface.js":"scripts/ParametricsInterface.js","./floor_textures.json":"floor_textures.json","./wall_textures.json":"wall_textures.json","./parametrics_items.json":"parametrics_items.json"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -117461,7 +117664,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "33121" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "33293" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

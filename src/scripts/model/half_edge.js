@@ -141,28 +141,38 @@ export class HalfEdge extends EventDispatcher {
          */
         this.front = front || false;
 
+        this.__vertices = null;
+        this.__normal = null; //new Vector3(0, 0, 0);
+
         this.offset = wall.thickness / 2.0;
         this.height = wall.height;
+
+        this.__wallMovedEvent = this.__wallMoved.bind(this);
+        this.__wallUpdatedEvent = this.__wallUpdated.bind(this);
 
         if (this.front) {
             this.wall.frontEdge = this;
         } else {
             this.wall.backEdge = this;
         }
+        this.wall.addEventListener(EVENT_MOVED, this.__wallMovedEvent);
+        this.wall.addEventListener(EVENT_UPDATED, this.__wallUpdatedEvent);
+    }
+
+    __wallMoved(evt) {
         let scope = this;
+        scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
+        scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
+        scope.dispatchEvent({ type: EVENT_REDRAW, item: scope });
 
-        this.wall.addEventListener(EVENT_MOVED, () => {
-            scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
-            scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
-            scope.dispatchEvent({ type: EVENT_REDRAW, item: scope });
-        });
+    }
 
-        this.wall.addEventListener(EVENT_UPDATED, () => {
-            scope.offset = scope.wall.thickness * 0.5;
-            scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
-            scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
-            scope.dispatchEvent({ type: EVENT_REDRAW, item: scope });
-        });
+    __wallUpdated(evt) {
+        let scope = this;
+        scope.offset = scope.wall.thickness * 0.5;
+        scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
+        scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
+        scope.dispatchEvent({ type: EVENT_REDRAW, item: scope });
     }
 
     /**
@@ -241,11 +251,18 @@ export class HalfEdge extends EventDispatcher {
         let v3 = v2.clone();
         let v4 = v1.clone();
 
+        let ab = null;
+        let ac = null;
         // v3.y = this.wall.height;
         // v4.y = this.wall.height;
 
         v3.y = this.wall.startElevation;
         v4.y = this.wall.endElevation;
+
+        ab = v2.clone().sub(v1);
+        ac = v3.clone().sub(v1);
+        this.__vertices = [v1, v2, v3, v4];
+        this.__normal = ab.cross(ac).normalize();
 
         geometry.vertices = [v1, v2, v3, v4];
         geometry.faces.push(new Face3(0, 1, 2));
@@ -566,6 +583,14 @@ export class HalfEdge extends EventDispatcher {
 
         let halfAngleVector = { x: vx * scalar, y: vy * scalar }; //new Vector2(vx * scalar, vy * scalar);
         return halfAngleVector;
+    }
+
+    get vertices() {
+        return this.__vertices;
+    }
+
+    get normal() {
+        return this.__normal;
     }
 }
 

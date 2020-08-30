@@ -10,10 +10,21 @@ export class InWallItem extends WallItem {
     }
 
     snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
+        this.snapToWall(point, intersectingPlane.wall, intersectingPlane.edge);
+        // let normal2d = new Vector2(normal.x, normal.z);
+        // let angle = Utils.angle(UP_VECTOR, normal2d);
+        // this.rotation = new Vector3(0, angle, 0);
+        // this.position = point;
+        // this.__addToAWall(intersectingPlane, toWall);
+    }
+
+    snapToWall(point, wall, wallEdge) {
+        let normal = wallEdge.normal;
         let normal2d = new Vector2(normal.x, normal.z);
         let angle = Utils.angle(UP_VECTOR, normal2d);
         this.rotation = new Vector3(0, angle, 0);
         this.position = point;
-        this.__addToAWall(intersectingPlane, toWall);
+        this.__currentWallSnapPoint = point.clone();
+        this.__addToAWall(wall, wallEdge);
     }
 }

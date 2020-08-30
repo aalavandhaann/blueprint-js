@@ -66,6 +66,7 @@ export class Physical3DItem extends Mesh {
         function __tinyUpdate() {
             scope.parent.needsUpdate = true;
         }
+        // if (!this.__itemModel.offlineUpdate) {
         if (evt.property === 'position') {
             gsap.to(this.position, { duration: duration, x: this.__itemModel.position.x, onUpdate: __tinyUpdate });
             gsap.to(this.position, { duration: duration, y: this.__itemModel.position.y });
@@ -79,6 +80,15 @@ export class Physical3DItem extends Mesh {
             gsap.to(this.__boxhelper.rotation, { duration: duration, y: this.__itemModel.rotation.y });
             gsap.to(this.__boxhelper.rotation, { duration: duration, z: this.__itemModel.rotation.z });
         }
+        // } else {
+        //     if (evt.property === 'position') {
+        //         this.position.set(this.__itemModel.position.x, this.__itemModel.position.y, this.__itemModel.position.z);
+        //     }
+        //     if (evt.property === 'rotation') {
+        //         this.__loadedItem.rotation.set(this.__itemModel.rotation.x, this.__itemModel.rotation.y, this.__itemModel.rotation.z);
+        //         this.__boxhelper.rotation.set(this.__itemModel.rotation.x, this.__itemModel.rotation.y, this.__itemModel.rotation.z);
+        //     }
+        // }
         if (evt.property === 'visible') {
             this.visible = this.__itemModel.visible;
         }
@@ -151,6 +161,10 @@ export class Physical3DItem extends Mesh {
         this.__itemModel.snapToPoint(coordinate3d, normal, intersectingPlane);
     }
 
+    snapToWall(coordinate3d, wall, wallEdge) {
+        this.__itemModel.snapToWall(coordinate3d, wall, wallEdge);
+    }
+
     get selected() {
         return this.__selected;
     }
@@ -176,3 +190,26 @@ export class Physical3DItem extends Mesh {
         return this.__itemModel;
     }
 }
+
+/**
+export class Physical3DItem {
+    constructor(itemModel) {
+        console.log(this);
+        return new Proxy(new Physical3DItemNonProxy(itemModel), {
+            get(target, name, receiver) {
+                console.log('USING REFLECT.GET ', target);
+                if (!Reflect.has(target, name) && !Reflect.has(target.itemModel, name)) {
+                    return undefined;
+                }
+                if (Reflect.has(target, name)) {
+                    return Reflect.get(target, name);
+                }
+                if (Reflect.has(target.itemModel, name)) {
+                    return Reflect.get(target.itemModel, name);
+                }
+                return undefined;
+            }
+        });
+    }
+}
+ */
