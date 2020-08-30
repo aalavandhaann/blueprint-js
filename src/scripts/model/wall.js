@@ -68,10 +68,10 @@ export class Wall extends EventDispatcher {
         this.end.attachEnd(this);
 
         /** Front is the plane from start to end. */
-        this.frontEdge = null;
+        this.__frontEdge = null;
 
         /** Back is the plane from end to start. */
-        this.backEdge = null;
+        this.__backEdge = null;
 
         this.__attachedRooms = [];
 
@@ -175,6 +175,7 @@ export class Wall extends EventDispatcher {
             if (!Utils.hasValue(this.__onWallItems, item)) {
                 this.__onWallItems.push(item);
             }
+            this.dispatchEvent({ type: EVENT_MOVED, item: this, position: null });
         }
     }
 
@@ -182,13 +183,14 @@ export class Wall extends EventDispatcher {
         if (item instanceof InWallItem || item instanceof InWallFloorItem) {
             if (Utils.hasValue(this.__inWallItems, item)) {
                 Utils.removeValue(this.__inWallItems, item);
-                this.dispatchEvent({ type: EVENT_MOVED, item: this, position: null });
             }
+            this.dispatchEvent({ type: EVENT_MOVED, item: this, position: null });
         }
         if (item instanceof WallItem || item instanceof WallFloorItem) {
             if (Utils.hasValue(this.__onWallItems, item)) {
                 Utils.removeValue(this.__onWallItems, item);
             }
+            this.dispatchEvent({ type: EVENT_MOVED, item: this, position: null });
         }
     }
 
@@ -252,6 +254,12 @@ export class Wall extends EventDispatcher {
     }
 
     resetFrontBack() {
+        if (this.frontEdge) {
+            this.frontEdge.destroy();
+        }
+        if (this.backEdge) {
+            this.backEdge.destroy();
+        }
         this.frontEdge = null;
         this.backEdge = null;
         this.orphan = false;
@@ -618,6 +626,34 @@ export class Wall extends EventDispatcher {
 
     clearAttachedRooms() {
         this.__attachedRooms = [];
+    }
+
+    get frontEdge() {
+        return this.__frontEdge;
+    }
+
+    set frontEdge(edge) {
+        this.__frontEdge = edge;
+        this.__inWallItems.forEach((item) => {
+            item.newWallEdge();
+        });
+        this.__onWallItems.forEach((item) => {
+            item.newWallEdge();
+        });
+    }
+
+    get backEdge() {
+        return this.__backEdge;
+    }
+
+    set backEdge(edge) {
+        this.__backEdge = edge;
+        this.__inWallItems.forEach((item) => {
+            item.newWallEdge();
+        });
+        this.__onWallItems.forEach((item) => {
+            item.newWallEdge();
+        });
     }
 }
 

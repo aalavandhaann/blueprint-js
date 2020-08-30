@@ -1,7 +1,7 @@
 import { EventDispatcher, Vector2, Vector3, MeshBasicMaterial, FrontSide, DoubleSide, BackSide, Shape, Path, ShapeGeometry, Mesh, Geometry, Face3, Box3 } from 'three';
 // import { SubdivisionModifier } from 'three/examples/jsm/modifiers/SubdivisionModifier';
 import { Utils } from '../core/utils.js';
-import { EVENT_REDRAW, EVENT_UPDATE_TEXTURES } from '../core/events.js';
+import { EVENT_REDRAW, EVENT_UPDATE_TEXTURES, EVENT_DELETED } from '../core/events.js';
 import { WallMaterial3D } from '../materials/WallMaterial3D.js';
 
 export class Edge3D extends EventDispatcher {
@@ -32,6 +32,7 @@ export class Edge3D extends EventDispatcher {
         this.redrawevent = this.__redraw.bind(this); //() => { scope.redraw(); };
         this.visibilityevent = this.__visibility.bind(this); //() => { scope.updateVisibility(); };
         this.showallevent = this.__showAll.bind(this); //() => { scope.showAll(); };
+        this.__edgeDeletedEvent = this.__edgeDeleted.bind(this);
         this.__updateTexturePackEvent = this.__updateTexturePack.bind(this);
 
         this.visibilityfactor = true;
@@ -59,6 +60,10 @@ export class Edge3D extends EventDispatcher {
         this.scene.needsUpdate = true;
     }
 
+    __edgeDeleted(evt) {
+        this.remove();
+    }
+
     __redraw() {
         this.redraw();
     }
@@ -72,6 +77,7 @@ export class Edge3D extends EventDispatcher {
     }
 
     init() {
+        this.edge.addEventListener(EVENT_DELETED, this.__edgeDeletedEvent);
         this.edge.addEventListener(EVENT_UPDATE_TEXTURES, this.__updateTexturePackEvent);
         this.edge.addEventListener(EVENT_REDRAW, this.redrawevent);
         this.controls.addEventListener('change', this.visibilityevent);
@@ -104,6 +110,7 @@ export class Edge3D extends EventDispatcher {
     }
 
     remove() {
+        this.edge.removeEventListener(EVENT_DELETED, this.__edgeDeletedEvent);
         this.edge.removeEventListener(EVENT_UPDATE_TEXTURES, this.__updateTexturePackEvent);
         this.edge.removeEventListener(EVENT_REDRAW, this.redrawevent);
         this.controls.removeEventListener('change', this.visibilityevent);
@@ -274,9 +281,6 @@ export class Edge3D extends EventDispatcher {
 
         let spoints = [new Vector2(points[0].x, points[0].y), new Vector2(points[1].x, points[1].y), new Vector2(points[2].x, points[2].y), new Vector2(points[3].x, points[3].y)];
         let shape = new Shape(spoints);
-        let wallInteriorMin = new Vector3(Math.min(v1.x, v2.x, v3.x, v4.x), Math.min(v1.y, v2.y, v3.y, v4.y), Math.min(v1.z, v2.z, v3.z, v4.z));
-        let wallInteriorMax = new Vector3(Math.max(v1.x, v2.x, v3.x, v4.x), Math.max(v1.y, v2.y, v3.y, v4.y), Math.max(v1.z, v2.z, v3.z, v4.z));
-        let wallInteriorBox = new Box3(wallInteriorMin, wallInteriorMax);
 
         // add holes for each wall item
         for (let i = 0; i < this.wall.inWallItems.length; i++) {
@@ -286,15 +290,12 @@ export class Edge3D extends EventDispatcher {
             let min = halfSize.clone().negate();
             let max = halfSize.clone();
             let holePoints = null;
-            let itemBox = new Box3(min.clone().add(pos), max.clone().add(pos));
 
             pos.applyMatrix4(transform);
             min.add(pos);
             max.add(pos);
-            // if (wallInteriorBox.containsBox(itemBox)) {
             holePoints = [new Vector2(min.x, min.y), new Vector2(max.x, min.y), new Vector2(max.x, max.y), new Vector2(min.x, max.y)];
             shape.holes.push(new Path(holePoints));
-            // }
         }
 
         let geometry = new ShapeGeometry(shape);

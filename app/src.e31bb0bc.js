@@ -37895,6 +37895,11 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
 
     _this.redrawCallbacks = null;
     /**
+     * Is this an orphan edge?
+     */
+
+    _this.__isOrphan = false;
+    /**
      * Is this is the front edge or the back edge
      * @property {boolean} front Is this is the front edge or the back edge
      * @type {boolean}
@@ -37928,6 +37933,7 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
       var scope = this;
       scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
       scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
+      this.generatePlane();
       scope.dispatchEvent({
         type: _events.EVENT_REDRAW,
         item: scope
@@ -37940,6 +37946,7 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
       scope.offset = scope.wall.thickness * 0.5;
       scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
       scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
+      this.generatePlane();
       scope.dispatchEvent({
         type: _events.EVENT_REDRAW,
         item: scope
@@ -38413,6 +38420,19 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
       return halfAngleVector;
     }
   }, {
+    key: "destroy",
+    value: function destroy() {
+      this.plane = null; // this.wall = null;
+
+      this.__isOrphan = true;
+      this.wall.removeEventListener(_events.EVENT_MOVED, this.__wallMovedEvent);
+      this.wall.removeEventListener(_events.EVENT_UPDATED, this.__wallUpdatedEvent);
+      this.dispatchEvent({
+        type: _events.EVENT_DELETED,
+        edge: this
+      });
+    }
+  }, {
     key: "vertices",
     get: function get() {
       return this.__vertices;
@@ -38421,6 +38441,11 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
     key: "normal",
     get: function get() {
       return this.__normal;
+    }
+  }, {
+    key: "isOrphan",
+    get: function get() {
+      return this.__isOrphan;
     }
   }]);
 
@@ -43251,6 +43276,7 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
     _this.__currentWallSnapPoint = null;
     _this.__isWallDependent = false;
     _this.__followWallEvent = _this.__followWall.bind(_assertThisInitialized(_this));
+    _this.__edgeDeletedEvent = _this.__edgeDeleted.bind(_assertThisInitialized(_this));
     _this.__parametricGeometryUpdateEvent = _this.__parametricGeometryUpdate.bind(_assertThisInitialized(_this));
     _this.castShadow = false;
     _this.receiveShadow = false;
@@ -43325,7 +43351,6 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
             var wallEdge = this.__metadata.wallSide == 'front' ? wall.frontEdge : wall.backEdge;
             var wallSurfacePoint = this.__metadata.wallSurfacePoint;
             this.__currentWallSnapPoint = new _three.Vector3(wallSurfacePoint[0], wallSurfacePoint[1], wallSurfacePoint[2]);
-            0;
 
             this.__addToAWall(wall, wallEdge);
 
@@ -43349,11 +43374,24 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
       }
     }
   }, {
+    key: "__edgeDeleted",
+    value: function __edgeDeleted(evt) {
+      if (this.__currentWall) {
+        var wallEdge = this.__metadata.wallSide == 'front' ? this.__currentWall.frontEdge : this.__currentWall.backEdge;
+        this.__currentWallEdge = null;
+
+        var point = _utils.Utils.cartesianFromBarycenter(wallEdge.vertices, this.__barycentricLocation);
+
+        this.snapToWall(point, this.__currentWall, wallEdge);
+      }
+    }
+  }, {
     key: "__followWall",
     value: function __followWall(evt) {
       if (this.__isWallDependent && this.__currentWall && !this.__offlineUpdate) {
-        this.__currentWallSnapPoint = _utils.Utils.cartesianFromBarycenter(this.__currentWallEdge.vertices, this.__barycentricLocation);
-        this.snapToWall(this.__currentWallSnapPoint, this.__currentWall, this.__currentWallEdge);
+        var point = _utils.Utils.cartesianFromBarycenter(this.__currentWallEdge.vertices, this.__barycentricLocation);
+
+        this.snapToWall(point, this.__currentWall, this.__currentWallEdge);
       }
     }
   }, {
@@ -43361,11 +43399,12 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
     value: function __addToAWall(toWall, toWallEdge) {
       if (toWall === undefined || !toWall || toWall === 'undefined') {
         return;
-      } // if (this.__currentWall && this.__currentWall !== toWall) {
-
+      }
 
       if (this.__currentWall && this.__currentWall !== toWall) {
         this.__currentWall.removeEventListener(_events.EVENT_MOVED, this.__followWallEvent);
+
+        this.__currentWallEdge.removeEventListener(_events.EVENT_DELETED, this.__edgeDeletedEvent);
 
         this.__currentWall.removeItem(this);
       }
@@ -43387,6 +43426,8 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
 
       if (!this.__currentWall.hasEventListener(_events.EVENT_MOVED, this.__followWallEvent)) {
         this.__currentWall.addEventListener(_events.EVENT_MOVED, this.__followWallEvent);
+
+        this.__currentWallEdge.addEventListener(_events.EVENT_DELETED, this.__edgeDeletedEvent);
       }
     }
     /** */
@@ -43431,6 +43472,13 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "snapToWall",
     value: function snapToWall(point, wall, wallEdge) {}
+  }, {
+    key: "newWallEdge",
+    value: function newWallEdge() {
+      var wallEdge = this.__metadata.wallSide == 'front' ? this.__currentWall.frontEdge : this.__currentWall.backEdge;
+      this.__currentWallEdge = null;
+      this.__currentWallEdge = wallEdge;
+    }
   }, {
     key: "id",
     get: function get() {
@@ -43615,6 +43663,11 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
     get: function get() {
       return this.__offlineUpdate;
     }
+  }, {
+    key: "wallSide",
+    get: function get() {
+      return this.__metadata.wallSide;
+    }
   }]);
 
   return Item;
@@ -43686,21 +43739,7 @@ var WallItem = /*#__PURE__*/function (_Item) {
   _createClass(WallItem, [{
     key: "snapToPoint",
     value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
-      this.snapToWall(point, intersectingPlane.wall, intersectingPlane.edge); // let normal2d = new Vector2(normal.x, normal.z);
-      // let angle = Utils.angle(UP_VECTOR, normal2d);
-      // let rotatedSize = this.halfSize.clone();
-      // rotatedSize.applyAxisAngle(UP_VECTOR, angle);
-      // // The below needs to done so the size is always positive
-      // // The rotation of size might lead to negative values based on the angle of rotation
-      // rotatedSize.x = Math.abs(rotatedSize.x);
-      // rotatedSize.y = Math.abs(rotatedSize.y);
-      // rotatedSize.z = Math.abs(rotatedSize.z);
-      // this.__currentWallNormal = normal.clone();
-      // this.__currentWallSnapPoint = point.clone();
-      // point = point.clone().add(normal.clone().multiplyScalar(this.halfSize.z + (intersectingPlane.edge.wall.thickness * 0.25)));
-      // this.position = point;
-      // this.rotation = new Vector3(0, angle, 0);
-      // this.__addToAWall(intersectingPlane, toWall, toFloor, toRoof);
+      this.snapToWall(point, intersectingPlane.wall, intersectingPlane.edge);
     }
   }, {
     key: "snapToWall",
@@ -43719,11 +43758,6 @@ var WallItem = /*#__PURE__*/function (_Item) {
       this.rotation = new _three.Vector3(0, angle, 0);
 
       this.__addToAWall(wall, wallEdge);
-    }
-  }, {
-    key: "__followWall",
-    value: function __followWall(evt) {
-      _get(_getPrototypeOf(WallItem.prototype), "__followWall", this).call(this, evt);
     }
   }, {
     key: "__parametricGeometryUpdate",
@@ -43804,11 +43838,7 @@ var InWallItem = /*#__PURE__*/function (_WallItem) {
   _createClass(InWallItem, [{
     key: "snapToPoint",
     value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
-      this.snapToWall(point, intersectingPlane.wall, intersectingPlane.edge); // let normal2d = new Vector2(normal.x, normal.z);
-      // let angle = Utils.angle(UP_VECTOR, normal2d);
-      // this.rotation = new Vector3(0, angle, 0);
-      // this.position = point;
-      // this.__addToAWall(intersectingPlane, toWall);
+      this.snapToWall(point, intersectingPlane.wall, intersectingPlane.edge);
     }
   }, {
     key: "snapToWall",
@@ -43891,13 +43921,7 @@ var InWallFloorItem = /*#__PURE__*/function (_InWallItem) {
   _createClass(InWallFloorItem, [{
     key: "snapToPoint",
     value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
-      this.snapToWall(point, intersectingPlane.wall, intersectingPlane.edge); // let normal2d = new Vector2(normal.x, normal.z);
-      // let angle = Utils.angle(UP_VECTOR, normal2d);
-      // this.rotation = new Vector3(0, angle, 0);
-      // point.y = this.halfSize.y + 5;
-      // this.position = point;
-      // this.__currentWallNormal = normal.clone();
-      // this.__addToAWall(intersectingPlane, toWall);
+      this.snapToWall(point, intersectingPlane.wall, intersectingPlane.edge);
     }
   }, {
     key: "snapToWall",
@@ -43998,22 +44022,7 @@ var WallFloorItem = /*#__PURE__*/function (_WallItem) {
   _createClass(WallFloorItem, [{
     key: "snapToPoint",
     value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
-      this.snapToWall(point, intersectingPlane.wall, intersectingPlane.edge); // let normal2d = new Vector2(normal.x, normal.z);
-      // let angle = Utils.angle(UP_VECTOR, normal2d);
-      // let rotatedSize = this.halfSize.clone();
-      // rotatedSize.applyAxisAngle(UP_VECTOR, angle);
-      // // The below needs to done so the size is always positive
-      // // The rotation of size might lead to negative values based on the angle of rotation
-      // rotatedSize.x = Math.abs(rotatedSize.x);
-      // rotatedSize.y = Math.abs(rotatedSize.y);
-      // rotatedSize.z = Math.abs(rotatedSize.z);
-      // this.__currentWallNormal = normal.clone();
-      // this.__currentWallSnapPoint = point.clone();
-      // point = point.clone().add(normal.clone().multiplyScalar(this.halfSize.z + (intersectingPlane.edge.wall.thickness * 0.25)));
-      // point.y = this.halfSize.y + 5;
-      // this.rotation = new Vector3(0, angle, 0);
-      // this.position = point;
-      // this.__addToAWall(intersectingPlane, toWall);
+      this.snapToWall(point, intersectingPlane.wall, intersectingPlane.edge);
     }
   }, {
     key: "snapToWall",
@@ -44176,10 +44185,10 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
     /** Front is the plane from start to end. */
 
 
-    _this.frontEdge = null;
+    _this.__frontEdge = null;
     /** Back is the plane from end to start. */
 
-    _this.backEdge = null;
+    _this.__backEdge = null;
     _this.__attachedRooms = [];
     /** */
 
@@ -44298,6 +44307,12 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
         if (!_utils.Utils.hasValue(this.__onWallItems, item)) {
           this.__onWallItems.push(item);
         }
+
+        this.dispatchEvent({
+          type: _events.EVENT_MOVED,
+          item: this,
+          position: null
+        });
       }
     }
   }, {
@@ -44306,19 +44321,25 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
       if (item instanceof _in_wall_item.InWallItem || item instanceof _in_wall_floor_item.InWallFloorItem) {
         if (_utils.Utils.hasValue(this.__inWallItems, item)) {
           _utils.Utils.removeValue(this.__inWallItems, item);
-
-          this.dispatchEvent({
-            type: _events.EVENT_MOVED,
-            item: this,
-            position: null
-          });
         }
+
+        this.dispatchEvent({
+          type: _events.EVENT_MOVED,
+          item: this,
+          position: null
+        });
       }
 
       if (item instanceof _wall_item.WallItem || item instanceof _wall_floor_item.WallFloorItem) {
         if (_utils.Utils.hasValue(this.__onWallItems, item)) {
           _utils.Utils.removeValue(this.__onWallItems, item);
         }
+
+        this.dispatchEvent({
+          type: _events.EVENT_MOVED,
+          item: this,
+          position: null
+        });
       }
     }
   }, {
@@ -44386,6 +44407,14 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "resetFrontBack",
     value: function resetFrontBack() {
+      if (this.frontEdge) {
+        this.frontEdge.destroy();
+      }
+
+      if (this.backEdge) {
+        this.backEdge.destroy();
+      }
+
       this.frontEdge = null;
       this.backEdge = null;
       this.orphan = false;
@@ -44809,6 +44838,38 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
       this.end.move(eNewLocation.x, eNewLocation.y);
       this.__location = vec2;
     }
+  }, {
+    key: "frontEdge",
+    get: function get() {
+      return this.__frontEdge;
+    },
+    set: function set(edge) {
+      this.__frontEdge = edge;
+
+      this.__inWallItems.forEach(function (item) {
+        item.newWallEdge();
+      });
+
+      this.__onWallItems.forEach(function (item) {
+        item.newWallEdge();
+      });
+    }
+  }, {
+    key: "backEdge",
+    get: function get() {
+      return this.__backEdge;
+    },
+    set: function set(edge) {
+      this.__backEdge = edge;
+
+      this.__inWallItems.forEach(function (item) {
+        item.newWallEdge();
+      });
+
+      this.__onWallItems.forEach(function (item) {
+        item.newWallEdge();
+      });
+    }
   }]);
 
   return Wall;
@@ -44969,6 +45030,8 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
     value: function _roomUpdated() {
       this.updateInteriorCorners();
       this.updateArea();
+      this.generateFloorPlane();
+      this.generateRoofPlane();
     }
   }, {
     key: "__getOrderedCorners",
@@ -45173,26 +45236,19 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "generateRoofPlane",
     value: function generateRoofPlane() {
-      if (this.roofPlane && this.roofPlane != null) {
-        if (this.roofPlane.parent != null) {
-          this.roofPlane.parent.remove(this.roofPlane);
-        }
-      } // setup texture
-
-
+      // setup texture
       var geometry = new _three.Geometry();
       this.corners.forEach(function (corner) {
-        var vertex = new _three.Vector3(corner.x, corner.elevation, corner.y);
+        var vertex = new _three.Vector3(corner.location.x, corner.elevation, corner.location.y);
         geometry.vertices.push(vertex);
       });
 
       for (var _i = 2; _i < geometry.vertices.length; _i++) {
         var face = new _three.Face3(0, _i - 1, _i);
         geometry.faces.push(face);
-      }
+      } // geometry.computeBoundingBox();
+      // geometry.computeFaceNormals();
 
-      geometry.computeBoundingBox();
-      geometry.computeFaceNormals();
 
       if (!this.roofPlane) {
         var buffGeometry = new _three2.BufferGeometry().fromGeometry(geometry);
@@ -45202,6 +45258,8 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
         }));
       } else {
         this.roofPlane.geometry = this.roofPlane.geometry.fromGeometry(geometry);
+        this.roofPlane.geometry.computeBoundingBox();
+        this.roofPlane.geometry.computeFaceNormals();
       }
 
       this.roofPlane.room = this;
@@ -50366,8 +50424,8 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
     _this = _super.call(this, parameters);
     _this.__scene = scene;
     _this.__reflectsScene = reflectsScene;
-    _this.__mirrorCamera = null;
-    _this.roughness = !textureMapPack.reflective ? 0.5 : textureMapPack.reflective;
+    _this.__mirrorCamera = null; // this.roughness = (!textureMapPack.reflective) ? 0.5 : textureMapPack.reflective;
+
     _this.__repeat = !textureMapPack.repeat ? _constants.TEXTURE_DEFAULT_REPEAT : textureMapPack.repeat;
 
     if (_this.__reflectsScene) {
@@ -50582,14 +50640,9 @@ var WallMaterial3D = /*#__PURE__*/function (_Material3D) {
   var _super = _createSuper(WallMaterial3D);
 
   function WallMaterial3D(parameters, textureMapPack, scene) {
-    var _this;
-
     _classCallCheck(this, WallMaterial3D);
 
-    _this = _super.call(this, parameters, textureMapPack, scene, false);
-    _this.roughness = 0.7; // this.normalScale.set(100, 100);
-
-    return _this;
+    return _super.call(this, parameters, textureMapPack, scene, false);
   }
 
   return WallMaterial3D;
@@ -50671,6 +50724,7 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
 
     _this.showallevent = _this.__showAll.bind(_assertThisInitialized(_this)); //() => { scope.showAll(); };
 
+    _this.__edgeDeletedEvent = _this.__edgeDeleted.bind(_assertThisInitialized(_this));
     _this.__updateTexturePackEvent = _this.__updateTexturePack.bind(_assertThisInitialized(_this));
     _this.visibilityfactor = true;
     _this.__wallMaterial3D = null;
@@ -50709,6 +50763,11 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
       this.scene.needsUpdate = true;
     }
   }, {
+    key: "__edgeDeleted",
+    value: function __edgeDeleted(evt) {
+      this.remove();
+    }
+  }, {
     key: "__redraw",
     value: function __redraw() {
       this.redraw();
@@ -50726,6 +50785,7 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "init",
     value: function init() {
+      this.edge.addEventListener(_events.EVENT_DELETED, this.__edgeDeletedEvent);
       this.edge.addEventListener(_events.EVENT_UPDATE_TEXTURES, this.__updateTexturePackEvent);
       this.edge.addEventListener(_events.EVENT_REDRAW, this.redrawevent);
       this.controls.addEventListener('change', this.visibilityevent);
@@ -50760,6 +50820,7 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "remove",
     value: function remove() {
+      this.edge.removeEventListener(_events.EVENT_DELETED, this.__edgeDeletedEvent);
       this.edge.removeEventListener(_events.EVENT_UPDATE_TEXTURES, this.__updateTexturePackEvent);
       this.edge.removeEventListener(_events.EVENT_REDRAW, this.redrawevent);
       this.controls.removeEventListener('change', this.visibilityevent);
@@ -50930,10 +50991,7 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
         p.applyMatrix4(transform);
       });
       var spoints = [new _three.Vector2(points[0].x, points[0].y), new _three.Vector2(points[1].x, points[1].y), new _three.Vector2(points[2].x, points[2].y), new _three.Vector2(points[3].x, points[3].y)];
-      var shape = new _three.Shape(spoints);
-      var wallInteriorMin = new _three.Vector3(Math.min(v1.x, v2.x, v3.x, v4.x), Math.min(v1.y, v2.y, v3.y, v4.y), Math.min(v1.z, v2.z, v3.z, v4.z));
-      var wallInteriorMax = new _three.Vector3(Math.max(v1.x, v2.x, v3.x, v4.x), Math.max(v1.y, v2.y, v3.y, v4.y), Math.max(v1.z, v2.z, v3.z, v4.z));
-      var wallInteriorBox = new _three.Box3(wallInteriorMin, wallInteriorMax); // add holes for each wall item
+      var shape = new _three.Shape(spoints); // add holes for each wall item
 
       for (var i = 0; i < this.wall.inWallItems.length; i++) {
         var item = this.wall.inWallItems[i];
@@ -50942,13 +51000,11 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
         var min = halfSize.clone().negate();
         var max = halfSize.clone();
         var holePoints = null;
-        var itemBox = new _three.Box3(min.clone().add(pos), max.clone().add(pos));
         pos.applyMatrix4(transform);
         min.add(pos);
-        max.add(pos); // if (wallInteriorBox.containsBox(itemBox)) {
-
+        max.add(pos);
         holePoints = [new _three.Vector2(min.x, min.y), new _three.Vector2(max.x, min.y), new _three.Vector2(max.x, max.y), new _three.Vector2(min.x, max.y)];
-        shape.holes.push(new _three.Path(holePoints)); // }
+        shape.holes.push(new _three.Path(holePoints));
       }
 
       var geometry = new _three.ShapeGeometry(shape);
@@ -51085,8 +51141,7 @@ var FloorMaterial3D = /*#__PURE__*/function (_Material3D) {
   function FloorMaterial3D(parameters, textureMapPack, scene) {
     _classCallCheck(this, FloorMaterial3D);
 
-    return _super.call(this, parameters, textureMapPack, scene, true); // this.metalness = 1.0;
-    // this.normalScale.set(-10, -10);
+    return _super.call(this, parameters, textureMapPack, scene, true);
   }
 
   return FloorMaterial3D;
@@ -59456,68 +59511,70 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
 
       function __tinyUpdate() {
         scope.parent.needsUpdate = true;
-      } // if (!this.__itemModel.offlineUpdate) {
-
-
-      if (evt.property === 'position') {
-        _gsap.default.to(this.position, {
-          duration: duration,
-          x: this.__itemModel.position.x,
-          onUpdate: __tinyUpdate
-        });
-
-        _gsap.default.to(this.position, {
-          duration: duration,
-          y: this.__itemModel.position.y
-        });
-
-        _gsap.default.to(this.position, {
-          duration: duration,
-          z: this.__itemModel.position.z
-        });
       }
 
-      if (evt.property === 'rotation') {
-        _gsap.default.to(this.__loadedItem.rotation, {
-          duration: duration,
-          x: this.__itemModel.rotation.x,
-          onUpdate: __tinyUpdate
-        });
+      if (!this.__itemModel.offlineUpdate) {
+        if (evt.property === 'position') {
+          _gsap.default.to(this.position, {
+            duration: duration,
+            x: this.__itemModel.position.x,
+            onUpdate: __tinyUpdate
+          });
 
-        _gsap.default.to(this.__loadedItem.rotation, {
-          duration: duration,
-          y: this.__itemModel.rotation.y
-        });
+          _gsap.default.to(this.position, {
+            duration: duration,
+            y: this.__itemModel.position.y
+          });
 
-        _gsap.default.to(this.__loadedItem.rotation, {
-          duration: duration,
-          z: this.__itemModel.rotation.z
-        });
+          _gsap.default.to(this.position, {
+            duration: duration,
+            z: this.__itemModel.position.z
+          });
+        }
 
-        _gsap.default.to(this.__boxhelper.rotation, {
-          duration: duration,
-          x: this.__itemModel.rotation.x
-        });
+        if (evt.property === 'rotation') {
+          _gsap.default.to(this.__loadedItem.rotation, {
+            duration: duration,
+            x: this.__itemModel.rotation.x,
+            onUpdate: __tinyUpdate
+          });
 
-        _gsap.default.to(this.__boxhelper.rotation, {
-          duration: duration,
-          y: this.__itemModel.rotation.y
-        });
+          _gsap.default.to(this.__loadedItem.rotation, {
+            duration: duration,
+            y: this.__itemModel.rotation.y
+          });
 
-        _gsap.default.to(this.__boxhelper.rotation, {
-          duration: duration,
-          z: this.__itemModel.rotation.z
-        });
-      } // } else {
-      //     if (evt.property === 'position') {
-      //         this.position.set(this.__itemModel.position.x, this.__itemModel.position.y, this.__itemModel.position.z);
-      //     }
-      //     if (evt.property === 'rotation') {
-      //         this.__loadedItem.rotation.set(this.__itemModel.rotation.x, this.__itemModel.rotation.y, this.__itemModel.rotation.z);
-      //         this.__boxhelper.rotation.set(this.__itemModel.rotation.x, this.__itemModel.rotation.y, this.__itemModel.rotation.z);
-      //     }
-      // }
+          _gsap.default.to(this.__loadedItem.rotation, {
+            duration: duration,
+            z: this.__itemModel.rotation.z
+          });
 
+          _gsap.default.to(this.__boxhelper.rotation, {
+            duration: duration,
+            x: this.__itemModel.rotation.x
+          });
+
+          _gsap.default.to(this.__boxhelper.rotation, {
+            duration: duration,
+            y: this.__itemModel.rotation.y
+          });
+
+          _gsap.default.to(this.__boxhelper.rotation, {
+            duration: duration,
+            z: this.__itemModel.rotation.z
+          });
+        }
+      } else {
+        if (evt.property === 'position') {
+          this.position.set(this.__itemModel.position.x, this.__itemModel.position.y, this.__itemModel.position.z);
+        }
+
+        if (evt.property === 'rotation') {
+          this.__loadedItem.rotation.set(this.__itemModel.rotation.x, this.__itemModel.rotation.y, this.__itemModel.rotation.z);
+
+          this.__boxhelper.rotation.set(this.__itemModel.rotation.x, this.__itemModel.rotation.y, this.__itemModel.rotation.z);
+        }
+      }
 
       if (evt.property === 'visible') {
         this.visible = this.__itemModel.visible;
@@ -59911,13 +59968,8 @@ var DragRoomItemsControl3D = /*#__PURE__*/function (_EventDispatcher) {
             var _location = intersectionData.point;
             var normal = intersectionData.face.normal;
             var intersectingPlane = intersectionData.object;
-            var edgePlane = intersectionData.object.edge;
-            var wall = intersectionData.object.wall;
 
-            this.__selected.snapToPoint(_location, normal, intersectingPlane); // if (this.__selected.itemModel.isWallDependent) {
-            //     this.__selected.snapToWall(location, wall, edgePlane);
-            // }
-
+            this.__selected.snapToPoint(_location, normal, intersectingPlane);
           }
         }
 
@@ -60181,13 +60233,6 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
         });
       }
 
-      function animate() {
-        scope.renderer.setAnimationLoop(function () {
-          scope.render();
-        });
-        scope.render();
-      }
-
       scope.model.addEventListener(_events.EVENT_NEW_ITEM, scope.__newItemEvent); // scope.model.addEventListener(EVENT_LOADED, (evt) => scope.addRoomItems(evt));
       // scope.floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.addWalls(evt));
 
@@ -60203,8 +60248,10 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
       scope.dragcontrols.addEventListener(_events.EVENT_NO_ITEM_SELECTED, this.__roomItemUnselectedEvent);
       scope.dragcontrols.addEventListener(_events.EVENT_WALL_CLICKED, this.__wallSelectedEvent);
       scope.dragcontrols.addEventListener(_events.EVENT_ROOM_CLICKED, this.__roomSelectedEvent); // scope.controls.enabled = false;//To test the drag controls
+      //SEt the animation loop
 
-      animate();
+      scope.renderer.setAnimationLoop(scope.render.bind(this));
+      scope.render();
     }
   }, {
     key: "__wallSelected",
@@ -117673,7 +117720,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "33329" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "36601" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

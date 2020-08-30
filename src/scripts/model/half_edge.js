@@ -1,5 +1,5 @@
 import { EventDispatcher, Vector2, Vector3, Matrix4, Face3, Mesh, Geometry, MeshBasicMaterial, Box3 } from 'three';
-import { EVENT_REDRAW, EVENT_MOVED, EVENT_UPDATED, EVENT_UPDATE_TEXTURES } from '../core/events.js';
+import { EVENT_REDRAW, EVENT_MOVED, EVENT_UPDATED, EVENT_UPDATE_TEXTURES, EVENT_DELETED } from '../core/events.js';
 import { Utils } from '../core/utils.js';
 import { WallTypes, TEXTURE_DEFAULT_REPEAT } from '../core/constants.js';
 import { BufferGeometry } from 'three/build/three.module';
@@ -135,6 +135,11 @@ export class HalfEdge extends EventDispatcher {
         this.redrawCallbacks = null;
 
         /**
+         * Is this an orphan edge?
+         */
+        this.__isOrphan = false;
+
+        /**
          * Is this is the front edge or the back edge
          * @property {boolean} front Is this is the front edge or the back edge
          * @type {boolean}
@@ -163,6 +168,7 @@ export class HalfEdge extends EventDispatcher {
         let scope = this;
         scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
         scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
+        this.generatePlane();
         scope.dispatchEvent({ type: EVENT_REDRAW, item: scope });
 
     }
@@ -172,6 +178,7 @@ export class HalfEdge extends EventDispatcher {
         scope.offset = scope.wall.thickness * 0.5;
         scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
         scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
+        this.generatePlane();
         scope.dispatchEvent({ type: EVENT_REDRAW, item: scope });
     }
 
@@ -585,6 +592,15 @@ export class HalfEdge extends EventDispatcher {
         return halfAngleVector;
     }
 
+    destroy() {
+        this.plane = null;
+        // this.wall = null;
+        this.__isOrphan = true;
+        this.wall.removeEventListener(EVENT_MOVED, this.__wallMovedEvent);
+        this.wall.removeEventListener(EVENT_UPDATED, this.__wallUpdatedEvent);
+        this.dispatchEvent({ type: EVENT_DELETED, edge: this });
+    }
+
     get vertices() {
         return this.__vertices;
     }
@@ -592,6 +608,11 @@ export class HalfEdge extends EventDispatcher {
     get normal() {
         return this.__normal;
     }
+
+    get isOrphan() {
+        return this.__isOrphan;
+    }
+
 }
 
 export default HalfEdge;

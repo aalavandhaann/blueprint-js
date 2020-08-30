@@ -1,5 +1,5 @@
 import { EventDispatcher, Vector3, Vector2 } from 'three';
-import { EVENT_UPDATED, EVENT_PARAMETRIC_GEOMETRY_UPATED, EVENT_MOVED } from '../core/events';
+import { EVENT_UPDATED, EVENT_PARAMETRIC_GEOMETRY_UPATED, EVENT_MOVED, EVENT_DELETED } from '../core/events';
 import { Utils } from '../core/utils';
 import { BASE_PARAMETRIC_TYPES, ParametricFactory } from '../parametrics/ParametricFactory';
 
@@ -69,6 +69,7 @@ export class Item extends EventDispatcher {
         this.__isWallDependent = false;
 
         this.__followWallEvent = this.__followWall.bind(this);
+        this.__edgeDeletedEvent = this.__edgeDeleted.bind(this);
         this.__parametricGeometryUpdateEvent = this.__parametricGeometryUpdate.bind(this);
 
         this.castShadow = false;
@@ -126,7 +127,6 @@ export class Item extends EventDispatcher {
                     let wallEdge = (this.__metadata.wallSide == 'front') ? wall.frontEdge : wall.backEdge;
                     let wallSurfacePoint = this.__metadata.wallSurfacePoint;
                     this.__currentWallSnapPoint = new Vector3(wallSurfacePoint[0], wallSurfacePoint[1], wallSurfacePoint[2]);
-                    0
                     this.__addToAWall(wall, wallEdge);
                     break;
                 }
@@ -144,10 +144,19 @@ export class Item extends EventDispatcher {
         }
     }
 
+    __edgeDeleted(evt) {
+        if (this.__currentWall) {
+            let wallEdge = (this.__metadata.wallSide == 'front') ? this.__currentWall.frontEdge : this.__currentWall.backEdge;
+            this.__currentWallEdge = null;
+            let point = Utils.cartesianFromBarycenter(wallEdge.vertices, this.__barycentricLocation);
+            this.snapToWall(point, this.__currentWall, wallEdge);
+        }
+    }
+
     __followWall(evt) {
         if (this.__isWallDependent && this.__currentWall && !this.__offlineUpdate) {
-            this.__currentWallSnapPoint = Utils.cartesianFromBarycenter(this.__currentWallEdge.vertices, this.__barycentricLocation);
-            this.snapToWall(this.__currentWallSnapPoint, this.__currentWall, this.__currentWallEdge);
+            let point = Utils.cartesianFromBarycenter(this.__currentWallEdge.vertices, this.__barycentricLocation);
+            this.snapToWall(point, this.__currentWall, this.__currentWallEdge);
         }
     }
 
@@ -155,9 +164,9 @@ export class Item extends EventDispatcher {
         if (toWall === undefined || !toWall || toWall === 'undefined') {
             return;
         }
-        // if (this.__currentWall && this.__currentWall !== toWall) {
         if (this.__currentWall && this.__currentWall !== toWall) {
             this.__currentWall.removeEventListener(EVENT_MOVED, this.__followWallEvent);
+            this.__currentWallEdge.removeEventListener(EVENT_DELETED, this.__edgeDeletedEvent);
             this.__currentWall.removeItem(this);
         }
 
@@ -174,6 +183,7 @@ export class Item extends EventDispatcher {
         this.__offlineUpdate = false; //Really important as it will lead to a lot of recursion
         if (!this.__currentWall.hasEventListener(EVENT_MOVED, this.__followWallEvent)) {
             this.__currentWall.addEventListener(EVENT_MOVED, this.__followWallEvent);
+            this.__currentWallEdge.addEventListener(EVENT_DELETED, this.__edgeDeletedEvent);
         }
     }
 
@@ -208,6 +218,12 @@ export class Item extends EventDispatcher {
     }
 
     snapToWall(point, wall, wallEdge) {}
+
+    newWallEdge() {
+        let wallEdge = (this.__metadata.wallSide == 'front') ? this.__currentWall.frontEdge : this.__currentWall.backEdge;
+        this.__currentWallEdge = null;
+        this.__currentWallEdge = wallEdge;
+    }
 
 
     get id() {
@@ -360,5 +376,9 @@ export class Item extends EventDispatcher {
 
     get offlineUpdate() {
         return this.__offlineUpdate;
+    }
+
+    get wallSide() {
+        return this.__metadata.wallSide;
     }
 }

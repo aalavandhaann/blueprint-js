@@ -40,8 +40,6 @@ export class Room extends EventDispatcher {
 
         this.__destroyed = false;
 
-
-
         this.updateWalls();
         this.updateInteriorCorners();
         this.generateFloorPlane();
@@ -87,39 +85,11 @@ export class Room extends EventDispatcher {
         this.dispatchEvent({ type: EVENT_CHANGED, item: this });
     }
 
-
-    get uuid() {
-        return this.getUuid();
-    }
-
-    get corners() {
-        return this._corners;
-    }
-
-    get sharedWalls() {
-        return this.__walls;
-    }
-
-    get roomCornerPoints() {
-        return this._polygonPoints;
-    }
-
-    get roomByCornersId() {
-        return this._roomByCornersId;
-    }
-
-    set name(value) {
-        let oldname = this._name;
-        this._name = value;
-        this.dispatchEvent({ type: EVENT_ROOM_ATTRIBUTES_CHANGED, item: this, info: { from: oldname, to: this._name } });
-    }
-    get name() {
-        return this._name;
-    }
-
     _roomUpdated() {
         this.updateInteriorCorners();
         this.updateArea();
+        this.generateFloorPlane();
+        this.generateRoofPlane();
     }
 
     __getOrderedCorners(wall) {
@@ -273,30 +243,27 @@ export class Room extends EventDispatcher {
     }
 
     generateRoofPlane() {
-        if (this.roofPlane && this.roofPlane != null) {
-            if (this.roofPlane.parent != null) {
-                this.roofPlane.parent.remove(this.roofPlane);
-            }
-        }
         // setup texture
         let geometry = new Geometry();
 
         this.corners.forEach((corner) => {
-            let vertex = new Vector3(corner.x, corner.elevation, corner.y);
+            let vertex = new Vector3(corner.location.x, corner.elevation, corner.location.y);
             geometry.vertices.push(vertex);
         });
         for (let i = 2; i < geometry.vertices.length; i++) {
             let face = new Face3(0, i - 1, i);
             geometry.faces.push(face);
         }
-        geometry.computeBoundingBox();
-        geometry.computeFaceNormals();
+        // geometry.computeBoundingBox();
+        // geometry.computeFaceNormals();
 
         if (!this.roofPlane) {
             let buffGeometry = new BufferGeometry().fromGeometry(geometry);
             this.roofPlane = new Mesh(buffGeometry, new MeshBasicMaterial({ side: DoubleSide, visible: false }));
         } else {
             this.roofPlane.geometry = this.roofPlane.geometry.fromGeometry(geometry);
+            this.roofPlane.geometry.computeBoundingBox();
+            this.roofPlane.geometry.computeFaceNormals();
         }
 
         this.roofPlane.room = this;
@@ -609,6 +576,35 @@ export class Room extends EventDispatcher {
 
         // hold on to an edge reference
         this.edgePointer = firstEdge;
+    }
+
+    get uuid() {
+        return this.getUuid();
+    }
+
+    get corners() {
+        return this._corners;
+    }
+
+    get sharedWalls() {
+        return this.__walls;
+    }
+
+    get roomCornerPoints() {
+        return this._polygonPoints;
+    }
+
+    get roomByCornersId() {
+        return this._roomByCornersId;
+    }
+
+    set name(value) {
+        let oldname = this._name;
+        this._name = value;
+        this.dispatchEvent({ type: EVENT_ROOM_ATTRIBUTES_CHANGED, item: this, info: { from: oldname, to: this._name } });
+    }
+    get name() {
+        return this._name;
     }
 }
 export default Room;

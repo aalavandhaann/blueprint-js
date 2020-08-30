@@ -66,29 +66,29 @@ export class Physical3DItem extends Mesh {
         function __tinyUpdate() {
             scope.parent.needsUpdate = true;
         }
-        // if (!this.__itemModel.offlineUpdate) {
-        if (evt.property === 'position') {
-            gsap.to(this.position, { duration: duration, x: this.__itemModel.position.x, onUpdate: __tinyUpdate });
-            gsap.to(this.position, { duration: duration, y: this.__itemModel.position.y });
-            gsap.to(this.position, { duration: duration, z: this.__itemModel.position.z });
+        if (!this.__itemModel.offlineUpdate) {
+            if (evt.property === 'position') {
+                gsap.to(this.position, { duration: duration, x: this.__itemModel.position.x, onUpdate: __tinyUpdate });
+                gsap.to(this.position, { duration: duration, y: this.__itemModel.position.y });
+                gsap.to(this.position, { duration: duration, z: this.__itemModel.position.z });
+            }
+            if (evt.property === 'rotation') {
+                gsap.to(this.__loadedItem.rotation, { duration: duration, x: this.__itemModel.rotation.x, onUpdate: __tinyUpdate });
+                gsap.to(this.__loadedItem.rotation, { duration: duration, y: this.__itemModel.rotation.y });
+                gsap.to(this.__loadedItem.rotation, { duration: duration, z: this.__itemModel.rotation.z });
+                gsap.to(this.__boxhelper.rotation, { duration: duration, x: this.__itemModel.rotation.x });
+                gsap.to(this.__boxhelper.rotation, { duration: duration, y: this.__itemModel.rotation.y });
+                gsap.to(this.__boxhelper.rotation, { duration: duration, z: this.__itemModel.rotation.z });
+            }
+        } else {
+            if (evt.property === 'position') {
+                this.position.set(this.__itemModel.position.x, this.__itemModel.position.y, this.__itemModel.position.z);
+            }
+            if (evt.property === 'rotation') {
+                this.__loadedItem.rotation.set(this.__itemModel.rotation.x, this.__itemModel.rotation.y, this.__itemModel.rotation.z);
+                this.__boxhelper.rotation.set(this.__itemModel.rotation.x, this.__itemModel.rotation.y, this.__itemModel.rotation.z);
+            }
         }
-        if (evt.property === 'rotation') {
-            gsap.to(this.__loadedItem.rotation, { duration: duration, x: this.__itemModel.rotation.x, onUpdate: __tinyUpdate });
-            gsap.to(this.__loadedItem.rotation, { duration: duration, y: this.__itemModel.rotation.y });
-            gsap.to(this.__loadedItem.rotation, { duration: duration, z: this.__itemModel.rotation.z });
-            gsap.to(this.__boxhelper.rotation, { duration: duration, x: this.__itemModel.rotation.x });
-            gsap.to(this.__boxhelper.rotation, { duration: duration, y: this.__itemModel.rotation.y });
-            gsap.to(this.__boxhelper.rotation, { duration: duration, z: this.__itemModel.rotation.z });
-        }
-        // } else {
-        //     if (evt.property === 'position') {
-        //         this.position.set(this.__itemModel.position.x, this.__itemModel.position.y, this.__itemModel.position.z);
-        //     }
-        //     if (evt.property === 'rotation') {
-        //         this.__loadedItem.rotation.set(this.__itemModel.rotation.x, this.__itemModel.rotation.y, this.__itemModel.rotation.z);
-        //         this.__boxhelper.rotation.set(this.__itemModel.rotation.x, this.__itemModel.rotation.y, this.__itemModel.rotation.z);
-        //     }
-        // }
         if (evt.property === 'visible') {
             this.visible = this.__itemModel.visible;
         }

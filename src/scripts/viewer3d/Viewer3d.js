@@ -107,11 +107,6 @@ export class Viewer3D extends Scene {
             window.addEventListener('orientationchange', () => { scope.updateWindowSize(); });
         }
 
-        function animate() {
-            scope.renderer.setAnimationLoop(function() { scope.render(); });
-            scope.render();
-        }
-
         scope.model.addEventListener(EVENT_NEW_ITEM, scope.__newItemEvent);
         // scope.model.addEventListener(EVENT_LOADED, (evt) => scope.addRoomItems(evt));
         // scope.floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.addWalls(evt));
@@ -131,7 +126,9 @@ export class Viewer3D extends Scene {
         scope.dragcontrols.addEventListener(EVENT_ROOM_CLICKED, this.__roomSelectedEvent);
         // scope.controls.enabled = false;//To test the drag controls
 
-        animate();
+        //SEt the animation loop
+        scope.renderer.setAnimationLoop(scope.render.bind(this));
+        scope.render();
     }
 
     __wallSelected(evt) {

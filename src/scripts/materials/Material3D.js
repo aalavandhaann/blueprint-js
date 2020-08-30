@@ -9,7 +9,7 @@ export class Material3D extends MeshStandardMaterial {
         this.__reflectsScene = reflectsScene;
         this.__mirrorCamera = null;
 
-        this.roughness = (!textureMapPack.reflective) ? 0.5 : textureMapPack.reflective;
+        // this.roughness = (!textureMapPack.reflective) ? 0.5 : textureMapPack.reflective;
         this.__repeat = (!textureMapPack.repeat) ? TEXTURE_DEFAULT_REPEAT : textureMapPack.repeat;
 
         if (this.__reflectsScene) {
