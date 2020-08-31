@@ -4,3 +4,4 @@ gitpush.sh~
 *.blend1
 dist/*
 .cache/*
+3D-Models-Internet/*
