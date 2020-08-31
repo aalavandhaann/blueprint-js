@@ -26,7 +26,7 @@ export const boundsX = 'boundsX'; //In CMS
 export const boundsY = 'boundsY'; //In CMS
 
 
-export var config = { dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 20, systemUI: false, scale: 1, snapToGrid: false, dragOnlyX: false, dragOnlyY: false, snapTolerance: 50, gridSpacing: 50, directionalDrag: false, boundsX: 500, boundsY: 500 };
+export var config = { dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 20, systemUI: false, scale: 1, snapToGrid: true, dragOnlyX: false, dragOnlyY: false, snapTolerance: 50, gridSpacing: 50, directionalDrag: true, boundsX: 500, boundsY: 500 };
 
 export var wallInformation = { exterior: false, interior: false, midline: true, labels: true, exteriorlabel: 'e:', interiorlabel: 'i:', midlinelabel: 'm:' };
 

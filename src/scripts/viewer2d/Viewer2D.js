@@ -1,7 +1,7 @@
 import { Application, Graphics, Text } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import { Vector2, EventDispatcher } from 'three';
-import { EVENT_NEW, EVENT_DELETED, EVENT_LOADED, EVENT_2D_SELECTED, EVENT_NEW_ROOMS_ADDED, EVENT_KEY_RELEASED, EVENT_KEY_PRESSED, EVENT_WALL_2D_CLICKED, EVENT_CORNER_2D_CLICKED, EVENT_ROOM_2D_CLICKED, EVENT_NOTHING_2D_SELECTED, EVENT_MOVED } from '../core/events';
+import { EVENT_NEW, EVENT_DELETED, EVENT_LOADED, EVENT_2D_SELECTED, EVENT_NEW_ROOMS_ADDED, EVENT_KEY_RELEASED, EVENT_KEY_PRESSED, EVENT_WALL_2D_CLICKED, EVENT_CORNER_2D_CLICKED, EVENT_ROOM_2D_CLICKED, EVENT_NOTHING_2D_SELECTED, EVENT_MOVED, EVENT_MODE_RESET } from '../core/events';
 import { Grid2D } from './Grid2d';
 import { CornerView2D } from './CornerView2D';
 import { WallView2D } from './WallView2D';
@@ -97,6 +97,7 @@ export class Viewer2D extends Application {
 
         this.__redrawFloorplanEvent = this.__redrawFloorplan.bind(this);
         this.__windowResizeEvent = this._handleWindowResize.bind(this);
+        this.__resetFloorplanEvent = this.__resetFloorplan.bind(this);
 
         this.__floorplanContainer = new Viewport({
             screenWidth: window.innerWidth,
@@ -170,6 +171,7 @@ export class Viewer2D extends Application {
         // this.__floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.__redrawFloorplan(evt));
 
 
+        this.__floorplan.addEventListener(EVENT_MODE_RESET, this.__resetFloorplanEvent);
         this.__floorplan.addEventListener(EVENT_NEW, this.__redrawFloorplanEvent);
         this.__floorplan.addEventListener(EVENT_DELETED, this.__redrawFloorplanEvent);
         // this.__floorplan.addEventListener(EVENT_LOADED, this.__redrawFloorplanEvent);
@@ -377,6 +379,12 @@ export class Viewer2D extends Application {
         xValue = Math.min(3000, xValue);
         this.__floorplanContainer.x = xValue;
         this.__floorplanContainer.y = yValue;
+    }
+
+    __resetFloorplan(evt) {
+        this.__mode = floorplannerModes.MOVE;
+        this.__groupTransformer.visible = false;
+        this.__groupTransformer.selected = null;
     }
 
     __redrawFloorplan() {

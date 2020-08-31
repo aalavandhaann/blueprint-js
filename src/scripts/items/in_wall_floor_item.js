@@ -15,6 +15,7 @@ export class InWallFloorItem extends InWallItem {
     }
 
     snapToWall(point, wall, wallEdge) {
+        point = this.__fitToWallBounds(point, wallEdge);
         let normal = wallEdge.normal;
         let normal2d = new Vector2(normal.x, normal.z);
         let angle = Utils.angle(UP_VECTOR, normal2d);

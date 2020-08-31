@@ -139,8 +139,10 @@ export class Item extends EventDispatcher {
         this.__size = box.getSize(new Vector3());
         this.__halfSize = this.__size.clone().multiplyScalar(0.5);
         if (this.__currentWall && updateForWall) {
-            this.position = this.__position;
-            this.__currentWall.addItem(this);
+            let point = Utils.cartesianFromBarycenter(this.__currentWallEdge.vertices, this.__barycentricLocation);
+            this.snapToWall(point, this.__currentWall, this.__currentWallEdge);
+            // this.position = this.__position;
+            // this.__currentWall.addItem(this);
         }
     }
 

@@ -36595,12 +36595,12 @@ var config = {
   wallThickness: 20,
   systemUI: false,
   scale: 1,
-  snapToGrid: false,
+  snapToGrid: true,
   dragOnlyX: false,
   dragOnlyY: false,
   snapTolerance: 50,
   gridSpacing: 50,
-  directionalDrag: false,
+  directionalDrag: true,
   boundsX: 500,
   boundsY: 500
 };
@@ -43368,9 +43368,10 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
       this.__halfSize = this.__size.clone().multiplyScalar(0.5);
 
       if (this.__currentWall && updateForWall) {
-        this.position = this.__position;
+        var point = _utils.Utils.cartesianFromBarycenter(this.__currentWallEdge.vertices, this.__barycentricLocation);
 
-        this.__currentWall.addItem(this);
+        this.snapToWall(point, this.__currentWall, this.__currentWallEdge); // this.position = this.__position;
+        // this.__currentWall.addItem(this);
       }
     }
   }, {
@@ -43752,6 +43753,31 @@ var WallItem = /*#__PURE__*/function (_Item) {
   }
 
   _createClass(WallItem, [{
+    key: "__fitToWallBounds",
+    value: function __fitToWallBounds(point, wallEdge) {
+      var point2d = new _three.Vector2(point.x, point.z);
+      var wallEdgeVector = wallEdge.interiorEnd().clone().sub(wallEdge.interiorStart());
+      var sizeX = this.__halfSize.x + 5;
+      var sizeVector = wallEdgeVector.clone().normalize().multiplyScalar(sizeX);
+      var positionMinusSize = point2d.clone().sub(sizeVector);
+      var positionPlusSize = point2d.clone().add(sizeVector);
+      var startToPlusSizeVector = positionPlusSize.sub(wallEdge.interiorStart());
+      var endToMinusSizeVector = positionMinusSize.sub(wallEdge.interiorEnd());
+
+      if (startToPlusSizeVector.length() > wallEdgeVector.length()) {
+        var p = wallEdge.interiorEnd().clone().sub(sizeVector);
+        return new _three.Vector3(p.x, point.y, p.y);
+      }
+
+      if (endToMinusSizeVector.length() > wallEdgeVector.length()) {
+        var _p = wallEdge.interiorStart().clone().add(sizeVector);
+
+        return new _three.Vector3(_p.x, point.y, _p.y);
+      }
+
+      return point;
+    }
+  }, {
     key: "snapToPoint",
     value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
       this.snapToWall(point, intersectingPlane.wall, intersectingPlane.edge);
@@ -43761,6 +43787,7 @@ var WallItem = /*#__PURE__*/function (_Item) {
     value: function snapToWall(point, wall, wallEdge) {
       _get(_getPrototypeOf(WallItem.prototype), "snapToWall", this).call(this, point, wall, wallEdge);
 
+      point = this.__fitToWallBounds(point, wallEdge);
       var normal = wallEdge.normal;
       var normal2d = new _three.Vector2(normal.x, normal.z);
 
@@ -43858,6 +43885,7 @@ var InWallItem = /*#__PURE__*/function (_WallItem) {
   }, {
     key: "snapToWall",
     value: function snapToWall(point, wall, wallEdge) {
+      point = this.__fitToWallBounds(point, wallEdge);
       var normal = wallEdge.normal;
       var normal2d = new _three.Vector2(normal.x, normal.z);
 
@@ -43941,6 +43969,7 @@ var InWallFloorItem = /*#__PURE__*/function (_InWallItem) {
   }, {
     key: "snapToWall",
     value: function snapToWall(point, wall, wallEdge) {
+      point = this.__fitToWallBounds(point, wallEdge);
       var normal = wallEdge.normal;
       var normal2d = new _three.Vector2(normal.x, normal.z);
 
@@ -44042,6 +44071,7 @@ var WallFloorItem = /*#__PURE__*/function (_WallItem) {
   }, {
     key: "snapToWall",
     value: function snapToWall(point, wall, wallEdge) {
+      point = this.__fitToWallBounds(point, wallEdge);
       var normal = wallEdge.normal;
       var normal2d = new _three.Vector2(normal.x, normal.z);
 
@@ -46842,6 +46872,9 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
       });
       this.corners = [];
       this.walls = [];
+      this.dispatchEvent({
+        type: _events.EVENT_MODE_RESET
+      });
     }
     /**
      * @param {Object}
@@ -115796,6 +115829,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
     _this2.__drawModeMouseMoveEvent = _this2.__drawModeMouseMove.bind(_assertThisInitialized(_this2));
     _this2.__redrawFloorplanEvent = _this2.__redrawFloorplan.bind(_assertThisInitialized(_this2));
     _this2.__windowResizeEvent = _this2._handleWindowResize.bind(_assertThisInitialized(_this2));
+    _this2.__resetFloorplanEvent = _this2.__resetFloorplan.bind(_assertThisInitialized(_this2));
     _this2.__floorplanContainer = new _pixiViewport.Viewport({
       screenWidth: window.innerWidth,
       screenHeight: window.innerHeight,
@@ -115873,6 +115907,8 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
 
     _this2.__floorplanContainer.on('touchmove', _this2.__drawModeMouseMoveEvent); // this.__floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.__redrawFloorplan(evt));
 
+
+    _this2.__floorplan.addEventListener(_events.EVENT_MODE_RESET, _this2.__resetFloorplanEvent);
 
     _this2.__floorplan.addEventListener(_events.EVENT_NEW, _this2.__redrawFloorplanEvent);
 
@@ -116142,6 +116178,13 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
       xValue = Math.min(3000, xValue);
       this.__floorplanContainer.x = xValue;
       this.__floorplanContainer.y = yValue;
+    }
+  }, {
+    key: "__resetFloorplan",
+    value: function __resetFloorplan(evt) {
+      this.__mode = floorplannerModes.MOVE;
+      this.__groupTransformer.visible = false;
+      this.__groupTransformer.selected = null;
     }
   }, {
     key: "__redrawFloorplan",

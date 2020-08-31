@@ -1,4 +1,4 @@
-import { EVENT_UPDATED, EVENT_LOADED, EVENT_NEW, EVENT_DELETED, EVENT_ROOM_NAME_CHANGED } from '../core/events.js';
+import { EVENT_UPDATED, EVENT_LOADED, EVENT_NEW, EVENT_DELETED, EVENT_ROOM_NAME_CHANGED, EVENT_MODE_RESET } from '../core/events.js';
 import { EVENT_CORNER_ATTRIBUTES_CHANGED, EVENT_WALL_ATTRIBUTES_CHANGED, EVENT_ROOM_ATTRIBUTES_CHANGED, EVENT_MOVED, EVENT_NEW_ROOMS_ADDED } from '../core/events.js';
 import { EventDispatcher, Vector2, Vector3, Matrix4 } from 'three';
 import { Utils } from '../core/utils.js';
@@ -706,6 +706,7 @@ export class Floorplan extends EventDispatcher {
         });
         this.corners = [];
         this.walls = [];
+        this.dispatchEvent({ type: EVENT_MODE_RESET });
     }
 
     /**
