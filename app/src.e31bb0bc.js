@@ -50518,6 +50518,7 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
 
       if (this.__colorTexture) {
         flag = true;
+        this.__colorTexture.encoding = _three.sRGBEncoding;
         this.__colorTexture.wrapS = this.__colorTexture.wrapT = _three.RepeatWrapping;
 
         this.__colorTexture.repeat.set(this.__uRatio, this.__vRatio);
@@ -50526,6 +50527,7 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
       }
 
       if (this.__normalTexture) {
+        this.__normalTexture.encoding = _three.sRGBEncoding;
         this.__normalTexture.wrapS = this.__normalTexture.wrapT = _three.RepeatWrapping;
 
         this.__normalTexture.repeat.set(this.__uRatio, this.__vRatio);
@@ -50534,6 +50536,7 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
       }
 
       if (this.__roughnessTexture) {
+        this.__roughnessTexture.encoding = _three.sRGBEncoding;
         this.__roughnessTexture.wrapS = this.__roughnessTexture.wrapT = _three.RepeatWrapping;
 
         this.__roughnessTexture.repeat.set(this.__uRatio, this.__vRatio);
@@ -50542,6 +50545,7 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
       }
 
       if (this.__ambientTexture) {
+        this.__ambientTexture.encoding = _three.sRGBEncoding;
         this.__ambientTexture.wrapS = this.__ambientTexture.wrapT = _three.RepeatWrapping;
 
         this.__ambientTexture.repeat.set(this.__uRatio, this.__vRatio);
@@ -50550,6 +50554,7 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
       }
 
       if (this.__bumpTexture) {
+        this.__bumpTexture.encoding = _three.sRGBEncoding;
         this.__bumpTexture.wrapS = this.__bumpTexture.wrapT = _three.RepeatWrapping;
 
         this.__bumpTexture.repeat.set(this.__uRatio, this.__vRatio);
@@ -51526,18 +51531,18 @@ var Lights3D = /*#__PURE__*/function (_EventDispatcher) {
 
       this.ambLight = new _three.AmbientLight(0x404040); // soft white light
 
-      this.ambLight.intensity = 0.5;
+      this.ambLight.intensity = 0.15;
       this.dirLight.castShadow = true;
       this.dirLight.shadow.mapSize.width = 1024;
       this.dirLight.shadow.mapSize.height = 1024;
       this.dirLight.shadow.camera.far = this.height + this.tol;
       this.dirLight.shadow.bias = -0.0001;
       this.dirLight.visible = true;
+      this.dirLight.intensity = 0.15;
       this.scene.add(light); // this.scene.add(this.dirLight);
       // this.scene.add(this.dirLight.target);
 
-      this.scene.add(this.ambLight);
-      this.floorplan.addEventListener(_events.EVENT_UPDATED, this.updatedroomsevent);
+      this.scene.add(this.ambLight); // this.floorplan.addEventListener(EVENT_UPDATED, this.updatedroomsevent);
     }
   }, {
     key: "updateShadowCamera",
@@ -59667,7 +59672,13 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
   }, {
     key: "__gltfLoaded",
     value: function __gltfLoaded(gltfModel) {
-      this.__loadedItem = gltfModel.scene;
+      this.__loadedItem = gltfModel.scene; // this.__loadedItem.children.forEach((child) => {
+      //     if (child.material) {
+      //         if (child.material.map) {
+      //             child.material.map.encoding = sRGBEncoding;
+      //         }
+      //     }
+      // });
 
       this.__initializeChildItem();
 
@@ -60257,6 +60268,7 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
         minFilter: _three.LinearMipmapLinearFilter
       });
       scope.__environmentCamera = new _three.CubeCamera(1, 100000, cubeRenderTarget);
+      scope.__environmentCamera.renderTarget.texture.encoding = _three.sRGBEncoding;
       scope.renderer = scope.getARenderer();
       scope.domElement.appendChild(scope.renderer.domElement);
       scope.lights = new _lights3d.Lights3D(this, scope.floorplan); // scope.dragcontrols = new DragControls(this.physicalRoomItems, scope.camera, scope.renderer.domElement);
@@ -60445,12 +60457,14 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
         alpha: true
       }); // scope.renderer.autoClear = false;
 
-      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.enabled = false;
       renderer.shadowMapSoft = true;
       renderer.shadowMap.type = _three.PCFSoftShadowMap;
       renderer.setClearColor(0xFFFFFF, 1);
-      renderer.localClippingEnabled = false; //		renderer.setPixelRatio(window.devicePixelRatio);
-      // renderer.sortObjects = false;
+      renderer.localClippingEnabled = false;
+      renderer.gammaOutput = false;
+      renderer.outputEncoding = _three.sRGBEncoding;
+      renderer.setPixelRatio(window.devicePixelRatio); // renderer.sortObjects = false;
 
       return renderer;
     }
@@ -117155,7 +117169,7 @@ module.exports = {
     "bumpmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_height.png"
   }
 };
-},{}],"parametrics_items.json":[function(require,module,exports) {
+},{}],"design.json":[function(require,module,exports) {
 module.exports = {
   "floorplan": {
     "version": "2.0.1a",
@@ -117342,30 +117356,30 @@ module.exports = {
     "wallSide": "back",
     "wallSurfacePoint": [10, 138.38790186348007, 185.34460161835352]
   }, {
-    "itemName": "Lantern",
-    "itemType": 9,
-    "position": [224.46232602418777, 30, 65],
+    "itemName": "Tennis Table",
+    "itemType": 1,
+    "position": [221.43156753842538, 54.05, 429.1958745553041],
     "rotation": [0, 0, 0],
     "scale": [1, 1, 1],
-    "size": [240, 50, 100],
+    "size": [281.598, 98.1, 172.4],
     "fixed": false,
     "resizable": false,
-    "modelURL": "models/Cube.glb",
+    "modelURL": "models/TableTennisTable.glb",
+    "isParametric": false
+  }, {
+    "itemName": "DoubleChairWithPillow",
+    "itemType": 9,
+    "position": [99.27116005634912, 41.36685, 49.64319999999989],
+    "rotation": [0, 0, 0],
+    "scale": [1, 1, 1],
+    "size": [108.85, 72.7337, 69.2864],
+    "fixed": false,
+    "resizable": false,
+    "modelURL": "models/DoubleChairWithPillow.glb",
     "isParametric": false,
     "wall": "4e3d65cb-54c0-0681-28bf-bddcc7bdb571,71d4f128-ae80-3d58-9bd2-711c6ce6cdf2",
     "wallSide": "back",
-    "wallSurfacePoint": [224.46232602418777, 30, 10]
-  }, {
-    "itemName": "Lantern 02",
-    "itemType": 4,
-    "position": [209.43984621295914, 220, 270.9912269855666],
-    "rotation": [0, 0, 0],
-    "scale": [1, 1, 1],
-    "size": [240, 50, 100],
-    "fixed": false,
-    "resizable": false,
-    "modelURL": "models/Cube.glb",
-    "isParametric": false
+    "wallSurfacePoint": [99.27116005634912, 70.88314014751387, 9.999999999999886]
   }, {
     "itemName": "Parametric Door 01",
     "isParametric": true,
@@ -117385,7 +117399,7 @@ module.exports = {
       "handleType": "HANDLE_01"
     },
     "itemType": 7,
-    "position": [252.10994952514463, 105, 10],
+    "position": [252.10994952514454, 105, 10],
     "rotation": [0, 0, 0],
     "scale": [1, 1, 1],
     "size": [100, 200, 20],
@@ -117393,7 +117407,7 @@ module.exports = {
     "resizable": false,
     "wall": "4e3d65cb-54c0-0681-28bf-bddcc7bdb571,71d4f128-ae80-3d58-9bd2-711c6ce6cdf2",
     "wallSide": "back",
-    "wallSurfacePoint": [252.10994952514463, 105, 10]
+    "wallSurfacePoint": [252.10994952514454, 105, 10]
   }, {
     "itemName": "Parametric Door 02",
     "isParametric": true,
@@ -117445,7 +117459,7 @@ var floor_textures_json = _interopRequireWildcard(require("./floor_textures.json
 
 var wall_textures_json = _interopRequireWildcard(require("./wall_textures.json"));
 
-var default_room_json = _interopRequireWildcard(require("./parametrics_items.json"));
+var default_room_json = _interopRequireWildcard(require("./design.json"));
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
@@ -117453,6 +117467,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// import * as default_room_json from './parametrics_items.json';
 // import * as default_room_json from './empty_room.json';
 var default_room = JSON.stringify(default_room_json);
 var startY = 0;
@@ -117790,7 +117805,7 @@ if (!opts.widget) {
   settingsSelectedWall3D.hide();
   settingsSelectedRoom3D.hide();
 }
-},{"./scripts/blueprint.js":"scripts/blueprint.js","./scripts/core/events.js":"scripts/core/events.js","./scripts/core/configuration.js":"scripts/core/configuration.js","./scripts/core/constants.js":"scripts/core/constants.js","quicksettings":"../node_modules/quicksettings/quicksettings.min.js","./scripts/core/dimensioning.js":"scripts/core/dimensioning.js","./scripts/ParametricsInterface.js":"scripts/ParametricsInterface.js","./floor_textures.json":"floor_textures.json","./wall_textures.json":"wall_textures.json","./parametrics_items.json":"parametrics_items.json"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./scripts/blueprint.js":"scripts/blueprint.js","./scripts/core/events.js":"scripts/core/events.js","./scripts/core/configuration.js":"scripts/core/configuration.js","./scripts/core/constants.js":"scripts/core/constants.js","quicksettings":"../node_modules/quicksettings/quicksettings.min.js","./scripts/core/dimensioning.js":"scripts/core/dimensioning.js","./scripts/ParametricsInterface.js":"scripts/ParametricsInterface.js","./floor_textures.json":"floor_textures.json","./wall_textures.json":"wall_textures.json","./design.json":"design.json"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -117818,7 +117833,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "32913" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "40765" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

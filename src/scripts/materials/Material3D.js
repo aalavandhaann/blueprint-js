@@ -1,4 +1,4 @@
-import { MeshStandardMaterial, TextureLoader, RepeatWrapping, Color, Vector2 } from 'three';
+import { MeshStandardMaterial, TextureLoader, RepeatWrapping, Color, Vector2, sRGBEncoding } from 'three';
 import { TEXTURE_DEFAULT_REPEAT } from '../core/constants';
 
 export class Material3D extends MeshStandardMaterial {
@@ -39,27 +39,32 @@ export class Material3D extends MeshStandardMaterial {
         let flag = false;
         if (this.__colorTexture) {
             flag = true;
+            this.__colorTexture.encoding = sRGBEncoding;
             this.__colorTexture.wrapS = this.__colorTexture.wrapT = RepeatWrapping;
             this.__colorTexture.repeat.set(this.__uRatio, this.__vRatio);
             this.__colorTexture.needsUpdate = true;
         }
         if (this.__normalTexture) {
+            this.__normalTexture.encoding = sRGBEncoding;
             this.__normalTexture.wrapS = this.__normalTexture.wrapT = RepeatWrapping;
             this.__normalTexture.repeat.set(this.__uRatio, this.__vRatio);
             this.__normalTexture.needsUpdate = true;
         }
 
         if (this.__roughnessTexture) {
+            this.__roughnessTexture.encoding = sRGBEncoding;
             this.__roughnessTexture.wrapS = this.__roughnessTexture.wrapT = RepeatWrapping;
             this.__roughnessTexture.repeat.set(this.__uRatio, this.__vRatio);
             this.__roughnessTexture.needsUpdate = true;
         }
         if (this.__ambientTexture) {
+            this.__ambientTexture.encoding = sRGBEncoding;
             this.__ambientTexture.wrapS = this.__ambientTexture.wrapT = RepeatWrapping;
             this.__ambientTexture.repeat.set(this.__uRatio, this.__vRatio);
             this.__ambientTexture.needsUpdate = true;
         }
         if (this.__bumpTexture) {
+            this.__bumpTexture.encoding = sRGBEncoding;
             this.__bumpTexture.wrapS = this.__bumpTexture.wrapT = RepeatWrapping;
             this.__bumpTexture.repeat.set(this.__uRatio, this.__vRatio);
             this.__bumpTexture.needsUpdate = true;

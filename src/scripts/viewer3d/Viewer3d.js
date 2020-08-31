@@ -1,4 +1,4 @@
-import { WebGLRenderer, ImageUtils, PerspectiveCamera, AxesHelper, Scene, RGBFormat, LinearMipmapLinearFilter } from 'three';
+import { WebGLRenderer, ImageUtils, PerspectiveCamera, AxesHelper, Scene, RGBFormat, LinearMipmapLinearFilter, sRGBEncoding } from 'three';
 import { PCFSoftShadowMap, WebGLCubeRenderTarget, CubeCamera } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter';
@@ -78,6 +78,7 @@ export class Viewer3D extends Scene {
 
         let cubeRenderTarget = new WebGLCubeRenderTarget(16, { format: RGBFormat, generateMipmaps: true, minFilter: LinearMipmapLinearFilter });
         scope.__environmentCamera = new CubeCamera(1, 100000, cubeRenderTarget);
+        scope.__environmentCamera.renderTarget.texture.encoding = sRGBEncoding;
 
         scope.renderer = scope.getARenderer();
         scope.domElement.appendChild(scope.renderer.domElement);
@@ -246,12 +247,14 @@ export class Viewer3D extends Scene {
         var renderer = new WebGLRenderer({ antialias: true, alpha: true });
 
         // scope.renderer.autoClear = false;
-        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.enabled = false;
         renderer.shadowMapSoft = true;
         renderer.shadowMap.type = PCFSoftShadowMap;
         renderer.setClearColor(0xFFFFFF, 1);
         renderer.localClippingEnabled = false;
-        //		renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.gammaOutput = false;
+        renderer.outputEncoding = sRGBEncoding;
+        renderer.setPixelRatio(window.devicePixelRatio);
         // renderer.sortObjects = false;
         return renderer;
     }

@@ -209,46 +209,11 @@
             ],
         },
         {
-            "itemName": "Lantern",
-            "itemType": 9,
-            "position": [
-                224.46232602418777,
-                30,
-                65
-            ],
-            "rotation": [
-                0,
-                0,
-                0
-            ],
-            "scale": [
-                1,
-                1,
-                1
-            ],
-            "size": [
-                240,
-                50,
-                100
-            ],
-            "fixed": false,
-            "resizable": false,
-            "modelURL": "models/Cube.glb",
-            "isParametric": false,
-            "wall": "4e3d65cb-54c0-0681-28bf-bddcc7bdb571,71d4f128-ae80-3d58-9bd2-711c6ce6cdf2",
-            "wallSide": "back",
-            "wallSurfacePoint": [
-                224.46232602418777,
-                30,
-                10
-            ],
-        },
-        {
-            "itemName": "Lantern 02",
-            "itemType": 4,
+            "itemName": "Tennis Table",
+            "itemType": 1,
             "position": [
                 209.43984621295914,
-                220,
+                49.05,
                 270.9912269855666
             ],
             "rotation": [
@@ -262,13 +227,41 @@
                 1
             ],
             "size": [
-                240,
-                50,
-                100
+                281.598,
+                98.1,
+                172.4
             ],
             "fixed": false,
             "resizable": false,
-            "modelURL": "models/Cube.glb",
+            "modelURL": "models/TableTennisTable.glb",
+            "isParametric": false
+        },
+        {
+            "itemName": "DoubleChairWithPillow",
+            "itemType": 9,
+            "position": [
+                209.43984621295914,
+                49.05,
+                270.9912269855666
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "size": [
+                108.85,
+                72.7337,
+                69.2864
+            ],
+            "fixed": false,
+            "resizable": false,
+            "modelURL": "models/DoubleChairWithPillow.glb",
             "isParametric": false
         },
         {
