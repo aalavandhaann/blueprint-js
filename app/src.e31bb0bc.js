@@ -37930,9 +37930,9 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
   _createClass(HalfEdge, [{
     key: "__wallMoved",
     value: function __wallMoved(evt) {
-      var scope = this;
-      scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
-      scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
+      var scope = this; // scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
+      // scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
+
       this.generatePlane();
       scope.dispatchEvent({
         type: _events.EVENT_REDRAW,
@@ -37943,9 +37943,9 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
     key: "__wallUpdated",
     value: function __wallUpdated(evt) {
       var scope = this;
-      scope.offset = scope.wall.thickness * 0.5;
-      scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
-      scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
+      scope.offset = scope.wall.thickness * 0.5; // scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
+      // scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
+
       this.generatePlane();
       scope.dispatchEvent({
         type: _events.EVENT_REDRAW,
@@ -38075,7 +38075,8 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
           visible: true
         }));
       } else {
-        this.plane.geometry = this.plane.geometry.fromGeometry(geometry);
+        this.plane.geometry.dispose();
+        this.plane.geometry = new _three2.BufferGeometry().fromGeometry(geometry); //this.plane.geometry.fromGeometry(geometry);
       } //The below line was originally setting the plane visibility to false
       //Now its setting visibility to true. This is necessary to be detected
       //with the raycaster objects to click walls and floors.
@@ -38738,17 +38739,16 @@ var Corner = /*#__PURE__*/function (_EventDispatcher) {
         }
       }
 
-      this.dispatchEvent({
-        type: _events.EVENT_MOVED,
-        item: this,
-        position: new _three.Vector2(newX, newY)
-      }); //      this.moved_callbacks.fire(this.x, this.y);
-
       this.wallStarts.forEach(function (wall) {
         wall.fireMoved();
       });
       this.wallEnds.forEach(function (wall) {
         wall.fireMoved();
+      });
+      this.dispatchEvent({
+        type: _events.EVENT_MOVED,
+        item: this,
+        position: new _three.Vector2(newX, newY)
       });
     }
     /** Moves corner relatively to new position.
@@ -43480,6 +43480,21 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
       this.__currentWallEdge = wallEdge;
     }
   }, {
+    key: "dispose",
+    value: function dispose() {
+      if (this.isParametric && this.__parametricClass) {
+        this.__parametricClass.removeEventListener(_events.EVENT_PARAMETRIC_GEOMETRY_UPATED, this.__parametricGeometryUpdateEvent);
+      }
+
+      if (this.__currentWall) {
+        this.__currentWall.removeEventListener(_events.EVENT_MOVED, this.__followWallEvent);
+      }
+
+      if (this.__currentWallEdge) {
+        this.__currentWallEdge.removeEventListener(_events.EVENT_DELETED, this.__edgeDeletedEvent);
+      }
+    }
+  }, {
     key: "id",
     get: function get() {
       return this.__id;
@@ -45005,6 +45020,14 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
       });
     }
   }, {
+    key: "_roomUpdated",
+    value: function _roomUpdated() {
+      this.updateInteriorCorners();
+      this.updateArea();
+      this.generateFloorPlane();
+      this.generateRoofPlane();
+    }
+  }, {
     key: "destroy",
     value: function destroy() {
       var i = 0;
@@ -45024,14 +45047,6 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
         type: _events.EVENT_CHANGED,
         item: this
       });
-    }
-  }, {
-    key: "_roomUpdated",
-    value: function _roomUpdated() {
-      this.updateInteriorCorners();
-      this.updateArea();
-      this.generateFloorPlane();
-      this.generateRoofPlane();
     }
   }, {
     key: "__getOrderedCorners",
@@ -45257,11 +45272,12 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
           visible: false
         }));
       } else {
-        this.roofPlane.geometry = this.roofPlane.geometry.fromGeometry(geometry);
-        this.roofPlane.geometry.computeBoundingBox();
-        this.roofPlane.geometry.computeFaceNormals();
+        this.roofPlane.geometry.dispose();
+        this.roofPlane.geometry = new _three2.BufferGeometry().fromGeometry(geometry); //this.roofPlane.geometry.fromGeometry(geometry);            
       }
 
+      this.roofPlane.geometry.computeBoundingBox();
+      this.roofPlane.geometry.computeFaceNormals();
       this.roofPlane.room = this;
     }
   }, {
@@ -45281,7 +45297,8 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
           visible: false
         }));
       } else {
-        this.floorPlane.geometry = this.floorPlane.geometry.fromGeometry(geometry);
+        this.floorPlane.geometry.dispose();
+        this.floorPlane.geometry = new _three2.BufferGeometry().fromGeometry(geometry); //this.floorPlane.geometry.fromGeometry(geometry);
       } //The below line was originally setting the plane visibility to false
       //Now its setting visibility to true. This is necessary to be detected
       //with the raycaster objects to click walls and floors.
@@ -47606,6 +47623,15 @@ var Model = /*#__PURE__*/function (_EventDispatcher) {
 
         this.__roomItems.push(item);
       }
+    }
+  }, {
+    key: "reset",
+    value: function reset() {
+      this.floorplan.reset();
+      this.__roomItems.length = 0;
+      this.dispatchEvent({
+        type: _events.EVENT_MODE_RESET
+      });
     }
     /** Gets the items.
      * @returns The items.
@@ -59507,29 +59533,23 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
     key: "__itemUpdated",
     value: function __itemUpdated(evt) {
       var scope = this;
-      var duration = 0.15;
+      var duration = 0.25;
+
+      if (!scope.parent) {
+        return;
+      }
 
       function __tinyUpdate() {
-        scope.parent.needsUpdate = true;
+        if (scope.parent) {
+          scope.parent.needsUpdate = true;
+        }
       }
 
       if (!this.__itemModel.offlineUpdate) {
         if (evt.property === 'position') {
-          _gsap.default.to(this.position, {
-            duration: duration,
-            x: this.__itemModel.position.x,
-            onUpdate: __tinyUpdate
-          });
-
-          _gsap.default.to(this.position, {
-            duration: duration,
-            y: this.__itemModel.position.y
-          });
-
-          _gsap.default.to(this.position, {
-            duration: duration,
-            z: this.__itemModel.position.z
-          });
+          this.position.set(this.__itemModel.position.x, this.__itemModel.position.y, this.__itemModel.position.z); // gsap.to(this.position, { duration: duration, x: this.__itemModel.position.x, onUpdate: __tinyUpdate });
+          // gsap.to(this.position, { duration: duration, y: this.__itemModel.position.y });
+          // gsap.to(this.position, { duration: duration, z: this.__itemModel.position.z });
         }
 
         if (evt.property === 'rotation') {
@@ -59656,6 +59676,8 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
   }, {
     key: "dispose",
     value: function dispose() {
+      this.__itemModel.dispose();
+
       this.__itemModel.removeEventListener(_events.EVENT_UPDATED, this.__itemUpdatedEvent);
 
       this.parent.remove(this);
@@ -60183,6 +60205,7 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
     _this.__roomItemUnselectedEvent = _this.__roomItemUnselected.bind(_assertThisInitialized(_this));
     _this.__roomItemDraggedEvent = _this.__roomItemDragged.bind(_assertThisInitialized(_this));
     _this.__roomItemDragFinishEvent = _this.__roomItemDragFinish.bind(_assertThisInitialized(_this));
+    _this.__resetDesignEvent = _this.__resetDesign.bind(_assertThisInitialized(_this));
 
     _this.init();
 
@@ -60233,7 +60256,8 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
         });
       }
 
-      scope.model.addEventListener(_events.EVENT_NEW_ITEM, scope.__newItemEvent); // scope.model.addEventListener(EVENT_LOADED, (evt) => scope.addRoomItems(evt));
+      scope.model.addEventListener(_events.EVENT_NEW_ITEM, scope.__newItemEvent);
+      scope.model.addEventListener(_events.EVENT_MODE_RESET, scope.__resetDesignEvent); // scope.model.addEventListener(EVENT_LOADED, (evt) => scope.addRoomItems(evt));
       // scope.floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.addWalls(evt));
 
       scope.model.addEventListener(_events.EVENT_LOADED, scope.addRoomItems.bind(scope)); // scope.floorplan.addEventListener(EVENT_UPDATED, scope.addWalls.bind(scope));
@@ -60318,6 +60342,12 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
       });
     }
   }, {
+    key: "__resetDesign",
+    value: function __resetDesign(evt) {
+      this.addRoomItems();
+      this.addWalls();
+    }
+  }, {
     key: "addRoomItems",
     value: function addRoomItems(evt) {
       var i = 0;
@@ -60342,7 +60372,6 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
   }, {
     key: "addWalls",
     value: function addWalls() {
-      console.log('CREATE WALLS');
       var scope = this;
       var i = 0; // clear scene
 
@@ -115253,6 +115282,7 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics3) {
     _this4.__floorplan = floorplan;
     _this4.__groups = _this4.__floorplan.cornerGroups;
     _this4.__currentGroup = null;
+    _this4.__isActive = false;
     _this4.__originalPositions = [];
     _this4.__size = null;
     _this4.__center = null;
@@ -115263,14 +115293,17 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics3) {
     _this4.__scaleHandleDragStartEvent = _this4.__scaleHandleDragStart.bind(_assertThisInitialized(_this4));
     _this4.__scaleHandleDragEndEvent = _this4.__scaleHandleDragEnd.bind(_assertThisInitialized(_this4));
     _this4.__scaleHandleDragMoveEvent = _this4.__scaleHandleDragMove.bind(_assertThisInitialized(_this4));
-    _this4.__rotateHandleDragMoveEvent = _this4.__rotateHandleDragMove.bind(_assertThisInitialized(_this4));
+    _this4.__rotateHandleDragStartEvent = _this4.__rotateHandleDragStart.bind(_assertThisInitialized(_this4));
     _this4.__rotateHandleDragEndEvent = _this4.__rotateHandleDragEnd.bind(_assertThisInitialized(_this4));
+    _this4.__rotateHandleDragMoveEvent = _this4.__rotateHandleDragMove.bind(_assertThisInitialized(_this4));
 
     if (_this4.__parameters.scale) {
       _this4.__createScalingHandles();
     }
 
     if (_this4.__parameters.rotate) {
+      _this4.__rotateHandle.addFloorplanListener('DragStart', _this4.__rotateHandleDragStartEvent);
+
       _this4.__rotateHandle.addFloorplanListener('DragMove', _this4.__rotateHandleDragMoveEvent);
 
       _this4.__rotateHandle.addFloorplanListener('DragEnd', _this4.__rotateHandleDragEndEvent);
@@ -115279,6 +115312,8 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics3) {
     }
 
     if (_this4.__parameters.translate) {
+      _this4.__translateHandle.addFloorplanListener('DragStart', _this4.__rotateHandleDragStartEvent);
+
       _this4.__translateHandle.addFloorplanListener('DragMove', _this4.__rotateHandleDragMoveEvent);
 
       _this4.__translateHandle.addFloorplanListener('DragEnd', _this4.__rotateHandleDragEndEvent);
@@ -115356,6 +115391,7 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics3) {
   }, {
     key: "__scaleHandleDragMove",
     value: function __scaleHandleDragMove(evt) {
+      this.__isActive = true;
       var co = new _three.Vector3(evt.position.x, evt.position.y, 0);
       var handle = evt.handle;
       var opposite = evt.opposite;
@@ -115407,14 +115443,24 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics3) {
   }, {
     key: "__scaleHandleDragEnd",
     value: function __scaleHandleDragEnd(evt) {
-      // let matrix = this.__resizer.scalingMatrix.clone().multiply(this.__resizer.rotationMatrix);
+      if (!this.__isActive) {
+        return;
+      } // let matrix = this.__resizer.scalingMatrix.clone().multiply(this.__resizer.rotationMatrix);
+
+
       this.__setControlsPosition();
 
       this.__updateMatrixOfGroup();
+
+      this.__isActive = false;
     }
+  }, {
+    key: "__rotateHandleDragStart",
+    value: function __rotateHandleDragStart(evt) {}
   }, {
     key: "__rotateHandleDragMove",
     value: function __rotateHandleDragMove(evt) {
+      this.__isActive = true;
       var handle = evt.handle;
 
       if (handle === this.__rotateHandle) {
@@ -115436,7 +115482,15 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics3) {
   }, {
     key: "__rotateHandleDragEnd",
     value: function __rotateHandleDragEnd(evt) {
+      if (!this.__isActive) {
+        return;
+      }
+
+      this.__setControlsPosition();
+
       this.__updateMatrixOfGroup();
+
+      this.__isActive = false;
     }
   }, {
     key: "__updateMatrixOfGroup",
@@ -117360,7 +117414,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var default_room = JSON.stringify(default_room_json);
 var startY = 0;
 var panelWidths = 200;
-var uxInterfaceHeight = 270;
+var uxInterfaceHeight = 320;
 var subPanelsHeight = 460;
 var floor_textures = floor_textures_json['default'];
 var floor_texture_keys = Object.keys(floor_textures);
@@ -117641,6 +117695,7 @@ if (!opts.widget) {
   uxInterface.addFileChooser("Load Design", "Load Design", ".blueprint3d", loadBlueprint3DDesign);
   uxInterface.addButton('Save Design', saveBlueprint3DDesign);
   uxInterface.addButton('Export 3D Scene', saveBlueprint3D);
+  uxInterface.addButton('Reset', blueprint3d.model.reset.bind(blueprint3d.model));
   settingsViewer2d.addButton('Draw Mode', switchViewer2DToDraw);
   settingsViewer2d.addButton('Move Mode', switchViewer2DToMove);
   settingsViewer2d.addButton('Transform Mode', switchViewer2DToTransform);
@@ -117720,7 +117775,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "36601" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "32913" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

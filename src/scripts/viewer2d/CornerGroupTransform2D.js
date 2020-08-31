@@ -424,6 +424,7 @@ export class CornerGroupTransform2D extends Graphics {
         this.__floorplan = floorplan;
         this.__groups = this.__floorplan.cornerGroups;
         this.__currentGroup = null;
+        this.__isActive = false;
 
 
         this.__originalPositions = [];
@@ -439,18 +440,24 @@ export class CornerGroupTransform2D extends Graphics {
         this.__scaleHandleDragStartEvent = this.__scaleHandleDragStart.bind(this);
         this.__scaleHandleDragEndEvent = this.__scaleHandleDragEnd.bind(this);
         this.__scaleHandleDragMoveEvent = this.__scaleHandleDragMove.bind(this);
-        this.__rotateHandleDragMoveEvent = this.__rotateHandleDragMove.bind(this);
+
+        this.__rotateHandleDragStartEvent = this.__rotateHandleDragStart.bind(this);
         this.__rotateHandleDragEndEvent = this.__rotateHandleDragEnd.bind(this);
+        this.__rotateHandleDragMoveEvent = this.__rotateHandleDragMove.bind(this);
+
+
 
         if (this.__parameters.scale) {
             this.__createScalingHandles();
         }
         if (this.__parameters.rotate) {
+            this.__rotateHandle.addFloorplanListener('DragStart', this.__rotateHandleDragStartEvent);
             this.__rotateHandle.addFloorplanListener('DragMove', this.__rotateHandleDragMoveEvent);
             this.__rotateHandle.addFloorplanListener('DragEnd', this.__rotateHandleDragEndEvent);
             this.addChild(this.__rotateHandle);
         }
         if (this.__parameters.translate) {
+            this.__translateHandle.addFloorplanListener('DragStart', this.__rotateHandleDragStartEvent);
             this.__translateHandle.addFloorplanListener('DragMove', this.__rotateHandleDragMoveEvent);
             this.__translateHandle.addFloorplanListener('DragEnd', this.__rotateHandleDragEndEvent);
             this.addChild(this.__translateHandle);
@@ -504,9 +511,12 @@ export class CornerGroupTransform2D extends Graphics {
     }
 
 
-    __scaleHandleDragStart(evt) {}
+    __scaleHandleDragStart(evt) {
+
+    }
 
     __scaleHandleDragMove(evt) {
+        this.__isActive = true;
         let co = new Vector3(evt.position.x, evt.position.y, 0);
         let handle = evt.handle;
         let opposite = evt.opposite;
@@ -548,12 +558,21 @@ export class CornerGroupTransform2D extends Graphics {
     }
 
     __scaleHandleDragEnd(evt) {
+        if (!this.__isActive) {
+            return;
+        }
         // let matrix = this.__resizer.scalingMatrix.clone().multiply(this.__resizer.rotationMatrix);
         this.__setControlsPosition();
         this.__updateMatrixOfGroup();
+        this.__isActive = false;
+    }
+
+    __rotateHandleDragStart(evt) {
+
     }
 
     __rotateHandleDragMove(evt) {
+        this.__isActive = true;
         let handle = evt.handle;
         if (handle === this.__rotateHandle) {
             let co = new Vector2(evt.position.x, evt.position.y);
@@ -569,7 +588,12 @@ export class CornerGroupTransform2D extends Graphics {
     }
 
     __rotateHandleDragEnd(evt) {
+        if (!this.__isActive) {
+            return;
+        }
+        this.__setControlsPosition();
         this.__updateMatrixOfGroup();
+        this.__isActive = false;
     }
 
     __updateMatrixOfGroup() {

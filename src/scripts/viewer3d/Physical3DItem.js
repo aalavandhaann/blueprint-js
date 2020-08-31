@@ -61,16 +61,23 @@ export class Physical3DItem extends Mesh {
     }
     __itemUpdated(evt) {
         let scope = this;
-        let duration = 0.15;
+        let duration = 0.25;
+        if (!scope.parent) {
+            return;
+        }
 
         function __tinyUpdate() {
-            scope.parent.needsUpdate = true;
+            if (scope.parent) {
+                scope.parent.needsUpdate = true;
+            }
+
         }
         if (!this.__itemModel.offlineUpdate) {
             if (evt.property === 'position') {
-                gsap.to(this.position, { duration: duration, x: this.__itemModel.position.x, onUpdate: __tinyUpdate });
-                gsap.to(this.position, { duration: duration, y: this.__itemModel.position.y });
-                gsap.to(this.position, { duration: duration, z: this.__itemModel.position.z });
+                this.position.set(this.__itemModel.position.x, this.__itemModel.position.y, this.__itemModel.position.z);
+                // gsap.to(this.position, { duration: duration, x: this.__itemModel.position.x, onUpdate: __tinyUpdate });
+                // gsap.to(this.position, { duration: duration, y: this.__itemModel.position.y });
+                // gsap.to(this.position, { duration: duration, z: this.__itemModel.position.z });
             }
             if (evt.property === 'rotation') {
                 gsap.to(this.__loadedItem.rotation, { duration: duration, x: this.__itemModel.rotation.x, onUpdate: __tinyUpdate });
@@ -153,6 +160,7 @@ export class Physical3DItem extends Mesh {
     }
 
     dispose() {
+        this.__itemModel.dispose();
         this.__itemModel.removeEventListener(EVENT_UPDATED, this.__itemUpdatedEvent);
         this.parent.remove(this);
     }

@@ -71,6 +71,13 @@ export class Room extends EventDispatcher {
         this.dispatchEvent({ type: EVENT_CHANGED, item: this });
     }
 
+    _roomUpdated() {
+        this.updateInteriorCorners();
+        this.updateArea();
+        this.generateFloorPlane();
+        this.generateRoofPlane();
+    }
+
     destroy() {
         let i = 0;
         for (; i < this.corners.length; i++) {
@@ -83,13 +90,6 @@ export class Room extends EventDispatcher {
         }
         this.__destroyed = true;
         this.dispatchEvent({ type: EVENT_CHANGED, item: this });
-    }
-
-    _roomUpdated() {
-        this.updateInteriorCorners();
-        this.updateArea();
-        this.generateFloorPlane();
-        this.generateRoofPlane();
     }
 
     __getOrderedCorners(wall) {
@@ -261,10 +261,11 @@ export class Room extends EventDispatcher {
             let buffGeometry = new BufferGeometry().fromGeometry(geometry);
             this.roofPlane = new Mesh(buffGeometry, new MeshBasicMaterial({ side: DoubleSide, visible: false }));
         } else {
-            this.roofPlane.geometry = this.roofPlane.geometry.fromGeometry(geometry);
-            this.roofPlane.geometry.computeBoundingBox();
-            this.roofPlane.geometry.computeFaceNormals();
+            this.roofPlane.geometry.dispose();
+            this.roofPlane.geometry = new BufferGeometry().fromGeometry(geometry); //this.roofPlane.geometry.fromGeometry(geometry);            
         }
+        this.roofPlane.geometry.computeBoundingBox();
+        this.roofPlane.geometry.computeFaceNormals();
 
         this.roofPlane.room = this;
     }
@@ -281,7 +282,8 @@ export class Room extends EventDispatcher {
             let buffGeometry = new BufferGeometry().fromGeometry(geometry);
             this.floorPlane = new Mesh(buffGeometry, new MeshBasicMaterial({ side: DoubleSide, visible: false }));
         } else {
-            this.floorPlane.geometry = this.floorPlane.geometry.fromGeometry(geometry);
+            this.floorPlane.geometry.dispose();
+            this.floorPlane.geometry = new BufferGeometry().fromGeometry(geometry); //this.floorPlane.geometry.fromGeometry(geometry);
         }
 
         //The below line was originally setting the plane visibility to false

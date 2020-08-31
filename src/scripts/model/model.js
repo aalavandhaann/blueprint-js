@@ -1,4 +1,4 @@
-import { EVENT_LOADED, EVENT_LOADING, EVENT_ITEM_REMOVED, EVENT_NEW_PARAMETRIC_ITEM, EVENT_NEW_ITEM } from '../core/events.js';
+import { EVENT_LOADED, EVENT_LOADING, EVENT_ITEM_REMOVED, EVENT_NEW_PARAMETRIC_ITEM, EVENT_NEW_ITEM, EVENT_MODE_RESET } from '../core/events.js';
 import { EventDispatcher } from 'three';
 import { Floorplan } from './floorplan.js';
 import { Utils } from '../core/utils.js';
@@ -52,6 +52,12 @@ export class Model extends EventDispatcher {
             let item = new(Factory.getClass(itemType))(itemMetaData, this, itemMetaData.id);
             this.__roomItems.push(item);
         }
+    }
+
+    reset() {
+        this.floorplan.reset();
+        this.__roomItems.length = 0;
+        this.dispatchEvent({ type: EVENT_MODE_RESET });
     }
 
     /** Gets the items.

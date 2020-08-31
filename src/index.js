@@ -18,7 +18,7 @@ import * as default_room_json from './parametrics_items.json';
 let default_room = JSON.stringify(default_room_json);
 let startY = 0;
 let panelWidths = 200;
-let uxInterfaceHeight = 270;
+let uxInterfaceHeight = 320;
 let subPanelsHeight = 460;
 let floor_textures = floor_textures_json['default'];
 let floor_texture_keys = Object.keys(floor_textures);
@@ -284,6 +284,7 @@ if (!opts.widget) {
     uxInterface.addFileChooser("Load Design", "Load Design", ".blueprint3d", loadBlueprint3DDesign);
     uxInterface.addButton('Save Design', saveBlueprint3DDesign);
     uxInterface.addButton('Export 3D Scene', saveBlueprint3D);
+    uxInterface.addButton('Reset', blueprint3d.model.reset.bind(blueprint3d.model));
 
     settingsViewer2d.addButton('Draw Mode', switchViewer2DToDraw);
     settingsViewer2d.addButton('Move Mode', switchViewer2DToMove);

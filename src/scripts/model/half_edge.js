@@ -166,8 +166,8 @@ export class HalfEdge extends EventDispatcher {
 
     __wallMoved(evt) {
         let scope = this;
-        scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
-        scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
+        // scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
+        // scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
         this.generatePlane();
         scope.dispatchEvent({ type: EVENT_REDRAW, item: scope });
 
@@ -176,8 +176,8 @@ export class HalfEdge extends EventDispatcher {
     __wallUpdated(evt) {
         let scope = this;
         scope.offset = scope.wall.thickness * 0.5;
-        scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
-        scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
+        // scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
+        // scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
         this.generatePlane();
         scope.dispatchEvent({ type: EVENT_REDRAW, item: scope });
     }
@@ -270,7 +270,6 @@ export class HalfEdge extends EventDispatcher {
         ac = v3.clone().sub(v1);
         this.__vertices = [v1, v2, v3, v4];
         this.__normal = ab.cross(ac).normalize();
-
         geometry.vertices = [v1, v2, v3, v4];
         geometry.faces.push(new Face3(0, 1, 2));
         geometry.faces.push(new Face3(0, 2, 3));
@@ -280,7 +279,8 @@ export class HalfEdge extends EventDispatcher {
         if (!this.plane) {
             this.plane = new Mesh(new BufferGeometry().fromGeometry(geometry), new MeshBasicMaterial({ visible: true }));
         } else {
-            this.plane.geometry = this.plane.geometry.fromGeometry(geometry);
+            this.plane.geometry.dispose();
+            this.plane.geometry = new BufferGeometry().fromGeometry(geometry); //this.plane.geometry.fromGeometry(geometry);
         }
 
         //The below line was originally setting the plane visibility to false

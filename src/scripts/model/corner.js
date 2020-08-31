@@ -287,9 +287,6 @@ export class Corner extends EventDispatcher {
             }
         }
 
-        this.dispatchEvent({ type: EVENT_MOVED, item: this, position: new Vector2(newX, newY) });
-        //      this.moved_callbacks.fire(this.x, this.y);
-
         this.wallStarts.forEach((wall) => {
             wall.fireMoved();
         });
@@ -297,6 +294,7 @@ export class Corner extends EventDispatcher {
         this.wallEnds.forEach((wall) => {
             wall.fireMoved();
         });
+        this.dispatchEvent({ type: EVENT_MOVED, item: this, position: new Vector2(newX, newY) });
     }
 
     /** Moves corner relatively to new position.

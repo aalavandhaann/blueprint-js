@@ -225,6 +225,20 @@ export class Item extends EventDispatcher {
         this.__currentWallEdge = wallEdge;
     }
 
+    dispose() {
+        if (this.isParametric && this.__parametricClass) {
+            this.__parametricClass.removeEventListener(EVENT_PARAMETRIC_GEOMETRY_UPATED, this.__parametricGeometryUpdateEvent);
+        }
+        if (this.__currentWall) {
+            this.__currentWall.removeEventListener(EVENT_MOVED, this.__followWallEvent);
+
+        }
+        if (this.__currentWallEdge) {
+            this.__currentWallEdge.removeEventListener(EVENT_DELETED, this.__edgeDeletedEvent);
+        }
+
+    }
+
 
     get id() {
         return this.__id;
