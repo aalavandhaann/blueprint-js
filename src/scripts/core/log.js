@@ -11,9 +11,8 @@ export var logContext = ELogContext.None;
  * @param level The log level to be verified.
  * @returns If this context/levels is currently logged.
  */
-export function isLogging(context, level) 
-{
-	return logContext === ELogContext.All || logContext == context || level === ELogLevel.Warning || level === ELogLevel.Error || level === ELogLevel.Fatal;
+export function isLogging(context, level) {
+    return logContext === ELogContext.All || logContext === context || level === ELogLevel.Warning || level === ELogLevel.Error || level === ELogLevel.Fatal;
 }
 
 /** Log the passed message in the context and with given level.
@@ -21,30 +20,27 @@ export function isLogging(context, level)
  * @param level The level of the message.
  * @param message The messages to be logged. 
  */
-export function log(context, level, message) 
-{
-	if (isLogging(context, level) === false)
-	{
-		return;
-	}
-	var tPrefix = '';
-	switch (level) 
-	{
-	case ELogLevel.Information:
-		tPrefix = '[INFO_] ';
-		break;
-	case ELogLevel.Warning:
-		tPrefix = '[WARNG] ';
-		break;
-	case ELogLevel.Error:
-		tPrefix = '[ERROR] ';
-		break;
-	case ELogLevel.Fatal:
-		tPrefix = '[FATAL] ';
-		break;
-	case ELogLevel.Debug:
-		tPrefix = '[DEBUG] ';
-		break;
-	}
-	console.log(tPrefix + message);
+export function log(context, level, message) {
+    if (isLogging(context, level) === false) {
+        return;
+    }
+    var tPrefix = '';
+    switch (level) {
+        case ELogLevel.Information:
+            tPrefix = '[INFO_] ';
+            break;
+        case ELogLevel.Warning:
+            tPrefix = '[WARNG] ';
+            break;
+        case ELogLevel.Error:
+            tPrefix = '[ERROR] ';
+            break;
+        case ELogLevel.Fatal:
+            tPrefix = '[FATAL] ';
+            break;
+        case ELogLevel.Debug:
+            tPrefix = '[DEBUG] ';
+            break;
+    }
+    console.log(tPrefix + message);
 }

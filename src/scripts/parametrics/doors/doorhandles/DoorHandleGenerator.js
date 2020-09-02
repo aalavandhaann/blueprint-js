@@ -44,7 +44,7 @@ export class DoorHandleGenerator {
                 handle.applyMatrix4(new Matrix4().makeTranslation(-offset, 0, 0));
             } else if (doorSide === 'Left' && doorOpenDirection !== 'BOTH_SIDES') {
                 handle.applyMatrix4(new Matrix4().makeTranslation(offset, 0, 0));
-            } else if (doorSide !== 'Right' && doorOpenDirection == 'BOTH_SIDES') {
+            } else if (doorSide !== 'Right' && doorOpenDirection === 'BOTH_SIDES') {
                 handle.applyMatrix4(new Matrix4().makeRotationAxis(new Vector3(0, 0, 1), -Math.PI));
             }
 

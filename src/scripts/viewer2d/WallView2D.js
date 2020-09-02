@@ -53,7 +53,7 @@ export class WallDimensions2D extends Graphics {
 
     __wallOffsetLocation(point2d, offset = 20) {
         let wallOutDirection = this.__wallNormal();
-        if (wallOutDirection == null) {
+        if (wallOutDirection === null) {
             wallOutDirection = new Vector3(0, 1, 0);
         }
         let bestLocation = point2d.add(wallOutDirection.multiplyScalar(offset));

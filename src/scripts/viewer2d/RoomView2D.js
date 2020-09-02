@@ -60,7 +60,7 @@ export class RoomView2D extends BaseFloorplanViewElement2D {
         for (let i = 0; i < points.length; i++) {
             let x = Dimensioning.cmToPixel(points[i].x);
             let y = Dimensioning.cmToPixel(points[i].y);
-            if (i == 0) {
+            if (i === 0) {
                 this.moveTo(x, y);
             } else {
                 this.lineTo(x, y);

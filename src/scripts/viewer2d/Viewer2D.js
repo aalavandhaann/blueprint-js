@@ -259,7 +259,7 @@ export class Viewer2D extends Application {
     }
 
     __drawModeMouseUp(evt) {
-        if (this.__mode == floorplannerModes.DRAW) {
+        if (this.__mode === floorplannerModes.DRAW) {
             let co = evt.data.getLocalPosition(this.__floorplanContainer);
             let cmCo = new Vector2(co.x, co.y);
             cmCo.x = Dimensioning.pixelToCm(cmCo.x);
@@ -303,7 +303,7 @@ export class Viewer2D extends Application {
     }
 
     __drawModeMouseMove(evt) {
-        if (this.__mode == floorplannerModes.DRAW) {
+        if (this.__mode === floorplannerModes.DRAW) {
             let co = evt.data.getLocalPosition(this.__floorplanContainer);
             let cmCo = new Vector2(co.x, co.y);
             let lastNode = undefined;
@@ -337,7 +337,7 @@ export class Viewer2D extends Application {
         for (let i = 0; i < this.__entities2D.length; i++) {
             let entity = this.__entities2D[i];
             if (evt.item !== undefined) {
-                if (evt.item == entity) {
+                if (evt.item === entity) {
                     continue;
                 }
             }

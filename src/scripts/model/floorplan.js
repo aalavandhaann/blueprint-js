@@ -252,7 +252,7 @@ export class Floorplan extends EventDispatcher {
             var bstart = { x: twall.getStartX(), y: twall.getStartY() };
             var bend = { x: twall.getEndX(), y: twall.getEndY() };
             var iPoint;
-            if (twall.wallType == WallTypes.CURVED) {
+            if (twall.wallType === WallTypes.CURVED) {
                 iPoint = twall.bezier.intersects(line);
                 if (iPoint.length) {
                     iPoint = twall.bezier.get(iPoint[0]);
@@ -425,9 +425,9 @@ export class Floorplan extends EventDispatcher {
      */
     overlappedControlPoint(wall, x, y, tolerance) {
         tolerance = tolerance || defaultFloorPlanTolerance * 5;
-        if (wall.a.distanceTo(new Vector2(x, y)) < tolerance && wall.wallType == WallTypes.CURVED) {
+        if (wall.a.distanceTo(new Vector2(x, y)) < tolerance && wall.wallType === WallTypes.CURVED) {
             return wall.a;
-        } else if (wall.b.distanceTo(new Vector2(x, y)) < tolerance && wall.wallType == WallTypes.CURVED) {
+        } else if (wall.b.distanceTo(new Vector2(x, y)) < tolerance && wall.wallType === WallTypes.CURVED) {
             return wall.b;
         }
 
@@ -577,7 +577,7 @@ export class Floorplan extends EventDispatcher {
         this.reset();
         this.__updatesOn = false;
         var corners = {};
-        if (floorplan == null || !('corners' in floorplan) || !('walls' in floorplan)) {
+        if (floorplan === null || !('corners' in floorplan) || !('walls' in floorplan)) {
             return;
         }
         let currentUnit = Configuration.getStringValue(configDimUnit);
@@ -637,7 +637,7 @@ export class Floorplan extends EventDispatcher {
             if (Version.isVersionHigherThan(floorplan.version, '0.0.2a')) {
                 newWall.a = wall.a;
                 newWall.b = wall.b;
-                if (wall.wallType == 'CURVED') {
+                if (wall.wallType === 'CURVED') {
                     newWall.wallType = WallTypes.CURVED;
                 } else {
                     newWall.wallType = WallTypes.STRAIGHT;
@@ -788,7 +788,7 @@ export class Floorplan extends EventDispatcher {
             if (corner.y > zMax) zMax = corner.y;
         });
         var ret;
-        if (xMin == Infinity || xMax == -Infinity || zMin == Infinity || zMax == -Infinity) {
+        if (xMin === Infinity || xMax === -Infinity || zMin === Infinity || zMax === -Infinity) {
             ret = new Vector3();
         } else {
             if (center) {

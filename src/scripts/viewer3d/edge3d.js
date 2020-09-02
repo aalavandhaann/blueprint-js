@@ -207,7 +207,7 @@ export class Edge3D extends EventDispatcher {
     }
 
     updateTexture(callback) {
-        if (this.edge == null) {
+        if (this.edge === null) {
             return;
         }
         let height = Math.max(this.wall.startElevation, this.wall.endElevation);
@@ -220,7 +220,7 @@ export class Edge3D extends EventDispatcher {
         let extStartCorner = this.edge.getStart();
         let extEndCorner = this.edge.getEnd();
 
-        if (extStartCorner == null || extEndCorner == null) {
+        if (extStartCorner === null || extEndCorner === null) {
             return;
         }
 

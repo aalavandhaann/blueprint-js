@@ -124,7 +124,7 @@ export class Item extends EventDispatcher {
             for (let i = 0; i < walls.length; i++) {
                 let wall = walls[i];
                 if (wall.id === this.__metadata.wall) {
-                    let wallEdge = (this.__metadata.wallSide == 'front') ? wall.frontEdge : wall.backEdge;
+                    let wallEdge = (this.__metadata.wallSide === 'front') ? wall.frontEdge : wall.backEdge;
                     let wallSurfacePoint = this.__metadata.wallSurfacePoint;
                     this.__currentWallSnapPoint = new Vector3(wallSurfacePoint[0], wallSurfacePoint[1], wallSurfacePoint[2]);
                     this.__addToAWall(wall, wallEdge);
@@ -148,7 +148,7 @@ export class Item extends EventDispatcher {
 
     __edgeDeleted(evt) {
         if (this.__currentWall) {
-            let wallEdge = (this.__metadata.wallSide == 'front') ? this.__currentWall.frontEdge : this.__currentWall.backEdge;
+            let wallEdge = (this.__metadata.wallSide === 'front') ? this.__currentWall.frontEdge : this.__currentWall.backEdge;
             this.__currentWallEdge = null;
             let point = Utils.cartesianFromBarycenter(wallEdge.vertices, this.__barycentricLocation);
             this.snapToWall(point, this.__currentWall, wallEdge);
@@ -222,7 +222,7 @@ export class Item extends EventDispatcher {
     snapToWall(point, wall, wallEdge) {}
 
     newWallEdge() {
-        let wallEdge = (this.__metadata.wallSide == 'front') ? this.__currentWall.frontEdge : this.__currentWall.backEdge;
+        let wallEdge = (this.__metadata.wallSide === 'front') ? this.__currentWall.frontEdge : this.__currentWall.backEdge;
         this.__currentWallEdge = null;
         this.__currentWallEdge = wallEdge;
     }

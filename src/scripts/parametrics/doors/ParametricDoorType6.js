@@ -24,7 +24,7 @@ export class ParametricDoorType6 extends ParametricBaseDoor {
             minx = 0,
             maxx = 0;
         // # Open to right or left
-        if (openingDirection == DOOR_OPEN_DIRECTIONS.RIGHT) {
+        if (openingDirection === DOOR_OPEN_DIRECTIONS.RIGHT) {
             side = 1;
             minx = wf * -1;
             maxx = 0.0;

@@ -35,7 +35,7 @@ export class Utils {
 
         var tXx, tYy;
 
-        if (tParam < 0 || (start.x == end.x && start.y == end.y)) {
+        if (tParam < 0 || (start.x === end.x && start.y === end.y)) {
             tXx = start.x;
             tYy = start.y;
         } else if (tParam > 1) {
@@ -135,7 +135,7 @@ export class Utils {
         for (var tI = 0; tI < tNewPoints.length; tI++) {
             var tC1 = tNewPoints[tI];
             var tC2;
-            if (tI == tNewPoints.length - 1) {
+            if (tI === tNewPoints.length - 1) {
                 tC2 = tNewPoints[0];
             } else {
                 tC2 = tNewPoints[tI + 1];
@@ -160,7 +160,7 @@ export class Utils {
         for (var tI = 0; tI < firstCorners.length; tI++) {
             var tFirstCorner = firstCorners[tI],
                 tSecondCorner;
-            if (tI == firstCorners.length - 1) {
+            if (tI === firstCorners.length - 1) {
                 tSecondCorner = firstCorners[0];
             } else {
                 tSecondCorner = firstCorners[tI + 1];
@@ -177,7 +177,7 @@ export class Utils {
         for (var tI = 0; tI < corners.length; tI++) {
             var tFirstCorner = corners[tI],
                 tSecondCorner;
-            if (tI == corners.length - 1) {
+            if (tI === corners.length - 1) {
                 tSecondCorner = corners[0];
             } else {
                 tSecondCorner = corners[tI + 1];
@@ -263,7 +263,7 @@ export class Utils {
         for (tI = 0; tI < corners.length; tI++) {
             var tFirstCorner = corners[tI],
                 tSecondCorner;
-            if (tI == corners.length - 1) {
+            if (tI === corners.length - 1) {
                 tSecondCorner = corners[0];
             } else {
                 tSecondCorner = corners[tI + 1];
@@ -274,7 +274,7 @@ export class Utils {
             }
         }
         // odd intersections means the point is in the polygon
-        return ((tIntersects % 2) == 1);
+        return ((tIntersects % 2) === 1);
     }
 
     /** Checks if all corners of insideCorners are inside the polygon described by outsideCorners */

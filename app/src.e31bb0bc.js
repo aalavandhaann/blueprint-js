@@ -36913,7 +36913,7 @@ var Utils = /*#__PURE__*/function () {
       var tParam = tDot / tLenSq;
       var tXx, tYy;
 
-      if (tParam < 0 || start.x == end.x && start.y == end.y) {
+      if (tParam < 0 || start.x === end.x && start.y === end.y) {
         tXx = start.x;
         tYy = start.y;
       } else if (tParam > 1) {
@@ -37056,7 +37056,7 @@ var Utils = /*#__PURE__*/function () {
         var tC1 = tNewPoints[tI];
         var tC2;
 
-        if (tI == tNewPoints.length - 1) {
+        if (tI === tNewPoints.length - 1) {
           tC2 = tNewPoints[0];
         } else {
           tC2 = tNewPoints[tI + 1];
@@ -37089,7 +37089,7 @@ var Utils = /*#__PURE__*/function () {
         var tFirstCorner = firstCorners[tI],
             tSecondCorner;
 
-        if (tI == firstCorners.length - 1) {
+        if (tI === firstCorners.length - 1) {
           tSecondCorner = firstCorners[0];
         } else {
           tSecondCorner = firstCorners[tI + 1];
@@ -37111,7 +37111,7 @@ var Utils = /*#__PURE__*/function () {
         var tFirstCorner = corners[tI],
             tSecondCorner;
 
-        if (tI == corners.length - 1) {
+        if (tI === corners.length - 1) {
           tSecondCorner = corners[0];
         } else {
           tSecondCorner = corners[tI + 1];
@@ -37220,7 +37220,7 @@ var Utils = /*#__PURE__*/function () {
         var tFirstCorner = corners[tI],
             tSecondCorner;
 
-        if (tI == corners.length - 1) {
+        if (tI === corners.length - 1) {
           tSecondCorner = corners[0];
         } else {
           tSecondCorner = corners[tI + 1];
@@ -37232,7 +37232,7 @@ var Utils = /*#__PURE__*/function () {
       } // odd intersections means the point is in the polygon
 
 
-      return tIntersects % 2 == 1;
+      return tIntersects % 2 === 1;
     }
     /** Checks if all corners of insideCorners are inside the polygon described by outsideCorners */
 
@@ -41670,7 +41670,7 @@ var DoorHandleGenerator = /*#__PURE__*/function () {
           handle.applyMatrix4(new _three.Matrix4().makeTranslation(-offset, 0, 0));
         } else if (doorSide === 'Left' && doorOpenDirection !== 'BOTH_SIDES') {
           handle.applyMatrix4(new _three.Matrix4().makeTranslation(offset, 0, 0));
-        } else if (doorSide !== 'Right' && doorOpenDirection == 'BOTH_SIDES') {
+        } else if (doorSide !== 'Right' && doorOpenDirection === 'BOTH_SIDES') {
           handle.applyMatrix4(new _three.Matrix4().makeRotationAxis(new _three.Vector3(0, 0, 1), -Math.PI));
         }
 
@@ -42208,7 +42208,7 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
           minx = 0,
           maxx = 0; // # Open to right or left
 
-      if (openingDirection == DOOR_OPEN_DIRECTIONS.RIGHT) {
+      if (openingDirection === DOOR_OPEN_DIRECTIONS.RIGHT) {
         side = 1;
         minx = wf * -1;
         maxx = 0.0;
@@ -42556,7 +42556,7 @@ var ParametricDoorType2 = /*#__PURE__*/function (_ParametricBaseDoor) {
           minx = 0,
           maxx = 0; // # Open to right or left
 
-      if (openingDirection == _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
+      if (openingDirection === _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
         side = 1;
         minx = wf * -1;
         maxx = 0.0;
@@ -42667,7 +42667,7 @@ var ParametricDoorType3 = /*#__PURE__*/function (_ParametricBaseDoor) {
           minx = 0,
           maxx = 0; // # Open to right or left
 
-      if (openingDirection == _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
+      if (openingDirection === _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
         side = 1;
         minx = wf * -1;
         maxx = 0.0;
@@ -42778,7 +42778,7 @@ var ParametricDoorType4 = /*#__PURE__*/function (_ParametricBaseDoor) {
           minx = 0,
           maxx = 0; // # Open to right or left
 
-      if (openingDirection == _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
+      if (openingDirection === _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
         side = 1;
         minx = wf * -1;
         maxx = 0.0;
@@ -42889,7 +42889,7 @@ var ParametricDoorType5 = /*#__PURE__*/function (_ParametricBaseDoor) {
           minx = 0,
           maxx = 0; // # Open to right or left
 
-      if (openingDirection == _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
+      if (openingDirection === _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
         side = 1;
         minx = wf * -1;
         maxx = 0.0;
@@ -43000,7 +43000,7 @@ var ParametricDoorType6 = /*#__PURE__*/function (_ParametricBaseDoor) {
           minx = 0,
           maxx = 0; // # Open to right or left
 
-      if (openingDirection == _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
+      if (openingDirection === _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
         side = 1;
         minx = wf * -1;
         maxx = 0.0;
@@ -43348,7 +43348,7 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
           var wall = walls[i];
 
           if (wall.id === this.__metadata.wall) {
-            var wallEdge = this.__metadata.wallSide == 'front' ? wall.frontEdge : wall.backEdge;
+            var wallEdge = this.__metadata.wallSide === 'front' ? wall.frontEdge : wall.backEdge;
             var wallSurfacePoint = this.__metadata.wallSurfacePoint;
             this.__currentWallSnapPoint = new _three.Vector3(wallSurfacePoint[0], wallSurfacePoint[1], wallSurfacePoint[2]);
 
@@ -43378,7 +43378,7 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
     key: "__edgeDeleted",
     value: function __edgeDeleted(evt) {
       if (this.__currentWall) {
-        var wallEdge = this.__metadata.wallSide == 'front' ? this.__currentWall.frontEdge : this.__currentWall.backEdge;
+        var wallEdge = this.__metadata.wallSide === 'front' ? this.__currentWall.frontEdge : this.__currentWall.backEdge;
         this.__currentWallEdge = null;
 
         var point = _utils.Utils.cartesianFromBarycenter(wallEdge.vertices, this.__barycentricLocation);
@@ -43476,7 +43476,7 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "newWallEdge",
     value: function newWallEdge() {
-      var wallEdge = this.__metadata.wallSide == 'front' ? this.__currentWall.frontEdge : this.__currentWall.backEdge;
+      var wallEdge = this.__metadata.wallSide === 'front' ? this.__currentWall.frontEdge : this.__currentWall.backEdge;
       this.__currentWallEdge = null;
       this.__currentWallEdge = wallEdge;
     }
@@ -46316,7 +46316,7 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
         };
         var iPoint;
 
-        if (twall.wallType == _constants.WallTypes.CURVED) {
+        if (twall.wallType === _constants.WallTypes.CURVED) {
           iPoint = twall.bezier.intersects(line);
 
           if (iPoint.length) {
@@ -46528,9 +46528,9 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
     value: function overlappedControlPoint(wall, x, y, tolerance) {
       tolerance = tolerance || defaultFloorPlanTolerance * 5;
 
-      if (wall.a.distanceTo(new _three.Vector2(x, y)) < tolerance && wall.wallType == _constants.WallTypes.CURVED) {
+      if (wall.a.distanceTo(new _three.Vector2(x, y)) < tolerance && wall.wallType === _constants.WallTypes.CURVED) {
         return wall.a;
-      } else if (wall.b.distanceTo(new _three.Vector2(x, y)) < tolerance && wall.wallType == _constants.WallTypes.CURVED) {
+      } else if (wall.b.distanceTo(new _three.Vector2(x, y)) < tolerance && wall.wallType === _constants.WallTypes.CURVED) {
         return wall.b;
       }
 
@@ -46711,7 +46711,7 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
       this.__updatesOn = false;
       var corners = {};
 
-      if (floorplan == null || !('corners' in floorplan) || !('walls' in floorplan)) {
+      if (floorplan === null || !('corners' in floorplan) || !('walls' in floorplan)) {
         return;
       }
 
@@ -46785,7 +46785,7 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
           newWall.a = wall.a;
           newWall.b = wall.b;
 
-          if (wall.wallType == 'CURVED') {
+          if (wall.wallType === 'CURVED') {
             newWall.wallType = _constants.WallTypes.CURVED;
           } else {
             newWall.wallType = _constants.WallTypes.STRAIGHT;
@@ -46970,7 +46970,7 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
       });
       var ret;
 
-      if (xMin == Infinity || xMax == -Infinity || zMin == Infinity || zMax == -Infinity) {
+      if (xMin === Infinity || xMax === -Infinity || zMin === Infinity || zMax === -Infinity) {
         ret = new _three.Vector3();
       } else {
         if (center) {
@@ -50986,7 +50986,7 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "updateTexture",
     value: function updateTexture(callback) {
-      if (this.edge == null) {
+      if (this.edge === null) {
         return;
       }
 
@@ -51000,7 +51000,7 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
       var extStartCorner = this.edge.getStart();
       var extEndCorner = this.edge.getEnd();
 
-      if (extStartCorner == null || extEndCorner == null) {
+      if (extStartCorner === null || extEndCorner === null) {
         return;
       }
 
@@ -114166,7 +114166,7 @@ var WallDimensions2D = /*#__PURE__*/function (_Graphics) {
 
       var wallOutDirection = this.__wallNormal();
 
-      if (wallOutDirection == null) {
+      if (wallOutDirection === null) {
         wallOutDirection = new _three.Vector3(0, 1, 0);
       }
 
@@ -114653,7 +114653,7 @@ var RoomView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
 
         var y = _dimensioning.Dimensioning.cmToPixel(points[i].y);
 
-        if (i == 0) {
+        if (i === 0) {
           this.moveTo(x, y);
         } else {
           this.lineTo(x, y);
@@ -116038,7 +116038,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
   }, {
     key: "__drawModeMouseUp",
     value: function __drawModeMouseUp(evt) {
-      if (this.__mode == floorplannerModes.DRAW) {
+      if (this.__mode === floorplannerModes.DRAW) {
         var co = evt.data.getLocalPosition(this.__floorplanContainer);
         var cmCo = new _three.Vector2(co.x, co.y);
         cmCo.x = _dimensioning.Dimensioning.pixelToCm(cmCo.x);
@@ -116084,7 +116084,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
   }, {
     key: "__drawModeMouseMove",
     value: function __drawModeMouseMove(evt) {
-      if (this.__mode == floorplannerModes.DRAW) {
+      if (this.__mode === floorplannerModes.DRAW) {
         var co = evt.data.getLocalPosition(this.__floorplanContainer);
         var cmCo = new _three.Vector2(co.x, co.y);
         var lastNode = undefined;
@@ -116128,7 +116128,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
         var entity = this.__entities2D[i];
 
         if (evt.item !== undefined) {
-          if (evt.item == entity) {
+          if (evt.item === entity) {
             continue;
           }
         }
@@ -117833,7 +117833,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "40765" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42993" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
