@@ -386,7 +386,9 @@ export class Wall extends EventDispatcher {
 
     set thickness(thick) {
         this._thickness = thick;
-        this.dispatchEvent({ type: EVENT_UPDATED, item: this }); //This is stupid. You need to say what event exactly happened
+        this.start.move(this.start.location.x, this.start.location.y);
+        this.end.move(this.end.location.x, this.end.location.y);
+        // this.dispatchEvent({ type: EVENT_UPDATED, item: this }); //This is stupid. You need to say what event exactly happened
     }
 
     get uuid() {

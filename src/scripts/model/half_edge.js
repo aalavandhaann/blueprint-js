@@ -422,8 +422,10 @@ export class HalfEdge extends EventDispatcher {
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
     interiorStart() {
-        let vec = this.halfAngleVector(this.prev, this);
-        return new Vector2(this.getStart().x + vec.x, this.getStart().y + vec.y);
+        let vec = this.interiorPoint(this.prev, true);
+        return this.getStart().location.clone().add(vec);
+        // let vec = this.halfAngleVector(this.prev, this);
+        // return new Vector2(this.getStart().x + vec.x, this.getStart().y + vec.y);
         // return {x:this.getStart().x + vec.x, y:this.getStart().y + vec.y};
     }
 
@@ -434,8 +436,10 @@ export class HalfEdge extends EventDispatcher {
      */
     // 
     interiorEnd() {
-        let vec = this.halfAngleVector(this, this.next);
-        return new Vector2(this.getEnd().x + vec.x, this.getEnd().y + vec.y);
+        let vec = this.interiorPoint(this.next, false);
+        return this.getEnd().location.clone().add(vec);
+        // let vec = this.halfAngleVector(this, this.next);
+        // return new Vector2(this.getEnd().x + vec.x, this.getEnd().y + vec.y);
         // return {x:this.getEnd().x + vec.x, y:this.getEnd().y + vec.y};
     }
 
@@ -445,8 +449,9 @@ export class HalfEdge extends EventDispatcher {
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
     exteriorEnd() {
-        let vec = this.halfAngleVector(this, this.next);
-        return new Vector2(this.getEnd().x - vec.x, this.getEnd().y - vec.y);
+        // let vec = this.halfAngleVector(this, this.next);
+        // return new Vector2(this.getEnd().x - vec.x, this.getEnd().y - vec.y);
+        return new Vector2(this.getEnd().x, this.getEnd().y);
     }
 
     /**
@@ -455,8 +460,9 @@ export class HalfEdge extends EventDispatcher {
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
     exteriorStart() {
-        let vec = this.halfAngleVector(this.prev, this);
-        return new Vector2(this.getStart().x - vec.x, this.getStart().y - vec.y);
+        // let vec = this.halfAngleVector(this.prev, this);
+        // return new Vector2(this.getStart().x - vec.x, this.getStart().y - vec.y);
+        return new Vector2(this.getStart().x, this.getStart().y);
     }
 
     /**
@@ -529,6 +535,47 @@ export class HalfEdge extends EventDispatcher {
     //		}
     //		return [];
     //	}
+
+
+    /**
+     * 
+     * @param {HalfEdge} v1 
+     * @param {HalfEdge} v2 
+     * @description Get the point inside the room for interior ends Calculation
+     * @returns {Vector2}
+     */
+
+    interiorPoint(nextOrPrev, isFromStart = true) {
+        let directionOther = null,
+            directionSelf = null;
+        if (!nextOrPrev) {
+            if (isFromStart) {
+                directionSelf = this.getEnd().location.clone().sub(this.getStart().location).normalize();
+                directionSelf = directionSelf.multiplyScalar(this.wall.thickness);
+                directionSelf = directionSelf.rotateAround(new Vector2(), -0.785398); //Rotate by 45 degrees CW
+            } else {
+                directionSelf = this.getStart().location.clone().sub(this.getEnd().location).normalize();
+                directionSelf = directionSelf.multiplyScalar(this.wall.thickness);
+                directionSelf = directionSelf.rotateAround(new Vector2(), 0.785398); //Rotate by 45 degrees CW
+            }
+            return directionSelf;
+        }
+        if (isFromStart) {
+            directionSelf = this.getEnd().location.clone().sub(this.getStart().location).normalize();
+            // Two connected edges have their end corners that will be either start or end in one, 
+            // and vice-versa for the other one
+            directionOther = nextOrPrev.getStart().location.clone().sub(nextOrPrev.getEnd().location).normalize();
+        } else {
+            directionSelf = this.getStart().location.clone().sub(this.getEnd().location).normalize();
+            // Two connected edges have their end corners that will be either start or end in one, 
+            // and vice-versa for the other one
+            directionOther = nextOrPrev.getEnd().location.clone().sub(nextOrPrev.getStart().location).normalize();
+        }
+
+        directionOther = directionOther.multiplyScalar(this.wall.thickness);
+        directionSelf = directionSelf.multiplyScalar(nextOrPrev.wall.thickness);
+        return directionSelf.add(directionOther);
+    }
 
     /**
      * Gets CCW angle from v1 to v2

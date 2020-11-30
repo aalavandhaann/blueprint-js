@@ -53,7 +53,10 @@ export class RoomView2D extends BaseFloorplanViewElement2D {
         this.clear();
         this.beginFill(color, alpha);
 
-        this.__room.interiorCorners.forEach((corner) => {
+        // this.__room.interiorCorners.forEach((corner) => {
+        //     points.push(new Vector2(corner.x, corner.y));
+        // });
+        this.__room.corners.forEach((corner) => {
             points.push(new Vector2(corner.x, corner.y));
         });
 

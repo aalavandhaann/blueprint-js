@@ -205,9 +205,10 @@ export class WallView2D extends BaseFloorplanViewElement2D {
 
     __drawPolygon(color = 0xDDDDDD, alpha = 1.0) {
         let points = this.__getPolygonCoordinates();
+        // console.log('POLYGON POINTS :: ', points);
         this.clear();
         // this.beginFill(color, alpha);
-        this.beginFill(color, 0.05); //
+        this.beginFill(color, 0.85);
         for (let i = 0; i < points.length; i++) {
             let pt = points[i];
             if (i === 0) {
@@ -217,15 +218,21 @@ export class WallView2D extends BaseFloorplanViewElement2D {
             }
         }
         this.endFill();
+        if (!points.length) {
+            return;
+        }
+        let e2sStart = points[3].clone().sub(points[0]).multiplyScalar(0.5);
+        let e2sEnd = points[2].clone().sub(points[1]).multiplyScalar(0.5);
 
         let cornerLine = this.__getCornerCoordinates();
-        this.lineStyle(Dimensioning.cmToPixel(this.__wall.thickness), color, alpha, 0.5);
-        this.moveTo(cornerLine[0].x, cornerLine[0].y);
-        this.lineTo(cornerLine[1].x, cornerLine[1].y);
+        // this.lineStyle(Dimensioning.cmToPixel(this.__wall.thickness), color, alpha, 0.5);
+        // this.moveTo(cornerLine[0].x, cornerLine[0].y);
+        // this.lineTo(cornerLine[1].x, cornerLine[1].y);
 
-        this.lineStyle(1, 0xFFFFFF);
-        this.moveTo(cornerLine[0].x, cornerLine[0].y);
-        this.lineTo(cornerLine[1].x, cornerLine[1].y);
+        let lineThickness = 3.0; //Math.min(Dimensioning.cmToPixel(this.__wall.thickness * 0.25), 1.0);
+        this.lineStyle(lineThickness, 0xF0F0F0);
+        this.moveTo(cornerLine[1].x + e2sStart.x, cornerLine[1].y + e2sStart.y);
+        this.lineTo(cornerLine[0].x + e2sEnd.x, cornerLine[0].y + e2sEnd.y);
     }
 
     __drawSelectedState() {

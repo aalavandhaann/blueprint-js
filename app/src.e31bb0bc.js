@@ -38238,8 +38238,10 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "interiorStart",
     value: function interiorStart() {
-      var vec = this.halfAngleVector(this.prev, this);
-      return new _three.Vector2(this.getStart().x + vec.x, this.getStart().y + vec.y); // return {x:this.getStart().x + vec.x, y:this.getStart().y + vec.y};
+      var vec = this.interiorPoint(this.prev, true);
+      return this.getStart().location.clone().add(vec); // let vec = this.halfAngleVector(this.prev, this);
+      // return new Vector2(this.getStart().x + vec.x, this.getStart().y + vec.y);
+      // return {x:this.getStart().x + vec.x, y:this.getStart().y + vec.y};
     }
     /**
      * Return the 2D interior location that is at the end. 
@@ -38251,8 +38253,10 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "interiorEnd",
     value: function interiorEnd() {
-      var vec = this.halfAngleVector(this, this.next);
-      return new _three.Vector2(this.getEnd().x + vec.x, this.getEnd().y + vec.y); // return {x:this.getEnd().x + vec.x, y:this.getEnd().y + vec.y};
+      var vec = this.interiorPoint(this.next, false);
+      return this.getEnd().location.clone().add(vec); // let vec = this.halfAngleVector(this, this.next);
+      // return new Vector2(this.getEnd().x + vec.x, this.getEnd().y + vec.y);
+      // return {x:this.getEnd().x + vec.x, y:this.getEnd().y + vec.y};
     }
     /**
      * Return the 2D exterior location that is at the end. 
@@ -38263,8 +38267,9 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "exteriorEnd",
     value: function exteriorEnd() {
-      var vec = this.halfAngleVector(this, this.next);
-      return new _three.Vector2(this.getEnd().x - vec.x, this.getEnd().y - vec.y);
+      // let vec = this.halfAngleVector(this, this.next);
+      // return new Vector2(this.getEnd().x - vec.x, this.getEnd().y - vec.y);
+      return new _three.Vector2(this.getEnd().x, this.getEnd().y);
     }
     /**
      * Return the 2D exterior location that is at the start. 
@@ -38275,8 +38280,9 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "exteriorStart",
     value: function exteriorStart() {
-      var vec = this.halfAngleVector(this.prev, this);
-      return new _three.Vector2(this.getStart().x - vec.x, this.getStart().y - vec.y);
+      // let vec = this.halfAngleVector(this.prev, this);
+      // return new Vector2(this.getStart().x - vec.x, this.getStart().y - vec.y);
+      return new _three.Vector2(this.getStart().x, this.getStart().y);
     }
     /**
      * Return the 2D exterior location that is at the center/middle. 
@@ -38357,6 +38363,51 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
     //		return [];
     //	}
 
+    /**
+     * 
+     * @param {HalfEdge} v1 
+     * @param {HalfEdge} v2 
+     * @description Get the point inside the room for interior ends Calculation
+     * @returns {Vector2}
+     */
+
+  }, {
+    key: "interiorPoint",
+    value: function interiorPoint(nextOrPrev) {
+      var isFromStart = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+      var directionOther = null,
+          directionSelf = null;
+
+      if (!nextOrPrev) {
+        if (isFromStart) {
+          directionSelf = this.getEnd().location.clone().sub(this.getStart().location).normalize();
+          directionSelf = directionSelf.multiplyScalar(this.wall.thickness);
+          directionSelf = directionSelf.rotateAround(new _three.Vector2(), -0.785398); //Rotate by 45 degrees CW
+        } else {
+          directionSelf = this.getStart().location.clone().sub(this.getEnd().location).normalize();
+          directionSelf = directionSelf.multiplyScalar(this.wall.thickness);
+          directionSelf = directionSelf.rotateAround(new _three.Vector2(), 0.785398); //Rotate by 45 degrees CW
+        }
+
+        return directionSelf;
+      }
+
+      if (isFromStart) {
+        directionSelf = this.getEnd().location.clone().sub(this.getStart().location).normalize(); // Two connected edges have their end corners that will be either start or end in one, 
+        // and vice-versa for the other one
+
+        directionOther = nextOrPrev.getStart().location.clone().sub(nextOrPrev.getEnd().location).normalize();
+      } else {
+        directionSelf = this.getStart().location.clone().sub(this.getEnd().location).normalize(); // Two connected edges have their end corners that will be either start or end in one, 
+        // and vice-versa for the other one
+
+        directionOther = nextOrPrev.getEnd().location.clone().sub(nextOrPrev.getStart().location).normalize();
+      }
+
+      directionOther = directionOther.multiplyScalar(this.wall.thickness);
+      directionSelf = directionSelf.multiplyScalar(nextOrPrev.wall.thickness);
+      return directionSelf.add(directionOther);
+    }
     /**
      * Gets CCW angle from v1 to v2
      * @param {Vector2} v1 The point a
@@ -44790,10 +44841,8 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
     },
     set: function set(thick) {
       this._thickness = thick;
-      this.dispatchEvent({
-        type: _events.EVENT_UPDATED,
-        item: this
-      }); //This is stupid. You need to say what event exactly happened
+      this.start.move(this.start.location.x, this.start.location.y);
+      this.end.move(this.end.location.x, this.end.location.y); // this.dispatchEvent({ type: EVENT_UPDATED, item: this }); //This is stupid. You need to say what event exactly happened
     }
   }, {
     key: "uuid",
@@ -88258,7 +88307,8 @@ exports.Extract = Extract;
 },{"@pixi/utils":"../node_modules/@pixi/utils/lib/utils.es.js","@pixi/math":"../node_modules/@pixi/math/lib/math.es.js","@pixi/core":"../node_modules/@pixi/core/lib/core.es.js"}],"../node_modules/parse-uri/index.js":[function(require,module,exports) {
 'use strict';
 
-module.exports = function parseURI(str, opts) {
+function parseURI(str, opts) {
+  if (!str) return undefined;
   opts = opts || {};
   var o = {
     key: ['source', 'protocol', 'authority', 'userInfo', 'user', 'password', 'host', 'port', 'relative', 'path', 'directory', 'file', 'query', 'anchor'],
@@ -88282,7 +88332,9 @@ module.exports = function parseURI(str, opts) {
     if ($1) uri[o.q.name][$1] = $2;
   });
   return uri;
-};
+}
+
+module.exports = parseURI;
 },{}],"../node_modules/mini-signals/lib/mini-signals.js":[function(require,module,exports) {
 'use strict';
 
@@ -114522,11 +114574,12 @@ var WallView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
       var color = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0xDDDDDD;
       var alpha = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1.0;
 
-      var points = this.__getPolygonCoordinates();
+      var points = this.__getPolygonCoordinates(); // console.log('POLYGON POINTS :: ', points);
+
 
       this.clear(); // this.beginFill(color, alpha);
 
-      this.beginFill(color, 0.05); //
+      this.beginFill(color, 0.85);
 
       for (var i = 0; i < points.length; i++) {
         var pt = points[i];
@@ -114540,14 +114593,23 @@ var WallView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
 
       this.endFill();
 
-      var cornerLine = this.__getCornerCoordinates();
+      if (!points.length) {
+        return;
+      }
 
-      this.lineStyle(_dimensioning.Dimensioning.cmToPixel(this.__wall.thickness), color, alpha, 0.5);
-      this.moveTo(cornerLine[0].x, cornerLine[0].y);
-      this.lineTo(cornerLine[1].x, cornerLine[1].y);
-      this.lineStyle(1, 0xFFFFFF);
-      this.moveTo(cornerLine[0].x, cornerLine[0].y);
-      this.lineTo(cornerLine[1].x, cornerLine[1].y);
+      var e2sStart = points[3].clone().sub(points[0]).multiplyScalar(0.5);
+      var e2sEnd = points[2].clone().sub(points[1]).multiplyScalar(0.5);
+
+      var cornerLine = this.__getCornerCoordinates(); // this.lineStyle(Dimensioning.cmToPixel(this.__wall.thickness), color, alpha, 0.5);
+      // this.moveTo(cornerLine[0].x, cornerLine[0].y);
+      // this.lineTo(cornerLine[1].x, cornerLine[1].y);
+
+
+      var lineThickness = 3.0; //Math.min(Dimensioning.cmToPixel(this.__wall.thickness * 0.25), 1.0);
+
+      this.lineStyle(lineThickness, 0xF0F0F0);
+      this.moveTo(cornerLine[1].x + e2sStart.x, cornerLine[1].y + e2sStart.y);
+      this.lineTo(cornerLine[0].x + e2sEnd.x, cornerLine[0].y + e2sEnd.y);
     }
   }, {
     key: "__drawSelectedState",
@@ -114808,9 +114870,11 @@ var RoomView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
       var alpha = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1.0;
       var points = [];
       this.clear();
-      this.beginFill(color, alpha);
+      this.beginFill(color, alpha); // this.__room.interiorCorners.forEach((corner) => {
+      //     points.push(new Vector2(corner.x, corner.y));
+      // });
 
-      this.__room.interiorCorners.forEach(function (corner) {
+      this.__room.corners.forEach(function (corner) {
         points.push(new _three.Vector2(corner.x, corner.y));
       });
 
@@ -118003,7 +118067,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "39229" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "46761" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
