@@ -117591,13 +117591,24 @@ module.exports = {
   }, {
     "itemName": "Tennis Table",
     "itemType": 1,
-    "position": [221.43156753842538, 54.05, 229.1958745553041],
+    "position": [280, 50, 350],
     "rotation": [0, 0, 0],
     "scale": [1, 1, 1],
     "size": [281.598, 98.1, 172.4],
     "fixed": false,
     "resizable": false,
     "modelURL": "models/TableTennisTable.glb",
+    "isParametric": false
+  }, {
+    "itemName": "Andrea Wox Table",
+    "itemType": 1,
+    "position": [280, 25, 130],
+    "rotation": [0, 0, 0],
+    "scale": [1, 1, 1],
+    "size": [161.0, 51.8, 161.0],
+    "fixed": false,
+    "resizable": false,
+    "modelURL": "models/AndreaWox_Table_Resized.glb",
     "isParametric": false
   }, {
     "itemName": "DoubleChairWithPillow",
@@ -118067,7 +118078,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "46761" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "43851" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
