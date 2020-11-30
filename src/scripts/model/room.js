@@ -197,6 +197,9 @@ export class Room extends EventDispatcher {
     getTexture() {
         let uuid = this.getUuid();
         let tex = this.floorplan.getFloorTexture(uuid);
+        if (!tex) {
+            this.floorplan.setFloorTexture(uuid, defaultFloorTexture);
+        }
         return tex || defaultFloorTexture;
     }
 

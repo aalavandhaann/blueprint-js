@@ -262,7 +262,7 @@ blueprint3d.roomplanner.addRoomplanListener(EVENT_GLTF_READY, function(evt) {
     document.body.removeChild(a);
 });
 
-
+console.log(default_room);
 blueprint3d.model.loadSerialized(default_room);
 
 

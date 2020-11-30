@@ -1,8 +1,7 @@
-import { EventDispatcher, Vector2, Vector3, Matrix4, Face3, Mesh, Geometry, MeshBasicMaterial, Box3 } from 'three';
+import { EventDispatcher, Vector2, Vector3, Matrix4, Face3, Mesh, Geometry, MeshBasicMaterial, Box3, BufferGeometry, Plane } from 'three';
 import { EVENT_REDRAW, EVENT_MOVED, EVENT_UPDATED, EVENT_UPDATE_TEXTURES, EVENT_DELETED } from '../core/events.js';
 import { Utils } from '../core/utils.js';
 import { WallTypes, TEXTURE_DEFAULT_REPEAT } from '../core/constants.js';
-import { BufferGeometry } from 'three/build/three.module';
 
 /**
  * Half Edges are created by Room.
@@ -148,6 +147,7 @@ export class HalfEdge extends EventDispatcher {
 
         this.__vertices = null;
         this.__normal = null; //new Vector3(0, 0, 0);
+        this.__mathPlane = null;
 
         this.offset = wall.thickness / 2.0;
         this.height = wall.height;
@@ -270,6 +270,9 @@ export class HalfEdge extends EventDispatcher {
         ac = v3.clone().sub(v1);
         this.__vertices = [v1, v2, v3, v4];
         this.__normal = ab.cross(ac).normalize();
+        this.__mathPlane = new Plane();
+        this.__mathPlane.setFromNormalAndCoplanarPoint(this.__normal.clone(), this.__vertices[0].clone());
+
         geometry.vertices = [v1, v2, v3, v4];
         geometry.faces.push(new Face3(0, 1, 2));
         geometry.faces.push(new Face3(0, 2, 3));

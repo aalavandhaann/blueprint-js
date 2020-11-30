@@ -177,7 +177,7 @@ var TEXTURE_DEFAULT_REPEAT = 300;
 exports.TEXTURE_DEFAULT_REPEAT = TEXTURE_DEFAULT_REPEAT;
 var defaultWallTexture = {
   color: '#FFFFFF',
-  repeat: 300,
+  repeat: TEXTURE_DEFAULT_REPEAT,
   normalmap: 'textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_normal.jpg',
   roughnessmap: 'textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_roughness.jpg',
   colormap: 'textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_basecolor.jpg',
@@ -186,8 +186,8 @@ var defaultWallTexture = {
 };
 exports.defaultWallTexture = defaultWallTexture;
 var defaultFloorTexture = {
-  reflective: 0.5,
   color: '#FFFFFF',
+  emissive: '#181818',
   repeat: TEXTURE_DEFAULT_REPEAT,
   ambientmap: 'textures/Floor/Marble_Tiles_001/Marble_Tiles_001_ambientOcclusion.jpg',
   colormap: 'textures/Floor/Marble_Tiles_001/Marble_Tiles_001_basecolor.jpg',
@@ -37734,8 +37734,6 @@ var _utils = require("../core/utils.js");
 
 var _constants = require("../core/constants.js");
 
-var _three2 = require("three/build/three.module");
-
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -37909,6 +37907,7 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
     _this.__vertices = null;
     _this.__normal = null; //new Vector3(0, 0, 0);
 
+    _this.__mathPlane = null;
     _this.offset = wall.thickness / 2.0;
     _this.height = wall.height;
     _this.__wallMovedEvent = _this.__wallMoved.bind(_assertThisInitialized(_this));
@@ -38064,6 +38063,10 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
       ac = v3.clone().sub(v1);
       this.__vertices = [v1, v2, v3, v4];
       this.__normal = ab.cross(ac).normalize();
+      this.__mathPlane = new _three.Plane();
+
+      this.__mathPlane.setFromNormalAndCoplanarPoint(this.__normal.clone(), this.__vertices[0].clone());
+
       geometry.vertices = [v1, v2, v3, v4];
       geometry.faces.push(new _three.Face3(0, 1, 2));
       geometry.faces.push(new _three.Face3(0, 2, 3));
@@ -38071,12 +38074,12 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
       geometry.computeBoundingBox();
 
       if (!this.plane) {
-        this.plane = new _three.Mesh(new _three2.BufferGeometry().fromGeometry(geometry), new _three.MeshBasicMaterial({
+        this.plane = new _three.Mesh(new _three.BufferGeometry().fromGeometry(geometry), new _three.MeshBasicMaterial({
           visible: true
         }));
       } else {
         this.plane.geometry.dispose();
-        this.plane.geometry = new _three2.BufferGeometry().fromGeometry(geometry); //this.plane.geometry.fromGeometry(geometry);
+        this.plane.geometry = new _three.BufferGeometry().fromGeometry(geometry); //this.plane.geometry.fromGeometry(geometry);
       } //The below line was originally setting the plane visibility to false
       //Now its setting visibility to true. This is necessary to be detected
       //with the raycaster objects to click walls and floors.
@@ -38456,7 +38459,7 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
 exports.HalfEdge = HalfEdge;
 var _default = HalfEdge;
 exports.default = _default;
-},{"three":"../node_modules/three/build/three.module.js","../core/events.js":"scripts/core/events.js","../core/utils.js":"scripts/core/utils.js","../core/constants.js":"scripts/core/constants.js","three/build/three.module":"../node_modules/three/build/three.module.js"}],"scripts/model/corner.js":[function(require,module,exports) {
+},{"three":"../node_modules/three/build/three.module.js","../core/events.js":"scripts/core/events.js","../core/utils.js":"scripts/core/utils.js","../core/constants.js":"scripts/core/constants.js"}],"scripts/model/corner.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -45217,6 +45220,11 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
     value: function getTexture() {
       var uuid = this.getUuid();
       var tex = this.floorplan.getFloorTexture(uuid);
+
+      if (!tex) {
+        this.floorplan.setFloorTexture(uuid, _constants.defaultFloorTexture);
+      }
+
       return tex || _constants.defaultFloorTexture;
     }
     /**
@@ -50486,10 +50494,13 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
     _this.__mirrorCamera = null; // this.roughness = (!textureMapPack.reflective) ? 0.5 : textureMapPack.reflective;
 
     _this.__repeat = !textureMapPack.repeat ? _constants.TEXTURE_DEFAULT_REPEAT : textureMapPack.repeat;
+    _this.__repeatX = null;
+    _this.__repeatY = null;
 
     if (_this.__reflectsScene) {
       _this.__mirrorCamera = _this.__scene.environmentCamera;
       _this.envMap = _this.__mirrorCamera.renderTarget.texture;
+      _this.envMap.mapping = _three.CubeReflectionMapping;
     }
 
     _this.__textureMapPack = textureMapPack;
@@ -50498,34 +50509,38 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
     _this.__dimensions = new _three.Vector2();
     _this.__repeatPerCentimeter = 1.0 / _this.__repeat; //Repeat for every 'x' centimeters
 
+    _this.__repeatPerCentimeterX = null;
+    _this.__repeatPerCentimeterY = null;
     _this.__colorTexture = null;
     _this.__normalTexture = null;
     _this.__roughnessTexture = null;
     _this.__ambientTexture = null;
     _this.__bumpTexture = null;
+    _this.__metalTexture = null; // this.__applyNewTextures();
+    // this.normalScale.set(-10, 10);
 
-    _this.__applyNewTextures();
-
-    _this.normalScale.set(-10, 10);
-
+    _this.textureMapPack = textureMapPack;
     return _this;
   }
 
   _createClass(Material3D, [{
-    key: "__updateTextures",
-    value: function __updateTextures() {
-      var flag = false;
-
+    key: "__updateColorMap",
+    value: function __updateColorMap(texture) {
       if (this.__colorTexture) {
-        flag = true;
         this.__colorTexture.encoding = _three.sRGBEncoding;
         this.__colorTexture.wrapS = this.__colorTexture.wrapT = _three.RepeatWrapping;
 
         this.__colorTexture.repeat.set(this.__uRatio, this.__vRatio);
 
         this.__colorTexture.needsUpdate = true;
+        this.map = this.__colorTexture;
       }
 
+      this.__updateTextures();
+    }
+  }, {
+    key: "__updateNormalMap",
+    value: function __updateNormalMap(texture) {
       if (this.__normalTexture) {
         this.__normalTexture.encoding = _three.sRGBEncoding;
         this.__normalTexture.wrapS = this.__normalTexture.wrapT = _three.RepeatWrapping;
@@ -50533,8 +50548,14 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
         this.__normalTexture.repeat.set(this.__uRatio, this.__vRatio);
 
         this.__normalTexture.needsUpdate = true;
+        this.normalMap = this.__normalTexture;
       }
 
+      this.__updateTextures();
+    }
+  }, {
+    key: "__updateRoughnessMap",
+    value: function __updateRoughnessMap(texture) {
       if (this.__roughnessTexture) {
         this.__roughnessTexture.encoding = _three.sRGBEncoding;
         this.__roughnessTexture.wrapS = this.__roughnessTexture.wrapT = _three.RepeatWrapping;
@@ -50542,8 +50563,14 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
         this.__roughnessTexture.repeat.set(this.__uRatio, this.__vRatio);
 
         this.__roughnessTexture.needsUpdate = true;
+        this.roughnessMap = this.__roughnessTexture;
       }
 
+      this.__updateTextures();
+    }
+  }, {
+    key: "__updateAmbientMap",
+    value: function __updateAmbientMap(texture) {
       if (this.__ambientTexture) {
         this.__ambientTexture.encoding = _three.sRGBEncoding;
         this.__ambientTexture.wrapS = this.__ambientTexture.wrapT = _three.RepeatWrapping;
@@ -50551,8 +50578,29 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
         this.__ambientTexture.repeat.set(this.__uRatio, this.__vRatio);
 
         this.__ambientTexture.needsUpdate = true;
+        this.aoMap = this.__ambientTexture; // this.aoMapIntensity = 1.0;
       }
 
+      this.__updateTextures();
+    }
+  }, {
+    key: "__updateMetallicMap",
+    value: function __updateMetallicMap(texture) {
+      if (this.__metalTexture) {
+        this.__metalTexture.encoding = _three.sRGBEncoding;
+        this.__metalTexture.wrapS = this.__metalTexture.wrapT = _three.RepeatWrapping;
+
+        this.__metalTexture.repeat.set(this.__uRatio, this.__vRatio);
+
+        this.__metalTexture.needsUpdate = true;
+        this.metalnessMap = this.__metalTexture;
+      }
+
+      this.__updateTextures();
+    }
+  }, {
+    key: "__updateBumpMap",
+    value: function __updateBumpMap(texture) {
       if (this.__bumpTexture) {
         this.__bumpTexture.encoding = _three.sRGBEncoding;
         this.__bumpTexture.wrapS = this.__bumpTexture.wrapT = _three.RepeatWrapping;
@@ -50560,36 +50608,39 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
         this.__bumpTexture.repeat.set(this.__uRatio, this.__vRatio);
 
         this.__bumpTexture.needsUpdate = true;
+        this.displacementMap = this.__bumpTexture;
         this.displacementMap.needsUpdate = true;
       }
 
-      if (flag) {
-        this.needsUpdate = true;
-        this.__scene.needsUpdate = true;
-      }
+      this.__updateTextures();
+    }
+  }, {
+    key: "__updateTextures",
+    value: function __updateTextures() {
+      this.needsUpdate = true;
+      this.__scene.needsUpdate = true;
     }
   }, {
     key: "__applyNewTextures",
     value: function __applyNewTextures() {
       if (this.__textureMapPack.colormap) {
-        this.__colorTexture = new _three.TextureLoader().load(this.__textureMapPack.colormap, this.__updateTextures.bind(this));
-        this.map = this.__colorTexture;
+        this.__colorTexture = new _three.TextureLoader().load(this.__textureMapPack.colormap, this.__updateColorMap.bind(this));
       }
 
       if (this.__textureMapPack.normalmap) {
-        this.__normalTexture = new _three.TextureLoader().load(this.__textureMapPack.normalmap, this.__updateTextures.bind(this));
-        this.normalMap = this.__normalTexture;
+        this.__normalTexture = new _three.TextureLoader().load(this.__textureMapPack.normalmap, this.__updateNormalMap.bind(this));
       }
 
       if (this.__textureMapPack.roughnessmap) {
-        this.__roughnessTexture = new _three.TextureLoader().load(this.__textureMapPack.roughnessmap, this.__updateTextures.bind(this));
-        this.roughnessMap = this.__roughnessTexture;
+        this.__roughnessTexture = new _three.TextureLoader().load(this.__textureMapPack.roughnessmap, this.__updateRoughnessMap.bind(this));
       }
 
       if (this.__textureMapPack.ambientmap) {
-        this.__ambientTexture = new _three.TextureLoader().load(this.__textureMapPack.ambientmap, this.__updateTextures.bind(this));
-        this.aoMap = this.__ambientTexture;
-        this.aoMapIntensity = 1.0;
+        this.__ambientTexture = new _three.TextureLoader().load(this.__textureMapPack.ambientmap, this.__updateAmbientMap.bind(this));
+      }
+
+      if (this.__textureMapPack.metalmap) {
+        this.__metalTexture = new _three.TextureLoader().load(this.__textureMapPack.metalmap, this.__updateMetallicMap.bind(this));
       } // if (this.__textureMapPack.bumpmap) {
       //     console.log('APPLY DISPLACEMENT MAP ::: ');
       //     this.__bumpTexture = new TextureLoader().load(this.__textureMapPack.bumpmap, this.__updateTextures.bind(this));
@@ -50636,10 +50687,20 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
     },
     set: function set(textureMapPack) {
       this.__textureMapPack = textureMapPack;
+      textureMapPack.color = textureMapPack.color || '#FFFFFF';
+      textureMapPack.emissive = textureMapPack.emissive || '#000000';
+      textureMapPack.reflective = textureMapPack.reflective || 0.5;
+      textureMapPack.shininess = textureMapPack.shininess || 0.5;
       this.color = new _three.Color(textureMapPack.color);
-      this.roughness = !textureMapPack.reflective ? 0.5 : textureMapPack.reflective;
+      this.emissive = new _three.Color(textureMapPack.emissive);
+      this.roughness = textureMapPack.reflective;
+      this.metalness = textureMapPack.shininess;
       this.__repeat = !textureMapPack.repeat ? _constants.TEXTURE_DEFAULT_REPEAT : textureMapPack.repeat;
       this.__repeatPerCentimeter = 1.0 / this.__repeat;
+      this.__repeatX = textureMapPack.repeatX || textureMapPack.repeat;
+      this.__repeatY = textureMapPack.repeatY || textureMapPack.repeat;
+      this.__repeatPerCentimeterX = 1.0 / this.__repeatX;
+      this.__repeatPerCentimeterY = 1.0 / this.__repeatY;
 
       this.__applyNewTextures();
     }
@@ -50647,13 +50708,12 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
     key: "repeat",
     get: function get() {
       return this.__repeat;
-    },
-    set: function set(value) {
-      this.__repeat = value;
-      this.__repeatPerCentimeter = 1.0 / this.__repeat;
+    } // set repeat(value) {
+    //     this.__repeat = value;
+    //     this.__repeatPerCentimeter = 1.0 / this.__repeat;
+    //     this.__updateDimensions(this.__dimensions.x, this.__dimensions.y);
+    // }
 
-      this.__updateDimensions(this.__dimensions.x, this.__dimensions.y);
-    }
   }, {
     key: "dimensions",
     get: function get() {
@@ -50663,6 +50723,11 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
       this.__dimensions = vec2.clone();
 
       this.__updateDimensions(this.__dimensions.x, this.__dimensions.y);
+    }
+  }, {
+    key: "isReflective",
+    get: function get() {
+      return this.__reflectsScene;
     }
   }]);
 
@@ -51205,7 +51270,7 @@ var FloorMaterial3D = /*#__PURE__*/function (_Material3D) {
   function FloorMaterial3D(parameters, textureMapPack, scene) {
     _classCallCheck(this, FloorMaterial3D);
 
-    return _super.call(this, parameters, textureMapPack, scene, true);
+    return _super.call(this, parameters, textureMapPack, scene, false);
   }
 
   return FloorMaterial3D;
@@ -51289,9 +51354,11 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
   _createClass(Floor3D, [{
     key: "__updateReflections",
     value: function __updateReflections() {
-      if (this.__floorMaterial3D && this.scene.enabled) {
+      if (this.__floorMaterial3D && this.__floorMaterial3D.isReflective && this.scene.enabled) {
         var floorSize = this.room.floorRectangleSize.clone();
         this.floorPlane.visible = false;
+
+        this.__floorMaterial3D.envMapCamera.clear(this.scene.renderer);
 
         this.__floorMaterial3D.envMapCamera.position.set(floorSize.x, 0, floorSize.y);
 
@@ -51372,7 +51439,9 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
 
       this.__floorMaterial3D.dimensions = floorSize;
 
-      this.__floorMaterial3D.envMapCamera.position.copy(new _three.Vector3(floorSize.x, 0, floorSize.y));
+      if (this.__floorMaterial3D.envMapCamera) {
+        this.__floorMaterial3D.envMapCamera.position.copy(new _three.Vector3(floorSize.x, 0, floorSize.y));
+      }
 
       var floor = new _three.Mesh(useGeometry, this.__floorMaterial3D);
       floor.rotation.set(Math.PI * 0.5, 0, 0);
@@ -51531,7 +51600,7 @@ var Lights3D = /*#__PURE__*/function (_EventDispatcher) {
 
       this.ambLight = new _three.AmbientLight(0x404040); // soft white light
 
-      this.ambLight.intensity = 0.15;
+      this.ambLight.intensity = 0.5;
       this.dirLight.castShadow = true;
       this.dirLight.shadow.mapSize.width = 1024;
       this.dirLight.shadow.mapSize.height = 1024;
@@ -61277,6 +61346,7 @@ var _isMobile = _interopRequireWildcard(require("./isMobile"));
 Object.keys(_isMobile).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _isMobile[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107368,6 +107438,7 @@ var _accessibility = require("@pixi/accessibility");
 Object.keys(_accessibility).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _accessibility[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107381,6 +107452,7 @@ var _interaction = require("@pixi/interaction");
 Object.keys(_interaction).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _interaction[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107394,6 +107466,7 @@ var _app = require("@pixi/app");
 Object.keys(_app).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _app[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107407,6 +107480,7 @@ var _core = require("@pixi/core");
 Object.keys(_core).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _core[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107420,6 +107494,7 @@ var _extract = require("@pixi/extract");
 Object.keys(_extract).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _extract[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107433,6 +107508,7 @@ var _loaders = require("@pixi/loaders");
 Object.keys(_loaders).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _loaders[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107446,6 +107522,7 @@ var _particles = require("@pixi/particles");
 Object.keys(_particles).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _particles[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107459,6 +107536,7 @@ var _prepare = require("@pixi/prepare");
 Object.keys(_prepare).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _prepare[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107472,6 +107550,7 @@ var _spritesheet = require("@pixi/spritesheet");
 Object.keys(_spritesheet).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _spritesheet[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107485,6 +107564,7 @@ var _spriteTiling = require("@pixi/sprite-tiling");
 Object.keys(_spriteTiling).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _spriteTiling[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107498,6 +107578,7 @@ var _textBitmap = require("@pixi/text-bitmap");
 Object.keys(_textBitmap).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _textBitmap[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107511,6 +107592,7 @@ var _ticker = require("@pixi/ticker");
 Object.keys(_ticker).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _ticker[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107542,6 +107624,7 @@ var _constants = require("@pixi/constants");
 Object.keys(_constants).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _constants[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107555,6 +107638,7 @@ var _display = require("@pixi/display");
 Object.keys(_display).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _display[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107568,6 +107652,7 @@ var _graphics = require("@pixi/graphics");
 Object.keys(_graphics).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _graphics[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107581,6 +107666,7 @@ var _math = require("@pixi/math");
 Object.keys(_math).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _math[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107594,6 +107680,7 @@ var _mesh = require("@pixi/mesh");
 Object.keys(_mesh).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _mesh[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107607,6 +107694,7 @@ var _meshExtras = require("@pixi/mesh-extras");
 Object.keys(_meshExtras).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _meshExtras[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107620,6 +107708,7 @@ var _runner = require("@pixi/runner");
 Object.keys(_runner).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _runner[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107633,6 +107722,7 @@ var _sprite = require("@pixi/sprite");
 Object.keys(_sprite).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _sprite[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107646,6 +107736,7 @@ var _spriteAnimated = require("@pixi/sprite-animated");
 Object.keys(_spriteAnimated).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _spriteAnimated[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107659,6 +107750,7 @@ var _text = require("@pixi/text");
 Object.keys(_text).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _text[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107672,6 +107764,7 @@ var _settings = require("@pixi/settings");
 Object.keys(_settings).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _settings[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -109294,8 +109387,8 @@ class InputManager {
     if (this.count() === 1) {
       this.last = event.data.global.clone(); // clicked event does not fire if viewport is decelerating or bouncing
 
-      const decelerate = this.viewport.plugins.get('decelerate');
-      const bounce = this.viewport.plugins.get('bounce');
+      const decelerate = this.viewport.plugins.get('decelerate', true);
+      const bounce = this.viewport.plugins.get('bounce', true);
 
       if ((!decelerate || !decelerate.isActive()) && (!bounce || !bounce.isActive())) {
         this.clickedAvailable = true;
@@ -109311,6 +109404,16 @@ class InputManager {
     if (stop && this.viewport.options.stopPropagation) {
       event.stopPropagation();
     }
+  }
+  /**
+   * clears all pointer events
+   */
+
+
+  clear() {
+    this.isMouseDown = false;
+    this.touches = [];
+    this.last = null;
   }
   /**
    * @param {number} change
@@ -109511,11 +109614,18 @@ class PluginManager {
   /**
    * get plugin
    * @param {string} name of plugin
+   * @param {boolean} [ignorePaused] return null if plugin is paused
    * @return {Plugin}
    */
 
 
-  get(name) {
+  get(name, ignorePaused) {
+    if (ignorePaused) {
+      if (typeof this.plugins[name] !== 'undefined' && this.plugins[name].paused) {
+        return null;
+      }
+    }
+
     return this.plugins[name];
   }
   /**
@@ -109875,7 +109985,7 @@ class Drag extends Plugin {
     const isMouse = event.data.pointerType === 'mouse';
     const count = this.parent.input.count();
 
-    if (count === 1 || count > 1 && !this.parent.plugins.get('pinch')) {
+    if (count === 1 || count > 1 && !this.parent.plugins.get('pinch', true)) {
       if (!isMouse || this.mouse[event.data.button]) {
         return true;
       }
@@ -109933,7 +110043,7 @@ class Drag extends Plugin {
       const y = event.data.global.y;
       const count = this.parent.input.count();
 
-      if (count === 1 || count > 1 && !this.parent.plugins.get('pinch')) {
+      if (count === 1 || count > 1 && !this.parent.plugins.get('pinch', true)) {
         const distX = x - this.last.x;
         const distY = y - this.last.y;
 
@@ -110027,7 +110137,7 @@ class Drag extends Plugin {
     }
 
     if (this.options.wheel) {
-      const wheel = this.parent.plugins.get('wheel');
+      const wheel = this.parent.plugins.get('wheel', true);
 
       if (!wheel) {
         if (this.xDirection) {
@@ -110063,7 +110173,7 @@ class Drag extends Plugin {
   }
 
   clamp() {
-    const decelerate = this.parent.plugins.get('decelerate') || {};
+    const decelerate = this.parent.plugins.get('decelerate', true) || {};
 
     if (this.options.clampWheel !== 'y') {
       if (this.parent.screenWorldWidth < this.parent.screenWidth) {
@@ -110122,15 +110232,17 @@ class Drag extends Plugin {
 /**
  * @typedef {object} PinchOptions
  * @property {boolean} [noDrag] disable two-finger dragging
- * @property {number} [percent=1.0] percent to modify pinch speed
+ * @property {number} [percent=1] percent to modify pinch speed
+ * @property {number} [factor=1] factor to multiply two-finger drag to increase the speed of movement
  * @property {PIXI.Point} [center] place this point at center during zoom instead of center of two fingers
  */
 
 
 const pinchOptions = {
   noDrag: false,
-  percent: 1.0,
-  center: null
+  percent: 1,
+  center: null,
+  factor: 1
 };
 
 class Pinch extends Plugin {
@@ -110197,9 +110309,10 @@ class Pinch extends Plugin {
         this.parent.scale.y += change;
         this.parent.emit('zoomed', {
           viewport: this.parent,
-          type: 'pinch'
+          type: 'pinch',
+          center: point
         });
-        const clamp = this.parent.plugins.get('clamp-zoom');
+        const clamp = this.parent.plugins.get('clamp-zoom', true);
 
         if (clamp) {
           clamp.clamp();
@@ -110209,8 +110322,8 @@ class Pinch extends Plugin {
           this.parent.moveCenter(this.options.center);
         } else {
           const newPoint = this.parent.toGlobal(oldPoint);
-          this.parent.x += point.x - newPoint.x;
-          this.parent.y += point.y - newPoint.y;
+          this.parent.x += (point.x - newPoint.x) * this.options.factor;
+          this.parent.y += (point.y - newPoint.y) * this.options.factor;
           this.parent.emit('moved', {
             viewport: this.parent,
             type: 'pinch'
@@ -110218,8 +110331,8 @@ class Pinch extends Plugin {
         }
 
         if (!this.options.noDrag && this.lastCenter) {
-          this.parent.x += point.x - this.lastCenter.x;
-          this.parent.y += point.y - this.lastCenter.y;
+          this.parent.x += (point.x - this.lastCenter.x) * this.options.factor;
+          this.parent.y += (point.y - this.lastCenter.y) * this.options.factor;
           this.parent.emit('moved', {
             viewport: this.parent,
             type: 'pinch'
@@ -110593,10 +110706,15 @@ class ClampZoom extends Plugin {
 
 
 const decelerateOptions = {
-  friction: 0.95,
+  friction: 0.98,
   bounce: 0.8,
   minSpeed: 0.01
 };
+/**
+ * Time period of decay (1 frame)
+ */
+
+const TP = 16;
 
 class Decelerate extends Plugin {
   /**
@@ -110608,6 +110726,7 @@ class Decelerate extends Plugin {
     super(parent);
     this.options = Object.assign({}, decelerateOptions, options);
     this.saved = [];
+    this.timeSinceRelease = 0;
     this.reset();
     this.parent.on('moved', data => this.moved(data));
   }
@@ -110632,7 +110751,7 @@ class Decelerate extends Plugin {
 
     const count = this.parent.input.count();
 
-    if (count === 1 || count > 1 && !this.parent.plugins.get('pinch')) {
+    if (count === 1 || count > 1 && !this.parent.plugins.get('pinch', true)) {
       this.saved.push({
         x: this.parent.x,
         y: this.parent.y,
@@ -110671,6 +110790,7 @@ class Decelerate extends Plugin {
           this.x = (this.parent.x - save.x) / time;
           this.y = (this.parent.y - save.y) / time;
           this.percentChangeX = this.percentChangeY = this.options.friction;
+          this.timeSinceRelease = 0;
           break;
         }
       }
@@ -110702,29 +110822,41 @@ class Decelerate extends Plugin {
     if (this.paused) {
       return;
     }
+    /*
+     * See https://github.com/davidfig/pixi-viewport/issues/271 for math.
+     *
+     * The viewport velocity (this.x, this.y) decays expoenential by the the decay factor
+     * (this.percentChangeX, this.percentChangeY) each frame. This velocity function is integrated
+     * to calculate the displacement.
+     */
 
-    let moved;
+
+    const moved = this.x || this.y;
+    const ti = this.timeSinceRelease;
+    const tf = this.timeSinceRelease + elapsed;
 
     if (this.x) {
-      this.parent.x += this.x * elapsed;
-      this.x *= this.percentChangeX;
-
-      if (Math.abs(this.x) < this.options.minSpeed) {
-        this.x = 0;
-      }
-
-      moved = true;
+      const k = this.percentChangeX;
+      const lnk = Math.log(k);
+      this.parent.x += this.x * TP / lnk * (Math.pow(k, tf / TP) - Math.pow(k, ti / TP));
     }
 
     if (this.y) {
-      this.parent.y += this.y * elapsed;
-      this.y *= this.percentChangeY;
+      const k = this.percentChangeY;
+      const lnk = Math.log(k);
+      this.parent.y += this.y * TP / lnk * (Math.pow(k, tf / TP) - Math.pow(k, ti / TP));
+    }
 
-      if (Math.abs(this.y) < this.options.minSpeed) {
-        this.y = 0;
-      }
+    this.timeSinceRelease += elapsed;
+    this.x *= Math.pow(this.percentChangeX, elapsed / TP);
+    this.y *= Math.pow(this.percentChangeY, elapsed / TP);
 
-      moved = true;
+    if (Math.abs(this.x) < this.options.minSpeed) {
+      this.x = 0;
+    }
+
+    if (Math.abs(this.y) < this.options.minSpeed) {
+      this.y = 0;
     }
 
     if (moved) {
@@ -110743,10 +110875,18 @@ class Decelerate extends Plugin {
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
-function createCommonjsModule(fn, module) {
+function createCommonjsModule(fn, basedir, module) {
   return module = {
-    exports: {}
+    path: basedir,
+    exports: {},
+    require: function (path, base) {
+      return commonjsRequire(path, base === undefined || base === null ? module.path : base);
+    }
   }, fn(module, module.exports), module.exports;
+}
+
+function commonjsRequire() {
+  throw new Error('Dynamic requires are not currently supported by @rollup/plugin-commonjs');
 }
 
 var penner = createCommonjsModule(function (module, exports) {
@@ -111216,7 +111356,7 @@ class Bounce extends Plugin {
     }
 
     let oob;
-    let decelerate = this.parent.plugins.get('decelerate');
+    let decelerate = this.parent.plugins.get('decelerate', true);
 
     if (decelerate && (decelerate.x || decelerate.y)) {
       if (decelerate.x && decelerate.percentChangeX === decelerate.options.friction || decelerate.y && decelerate.percentChangeY === decelerate.options.friction) {
@@ -111232,8 +111372,8 @@ class Bounce extends Plugin {
       }
     }
 
-    const drag = this.parent.plugins.get('drag') || {};
-    const pinch = this.parent.plugins.get('pinch') || {};
+    const drag = this.parent.plugins.get('drag', true) || {};
+    const pinch = this.parent.plugins.get('pinch', true) || {};
     decelerate = decelerate || {};
 
     if (!drag.active && !pinch.active && (!this.toX || !this.toY) && (!decelerate.x || !decelerate.y)) {
@@ -111366,7 +111506,7 @@ class Snap extends Plugin {
 
   up() {
     if (this.parent.input.count() === 0) {
-      const decelerate = this.parent.plugins.get('decelerate');
+      const decelerate = this.parent.plugins.get('decelerate', true);
 
       if (decelerate && (decelerate.x || decelerate.y)) {
         decelerate.percentChangeX = decelerate.percentChangeY = this.options.friction;
@@ -111495,12 +111635,16 @@ class SnapZoom extends Plugin {
 
   createSnapping() {
     const scale = this.parent.scale;
+    const startWorldScreenWidth = this.parent.worldScreenWidth;
+    const startWorldScreenHeight = this.parent.worldScreenHeight;
+    const endWorldScreenWidth = this.parent.screenWidth / this.xScale;
+    const endWorldScreenHeight = this.parent.screenHeight / this.yScale;
     this.snapping = {
       time: 0,
-      startX: scale.x,
-      startY: scale.y,
-      deltaX: this.xScale - scale.x,
-      deltaY: this.yScale - scale.y
+      startX: startWorldScreenWidth,
+      startY: startWorldScreenHeight,
+      deltaX: endWorldScreenWidth - startWorldScreenWidth,
+      deltaY: endWorldScreenHeight - startWorldScreenHeight
     };
     this.parent.emit('snap-zoom-start', this.parent);
   }
@@ -111568,11 +111712,13 @@ class SnapZoom extends Plugin {
         this.snapping = null;
       } else {
         const snapping = this.snapping;
-        this.parent.scale.x = this.ease(snapping.time, snapping.startX, snapping.deltaX, this.options.time);
-        this.parent.scale.y = this.ease(snapping.time, snapping.startY, snapping.deltaY, this.options.time);
+        const worldScreenWidth = this.ease(snapping.time, snapping.startX, snapping.deltaX, this.options.time);
+        const worldScreenHeight = this.ease(snapping.time, snapping.startY, snapping.deltaY, this.options.time);
+        this.parent.scale.x = this.parent.screenWidth / worldScreenWidth;
+        this.parent.scale.y = this.parent.screenHeight / worldScreenHeight;
       }
 
-      const clamp = this.parent.plugins.get('clamp-zoom');
+      const clamp = this.parent.plugins.get('clamp-zoom', true);
 
       if (clamp) {
         clamp.clamp();
@@ -111758,7 +111904,7 @@ class Wheel extends Plugin {
         viewport: this.parent,
         type: 'wheel'
       });
-      const clamp = this.parent.plugins.get('clamp-zoom');
+      const clamp = this.parent.plugins.get('clamp-zoom', true);
 
       if (clamp) {
         clamp.clamp();
@@ -111818,7 +111964,7 @@ class Wheel extends Plugin {
         viewport: this.parent,
         type: 'wheel'
       });
-      const clamp = this.parent.plugins.get('clamp-zoom');
+      const clamp = this.parent.plugins.get('clamp-zoom', true);
 
       if (clamp) {
         clamp.clamp();
@@ -111917,12 +112063,20 @@ class MouseEdges extends Plugin {
   }
 
   down() {
+    if (this.paused) {
+      return;
+    }
+
     if (!this.options.allowButtons) {
       this.horizontal = this.vertical = null;
     }
   }
 
   move(event) {
+    if (this.paused) {
+      return;
+    }
+
     if (event.data.pointerType !== 'mouse' && event.data.identifier !== 1 || !this.options.allowButtons && event.data.buttons !== 0) {
       return;
     }
@@ -111977,7 +112131,7 @@ class MouseEdges extends Plugin {
   }
 
   decelerateHorizontal() {
-    const decelerate = this.parent.plugins.get('decelerate');
+    const decelerate = this.parent.plugins.get('decelerate', true);
 
     if (this.horizontal && decelerate && !this.options.noDecelerate) {
       decelerate.activate({
@@ -111987,7 +112141,7 @@ class MouseEdges extends Plugin {
   }
 
   decelerateVertical() {
-    const decelerate = this.parent.plugins.get('decelerate');
+    const decelerate = this.parent.plugins.get('decelerate', true);
 
     if (this.vertical && decelerate && !this.options.noDecelerate) {
       decelerate.activate({
@@ -111997,6 +112151,10 @@ class MouseEdges extends Plugin {
   }
 
   up() {
+    if (this.paused) {
+      return;
+    }
+
     if (this.horizontal) {
       this.decelerateHorizontal();
     }
@@ -112681,7 +112839,7 @@ class Viewport extends PIXI.Container {
       this.scale.y = this.scale.x;
     }
 
-    const clampZoom = this.plugins.get('clamp-zoom');
+    const clampZoom = this.plugins.get('clamp-zoom', true);
 
     if (!noClamp && clampZoom) {
       clampZoom.clamp();
@@ -112716,7 +112874,7 @@ class Viewport extends PIXI.Container {
       this.scale.x = this.scale.y;
     }
 
-    const clampZoom = this.plugins.get('clamp-zoom');
+    const clampZoom = this.plugins.get('clamp-zoom', true);
 
     if (!noClamp && clampZoom) {
       clampZoom.clamp();
@@ -112751,7 +112909,7 @@ class Viewport extends PIXI.Container {
       this.scale.x = this.scale.y;
     }
 
-    const clampZoom = this.plugins.get('clamp-zoom');
+    const clampZoom = this.plugins.get('clamp-zoom', true);
 
     if (clampZoom) {
       clampZoom.clamp();
@@ -112788,7 +112946,7 @@ class Viewport extends PIXI.Container {
       this.scale.x = this.scale.y;
     }
 
-    const clampZoom = this.plugins.get('clamp-zoom');
+    const clampZoom = this.plugins.get('clamp-zoom', true);
 
     if (clampZoom) {
       clampZoom.clamp();
@@ -112799,6 +112957,14 @@ class Viewport extends PIXI.Container {
     }
 
     return this;
+  }
+
+  set visible(value) {
+    if (!value) {
+      this.input.clear();
+    }
+
+    super.visible = value;
   }
   /**
    * zoom viewport to specific value
@@ -112816,7 +112982,7 @@ class Viewport extends PIXI.Container {
     }
 
     this.scale.set(scale);
-    const clampZoom = this.plugins.get('clamp-zoom');
+    const clampZoom = this.plugins.get('clamp-zoom', true);
 
     if (clampZoom) {
       clampZoom.clamp();
@@ -117334,7 +117500,10 @@ module.exports = {
         "ambientmap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_ambientOcclusion.jpg",
         "normalmap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_normal.jpg",
         "colormap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_basecolor.jpg",
-        "color": "#FFFFFF"
+        "color": "#FFFFFF",
+        "emissive": "#000000",
+        "reflective": 0.5,
+        "shininess": 0.5
       }
     },
     "carbonSheet": {},
@@ -117358,7 +117527,7 @@ module.exports = {
   }, {
     "itemName": "Tennis Table",
     "itemType": 1,
-    "position": [221.43156753842538, 54.05, 429.1958745553041],
+    "position": [221.43156753842538, 54.05, 229.1958745553041],
     "rotation": [0, 0, 0],
     "scale": [1, 1, 1],
     "size": [281.598, 98.1, 172.4],
@@ -117737,6 +117906,7 @@ blueprint3d.roomplanner.addRoomplanListener(_events.EVENT_GLTF_READY, function (
   a.click();
   document.body.removeChild(a);
 });
+console.log(default_room);
 blueprint3d.model.loadSerialized(default_room);
 
 if (!opts.widget) {
@@ -117833,7 +118003,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42993" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42575" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

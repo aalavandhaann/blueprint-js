@@ -166,7 +166,10 @@
                 "ambientmap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_ambientOcclusion.jpg",
                 "normalmap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_normal.jpg",
                 "colormap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_basecolor.jpg",
-                "color": "#FFFFFF"
+                "color": "#FFFFFF",
+                "emissive": "#000000",
+                "reflective": 0.5,
+                "shininess": 0.5,
             }
         },
         "carbonSheet": {},
@@ -214,7 +217,7 @@
             "position": [
                 221.43156753842538,
                 54.05,
-                429.1958745553041
+                229.1958745553041
             ],
             "rotation": [
                 0,
