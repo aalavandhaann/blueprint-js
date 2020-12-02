@@ -423,6 +423,7 @@ export class HalfEdge extends EventDispatcher {
      */
     interiorStart() {
         let vec = this.interiorPointByEdges(this.prev, this); //this.interiorPoint(this.prev, true);
+        vec = vec.multiplyScalar(0.5);
         return this.getStart().location.clone().add(vec);
         // let vec = this.halfAngleVector(this.prev, this);
         // return new Vector2(this.getStart().x + vec.x, this.getStart().y + vec.y);
@@ -437,21 +438,11 @@ export class HalfEdge extends EventDispatcher {
     // 
     interiorEnd() {
         let vec = this.interiorPointByEdges(this, this.next); //this.interiorPoint(this.next, false);
+        vec = vec.multiplyScalar(0.5);
         return this.getEnd().location.clone().add(vec);
         // let vec = this.halfAngleVector(this, this.next);
         // return new Vector2(this.getEnd().x + vec.x, this.getEnd().y + vec.y);
         // return {x:this.getEnd().x + vec.x, y:this.getEnd().y + vec.y};
-    }
-
-    /**
-     * Return the 2D exterior location that is at the end. 
-     * @return {Vector2} Return an object with attributes x, y
-     * @see https://threejs.org/docs/#api/en/math/Vector2
-     */
-    exteriorEnd() {
-        // let vec = this.halfAngleVector(this, this.next);
-        // return new Vector2(this.getEnd().x - vec.x, this.getEnd().y - vec.y);
-        return new Vector2(this.getEnd().x, this.getEnd().y);
     }
 
     /**
@@ -460,9 +451,26 @@ export class HalfEdge extends EventDispatcher {
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
     exteriorStart() {
+        let vec = this.interiorPointByEdges(this.prev, this); //this.interiorPoint(this.prev, true);
+        vec = vec.multiplyScalar(-0.5);
+        return this.getStart().location.clone().add(vec);
         // let vec = this.halfAngleVector(this.prev, this);
         // return new Vector2(this.getStart().x - vec.x, this.getStart().y - vec.y);
-        return new Vector2(this.getStart().x, this.getStart().y);
+        // return new Vector2(this.getStart().x, this.getStart().y);
+    }
+
+    /**
+     * Return the 2D exterior location that is at the end. 
+     * @return {Vector2} Return an object with attributes x, y
+     * @see https://threejs.org/docs/#api/en/math/Vector2
+     */
+    exteriorEnd() {
+        let vec = this.interiorPointByEdges(this, this.next); //this.interiorPoint(this.next, false);
+        vec = vec.multiplyScalar(-0.5);
+        return this.getEnd().location.clone().add(vec);
+        // let vec = this.halfAngleVector(this, this.next);
+        // return new Vector2(this.getEnd().x - vec.x, this.getEnd().y - vec.y);
+        // return new Vector2(this.getEnd().x, this.getEnd().y);
     }
 
     /**

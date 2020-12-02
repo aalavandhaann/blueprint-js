@@ -1,7 +1,7 @@
 import { BaseFloorplanViewElement2D } from './BaseFloorplanViewElement2D.js';
 import { EVENT_MOVED, EVENT_UPDATED, EVENT_DELETED } from '../core/events.js';
 import { Dimensioning } from '../core/dimensioning.js';
-import { Graphics, Text } from 'pixi.js';
+import { Graphics, Text, Point } from 'pixi.js';
 import { Vector3, Vector2, Color } from 'three';
 import { Configuration, snapToGrid, snapTolerance, dragOnlyX, dragOnlyY, directionalDrag } from '../core/configuration.js';
 import { isMobile } from 'detect-touch-device';
@@ -203,6 +203,40 @@ export class WallView2D extends BaseFloorplanViewElement2D {
         return points;
     }
 
+    __drawInWallItems() {
+        this.lineStyle(0, 0xF0F0F0);
+        let inWallItems = this.__wall.inWallItems;
+        // let depth = this.__wall.thickness * 0.5;
+        let wallDirection = this.__wall.wallDirectionNormalized();
+        for (let i = 0; i < inWallItems.length; i++) {
+            let item = inWallItems[i];
+            let pos = new Vector2(item.position.x, item.position.z);
+            let width = item.halfSize.x;
+            let depth = item.halfSize.z;
+
+            let right = wallDirection.clone().multiplyScalar(width);
+            let left = wallDirection.clone().multiplyScalar(width).multiplyScalar(-1);
+            let up = wallDirection.clone().rotateAround(new Vector2(), Math.PI * 0.5).multiplyScalar(depth);
+            let down = up.clone().multiplyScalar(-1);
+
+            let a = pos.clone().add(right.clone().add(up));
+            let b = pos.clone().add(right.clone().sub(up));
+            let c = pos.clone().add(left.clone().add(down));
+            let d = pos.clone().add(left.clone().sub(down));
+
+            let points = [
+                new Point(Dimensioning.cmToPixel(a.x), Dimensioning.cmToPixel(a.y)),
+                new Point(Dimensioning.cmToPixel(b.x), Dimensioning.cmToPixel(b.y)),
+                new Point(Dimensioning.cmToPixel(c.x), Dimensioning.cmToPixel(c.y)),
+                new Point(Dimensioning.cmToPixel(d.x), Dimensioning.cmToPixel(d.y)),
+            ];
+
+            this.beginFill(0x0000F0, 0.85);
+            this.drawPolygon(points);
+            this.endFill();
+        }
+    }
+
     __drawPolygon(color = 0xDDDDDD, alpha = 1.0) {
         let points = this.__getPolygonCoordinates();
         // console.log('POLYGON POINTS :: ', points);
@@ -231,8 +265,14 @@ export class WallView2D extends BaseFloorplanViewElement2D {
 
         let lineThickness = 3.0; //Math.min(Dimensioning.cmToPixel(this.__wall.thickness * 0.25), 1.0);
         this.lineStyle(lineThickness, 0xF0F0F0);
-        this.moveTo(cornerLine[1].x + e2sStart.x, cornerLine[1].y + e2sStart.y);
-        this.lineTo(cornerLine[0].x + e2sEnd.x, cornerLine[0].y + e2sEnd.y);
+
+        this.moveTo(cornerLine[1].x, cornerLine[1].y);
+        this.lineTo(cornerLine[0].x, cornerLine[0].y);
+
+        // this.moveTo(cornerLine[1].x + e2sStart.x, cornerLine[1].y + e2sStart.y);
+        // this.lineTo(cornerLine[0].x + e2sEnd.x, cornerLine[0].y + e2sEnd.y);
+
+        this.__drawInWallItems();
     }
 
     __drawSelectedState() {
