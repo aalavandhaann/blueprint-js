@@ -1,6 +1,8 @@
 import { EventDispatcher, SphereGeometry, ShaderMaterial, Mesh, TextureLoader, Color, DoubleSide } from 'three';
 import { AxesHelper } from 'three';
 import { GridHelper } from 'three';
+import { Configuration, gridSpacing } from '../core/configuration';
+import { EVENT_CHANGED } from '../core/events';
 
 export class Skybox extends EventDispatcher {
     constructor(scene, renderer) {
@@ -19,6 +21,7 @@ export class Skybox extends EventDispatcher {
         this.renderer = renderer;
 
         this.sphereRadius = 4000;
+        this.__gridSize = 10000;
         this.widthSegments = 32;
         this.heightSegments = 15;
         this.sky = null;
@@ -38,17 +41,26 @@ export class Skybox extends EventDispatcher {
         this.sky = new Mesh(this.skyGeo, this.skyMat);
         //		this.sky.position.x += this.sphereRadius*0.5;
 
-        this.ground = new GridHelper(10000, 100, 0x0F0F0F, 0x808080);
+        this.ground = new GridHelper(this.__gridSize, Math.round(this.__gridSize / Configuration.getNumericValue(gridSpacing)), 0x0F0F0F, 0x808080);
         this.ground.position.y = -10;
 
         this.scene.add(this.sky);
         this.scene.add(this.ground);
 
-        var axesHelper = new AxesHelper(1000);
+        let axesHelper = new AxesHelper(1000);
         this.scene.add(axesHelper);
         // axesHelper.visible = false;
 
         this.init();
+        Configuration.getInstance().addEventListener(EVENT_CHANGED, this.__updateGrid.bind(this));
+    }
+
+    __updateGrid(evt) {
+        this.scene.remove(this.ground);
+        this.ground = new GridHelper(this.__gridSize, Math.round(this.__gridSize / Configuration.getNumericValue(gridSpacing)), 0x0F0F0F, 0x808080);
+        this.ground.position.y = -10;
+        this.scene.add(this.ground);
+        this.scene.needsUpdate = true;
     }
 
     setEnabled(flag) {

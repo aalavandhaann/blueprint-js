@@ -422,7 +422,7 @@ export class HalfEdge extends EventDispatcher {
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
     interiorStart() {
-        let vec = this.interiorPoint(this.prev, true);
+        let vec = this.interiorPointByEdges(this.prev, this); //this.interiorPoint(this.prev, true);
         return this.getStart().location.clone().add(vec);
         // let vec = this.halfAngleVector(this.prev, this);
         // return new Vector2(this.getStart().x + vec.x, this.getStart().y + vec.y);
@@ -436,7 +436,7 @@ export class HalfEdge extends EventDispatcher {
      */
     // 
     interiorEnd() {
-        let vec = this.interiorPoint(this.next, false);
+        let vec = this.interiorPointByEdges(this, this.next); //this.interiorPoint(this.next, false);
         return this.getEnd().location.clone().add(vec);
         // let vec = this.halfAngleVector(this, this.next);
         // return new Vector2(this.getEnd().x + vec.x, this.getEnd().y + vec.y);
@@ -536,6 +536,36 @@ export class HalfEdge extends EventDispatcher {
     //		return [];
     //	}
 
+    /**
+     * 
+     * @param {HalfEdge} v1 
+     * @param {HalfEdge} v2 
+     * @description Get the point inside the room for interior ends Calculation
+     * @returns {Vector2}
+     */
+
+    interiorPointByEdges(v1, v2) {
+        let directionSelf = null,
+            directionOther = null;
+        if (!v1 || !v2) {
+            if (!v1) {
+                directionSelf = this.getEnd().location.clone().sub(this.getStart().location).normalize();
+                directionSelf = directionSelf.multiplyScalar(this.wall.thickness);
+                directionSelf = directionSelf.rotateAround(new Vector2(), -0.785398); //Rotate by 45 degrees CW
+            } else if (!v2) {
+                directionSelf = this.getStart().location.clone().sub(this.getEnd().location).normalize();
+                directionSelf = directionSelf.multiplyScalar(this.wall.thickness);
+                directionSelf = directionSelf.rotateAround(new Vector2(), 0.785398); //Rotate by 45 degrees CW
+            }
+            return directionSelf;
+        }
+        directionSelf = v2.getEnd().location.clone().sub(v2.getStart().location).normalize();
+        directionOther = v1.getStart().location.clone().sub(v1.getEnd().location).normalize();
+
+        directionOther = directionOther.multiplyScalar(v2.wall.thickness);
+        directionSelf = directionSelf.multiplyScalar(v1.wall.thickness);
+        return directionSelf.add(directionOther);
+    }
 
     /**
      * 
