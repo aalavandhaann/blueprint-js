@@ -140,9 +140,17 @@ export class Material3D extends MeshStandardMaterial {
     __scaleUV(uRatio, vRatio) {
         this.__uRatio = uRatio;
         this.__vRatio = vRatio;
-        this.__updateTextures();
-        this.needsUpdate = true;
-        this.__scene.needsUpdate = true;
+
+        this.__updateColorMap();
+        this.__updateNormalMap();
+        this.__updateRoughnessMap();
+        this.__updateMetallicMap();
+        this.__updateAmbientMap();
+        this.__updateBumpMap();
+
+        // this.__updateTextures();
+        // this.needsUpdate = true;
+        // this.__scene.needsUpdate = true;
     }
 
     /**
