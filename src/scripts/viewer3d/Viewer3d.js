@@ -3,7 +3,7 @@ import { PCFSoftShadowMap, WebGLCubeRenderTarget, CubeCamera } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter';
 
-import { EVENT_UPDATED, EVENT_LOADED, EVENT_ITEM_SELECTED, EVENT_ITEM_MOVE, EVENT_ITEM_MOVE_FINISH, EVENT_NO_ITEM_SELECTED, EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED, EVENT_GLTF_READY, EVENT_NEW_ITEM, EVENT_NEW_ROOMS_ADDED, EVENT_MODE_RESET } from '../core/events.js';
+import { EVENT_UPDATED, EVENT_LOADED, EVENT_ITEM_SELECTED, EVENT_ITEM_MOVE, EVENT_ITEM_MOVE_FINISH, EVENT_NO_ITEM_SELECTED, EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED, EVENT_GLTF_READY, EVENT_NEW_ITEM, EVENT_NEW_ROOMS_ADDED, EVENT_MODE_RESET, EVENT_EXTERNAL_FLOORPLAN_LOADED } from '../core/events.js';
 // import { EVENT_NEW, EVENT_DELETED } from '../core/events.js';
 
 import { Skybox } from './skybox.js';
@@ -35,7 +35,7 @@ export class Viewer3D extends Scene {
         this.__environmentCamera = null;
 
         this.cameraNear = 10;
-        this.cameraFar = 10000;
+        this.cameraFar = 100000;
 
         this.controls = null;
 
@@ -50,8 +50,13 @@ export class Viewer3D extends Scene {
         this.elementHeight = null;
         this.elementWidth = null;
         this.pauseRender = false;
+
         this.edges3d = [];
         this.floors3d = [];
+
+        this.__externalEdges3d = [];
+        this.__externalFloors3d = [];
+
         this.__currentItemSelected = null;
 
         this.needsUpdate = true;
@@ -91,7 +96,7 @@ export class Viewer3D extends Scene {
         scope.controls.enableDamping = false;
         scope.controls.dampingFactor = 0.1;
         scope.controls.maxPolarAngle = Math.PI * 1.0; //Math.PI * 0.5; //Math.PI * 0.35;
-        scope.controls.maxDistance = 2500; //2500
+        scope.controls.maxDistance = 7500; //2500
         scope.controls.minDistance = 10; //1000; //1000
         scope.controls.screenSpacePanning = true;
 
@@ -116,8 +121,11 @@ export class Viewer3D extends Scene {
         // scope.floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.addWalls(evt));
 
         scope.model.addEventListener(EVENT_LOADED, scope.addRoomItems.bind(scope));
-        // scope.floorplan.addEventListener(EVENT_UPDATED, scope.addWalls.bind(scope));
-        scope.floorplan.addEventListener(EVENT_NEW_ROOMS_ADDED, scope.addWalls.bind(scope));
+
+        // scope.floorplan.addEventListener(EVENT_UPDATED, scope.addRoomsAndWalls.bind(scope));
+        scope.floorplan.addEventListener(EVENT_NEW_ROOMS_ADDED, scope.addRoomsAndWalls.bind(scope));
+        scope.floorplan.addEventListener(EVENT_EXTERNAL_FLOORPLAN_LOADED, scope.addExternalRoomsAndWalls.bind(scope));
+
         this.controls.addEventListener('change', () => { scope.needsUpdate = true; });
 
 
@@ -185,7 +193,8 @@ export class Viewer3D extends Scene {
 
     __resetDesign(evt) {
         this.addRoomItems();
-        this.addWalls();
+        this.addRoomsAndWalls();
+        this.addExternalRoomsAndWalls();
     }
 
     addRoomItems(evt) {
@@ -204,7 +213,7 @@ export class Viewer3D extends Scene {
 
     }
 
-    addWalls() {
+    addRoomsAndWalls() {
         let scope = this;
         let i = 0;
 
@@ -233,6 +242,48 @@ export class Viewer3D extends Scene {
         for (i = 0; i < wallEdges.length; i++) {
             let edge3d = new Edge3D(scope, wallEdges[i], scope.controls);
             scope.edges3d.push(edge3d);
+        }
+
+        scope.shouldRender = true;
+
+        let floorplanCenter = scope.floorplan.getDimensions(true);
+        scope.controls.target = floorplanCenter.clone();
+        scope.camera.position.set(floorplanCenter.x, 300, floorplanCenter.z * 5);
+        scope.controls.update();
+    }
+
+
+    addExternalRoomsAndWalls() {
+        // console.trace('ADD EXTERNAL ROOMS AND WALLS');
+        let scope = this;
+        let i = 0;
+
+        // clear scene
+        scope.__externalFloors3d.forEach((floor) => {
+            floor.destroy();
+            floor = null;
+        });
+
+        scope.__externalEdges3d.forEach((edge3d) => {
+            edge3d.remove();
+            edge3d = null;
+        });
+
+        scope.__externalEdges3d = [];
+        scope.__externalFloors3d = [];
+
+        let wallEdges = scope.floorplan.externalWallEdges();
+        let rooms = scope.floorplan.externalRooms;
+
+        // draw floors
+        for (i = 0; i < rooms.length; i++) {
+            var threeFloor = new Floor3D(scope, rooms[i], scope.controls);
+            scope.__externalFloors3d.push(threeFloor);
+        }
+
+        for (i = 0; i < wallEdges.length; i++) {
+            let edge3d = new Edge3D(scope, wallEdges[i], scope.controls);
+            scope.__externalEdges3d.push(edge3d);
         }
 
         scope.shouldRender = true;

@@ -144,6 +144,14 @@ export class WallView2D extends BaseFloorplanViewElement2D {
         this.__wallDeletedEvent = this.__wallDeleted.bind(this); //this.remove.bind(this);
         this.__info = new WallDimensions2D(floorplan, options, wall);
         this.viewDimensions = false;
+
+        this.interactive = wall.isLocked;
+        this.buttonMode = wall.isLocked;
+
+        if (wall.isLocked) {
+            this.__deactivate();
+        }
+
         this.addChild(this.__info);
 
         this.__wall.addEventListener(EVENT_MOVED, this.__wallUpdatedEvent);

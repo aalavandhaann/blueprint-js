@@ -1,4 +1,4 @@
-import { EVENT_LOADED, EVENT_LOADING, EVENT_ITEM_REMOVED, EVENT_NEW_PARAMETRIC_ITEM, EVENT_NEW_ITEM, EVENT_MODE_RESET } from '../core/events.js';
+import { EVENT_LOADED, EVENT_LOADING, EVENT_ITEM_REMOVED, EVENT_NEW_PARAMETRIC_ITEM, EVENT_NEW_ITEM, EVENT_MODE_RESET, EVENT_EXTERNAL_FLOORPLAN_LOADED } from '../core/events.js';
 import { EventDispatcher } from 'three';
 import { Floorplan } from './floorplan.js';
 import { Utils } from '../core/utils.js';
@@ -30,6 +30,12 @@ export class Model extends EventDispatcher {
         var data = JSON.parse(json);
         this.newDesign(data.floorplan, data.items);
         this.dispatchEvent({ type: EVENT_LOADED, item: this, });
+    }
+
+    loadLockedSerialized(json) {
+        var data = JSON.parse(json);
+        this.floorplan.loadLockedFloorplan(data.floorplan);
+        this.dispatchEvent({ type: EVENT_EXTERNAL_FLOORPLAN_LOADED, item: this, });
     }
 
     exportSerialized() {

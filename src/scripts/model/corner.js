@@ -91,6 +91,16 @@ export class Corner extends EventDispatcher {
          * @type {Boolean}
          **/
         this._hasChanged = false;
+
+        this.__isLocked = false;
+    }
+
+    set isLocked(flag) {
+        this.__isLocked = flag;
+    }
+
+    get isLocked() {
+        return this.__isLocked;
     }
 
     get uuid() {

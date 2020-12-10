@@ -17,6 +17,13 @@ export class RoomView2D extends BaseFloorplanViewElement2D {
         this.__roomAreaField.alpha = 0.5;
         this.__roomNameField.alpha = 0.5;
 
+        this.interactive = room.isLocked;
+        this.buttonMode = room.isLocked;
+
+        if (room.isLocked) {
+            this.__deactivate();
+        }
+
         this.addChild(this.__roomNameField);
         this.addChild(this.__roomAreaField);
         this.__room.addEventListener(EVENT_ROOM_ATTRIBUTES_CHANGED, this.__updatedRoomEvent);

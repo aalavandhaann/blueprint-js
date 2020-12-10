@@ -13,8 +13,8 @@ import { ParametricsInterface } from './scripts/ParametricsInterface.js';
 import * as floor_textures_json from './floor_textures.json';
 import * as wall_textures_json from './wall_textures.json';
 // import * as default_room_json from './parametrics_items.json';
-// import * as default_room_json from './empty_room.json';
-import * as default_room_json from './design.json';
+import * as default_room_json from './empty_room.json';
+// import * as default_room_json from './design.json';
 
 
 
@@ -22,7 +22,7 @@ import * as default_room_json from './design.json';
 let default_room = JSON.stringify(default_room_json);
 let startY = 0;
 let panelWidths = 200;
-let uxInterfaceHeight = 380;
+let uxInterfaceHeight = 450;
 let subPanelsHeight = 460;
 let floor_textures = floor_textures_json['default'];
 let floor_texture_keys = Object.keys(floor_textures);
@@ -161,6 +161,15 @@ function loadBlueprint3DDesign(filedata) {
     reader.onload = function(event) {
         let data = event.target.result;
         blueprint3d.model.loadSerialized(data);
+    };
+    reader.readAsText(filedata);
+}
+
+function loadLockedBlueprint3DDesign(filedata) {
+    let reader = new FileReader();
+    reader.onload = function(event) {
+        let data = event.target.result;
+        blueprint3d.model.loadLockedSerialized(data);
     };
     reader.readAsText(filedata);
 }
@@ -364,7 +373,7 @@ blueprint3d.roomplanner.addRoomplanListener(EVENT_GLTF_READY, function(evt) {
     document.body.removeChild(a);
 });
 
-console.log(default_room);
+// console.log(default_room);
 blueprint3d.model.loadSerialized(default_room);
 
 
@@ -389,6 +398,8 @@ if (!opts.widget) {
     uxInterface.addButton('Export as GLTF', saveBlueprint3D);
     uxInterface.addButton('Export Project (blueprint-py)', exportDesignAsPackage);
     uxInterface.addButton('Reset', blueprint3d.model.reset.bind(blueprint3d.model));
+
+    uxInterface.addFileChooser("Load Locked Design", "Load Locked Design", ".blueprint3d", loadLockedBlueprint3DDesign);
 
     settingsViewer2d.addButton('Draw Mode', switchViewer2DToDraw);
     settingsViewer2d.addButton('Move Mode', switchViewer2DToMove);

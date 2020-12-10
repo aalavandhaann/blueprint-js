@@ -1,4 +1,4 @@
-import { EVENT_UPDATED, EVENT_LOADED, EVENT_NEW, EVENT_DELETED, EVENT_ROOM_NAME_CHANGED, EVENT_MODE_RESET } from '../core/events.js';
+import { EVENT_UPDATED, EVENT_LOADED, EVENT_NEW, EVENT_DELETED, EVENT_ROOM_NAME_CHANGED, EVENT_MODE_RESET, EVENT_EXTERNAL_FLOORPLAN_LOADED } from '../core/events.js';
 import { EVENT_CORNER_ATTRIBUTES_CHANGED, EVENT_WALL_ATTRIBUTES_CHANGED, EVENT_ROOM_ATTRIBUTES_CHANGED, EVENT_MOVED, EVENT_NEW_ROOMS_ADDED } from '../core/events.js';
 import { EventDispatcher, Vector2, Vector3, Matrix4 } from 'three';
 import { Utils } from '../core/utils.js';
@@ -25,91 +25,108 @@ export const defaultFloorPlanTolerance = 10.0;
 export class Floorplan extends EventDispatcher {
     /** Constructs a floorplan. */
     constructor() {
-            super();
-            /**
-             * List of elements of Wall instance
-             * 
-             * @property {Wall[]} walls Array of walls
-             * @type {Wall[]}
-             */
-            this.walls = [];
-            /**
-             * List of elements of Corner instance
-             * 
-             * @property {Corner[]} corners array of corners
-             * @type {Corner[]}
-             */
-            this.corners = [];
+        super();
+        /**
+         * List of elements of Wall instance
+         * 
+         * @property {Wall[]} walls Array of walls
+         * @type {Wall[]}
+         */
+        this.walls = [];
+        /**
+         * List of elements of Corner instance
+         * 
+         * @property {Corner[]} corners array of corners
+         * @type {Corner[]}
+         */
+        this.corners = [];
 
-            /**
-             * List of elements of Room instance
-             * 
-             * @property {Room[]} walls Array of walls
-             * @type {Room[]}
-             */
-            this.rooms = [];
+        /**
+         * List of elements of Room instance
+         * 
+         * @property {Room[]} walls Array of walls
+         * @type {Room[]}
+         */
+        this.rooms = [];
 
-            this.__roofPlanesForIntersection = [];
-            this.__floorPlanesForIntersection = [];
-            this.__wallPlanesForIntersection = [];
+        this.__externalCorners = [];
+        this.__externalWalls = [];
+        this.__externalRooms = [];
 
-            /**
-             * An {@link Object} that stores the metadata of rooms like name
-             * 
-             * @property {Object} metaroomsdata stores the metadata of rooms like
-             *           name
-             * @type {Object}
-             */
-            this.metaroomsdata = {};
-            // List with reference to callback on a new wall insert event
-            /**
-             * @deprecated
-             */
-            this.new_wall_callbacks = [];
-            // List with reference to callbacks on a new corner insert event
-            /**
-             * @deprecated
-             */
-            this.new_corner_callbacks = [];
-            // List with reference to callbacks on redraw event
-            /**
-             * @deprecated
-             */
-            this.redraw_callbacks = [];
-            // List with reference to callbacks for updated_rooms event
-            /**
-             * @deprecated
-             */
-            this.updated_rooms = [];
-            // List with reference to callbacks for roomLoaded event
-            /**
-             * @deprecated
-             */
-            this.roomLoadedCallbacks = [];
+        this.__roofPlanesForIntersection = [];
+        this.__floorPlanesForIntersection = [];
+        this.__wallPlanesForIntersection = [];
 
-            this.floorTextures = {};
-            /**
-             * The {@link CarbonSheet} that handles the background image to show in
-             * the 2D view
-             * 
-             * @property {CarbonSheet} _carbonSheet The carbonsheet instance
-             * @type {Object}
-             */
-            this._carbonSheet = null;
+        /**
+         * An {@link Object} that stores the metadata of rooms like name
+         * 
+         * @property {Object} metaroomsdata stores the metadata of rooms like
+         *           name
+         * @type {Object}
+         */
+        this.metaroomsdata = {};
+        // List with reference to callback on a new wall insert event
+        /**
+         * @deprecated
+         */
+        this.new_wall_callbacks = [];
+        // List with reference to callbacks on a new corner insert event
+        /**
+         * @deprecated
+         */
+        this.new_corner_callbacks = [];
+        // List with reference to callbacks on redraw event
+        /**
+         * @deprecated
+         */
+        this.redraw_callbacks = [];
+        // List with reference to callbacks for updated_rooms event
+        /**
+         * @deprecated
+         */
+        this.updated_rooms = [];
+        // List with reference to callbacks for roomLoaded event
+        /**
+         * @deprecated
+         */
+        this.roomLoadedCallbacks = [];
 
-            /**
-             * This is necessary to sometimes explicitly stop the floorplan from doing
-             * heavy computations
-             */
-            this.__updatesOn = true;
+        this.floorTextures = {};
+        /**
+         * The {@link CarbonSheet} that handles the background image to show in
+         * the 2D view
+         * 
+         * @property {CarbonSheet} _carbonSheet The carbonsheet instance
+         * @type {Object}
+         */
+        this._carbonSheet = null;
 
-            this.__cornerGroups = new CornerGroups(this);
+        /**
+         * This is necessary to sometimes explicitly stop the floorplan from doing
+         * heavy computations
+         */
+        this.__updatesOn = true;
 
-            this.__wallAttributesChangedEvent = this.__wallAttributesChanged.bind(this);
-            this.__wallDeletedEvent = this.__wallDeleted.bind(this);
-            this.__cornerAttributesChangedOrMovedEvent = this.__cornerAttributesChangedOrMoved.bind(this);
-            this.__cornerDeletedEvent = this.__cornerDeleted.bind(this);
+        this.__cornerGroups = new CornerGroups(this);
 
+        this.__wallAttributesChangedEvent = this.__wallAttributesChanged.bind(this);
+        this.__wallDeletedEvent = this.__wallDeleted.bind(this);
+        this.__cornerAttributesChangedOrMovedEvent = this.__cornerAttributesChangedOrMoved.bind(this);
+        this.__cornerDeletedEvent = this.__cornerDeleted.bind(this);
+
+    }
+
+    externalWallEdges() {
+            let edges = [];
+            this.__externalWalls.forEach((wall) => {
+                if (wall.frontEdge) {
+                    edges.push(wall.frontEdge);
+                }
+                if (wall.backEdge) {
+                    edges.push(wall.backEdge);
+                }
+            });
+            return edges;
         }
         /**
          * @return {HalfEdge[]} edges The array of {@link HalfEdge}
@@ -576,7 +593,7 @@ export class Floorplan extends EventDispatcher {
     loadFloorplan(floorplan) {
         this.reset();
         this.__updatesOn = false;
-        var corners = {};
+        let corners = {};
         if (floorplan === null || !('corners' in floorplan) || !('walls' in floorplan)) {
             return;
         }
@@ -602,16 +619,16 @@ export class Floorplan extends EventDispatcher {
 
         }
 
-        for (var id in floorplan.corners) {
-            var corner = floorplan.corners[id];
+        for (let id in floorplan.corners) {
+            let corner = floorplan.corners[id];
             corners[id] = this.newCorner(Dimensioning.cmFromMeasureRaw(corner.x), Dimensioning.cmFromMeasureRaw(corner.y), id);
             if (corner.elevation) {
                 corners[id].elevation = Dimensioning.cmFromMeasureRaw(corner.elevation);
             }
         }
-        var scope = this;
+        let scope = this;
         floorplan.walls.forEach((wall) => {
-            var newWall = scope.newWall(corners[wall.corner1], corners[wall.corner2]);
+            let newWall = scope.newWall(corners[wall.corner1], corners[wall.corner2]);
 
             if (wall.frontTexture) {
                 if (wall.frontTexture.colormap) {
@@ -653,6 +670,114 @@ export class Floorplan extends EventDispatcher {
         this.update();
         Configuration.setValue(configDimUnit, currentUnit);
         this.dispatchEvent({ type: EVENT_LOADED, item: this });
+        // this.roomLoadedCallbacks.fire();
+    }
+
+    // Load the floorplan from a previously saved json object file
+    /**
+     * @param {JSON}
+     *            floorplan
+     * @return {void}
+     * @emits {EVENT_LOADED}
+     */
+    loadLockedFloorplan(floorplan) {
+        if (floorplan === null || !('corners' in floorplan) || !('walls' in floorplan)) {
+            return;
+        }
+        let currentUnit = Configuration.getStringValue(configDimUnit);
+        if (floorplan.units) {
+            switch (floorplan.units) {
+                case dimInch:
+                    Configuration.setValue(configDimUnit, dimInch);
+                    break;
+                case dimFeetAndInch:
+                    Configuration.setValue(configDimUnit, dimFeetAndInch);
+                    break;
+                case dimMeter:
+                    Configuration.setValue(configDimUnit, dimMeter);
+                    break;
+                case dimCentiMeter:
+                    Configuration.setValue(configDimUnit, dimCentiMeter);
+                    break;
+                case dimMilliMeter:
+                    Configuration.setValue(configDimUnit, dimMilliMeter);
+                    break;
+            }
+        }
+
+
+        let externalNewCorners = {};
+
+        for (let id in floorplan.corners) {
+            let cornerData = floorplan.corners[id];
+            let corner = new Corner(this, Dimensioning.cmFromMeasureRaw(cornerData.x), Dimensioning.cmFromMeasureRaw(cornerData.y));
+            corner.elevation = Dimensioning.cmFromMeasureRaw(cornerData.elevation);
+            corner.isLocked = true;
+            externalNewCorners[id] = corner;
+            this.__externalCorners.push(corner);
+        }
+        floorplan.walls.forEach((wall) => {
+            let corner1 = externalNewCorners[wall.corner1];
+            let corner2 = externalNewCorners[wall.corner2];
+            let newWall = new Wall(corner1, corner2);
+            newWall.isLocked = true;
+            if (wall.frontTexture) {
+                if (wall.frontTexture.colormap) {
+                    newWall.frontTexture = wall.frontTexture;
+                } else {
+                    newWall.frontTexture = defaultWallTexture;
+                }
+
+            }
+            if (wall.backTexture) {
+                if (wall.backTexture.colormap) {
+                    newWall.backTexture = wall.backTexture;
+                } else {
+                    newWall.backTexture = defaultWallTexture;
+                }
+
+            }
+            if (wall.thickness) {
+                newWall.thickness = Dimensioning.cmFromMeasureRaw(wall.thickness);
+            }
+            // Adding of a, b, wallType (straight, curved) for walls happened
+            // with introduction of 0.0.2a
+            if (Version.isVersionHigherThan(floorplan.version, '0.0.2a')) {
+                newWall.a = wall.a;
+                newWall.b = wall.b;
+                if (wall.wallType === 'CURVED') {
+                    newWall.wallType = WallTypes.CURVED;
+                } else {
+                    newWall.wallType = WallTypes.STRAIGHT;
+                }
+            }
+            this.__externalWalls.push(newWall);
+        });
+
+
+
+        for (let roomKey in floorplan.rooms) {
+            let cornerIds = roomKey.split(',');
+            let roomCorners = [];
+            let isValidRoom = true;
+            for (let j = 0; j < cornerIds.length; j++) {
+                let cornerId = cornerIds[j];
+                if (!externalNewCorners[cornerId]) {
+                    isValidRoom = false;
+                    break;
+                }
+                roomCorners.push(externalNewCorners[cornerId]);
+            }
+            if (isValidRoom) {
+                let newRoom = new Room(this, roomCorners);
+                newRoom.updateArea();
+                newRoom.isLocked = true;
+                this.__externalRooms.push(newRoom);
+            }
+        }
+
+        Configuration.setValue(configDimUnit, currentUnit);
+        this.dispatchEvent({ type: EVENT_EXTERNAL_FLOORPLAN_LOADED, item: this });
         // this.roomLoadedCallbacks.fire();
     }
 
@@ -706,6 +831,9 @@ export class Floorplan extends EventDispatcher {
         });
         this.corners = [];
         this.walls = [];
+        this.__externalRooms = [];
+        this.__externalCorners = [];
+        this.__externalWalls = [];
         this.dispatchEvent({ type: EVENT_MODE_RESET });
     }
 
@@ -885,6 +1013,9 @@ export class Floorplan extends EventDispatcher {
             if (scope.metaroomsdata) {
                 if (scope.metaroomsdata[room.roomByCornersId]) {
                     room.name = scope.metaroomsdata[room.roomByCornersId]['name'];
+                } else {
+                    scope.metaroomsdata[room.roomByCornersId] = {};
+                    scope.metaroomsdata[room.roomByCornersId]['name'] = room.name;
                 }
             }
         });
@@ -1055,6 +1186,18 @@ export class Floorplan extends EventDispatcher {
 
     get cornerGroups() {
         return this.__cornerGroups;
+    }
+
+    get externalCorners() {
+        return this.__externalCorners;
+    }
+
+    get externalWalls() {
+        return this.__externalWalls;
+    }
+
+    get externalRooms() {
+        return this.__externalRooms;
     }
 }
 export default Floorplan;

@@ -5,6 +5,7 @@ import Room from "../model/room";
 import { Dimensioning } from "../core/dimensioning";
 import { Matrix4, Vector3, Vector2, EventDispatcher, Quaternion } from "three";
 import { Utils } from "../core/utils";
+import { Configuration, snapToGrid, snapTolerance } from "../core/configuration";
 
 
 class CornerGroupRectangle extends Graphics {
@@ -253,7 +254,13 @@ class CornerGroupTransformationPoint extends Sprite {
     __dragMove(evt) {
         if (this.__isDragged) {
             evt.stopPropagation();
+            let snapping = Configuration.getBooleanValue(snapToGrid);
             let co = evt.data.getLocalPosition(this.parent);
+
+            if (snapping) {
+                co.x = Math.floor(co.x / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
+                co.y = Math.floor(co.y / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
+            }
             this.__eventDispatcher.dispatchEvent({ type: 'DragMove', position: co, handle: this });
         }
     }
@@ -356,7 +363,13 @@ class CornerGroupScalePoint extends Graphics {
     __dragMove(evt) {
         if (this.__isDragged) {
             evt.stopPropagation();
+            let snapping = Configuration.getBooleanValue(snapToGrid);
             let co = evt.data.getLocalPosition(this.parent);
+
+            if (snapping) {
+                co.x = Math.floor(co.x / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
+                co.y = Math.floor(co.y / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
+            }
             this.__eventDispatcher.dispatchEvent({ type: 'DragMove', position: co, handle: this, opposite: this.opposite });
         }
     }

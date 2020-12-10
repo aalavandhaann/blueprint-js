@@ -14,6 +14,13 @@ export class CornerView2D extends BaseFloorplanViewElement2D {
         this.__cornerUpdateEvent = this.__updateWithModel.bind(this);
         this.__cornerDeletedEvent = this.__cornerDeleted.bind(this);
 
+        this.interactive = corner.isLocked;
+        this.buttonMode = corner.isLocked;
+
+        if (corner.isLocked) {
+            this.__deactivate();
+        }
+
         this.__drawHoveredOffState();
 
         this.__corner.addEventListener(EVENT_MOVED, this.__cornerUpdateEvent);

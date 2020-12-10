@@ -40,6 +40,8 @@ export class Room extends EventDispatcher {
 
         this.__destroyed = false;
 
+        this.__isLocked = false;
+
         this.updateWalls();
         this.updateInteriorCorners();
         this.generateFloorPlane();
@@ -581,6 +583,14 @@ export class Room extends EventDispatcher {
 
         // hold on to an edge reference
         this.edgePointer = firstEdge;
+    }
+
+    set isLocked(flag) {
+        this.__isLocked = flag;
+    }
+
+    get isLocked() {
+        return this.__isLocked;
     }
 
     get uuid() {

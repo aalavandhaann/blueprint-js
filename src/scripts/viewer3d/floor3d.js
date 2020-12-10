@@ -108,19 +108,43 @@ export class Floor3D extends EventDispatcher {
     }
 
     buildRoofVaryingHeight() {
+        let side = (this.room.isLocked) ? DoubleSide : FrontSide;
         // setup texture
-        var roofMaterial = new MeshBasicMaterial({ side: FrontSide, color: 0xe5e5e5 });
-        var geometry = new Geometry();
+        let roofMaterial = new MeshBasicMaterial({ side: side, color: 0xe5e5e5 });
 
-        this.room.corners.forEach((corner) => {
-            var vertex = new Vector3(corner.x, corner.elevation, corner.y);
-            geometry.vertices.push(vertex);
+        let spoints = [];
+        let shape = null;
+        let shapeGeometry = null;
+        let roof = null;
+
+        this.room.interiorCorners.forEach((corner) => {
+            spoints.push(new Vector2(corner.x, corner.y));
         });
-        for (var i = 2; i < geometry.vertices.length; i++) {
-            var face = new Face3(0, i - 1, i);
-            geometry.faces.push(face);
+
+        shape = new Shape(spoints);
+        shapeGeometry = new ShapeGeometry(shape);
+
+        for (let i = 0; i < shapeGeometry.vertices.length; i++) {
+            let index = i % this.room.corners.length;
+            let corner = this.room.corners[index];
+            let vertex = shapeGeometry.vertices[i];
+            vertex.z = vertex.y;
+            vertex.y = corner.elevation;
         }
-        var roof = new Mesh(geometry, roofMaterial);
+        roof = new Mesh(shapeGeometry, roofMaterial);
+
+
+        // let geometry = new Geometry();
+
+        // this.room.corners.forEach((corner) => {
+        //     let vertex = new Vector3(corner.x, corner.elevation, corner.y);
+        //     geometry.vertices.push(vertex);
+        // });
+        // for (let i = 2; i < geometry.vertices.length; i++) {
+        //     let face = new Face3(0, i - 1, i);
+        //     geometry.faces.push(face);
+        // }
+        // let roof = new Mesh(geometry, roofMaterial);
         // roof.rotation.set(Math.PI / 2, 0, 0);
         // roof.position.y = Configuration.getNumericValue(configWallHeight);
         return roof;

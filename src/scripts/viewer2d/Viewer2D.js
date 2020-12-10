@@ -1,7 +1,7 @@
 import { Application, Graphics, Text } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import { Vector2, EventDispatcher } from 'three';
-import { EVENT_NEW, EVENT_DELETED, EVENT_LOADED, EVENT_2D_SELECTED, EVENT_NEW_ROOMS_ADDED, EVENT_KEY_RELEASED, EVENT_KEY_PRESSED, EVENT_WALL_2D_CLICKED, EVENT_CORNER_2D_CLICKED, EVENT_ROOM_2D_CLICKED, EVENT_NOTHING_2D_SELECTED, EVENT_MOVED, EVENT_MODE_RESET } from '../core/events';
+import { EVENT_NEW, EVENT_DELETED, EVENT_LOADED, EVENT_2D_SELECTED, EVENT_NEW_ROOMS_ADDED, EVENT_KEY_RELEASED, EVENT_KEY_PRESSED, EVENT_WALL_2D_CLICKED, EVENT_CORNER_2D_CLICKED, EVENT_ROOM_2D_CLICKED, EVENT_NOTHING_2D_SELECTED, EVENT_MOVED, EVENT_MODE_RESET, EVENT_EXTERNAL_FLOORPLAN_LOADED } from '../core/events';
 import { Grid2D } from './Grid2d';
 import { CornerView2D } from './CornerView2D';
 import { WallView2D } from './WallView2D';
@@ -82,6 +82,11 @@ export class Viewer2D extends Application {
         this.__rooms2d = [];
         this.__entities2D = [];
 
+        this.__externalCorners2d = [];
+        this.__externalWalls2d = [];
+        this.__externalRooms2d = [];
+        this.__externalEntities2d = [];
+
         this.__worldWidth = 3000;
         this.__worldHeight = 3000;
         this.__currentSelection = null;
@@ -96,6 +101,7 @@ export class Viewer2D extends Application {
         this.__drawModeMouseMoveEvent = this.__drawModeMouseMove.bind(this);
 
         this.__redrawFloorplanEvent = this.__redrawFloorplan.bind(this);
+        this.__drawExternalFloorplanEvent = this.__drawExternalFloorplan.bind(this);
         this.__windowResizeEvent = this._handleWindowResize.bind(this);
         this.__resetFloorplanEvent = this.__resetFloorplan.bind(this);
 
@@ -176,6 +182,8 @@ export class Viewer2D extends Application {
         this.__floorplan.addEventListener(EVENT_DELETED, this.__redrawFloorplanEvent);
         // this.__floorplan.addEventListener(EVENT_LOADED, this.__redrawFloorplanEvent);
         this.__floorplan.addEventListener(EVENT_NEW_ROOMS_ADDED, this.__redrawFloorplanEvent);
+
+        this.__floorplan.addEventListener(EVENT_EXTERNAL_FLOORPLAN_LOADED, this.__drawExternalFloorplanEvent);
 
 
         window.addEventListener('resize', this.__windowResizeEvent);
@@ -385,10 +393,11 @@ export class Viewer2D extends Application {
         this.__mode = floorplannerModes.MOVE;
         this.__groupTransformer.visible = false;
         this.__groupTransformer.selected = null;
+        this.__drawExternalFloorplan();
     }
 
     __redrawFloorplan() {
-        var scope = this;
+        let scope = this;
         let i = 0;
 
         // clear scene
@@ -432,6 +441,45 @@ export class Viewer2D extends Application {
             cornerView.addFloorplanListener(EVENT_2D_SELECTED, this.__selectionMonitorEvent);
             modelCorner.removeEventListener(EVENT_MOVED, this.__cornerMovedEvent);
             modelCorner.addEventListener(EVENT_MOVED, this.__cornerMovedEvent);
+        }
+        this._handleWindowResize();
+    }
+
+    __drawExternalFloorplan() {
+        let scope = this;
+        let i = 0;
+        // clear scene
+        scope.__externalEntities2d.forEach((entity) => {
+            entity.remove();
+        });
+
+
+        this.__externalCorners2d = [];
+        this.__externalWalls2d = [];
+        this.__externalRooms2d = [];
+
+        let rooms = this.__floorplan.externalRooms;
+
+        for (i = 0; i < rooms.length; i++) {
+            let modelRoom = rooms[i];
+            let roomView = new RoomView2D(this.__floorplan, this.__options, modelRoom);
+            this.__floorplanElementsHolder.addChild(roomView);
+            this.__externalRooms2d.push(roomView);
+            this.__externalEntities2d.push(roomView);
+        }
+        for (i = 0; i < this.__floorplan.externalWalls.length; i++) {
+            let modelWall = this.__floorplan.externalWalls[i];
+            let wallView = new WallView2D(this.__floorplan, this.__options, modelWall);
+            this.__floorplanElementsHolder.addChild(wallView);
+            this.__externalWalls2d.push(wallView);
+            this.__externalEntities2d.push(wallView);
+        }
+        for (i = 0; i < this.__floorplan.externalCorners.length; i++) {
+            let modelCorner = this.__floorplan.externalCorners[i];
+            let cornerView = new CornerView2D(this.__floorplan, this.__options, modelCorner);
+            this.__floorplanElementsHolder.addChild(cornerView);
+            this.__externalCorners2d.push(cornerView);
+            this.__externalEntities2d.push(cornerView);
         }
         this._handleWindowResize();
     }

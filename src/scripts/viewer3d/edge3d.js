@@ -48,10 +48,11 @@ export class Edge3D extends EventDispatcher {
         let texturePack = this.edge.getTexture();
 
         if (!this.__wallMaterial3D) {
+            let side = (this.wall.isLocked) ? DoubleSide : FrontSide;
             if (!texturePack.color) {
                 texturePack.color = '#FF0000';
             }
-            this.__wallMaterial3D = new WallMaterial3D({ color: texturePack.color, side: FrontSide, transparent: true, wireframe: false }, texturePack, this.scene);
+            this.__wallMaterial3D = new WallMaterial3D({ color: texturePack.color, side: side, transparent: true, wireframe: false }, texturePack, this.scene);
         }
         this.__wallMaterial3D.textureMapPack = texturePack;
         this.__wallMaterial3D.dimensions = new Vector2(width, height);
@@ -95,6 +96,9 @@ export class Edge3D extends EventDispatcher {
     }
 
     removeFromScene() {
+        // if (this.wall.isLocked) {
+        //     console.trace('REMOVE MYSELF FROM SCENE');
+        // }
         let scope = this;
         scope.planes.forEach((plane) => {
             scope.scene.remove(plane);
@@ -157,6 +161,9 @@ export class Edge3D extends EventDispatcher {
     }
 
     updateVisibility() {
+        if (this.wall.isLocked) {
+            return;
+        }
         let scope = this;
         // finds the normal from the specified edge
         let start = scope.edge.interiorStart();
@@ -229,20 +236,21 @@ export class Edge3D extends EventDispatcher {
         let exteriorStart = this.edge.exteriorStart();
         let exteriorEnd = this.edge.exteriorEnd();
 
-        let fillerMaterial = new MeshBasicMaterial({
-            color: this.fillerColor,
-            side: DoubleSide,
-            // map: this.texture,
-            transparent: true,
-            opacity: 1.0,
-            wireframe: false,
-        });
+        // let fillerMaterial = new MeshBasicMaterial({
+        //     color: this.fillerColor,
+        //     side: DoubleSide,
+        //     // map: this.texture,
+        //     transparent: true,
+        //     opacity: 1.0,
+        //     wireframe: false,
+        // });
+        // fillerMaterial.visible = false;//Debug statement
 
         // exterior plane for real exterior walls
         //If the walls have corners that have more than one room attached
         //Then there is no need to construct an exterior wall
         if (this.edge.wall.start.getAttachedRooms().length < 2 || this.edge.wall.end.getAttachedRooms().length < 2) {
-            this.planes.push(this.makeWall(exteriorStart, exteriorEnd, this.edge.exteriorTransform, this.edge.invExteriorTransform, fillerMaterial));
+            this.planes.push(this.makeWall(exteriorStart, exteriorEnd, this.edge.exteriorTransform, this.edge.invExteriorTransform, this.__wallMaterial3D));
         }
         // interior plane
         // this.planes.push(this.makeWall(interiorStart, interiorEnd, this.edge.interiorTransform, this.edge.invInteriorTransform, wallMaterial));

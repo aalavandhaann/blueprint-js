@@ -44,7 +44,7 @@ export class Skybox extends EventDispatcher {
         this.ground = new GridHelper(this.__gridSize, Math.round(this.__gridSize / Configuration.getNumericValue(gridSpacing)), 0x0F0F0F, 0x808080);
         this.ground.position.y = -10;
 
-        this.scene.add(this.sky);
+        // this.scene.add(this.sky);
         this.scene.add(this.ground);
 
         let axesHelper = new AxesHelper(1000);

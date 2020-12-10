@@ -1,4 +1,4 @@
-import { Vector2, Matrix4, Vector3 } from "three/build/three.module";
+import { Vector2, Matrix4, Vector3 } from "three";
 import { EVENT_MOVED } from "../core/events";
 
 export class CornerGroup {
@@ -70,11 +70,16 @@ export class CornerGroup {
         let rotationMatrix = TInv.clone().multiply(new Matrix4().makeRotationAxis(new Vector3(0, 0, 1), radians)).multiply(T);
         let scaleMatrix = TInv.clone().multiply(new Matrix4().makeScale(scale.x, scale.y, 1)).multiply(T);
         let transformMatrix = rotationMatrix.multiply(scaleMatrix).multiply(translationMatrix);
-        for (let i = 0; i < this.__corners.length; i++) {
+        let i = 0;
+        for (i = 0; i < this.__corners.length; i++) {
             let location = this.__originalCornerPositions[i].clone();
             let location3 = new Vector3(location.x, location.y, 0);
             location3.applyMatrix4(transformMatrix);
-            this.__corners[i].move(location3.x, location3.y);
+            this.__corners[i].location = new Vector2(location3.x, location3.y);
+        }
+
+        if (this.__corners[0]) {
+            this.__corners[0].floorplan.update();
         }
     }
 

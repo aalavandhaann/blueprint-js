@@ -9,6 +9,7 @@ export class BaseFloorplanViewElement2D extends Graphics {
         this.__floorplan = floorplan;
         this.__options = options;
         this.__eventDispatcher = new EventDispatcher();
+        this.__interactable = true;
         this.interactive = true;
         this.buttonMode = true;
         this.__isDragging = false;
@@ -34,6 +35,14 @@ export class BaseFloorplanViewElement2D extends Graphics {
 
         this.__keyboard.addEventListener(EVENT_KEY_RELEASED, this.__keyListenerEvent);
         this.__keyboard.addEventListener(EVENT_KEY_PRESSED, this.__keyListenerEvent);
+    }
+
+    __deactivate() {
+        this.off('mousedown', this.__mouseClickEvent).off('touchstart', this.__mouseClickEvent);
+        this.off('mouseupoutside', this.__mouseUpEvent).off('touchendoutside', this.__mouseUpEvent);
+        this.off('mouseup', this.__mouseUpEvent).off('touchend', this.__mouseUpEvent);
+        this.off('mousemove', this.__mouseMoveEvent).off('touchmove', this.__mouseMoveEvent);
+        this.off('mouseover', this.__mouseOverEvent).off('mouseout', this.__mouseOutEvent);
     }
 
     __keyListener(evt) {
@@ -146,5 +155,15 @@ export class BaseFloorplanViewElement2D extends Graphics {
         } else {
             this.__eventDispatcher.dispatchEvent({ type: EVENT_2D_UNSELECTED, item: this });
         }
+    }
+
+    get interactable() {
+        return this.__interactable;
+    }
+
+    set interactable(flag) {
+        this.__interactable = flag;
+        this.interactive = flag;
+        this.buttonMode = flag;
     }
 }

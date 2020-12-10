@@ -111,6 +111,8 @@ export class Wall extends EventDispatcher {
         /** Actions to be applied explicitly. */
         this.action_callbacks = null;
 
+        this.__isLocked = false;
+
         this.__location = new Vector2();
         this.__wallPlane2D = new Plane();
         this.__wallNormal2D = new Vector2();
@@ -324,6 +326,14 @@ export class Wall extends EventDispatcher {
             this.backEdge.dispatchRedrawEvent();
             //this.backEdge.redrawCallbacks.fire();
         }
+    }
+
+    set isLocked(flag) {
+        this.__isLocked = flag;
+    }
+
+    get isLocked() {
+        return this.__isLocked;
     }
 
     set wallSize(value) {
