@@ -5,3 +5,5 @@ gitpush.sh~
 dist/*
 .cache/*
 3D-Models-Internet/*
+
+__pycache__
