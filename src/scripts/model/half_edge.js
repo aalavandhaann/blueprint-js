@@ -463,7 +463,7 @@ export class HalfEdge extends EventDispatcher {
         // let vec = this.halfAngleVector(this.prev, this);
         // return new Vector2(this.getStart().x - vec.x, this.getStart().y - vec.y);
 
-        return new Vector2(this.getStart().x, this.getStart().y);
+        // return new Vector2(this.getStart().x, this.getStart().y);
     }
 
     /**
@@ -479,7 +479,7 @@ export class HalfEdge extends EventDispatcher {
         // let vec = this.halfAngleVector(this, this.next);
         // return new Vector2(this.getEnd().x - vec.x, this.getEnd().y - vec.y);
 
-        return new Vector2(this.getEnd().x, this.getEnd().y);
+        // return new Vector2(this.getEnd().x, this.getEnd().y);
     }
 
     /**

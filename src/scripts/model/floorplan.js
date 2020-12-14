@@ -938,7 +938,6 @@ export class Floorplan extends EventDispatcher {
         // find orphaned wall segments (i.e. not part of rooms) and
         // give them edges
         let orphanWalls = [];
-        console.log('CREATE ORPHAN WALL EDGES');
         this.walls.forEach((wall) => {
             // if (!wall.backEdge) {
             //     let back = new HalfEdge(null, wall, false);

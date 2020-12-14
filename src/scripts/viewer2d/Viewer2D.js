@@ -204,6 +204,9 @@ export class Viewer2D extends Application {
     }
 
     switchMode(mode) {
+        if(this.__mode === floorplannerModes.EDIT_ISLANDS && mode !== floorplannerModes.EDIT_ISLANDS){
+            this.__floorplan.update();
+        }
         switch (mode) {
             case floorplannerModes.DRAW:
                 this.__mode = floorplannerModes.DRAW;

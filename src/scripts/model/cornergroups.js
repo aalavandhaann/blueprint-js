@@ -75,12 +75,13 @@ export class CornerGroup {
             let location = this.__originalCornerPositions[i].clone();
             let location3 = new Vector3(location.x, location.y, 0);
             location3.applyMatrix4(transformMatrix);
-            this.__corners[i].location = new Vector2(location3.x, location3.y);
+            // this.__corners[i].location = new Vector2(location3.x, location3.y);
+            this.__corners[i].move(location3.x, location3.y);
         }
 
-        if (this.__corners[0]) {
-            this.__corners[0].floorplan.update();
-        }
+        // if (this.__corners[0]) {
+        //     this.__corners[0].floorplan.update();
+        // }
     }
 
     applyTransformations(scale, radians, origin) {
@@ -110,6 +111,10 @@ export class CornerGroup {
 
     get matrix() {
         return this.__matrix;
+    }
+
+    set matrix(mat){
+        this.__matrix = mat;
     }
 
     get corners() {

@@ -63,6 +63,7 @@ class BlueprintJS {
     }
 
     switchView() {
+        this.floorplanner.switchMode(floorplannerModes.MOVE);
         if (this.options.widget) {
             return;
         }

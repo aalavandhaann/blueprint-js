@@ -303,7 +303,7 @@ export class Viewer3D extends Scene {
         renderer.shadowMap.type = PCFSoftShadowMap;
         renderer.setClearColor(0xFFFFFF, 1);
         renderer.localClippingEnabled = false;
-        renderer.gammaOutput = false;
+        // renderer.gammaOutput = false;
         renderer.outputEncoding = sRGBEncoding;
         renderer.setPixelRatio(window.devicePixelRatio);
         // renderer.sortObjects = false;

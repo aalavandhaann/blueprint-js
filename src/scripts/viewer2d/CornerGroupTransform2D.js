@@ -437,6 +437,7 @@ export class CornerGroupTransform2D extends Graphics {
         this.__floorplan = floorplan;
         this.__groups = this.__floorplan.cornerGroups;
         this.__currentGroup = null;
+        this.__cornerPointer = null;
         this.__isActive = false;
 
 
@@ -613,6 +614,11 @@ export class CornerGroupTransform2D extends Graphics {
         let matrix = this.__resizer.matrix4;
         let scale = new Vector3().setFromMatrixScale(matrix);
         this.__currentGroup.applyTransformations(scale, this.__resizer.rotationRadians, this.__toUnits(this.__resizer.origin.clone()));
+        // let newMatrix = this.__currentGroup.matrix;
+        // if(this.__cornerPointer){
+        //     this.__currentGroup = this.__groups.getContainingGroup(this.__cornerPointer);
+        //     this.__updateTransformControls();
+        // }        
     }
 
     __toPixels(vector) {
@@ -693,11 +699,13 @@ export class CornerGroupTransform2D extends Graphics {
                 throw new Error('selected  can assigned with a Corner, Wall, Room or null. Unrecogonized datatype');
             }
             this.__currentGroup = this.__groups.getContainingGroup(corner);
+            this.__cornerPointer = corner;
             this.__updateTransformControls();
         } else {
             if (this.__resizer) {
                 this.__resizer.destroy();
             }
+            this.__cornerPointer = null;
         }
     }
 }
