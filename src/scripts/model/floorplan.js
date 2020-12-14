@@ -937,14 +937,19 @@ export class Floorplan extends EventDispatcher {
         // kinda hacky
         // find orphaned wall segments (i.e. not part of rooms) and
         // give them edges
-        var orphanWalls = [];
+        let orphanWalls = [];
+        console.log('CREATE ORPHAN WALL EDGES');
         this.walls.forEach((wall) => {
+            // if (!wall.backEdge) {
+            //     let back = new HalfEdge(null, wall, false);
+            //     back.generatePlane();
+            // }
+            // if (!wall.frontEdge) {
+            //     let front = new HalfEdge(null, wall, true);
+            //     front.generatePlane();
+            // }
             if (!wall.backEdge && !wall.frontEdge) {
                 wall.orphan = true;
-                var back = new HalfEdge(null, wall, false);
-                var front = new HalfEdge(null, wall, true);
-                back.generatePlane();
-                front.generatePlane();
                 orphanWalls.push(wall);
             }
         });
@@ -1039,7 +1044,8 @@ export class Floorplan extends EventDispatcher {
 
     /**
      * Find the "rooms" in our planar straight-line graph. Rooms are set of the
-     * smallest (by area) possible cycles in this graph.
+     * smallest (by area) possible cycles in this graph. The room corners are always
+     * ordered in clockwise direction
      * 
      * @param corners
      *            The corners of the floorplan.

@@ -48,7 +48,7 @@ export class HalfEdge extends EventDispatcher {
          * @property {Room} room Reference to a Room instance
          * @type {Room}
          **/
-        this.room = room;
+        this.room = room || null;
 
         /** 
          *  Reference to a Wall instance
@@ -422,11 +422,13 @@ export class HalfEdge extends EventDispatcher {
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
     interiorStart() {
-        // let vec = this.interiorPointByEdges(this.prev, this); //this.interiorPoint(this.prev, true);
-        // vec = vec.multiplyScalar(0.5);
-        // return this.getStart().location.clone().add(vec);
-        let vec = this.halfAngleVector(this.prev, this);
-        return new Vector2(this.getStart().x + vec.x, this.getStart().y + vec.y);
+        let vec = this.interiorPointByEdges(this.prev, this, ); //this.interiorPoint(this.prev, true);//        
+        vec = vec.multiplyScalar(0.5);
+        return this.getStart().location.clone().add(vec);
+
+        // let vec = this.halfAngleVector(this.prev, this);
+        // return new Vector2(this.getStart().x + vec.x, this.getStart().y + vec.y);
+
         // return {x:this.getStart().x + vec.x, y:this.getStart().y + vec.y};
     }
 
@@ -437,13 +439,16 @@ export class HalfEdge extends EventDispatcher {
      */
     // 
     interiorEnd() {
-        // let vec = this.interiorPointByEdges(this, this.next); //this.interiorPoint(this.next, false);
-        // vec = vec.multiplyScalar(0.5);
-        // return this.getEnd().location.clone().add(vec);
-        let vec = this.halfAngleVector(this, this.next);
-        return new Vector2(this.getEnd().x + vec.x, this.getEnd().y + vec.y);
+        let vec = this.interiorPointByEdges(this, this.next); //this.interiorPoint(this.next, false);//
+        vec = vec.multiplyScalar(0.5);
+        return this.getEnd().location.clone().add(vec);
+
+        // let vec = this.halfAngleVector(this, this.next);
+        // return new Vector2(this.getEnd().x + vec.x, this.getEnd().y + vec.y);
+
         // return {x:this.getEnd().x + vec.x, y:this.getEnd().y + vec.y};
     }
+
 
     /**
      * Return the 2D exterior location that is at the start. 
@@ -451,12 +456,14 @@ export class HalfEdge extends EventDispatcher {
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
     exteriorStart() {
-        // let vec = this.interiorPointByEdges(this.prev, this); //this.interiorPoint(this.prev, true);
-        // vec = vec.multiplyScalar(-0.5);
-        // return this.getStart().location.clone().add(vec);
-        let vec = this.halfAngleVector(this.prev, this);
-        return new Vector2(this.getStart().x - vec.x, this.getStart().y - vec.y);
-        // return new Vector2(this.getStart().x, this.getStart().y);
+        let vec = this.interiorPointByEdges(this.prev, this); //this.interiorPoint(this.prev, true);//
+        vec = vec.multiplyScalar(-0.5);
+        return this.getStart().location.clone().add(vec);
+
+        // let vec = this.halfAngleVector(this.prev, this);
+        // return new Vector2(this.getStart().x - vec.x, this.getStart().y - vec.y);
+
+        return new Vector2(this.getStart().x, this.getStart().y);
     }
 
     /**
@@ -465,12 +472,14 @@ export class HalfEdge extends EventDispatcher {
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
     exteriorEnd() {
-        // let vec = this.interiorPointByEdges(this, this.next); //this.interiorPoint(this.next, false);
-        // vec = vec.multiplyScalar(-0.5);
-        // return this.getEnd().location.clone().add(vec);
-        let vec = this.halfAngleVector(this, this.next);
-        return new Vector2(this.getEnd().x - vec.x, this.getEnd().y - vec.y);
-        // return new Vector2(this.getEnd().x, this.getEnd().y);
+        let vec = this.interiorPointByEdges(this, this.next); //this.interiorPoint(this.next, false);//
+        vec = vec.multiplyScalar(-0.5);
+        return this.getEnd().location.clone().add(vec);
+
+        // let vec = this.halfAngleVector(this, this.next);
+        // return new Vector2(this.getEnd().x - vec.x, this.getEnd().y - vec.y);
+
+        return new Vector2(this.getEnd().x, this.getEnd().y);
     }
 
     /**
@@ -511,38 +520,53 @@ export class HalfEdge extends EventDispatcher {
         return [this.interiorStart(), this.interiorEnd(), this.exteriorEnd(), this.exteriorStart()];
     }
 
-    //	curvedCorners()
-    //	{
-    //		if(this.wall)
-    //		{
-    //			var curves = [];
-    //			var o = new Vector2(0, 0);
-    //			var s = this.wall.start.location;
-    //			var e = this.wall.end.location;
-    //			
-    ////			var avect = this.wall.a.clone().sub(this.wall.start);
-    ////			var bvect = this.wall.b.clone().sub(this.wall.start);
-    //			
-    //			var sevect = s.clone().sub(e).normalize();
-    //			var se90plus = sevect.clone().rotateAround(o, 3.14*0.5).multiplyScalar(this.wall.thickness*0.5);
-    //			var se90minus = sevect.clone().rotateAround(o, -3.14*0.5).multiplyScalar(this.wall.thickness*0.5);
-    //			
-    //			var s1 = se90plus.clone().add(s);
-    //			var e1 = se90plus.clone().add(e);
-    //			var e2 = se90minus.clone().add(e);
-    //			var s2 = se90minus.clone().add(s);
-    //			
-    //			curves.push([s1]);
-    //			curves.push([this.wall.a.clone().add(se90plus), this.wall.b.clone().add(se90plus), e1]);
-    //			curves.push([e2]);
-    //			curves.push([this.wall.b.clone().add(se90minus), this.wall.a.clone().add(se90minus), s2]);
-    ////			curves.push([s2]);
-    //			
-    //			
-    //			return curves;			
-    //		}
-    //		return [];
-    //	}
+    interiorPointByEdges(v1, v2) {
+        if (!v1 || !v2) {
+            // throw new Error('Need a valid next or previous edge');            
+            console.warn('Need a valid next or previous edge');
+            return new Vector2(0, 0);
+        }
+
+        let u = null,
+            v = null,
+            w = null,
+            u3 = null,
+            v3 = null,
+            w3 = null, 
+            axis3 = null;
+        let dot = 0;
+        let angle_u_v_w = 0.0;
+
+        u = v1.getEnd().location.clone().sub(v1.getStart().location).normalize();
+        v = v2.getEnd().location.clone().sub(v2.getStart().location).normalize();
+        dot = u.dot(v);
+
+        let magnitude = ((v2.wall.thickness**2) + (v1.wall.thickness**2))**0.5;
+        u = u.multiplyScalar(v2.wall.thickness);
+        v = v.multiplyScalar(v1.wall.thickness);
+        w = u.clone().add(v);
+        
+        u3 = new Vector3(u.x, u.y, 0.0);
+        v3 = new Vector3(v.x, v.y, 0.0);
+        w3 = new Vector3(w.x, w.y, 0.0);
+        axis3 = u3.clone().cross(v3);
+
+        if(dot > (1.0 - 1e-6) || dot < (1e-6 - 1.0)){
+            let w = u.clone().normalize().multiplyScalar(Math.max(v2.wall.thickness, v1.wall.thickness));
+            w = w.rotateAround(new Vector2(0, 0), Math.PI * 0.5);            
+            return w;
+        }
+
+        if(axis3.z < 0){
+            v = v.multiplyScalar(-1);
+            w = u.clone().add(v);
+        }
+        else{
+            u = u.multiplyScalar(-1);
+            w = u.clone().add(v);
+        }
+        return w;
+    }
 
     /**
      * 
@@ -552,7 +576,7 @@ export class HalfEdge extends EventDispatcher {
      * @returns {Vector2}
      */
 
-    interiorPointByEdges(v1, v2) {
+    interiorPointByEdgesOLD(v1, v2) {
         let directionSelf = null,
             directionOther = null;
         if (!v1 || !v2) {
@@ -567,12 +591,32 @@ export class HalfEdge extends EventDispatcher {
             }
             return directionSelf;
         }
-        directionSelf = v2.getEnd().location.clone().sub(v2.getStart().location).normalize();
-        directionOther = v1.getStart().location.clone().sub(v1.getEnd().location).normalize();
 
-        directionOther = directionOther.multiplyScalar(v2.wall.thickness);
-        directionSelf = directionSelf.multiplyScalar(v1.wall.thickness);
-        return directionSelf.add(directionOther);
+        let d1 = null,
+            d2 = null;
+        let dot = 0;
+
+        d1 = v1.getEnd().location.clone().sub(v1.getStart().location).normalize();
+        d2 = v2.getStart().location.clone().sub(v2.getEnd().location).normalize();
+        dot = d1.dot(d2);
+
+        if (dot > 1.0 - 1e-6 || dot < 1e-6 - 1.0) {
+            let maxThickness = Math.max(v1.wall.thickness, v2.wall.thickness);
+            d1 = d1.multiplyScalar(maxThickness);
+            d2 = d2.multiplyScalar(maxThickness);
+        } else {
+
+            d1 = d1.multiplyScalar(v2.wall.thickness);
+            d2 = d2.multiplyScalar(v1.wall.thickness);
+        }
+        return d1.add(d2);
+
+        // directionSelf = v2.getEnd().location.clone().sub(v2.getStart().location).normalize();
+        // directionOther = v1.getStart().location.clone().sub(v1.getEnd().location).normalize();
+
+        // directionOther = directionOther.multiplyScalar(v2.wall.thickness);
+        // directionSelf = directionSelf.multiplyScalar(v1.wall.thickness);
+        // return directionSelf.add(directionOther);
     }
 
     /**
@@ -676,7 +720,8 @@ export class HalfEdge extends EventDispatcher {
         let desiredMag = (this.wall.thickness * 0.5) / sn;
         let scalar = desiredMag / mag;
 
-        let halfAngleVector = { x: vx * scalar, y: vy * scalar }; //new Vector2(vx * scalar, vy * scalar);
+        let halfAngleVector = new Vector2(vx * scalar, vy * scalar); //{ x: vx * scalar, y: vy * scalar }; //
+
         return halfAngleVector;
     }
 

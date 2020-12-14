@@ -13,8 +13,9 @@ import { ParametricsInterface } from './scripts/ParametricsInterface.js';
 import * as floor_textures_json from './floor_textures.json';
 import * as wall_textures_json from './wall_textures.json';
 // import * as default_room_json from './parametrics_items.json';
-import * as default_room_json from './empty_room.json';
+// import * as default_room_json from './empty_room.json';
 // import * as default_room_json from './design.json';
+import * as default_room_json from './LShape.json';
 
 
 
@@ -416,7 +417,7 @@ if (!opts.widget) {
     settingsViewer2d.bindNumber('boundsY', 1, 200, configurationHelper.boundsY, 1, configurationHelper);
 
     settingsSelectedCorner.bindRange('cornerElevation', 1, 500, floorplanningHelper.cornerElevation, 1, floorplanningHelper);
-    settingsSelectedWall.bindRange('wallThickness', 0.01, 100, floorplanningHelper.wallThickness, 0.1, floorplanningHelper);
+    settingsSelectedWall.bindRange('wallThickness', 0.01, 1, floorplanningHelper.wallThickness, 0.1, floorplanningHelper);
     settingsSelectedRoom.bindText('roomName', floorplanningHelper.roomName, floorplanningHelper);
 
     // settingsViewer3d.addDropDown('Floor Textures', floor_texture_keys, selectFloorTexture);

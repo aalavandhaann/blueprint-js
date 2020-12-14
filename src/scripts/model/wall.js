@@ -645,6 +645,9 @@ export class Wall extends EventDispatcher {
     }
 
     set frontEdge(edge) {
+        if (this.__frontEdge) {
+            this.__frontEdge.destroy();
+        }
         this.__frontEdge = edge;
         this.__inWallItems.forEach((item) => {
             item.newWallEdge();
@@ -659,6 +662,9 @@ export class Wall extends EventDispatcher {
     }
 
     set backEdge(edge) {
+        if (this.__backEdge) {
+            this.__backEdge.destroy();
+        }
         this.__backEdge = edge;
         this.__inWallItems.forEach((item) => {
             item.newWallEdge();

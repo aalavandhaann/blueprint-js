@@ -1,3 +1,4 @@
+import { Vector2, Vector3 } from 'three';
 import { Configuration, configDimUnit } from './configuration.js';
 import { dimInch, dimFeetAndInch, dimMeter, dimCentiMeter, dimMilliMeter } from './constants.js';
 
@@ -15,6 +16,26 @@ export const dimensioningOptions = [dimInch, dimFeetAndInch, dimMeter, dimCentiM
 
 /** Dimensioning functions. */
 export class Dimensioning {
+    static cmToPixelVector2D(cmV2d) {
+        let pixelV2d = new Vector2(Dimensioning.cmToPixel(cmV2d.x), Dimensioning.cmToPixel(cmV2d.y));
+        return pixelV2d;
+    }
+
+    static cmToPixelVector3D(cmV3d) {
+        let pixelV2d = new Vector3(Dimensioning.cmToPixel(cmV3d.x), Dimensioning.cmToPixel(cmV3d.y), Dimensioning.cmToPixel(cmV3d.z));
+        return pixelV2d;
+    }
+
+    static pixelToCmVector2D(pixelV2d) {
+        let cmV2d = new Vector2(Dimensioning.cmToPixel(pixelV2d.x), Dimensioning.cmToPixel(pixelV2d.y));
+        return cmV2d;
+    }
+
+    static pixelToCmVector3D(pixel3d) {
+        let cmV2d = new Vector3(Dimensioning.cmToPixel(pixel3d.x), Dimensioning.cmToPixel(pixel3d.y), Dimensioning.cmToPixel(pixel3d.z));
+        return cmV2d;
+    }
+
     static cmToPixel(cm, apply_scale = true) {
         if (apply_scale) {
             return cm * pixelsPerCm * Configuration.getNumericValue('scale');

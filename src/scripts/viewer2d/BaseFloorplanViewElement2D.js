@@ -2,6 +2,7 @@ import { EventDispatcher } from 'three';
 import { Graphics } from 'pixi.js';
 import { EVENT_2D_SELECTED, EVENT_2D_UNSELECTED, EVENT_KEY_RELEASED, EVENT_KEY_PRESSED } from '../core/events';
 import { KeyboardListener2D } from './KeyboardManager2D';
+import { Dimensioning } from '../core/dimensioning';
 
 export class BaseFloorplanViewElement2D extends Graphics {
     constructor(floorplan, options) {
@@ -56,6 +57,12 @@ export class BaseFloorplanViewElement2D extends Graphics {
         if (evt.type === EVENT_KEY_RELEASED && evt.key === 'Shift') {
             this.__snapToGrid = false;
         }
+    }
+
+    __vectorToPixels(v) {
+        v.x = Dimensioning.cmToPixel(v.x);
+        v.y = Dimensioning.cmToPixel(v.y);
+        return v;
     }
 
     __drawSelectedState() {

@@ -135,13 +135,131 @@ export class WallDimensions2D extends Graphics {
 
 }
 
+export class Edge2D extends BaseFloorplanViewElement2D {
+    constructor(floorplan, options, wall, edge) {
+        super(floorplan, options);
+        this.__wall = wall;
+        this.__edge = edge;
+        this.__showNeighbours = false;
+        this.__deactivate();
+    }
+
+    __getCornerCoordinates() {
+        let sPoint = Dimensioning.cmToPixelVector2D(this.__wall.start.location.clone());
+        let ePoint = Dimensioning.cmToPixelVector2D(this.__wall.end.location.clone());
+        return [sPoint, ePoint];
+    }
+
+    __getPolygonCoordinates(forEdge) {
+        let points = [forEdge.exteriorStart(), forEdge.exteriorEnd(), forEdge.interiorEnd(), forEdge.interiorStart()];
+        if (isMobile) {
+            let pixelPoints = [];
+            let start = forEdge.getStart().location;
+            let end = forEdge.getEnd().location;
+            let origins = [start, end, end, start];
+            for (let i = 0; i < points.length; i++) {
+                let point = points[i];
+                let origin = origins[i];
+                let vect = point.clone().sub(origin);
+
+                vect = vect.multiplyScalar(3.0).add(origin);
+                let pixelPoint = Dimensioning.cmToPixelVector2D(vect); //new Vector2(Dimensioning.cmToPixel(vect.x), Dimensioning.cmToPixel(vect.y));
+                pixelPoints.push(pixelPoint);
+            }
+            return pixelPoints;
+        }
+        for (let i = 0; i < points.length; i++) {
+            points[i] = Dimensioning.cmToPixelVector2D(points[i]);
+        }
+        return points;
+    }
+
+    __drawEdgeArrow(forEdge, color = 0xDDDDDD, alpha = 1.0) {
+        let start = Dimensioning.cmToPixelVector2D(forEdge.getStart().location.clone());
+        let end = Dimensioning.cmToPixelVector2D(forEdge.getEnd().location.clone());
+        let vect = end.clone().sub(start);
+        let midPoint = start.clone().add(vect.multiplyScalar(0.5));
+        let lineThickness = 3.0;
+        let arrowSize = 7;
+        let dotSize = 5;
+
+        this.lineStyle(lineThickness, color, alpha);
+        this.moveTo(start.x, start.y);
+        this.lineTo(midPoint.x, midPoint.y);
+
+        this.beginFill(color, alpha);
+        this.drawCircle(start.x, start.y, dotSize);
+        this.drawRect(midPoint.x - arrowSize * 0.5, midPoint.y - arrowSize * 0.5, arrowSize, arrowSize);
+        this.endFill();
+    }
+
+    __drawEdgePolygon(forEdge, color = 0xDDDDDD, alpha = 1.0) {
+        let points = this.__getPolygonCoordinates(forEdge);
+        this.clear();
+        let lineThickness = 2.5;
+        this.lineStyle(lineThickness, color, 1.0);
+        this.moveTo(points[2].x, points[2].y);
+        this.lineTo(points[3].x, points[3].y);
+
+        this.lineStyle(lineThickness, color, 0.0);
+        this.beginFill(color, alpha);
+        for (let i = 0; i < points.length; i++) {
+            let pt = points[i];
+            if (i === 0) {
+                this.moveTo(pt.x, pt.y);
+            } else {
+                this.lineTo(pt.x, pt.y);
+            }
+        }
+            this.endFill();
+    }
+
+    drawEdge(color = 0xDDDDDD, alpha = 1.0) {
+        this.clear();
+        // if(!this.__edge.room){
+        //     return;
+        // }
+
+        this.__drawEdgePolygon(this.__edge, color, alpha);
+
+        // if (this.__showNeighbours) {
+        //     this.__drawEdgeArrow(this.__edge, 0x000000, alpha);
+        //     if (this.__edge.prev) { //Red for previous edge
+        //         this.__drawEdgeArrow(this.__edge.prev, 0xFF0000, alpha);
+        //     }
+        //     if (this.__edge.next) { //Blue for Next edge
+        //         this.__drawEdgeArrow(this.__edge.next, 0x0000FF, alpha);
+        //     }
+        // }
+
+        let cornerLine = this.__getCornerCoordinates();
+        let lineThickness = 1.5; //Math.min(Dimensioning.cmToPixel(this.__wall.thickness * 0.25), 1.0);
+        this.lineStyle(lineThickness, 0xF0F0F0);
+        this.moveTo(cornerLine[1].x, cornerLine[1].y);
+        this.lineTo(cornerLine[0].x, cornerLine[0].y);
+    }
+
+    get edge() {
+        return this.__edge;
+    }
+
+    get showNeighbours() {
+        return this.__showNeighbours;
+    }
+
+    set showNeighbours(flag) {
+        this.__showNeighbours = flag;
+    }
+}
+
 export class WallView2D extends BaseFloorplanViewElement2D {
     constructor(floorplan, options, wall) {
         super(floorplan, options);
         this.__options = options;
         this.__wall = wall;
-        this.__wallUpdatedEvent = this.__drawUpdatedWall.bind(this);
-        this.__wallDeletedEvent = this.__wallDeleted.bind(this); //this.remove.bind(this);
+
+        this.__frontEdge = null;
+        this.__backEdge = null;
         this.__info = new WallDimensions2D(floorplan, options, wall);
         this.viewDimensions = false;
 
@@ -152,12 +270,24 @@ export class WallView2D extends BaseFloorplanViewElement2D {
             this.__deactivate();
         }
 
-        this.addChild(this.__info);
+        this.__wallUpdatedEvent = this.__drawUpdatedWall.bind(this);
+        this.__wallDeletedEvent = this.__wallDeleted.bind(this); //this.remove.bind(this);
 
         this.__wall.addEventListener(EVENT_MOVED, this.__wallUpdatedEvent);
         this.__wall.addEventListener(EVENT_UPDATED, this.__wallUpdatedEvent);
         this.__wall.addEventListener(EVENT_DELETED, this.__wallDeletedEvent);
+
+        if (wall.backEdge) {
+            this.__backEdge = new Edge2D(this.__floorplan, options, this.__wall, wall.backEdge);
+            this.addChild(this.__backEdge);
+        }
+        if (wall.frontEdge) {
+            this.__frontEdge = new Edge2D(this.__floorplan, options, this.__wall, wall.frontEdge);
+            this.addChild(this.__frontEdge);
+        }
+        this.addChild(this.__info);
         this.__mouseOut();
+
     }
 
     get viewDimensions() {
@@ -173,12 +303,13 @@ export class WallView2D extends BaseFloorplanViewElement2D {
     }
 
     __getCornerCoordinates() {
-        let sPoint = this.__wall.start.location.clone();
-        let ePoint = this.__wall.end.location.clone();
-        sPoint.x = Dimensioning.cmToPixel(sPoint.x);
-        sPoint.y = Dimensioning.cmToPixel(sPoint.y);
-        ePoint.x = Dimensioning.cmToPixel(ePoint.x);
-        ePoint.y = Dimensioning.cmToPixel(ePoint.y);
+        let sPoint = Dimensioning.cmToPixelVector2D(this.__wall.start.location.clone());
+        let ePoint = Dimensioning.cmToPixelVector2D(this.__wall.end.location.clone());
+
+        // sPoint.x = Dimensioning.cmToPixel(sPoint.x);
+        // sPoint.y = Dimensioning.cmToPixel(sPoint.y);
+        // ePoint.x = Dimensioning.cmToPixel(ePoint.x);
+        // ePoint.y = Dimensioning.cmToPixel(ePoint.y);
         return [sPoint, ePoint];
     }
 
@@ -246,50 +377,46 @@ export class WallView2D extends BaseFloorplanViewElement2D {
     }
 
     __drawPolygon(color = 0xDDDDDD, alpha = 1.0) {
-        let points = this.__getPolygonCoordinates();
-        // console.log('POLYGON POINTS :: ', points);
         this.clear();
-        // this.beginFill(color, alpha);
-        this.beginFill(color, 0.85);
-        for (let i = 0; i < points.length; i++) {
-            let pt = points[i];
-            if (i === 0) {
-                this.moveTo(pt.x, pt.y);
-            } else {
-                this.lineTo(pt.x, pt.y);
-            }
+        /**
+         * Front edge color is blue
+         */
+        let frontColor = color; //0x0000FF; //
+
+        /**
+         * Back Edge color is red
+         */
+        let backColor = color; //0xFF0000; //
+
+
+        if (this.__frontEdge) {
+            this.__frontEdge.drawEdge(frontColor, alpha);
         }
-        this.endFill();
-        if (!points.length) {
-            return;
+        if (this.__backEdge) {
+            this.__backEdge.drawEdge(backColor, alpha);
         }
-        let e2sStart = points[3].clone().sub(points[0]).multiplyScalar(0.5);
-        let e2sEnd = points[2].clone().sub(points[1]).multiplyScalar(0.5);
-
-        let cornerLine = this.__getCornerCoordinates();
-        // this.lineStyle(Dimensioning.cmToPixel(this.__wall.thickness), color, alpha, 0.5);
-        // this.moveTo(cornerLine[0].x, cornerLine[0].y);
-        // this.lineTo(cornerLine[1].x, cornerLine[1].y);
-
-        let lineThickness = 3.0; //Math.min(Dimensioning.cmToPixel(this.__wall.thickness * 0.25), 1.0);
-        this.lineStyle(lineThickness, 0xF0F0F0);
-
-        this.moveTo(cornerLine[1].x, cornerLine[1].y);
-        this.lineTo(cornerLine[0].x, cornerLine[0].y);
-
-        // this.moveTo(cornerLine[1].x + e2sStart.x, cornerLine[1].y + e2sStart.y);
-        // this.lineTo(cornerLine[0].x + e2sEnd.x, cornerLine[0].y + e2sEnd.y);
-
         this.__drawInWallItems();
     }
 
     __drawSelectedState() {
+        if (this.__frontEdge) {
+            this.__frontEdge.showNeighbours = true;
+        }
+        if (this.__backEdge) {
+            this.__backEdge.showNeighbours = true;
+        }
         this.__drawPolygon(0x049995, 1.0);
     }
     __drawHoveredOnState() {
         this.__drawPolygon(0x04A9F5, 1.0);
     }
     __drawHoveredOffState() {
+        if (this.__frontEdge) {
+            this.__frontEdge.showNeighbours = false;
+        }
+        if (this.__backEdge) {
+            this.__backEdge.showNeighbours = false;
+        }
         this.__drawPolygon(0x000000, 1.0);
     }
 

@@ -35,10 +35,10 @@ export class CornerView2D extends BaseFloorplanViewElement2D {
             this.drawCircle(0, 0, radius * 2.5);
             this.endFill();
         }
-        this.beginFill(borderColor);
+        this.beginFill(borderColor, 0.2);
         this.drawCircle(0, 0, radius);
         this.endFill();
-        this.beginFill(fillColor);
+        this.beginFill(fillColor, 0.2);
         this.drawCircle(0, 0, radius * 0.55);
         this.endFill();
     }
