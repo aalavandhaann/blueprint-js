@@ -948,7 +948,11 @@ export class Floorplan extends EventDispatcher {
             //     front.generatePlane();
             // }
             if (!wall.backEdge && !wall.frontEdge) {
+                let back = new HalfEdge(null, wall, false);
+                let front = new HalfEdge(null, wall, true);
                 wall.orphan = true;
+                back.generatePlane();
+                front.generatePlane();                
                 orphanWalls.push(wall);
             }
         });

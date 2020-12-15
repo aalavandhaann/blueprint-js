@@ -421,8 +421,8 @@ export class HalfEdge extends EventDispatcher {
      * @return {Vector2} Return an object with attributes x, y
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
-    interiorStart() {
-        let vec = this.interiorPointByEdges(this.prev, this, ); //this.interiorPoint(this.prev, true);//        
+    interiorStart(debug=false) {
+        let vec = this.interiorPointByEdges(this.prev, this, debug); //this.interiorPoint(this.prev, true);//        
         vec = vec.multiplyScalar(0.5);
         return this.getStart().location.clone().add(vec);
 
@@ -438,8 +438,8 @@ export class HalfEdge extends EventDispatcher {
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
     // 
-    interiorEnd() {
-        let vec = this.interiorPointByEdges(this, this.next); //this.interiorPoint(this.next, false);//
+    interiorEnd(debug=false) {
+        let vec = this.interiorPointByEdges(this, this.next, debug); //this.interiorPoint(this.next, false);//
         vec = vec.multiplyScalar(0.5);
         return this.getEnd().location.clone().add(vec);
 
@@ -455,8 +455,8 @@ export class HalfEdge extends EventDispatcher {
      * @return {Vector2} Return an object with attributes x, y
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
-    exteriorStart() {
-        let vec = this.interiorPointByEdges(this.prev, this); //this.interiorPoint(this.prev, true);//
+    exteriorStart(debug=false) {
+        let vec = this.interiorPointByEdges(this.prev, this, debug); //this.interiorPoint(this.prev, true);//
         vec = vec.multiplyScalar(-0.5);
         return this.getStart().location.clone().add(vec);
 
@@ -471,8 +471,8 @@ export class HalfEdge extends EventDispatcher {
      * @return {Vector2} Return an object with attributes x, y
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
-    exteriorEnd() {
-        let vec = this.interiorPointByEdges(this, this.next); //this.interiorPoint(this.next, false);//
+    exteriorEnd(debug=false) {
+        let vec = this.interiorPointByEdges(this, this.next, debug); //this.interiorPoint(this.next, false);//
         vec = vec.multiplyScalar(-0.5);
         return this.getEnd().location.clone().add(vec);
 
@@ -520,11 +520,11 @@ export class HalfEdge extends EventDispatcher {
         return [this.interiorStart(), this.interiorEnd(), this.exteriorEnd(), this.exteriorStart()];
     }
 
-    interiorPointByEdges(v1, v2) {
+    interiorPointByEdges(v1, v2, debug=false) {
         if (!v1 || !v2) {
             // throw new Error('Need a valid next or previous edge');            
             console.warn('Need a valid next or previous edge');
-            return new Vector2(0, 0);
+            return this.halfAngleVector(v1, v2).multiplyScalar(2.0);
         }
 
         let u = null,
@@ -541,7 +541,15 @@ export class HalfEdge extends EventDispatcher {
         v = v2.getEnd().location.clone().sub(v2.getStart().location).normalize();
         dot = u.dot(v);
 
-        let magnitude = ((v2.wall.thickness**2) + (v1.wall.thickness**2))**0.5;
+        if(dot > (1.0 - 1e-6) || dot < (1e-6 - 1.0)){
+            if(debug){
+                console.log('DOT PRODUCT TRIGGER ', dot);
+            }            
+            let w = u.clone().normalize().multiplyScalar(Math.min(v2.wall.thickness, v1.wall.thickness));
+            w = w.rotateAround(new Vector2(0, 0), Math.PI * 0.5);            
+            return w;
+        }
+
         u = u.multiplyScalar(v2.wall.thickness);
         v = v.multiplyScalar(v1.wall.thickness);
         w = u.clone().add(v);
@@ -549,14 +557,10 @@ export class HalfEdge extends EventDispatcher {
         u3 = new Vector3(u.x, u.y, 0.0);
         v3 = new Vector3(v.x, v.y, 0.0);
         w3 = new Vector3(w.x, w.y, 0.0);
-        axis3 = u3.clone().cross(v3);
-
-        if(dot > (1.0 - 1e-6) || dot < (1e-6 - 1.0)){
-            let w = u.clone().normalize().multiplyScalar(Math.max(v2.wall.thickness, v1.wall.thickness));
-            w = w.rotateAround(new Vector2(0, 0), Math.PI * 0.5);            
-            return w;
+        axis3 = u3.clone().cross(v3);        
+        if(debug){
+        console.log('CROSS PRODUCT AXIS :: ',axis3);
         }
-
         if(axis3.z < 0){
             v = v.multiplyScalar(-1);
             w = u.clone().add(v);
