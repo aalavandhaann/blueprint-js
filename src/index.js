@@ -13,9 +13,9 @@ import { ParametricsInterface } from './scripts/ParametricsInterface.js';
 import * as floor_textures_json from './floor_textures.json';
 import * as wall_textures_json from './wall_textures.json';
 // import * as default_room_json from './parametrics_items.json';
-import * as default_room_json from './empty_room.json';
+// import * as default_room_json from './empty_room.json';
 // import * as default_room_json from './design.json';
-// import * as default_room_json from './LShape.json';
+import * as default_room_json from './LShape.json';
 
 
 
@@ -68,12 +68,21 @@ let opts = {
             'corner-radius': 12.5,
             pannable: true,
             zoomable: true,
+            scale: false,
+            rotate: true,
+            translate: true,
             dimlinecolor: '#3E0000',
             dimarrowcolor: '#FF0000',
             dimtextcolor: '#000000'
         }
     },
-    viewer3d: 'bp3djs-viewer3d',
+    viewer3d: {
+        id: 'bp3djs-viewer3d',
+        viewer3dOptions:{
+            occludedWalls: true,
+            occludedRoofs: true
+        }
+    },
     textureDir: "models/textures/",
     widget: false,
     resize: true,

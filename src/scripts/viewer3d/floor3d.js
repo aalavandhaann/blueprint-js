@@ -5,8 +5,17 @@ import { BufferGeometry } from 'three/build/three.module';
 import { FloorMaterial3D } from '../materials/FloorMaterial3D.js';
 
 export class Floor3D extends EventDispatcher {
-    constructor(scene, room, controls) {
+    constructor(scene, room, controls, opts) {
         super();
+
+        let options = { occludedRoofs: false };
+        for (let opt in options) {
+            if (options.hasOwnProperty(opt) && opts.hasOwnProperty(opt)) {
+                options[opt] = opts[opt];
+            }
+        }
+        this.__options = options;
+
         this.scene = scene;
         this.room = room;
         this.controls = controls;
@@ -108,7 +117,7 @@ export class Floor3D extends EventDispatcher {
     }
 
     buildRoofVaryingHeight() {
-        let side = (this.room.isLocked) ? DoubleSide : FrontSide;
+        let side = (this.room.isLocked || this.__options.occludedRoofs) ? DoubleSide : FrontSide;
         // setup texture
         let roofMaterial = new MeshBasicMaterial({ side: side, color: 0xe5e5e5 });
 
@@ -129,7 +138,7 @@ export class Floor3D extends EventDispatcher {
             let corner = this.room.corners[index];
             let vertex = shapeGeometry.vertices[i];
             vertex.z = vertex.y;
-            vertex.y = corner.elevation;
+            vertex.y = corner.elevation+0.1;
         }
         roof = new Mesh(shapeGeometry, roofMaterial);
 

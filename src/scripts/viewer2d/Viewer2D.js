@@ -63,7 +63,7 @@ export class Viewer2D extends Application {
         super({ width: 512, height: 512, });
         this.__eventDispatcher = new EventDispatcher();
 
-        var opts = { 'corner-radius': 20, pannable: true, zoomable: true, dimlinecolor: '#3EDEDE', dimarrowcolor: '#000000', dimtextcolor: '#000000', };
+        var opts = { 'corner-radius': 20, pannable: true, zoomable: true, dimlinecolor: '#3EDEDE', dimarrowcolor: '#000000', dimtextcolor: '#000000', scale: true, rotate: true, translate: true};
         for (var opt in opts) {
             if (opts.hasOwnProperty(opt) && options.hasOwnProperty(opt)) {
                 opts[opt] = options[opt];
@@ -122,7 +122,7 @@ export class Viewer2D extends Application {
         let origin = new Graphics();
         this.__floorplanElementsHolder = new Graphics();
         this.__grid2d = new Grid2D(this.view, options);
-        this.__groupTransformer = new CornerGroupTransform2D(this.__floorplan);
+        this.__groupTransformer = new CornerGroupTransform2D(this.__floorplan, this.__options);
         this.__groupTransformer.visible = false;
         this.__groupTransformer.selected = null;
 

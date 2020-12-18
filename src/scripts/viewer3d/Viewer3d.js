@@ -16,17 +16,18 @@ import { DragRoomItemsControl3D } from './DragRoomItemsControl3D.js';
 export class Viewer3D extends Scene {
     constructor(model, element, opts) {
         super();
-        var options = { resize: true, pushHref: false, spin: true, spinSpeed: .00002, clickPan: true, canMoveFixedItems: false };
-        for (var opt in options) {
+        let options = { occludedRoofs: false, occludedWalls: false, resize: true, pushHref: false, spin: true, spinSpeed: .00002, clickPan: true, canMoveFixedItems: false };
+        for (let opt in options) {
             if (options.hasOwnProperty(opt) && opts.hasOwnProperty(opt)) {
                 options[opt] = opts[opt];
             }
         }
+
         this.__physicalRoomItems = [];
         this.__enabled = true;
         this.model = model;
         this.floorplan = this.model.floorplan;
-        this.options = options;
+        this.__options = options;
 
         this.domElement = document.getElementById(element);
 
@@ -92,7 +93,7 @@ export class Viewer3D extends Scene {
         // scope.dragcontrols = new DragControls(this.physicalRoomItems, scope.camera, scope.renderer.domElement);
         scope.dragcontrols = new DragRoomItemsControl3D(this.floorplan.wallPlanesForIntersection, this.floorplan.floorPlanesForIntersection, this.physicalRoomItems, scope.camera, scope.renderer.domElement);
         scope.controls = new OrbitControls(scope.camera, scope.domElement);
-        // scope.controls.autoRotate = this.options['spin'];
+        // scope.controls.autoRotate = this.__options['spin'];
         scope.controls.enableDamping = false;
         scope.controls.dampingFactor = 0.1;
         scope.controls.maxPolarAngle = Math.PI * 1.0; //Math.PI * 0.5; //Math.PI * 0.35;
@@ -110,7 +111,7 @@ export class Viewer3D extends Scene {
         // handle window resizing
         scope.updateWindowSize();
 
-        if (scope.options.resize) {
+        if (scope.__options.resize) {
             window.addEventListener('resize', () => { scope.updateWindowSize(); });
             window.addEventListener('orientationchange', () => { scope.updateWindowSize(); });
         }
@@ -185,7 +186,7 @@ export class Viewer3D extends Scene {
         if (!evt.item) {
             return;
         }
-        let physicalRoomItem = new Physical3DItem(evt.item);
+        let physicalRoomItem = new Physical3DItem(evt.item, this.__options);
         this.add(physicalRoomItem);
         this.__physicalRoomItems.push(physicalRoomItem);
         this.__roomItemSelected({ type: EVENT_ITEM_SELECTED, item: physicalRoomItem });
@@ -206,7 +207,7 @@ export class Viewer3D extends Scene {
         this.__physicalRoomItems.length = 0; //A cool way to clear an array in javascript
         let roomItems = this.model.roomItems;
         for (i = 0; i < roomItems.length; i++) {
-            let physicalRoomItem = new Physical3DItem(roomItems[i]);
+            let physicalRoomItem = new Physical3DItem(roomItems[i], this.__options);
             this.add(physicalRoomItem);
             this.__physicalRoomItems.push(physicalRoomItem);
         }
@@ -235,12 +236,12 @@ export class Viewer3D extends Scene {
 
         // draw floors
         for (i = 0; i < rooms.length; i++) {
-            var threeFloor = new Floor3D(scope, rooms[i], scope.controls);
+            var threeFloor = new Floor3D(scope, rooms[i], scope.controls, this.__options);
             scope.floors3d.push(threeFloor);
         }
 
         for (i = 0; i < wallEdges.length; i++) {
-            let edge3d = new Edge3D(scope, wallEdges[i], scope.controls);
+            let edge3d = new Edge3D(scope, wallEdges[i], scope.controls, this.__options);
             scope.edges3d.push(edge3d);
         }
 
@@ -277,12 +278,12 @@ export class Viewer3D extends Scene {
 
         // draw floors
         for (i = 0; i < rooms.length; i++) {
-            var threeFloor = new Floor3D(scope, rooms[i], scope.controls);
+            var threeFloor = new Floor3D(scope, rooms[i], scope.controls, this.__options);
             scope.__externalFloors3d.push(threeFloor);
         }
 
         for (i = 0; i < wallEdges.length; i++) {
-            let edge3d = new Edge3D(scope, wallEdges[i], scope.controls);
+            let edge3d = new Edge3D(scope, wallEdges[i], scope.controls, this.__options);
             scope.__externalEdges3d.push(edge3d);
         }
 
@@ -317,7 +318,7 @@ export class Viewer3D extends Scene {
         scope.widthMargin = scope.domElement.offsetLeft;
         scope.elementWidth = scope.domElement.clientWidth;
 
-        if (scope.options.resize) {
+        if (scope.__options.resize) {
             scope.elementHeight = window.innerHeight - scope.heightMargin;
         } else {
             scope.elementHeight = scope.domElement.clientHeight;

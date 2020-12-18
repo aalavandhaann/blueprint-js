@@ -24,6 +24,8 @@ class BlueprintJS {
     constructor(options) {
         Configuration.setValue(configDimUnit, dimCentiMeter);
 
+        console.log('BLUEPRINT JS :: OPTIONS ::: ', options);
+
         /**
          * @property {Object} options
          * @type {Object}
@@ -43,7 +45,7 @@ class BlueprintJS {
          * @property {Main} three
          * @type {Main}
          **/
-        this.roomplanner = new Viewer3D(this.model, options.viewer3d, this.options);
+        this.roomplanner = new Viewer3D(this.model, options.viewer3d.id, this.options.viewer3d.viewer3dOptions);
 
         this.configurationHelper = new ConfigurationHelper();
         this.floorplanningHelper = null;
@@ -70,12 +72,12 @@ class BlueprintJS {
         if (this.view_now === 3 && !this.options.widget) {
             this.view_now = 2;
             document.getElementById(this.options.viewer2d.id).style.visibility = "visible";
-            document.getElementById(this.options.viewer3d).style.visibility = "hidden";
+            document.getElementById(this.options.viewer3d.id).style.visibility = "hidden";
             this.roomplanner.enabled = false;
         } else if (this.view_now === 2 && !this.options.widget) {
             this.view_now = 3;
             document.getElementById(this.options.viewer2d.id).style.visibility = "hidden";
-            document.getElementById(this.options.viewer3d).style.visibility = "visible";
+            document.getElementById(this.options.viewer3d.id).style.visibility = "visible";
             this.roomplanner.enabled = true;
         }
     }

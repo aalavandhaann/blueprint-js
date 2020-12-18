@@ -211,9 +211,15 @@ export class Floorplan extends EventDispatcher {
         this.walls.forEach((wall) => {
             if (wall.frontEdge) {
                 planes.push(wall.frontEdge.plane);
+                if(wall.frontEdge.exteriorPlane){
+                    planes.push(wall.frontEdge.exteriorPlane);
+                }
             }
             if (wall.backEdge) {
                 planes.push(wall.backEdge.plane);
+                if(wall.backEdge.exteriorPlane){
+                    planes.push(wall.backEdge.exteriorPlane);
+                }
             }
         });
         return planes;

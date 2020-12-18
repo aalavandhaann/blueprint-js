@@ -4,13 +4,16 @@ import { EVENT_ITEM_LOADED, EVENT_ITEM_LOADING, EVENT_UPDATED, EVENT_PARAMETRIC_
 import { BoxBufferGeometry, LineBasicMaterial, LineSegments, EdgesGeometry } from "three";
 import gsap from 'gsap';
 export class Physical3DItem extends Mesh {
-    constructor(itemModel) {
+    constructor(itemModel, opts) {
         super();
         this.__itemModel = itemModel;
         this.__box = null;
         this.__center = null;
         this.__size = null;
         this.__selected = false;
+
+        
+        this.__options = opts;
 
         this.__selectedMaterial = new LineBasicMaterial({ color: 0x0000F0, linewidth: 5 });
 

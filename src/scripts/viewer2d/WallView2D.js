@@ -140,7 +140,7 @@ export class Edge2D extends BaseFloorplanViewElement2D {
         super(floorplan, options);
         this.__wall = wall;
         this.__edge = edge;
-        this.__showNeighbours = false;
+        this.__debugMode = false;
         this.__deactivate();
     }
 
@@ -152,10 +152,10 @@ export class Edge2D extends BaseFloorplanViewElement2D {
 
     __getPolygonCoordinates(forEdge) {
         let points = [
-            forEdge.exteriorStart(this.__showNeighbours), 
-            forEdge.exteriorEnd(this.__showNeighbours), 
-            forEdge.interiorEnd(this.__showNeighbours), 
-            forEdge.interiorStart(this.__showNeighbours)];
+            forEdge.exteriorStart(this.__debugMode), 
+            forEdge.exteriorEnd(this.__debugMode), 
+            forEdge.interiorEnd(this.__debugMode), 
+            forEdge.interiorStart(this.__debugMode)];
         if (isMobile) {
             let pixelPoints = [];
             let start = forEdge.getStart().location;
@@ -225,9 +225,10 @@ export class Edge2D extends BaseFloorplanViewElement2D {
         //     return;
         // }
 
-        this.__drawEdgePolygon(this.__edge, color, 0.1);//alpha);
+        let alpha_new = (this.__debugMode) ? 0.1 : alpha;
+        this.__drawEdgePolygon(this.__edge, color, alpha_new);//0.1);//
 
-        if (this.__showNeighbours) {
+        if (this.__debugMode) {
             this.__drawEdgeArrow(this.__edge, 0x000000, alpha);
             if (this.__edge.prev) { //Red for previous edge
                 this.__drawEdgeArrow(this.__edge.prev, 0xFF0000, alpha);
@@ -237,23 +238,25 @@ export class Edge2D extends BaseFloorplanViewElement2D {
             }
         }
 
-        // let cornerLine = this.__getCornerCoordinates();
-        // let lineThickness = 1.5; //Math.min(Dimensioning.cmToPixel(this.__wall.thickness * 0.25), 1.0);
-        // this.lineStyle(lineThickness, 0xF0F0F0);
-        // this.moveTo(cornerLine[1].x, cornerLine[1].y);
-        // this.lineTo(cornerLine[0].x, cornerLine[0].y);
+        if(!this.__debugMode){
+            let cornerLine = this.__getCornerCoordinates();
+            let lineThickness = 1.5; //Math.min(Dimensioning.cmToPixel(this.__wall.thickness * 0.25), 1.0);
+            this.lineStyle(lineThickness, 0xF0F0F0);
+            this.moveTo(cornerLine[1].x, cornerLine[1].y);
+            this.lineTo(cornerLine[0].x, cornerLine[0].y);
+        }        
     }
 
     get edge() {
         return this.__edge;
     }
 
-    get showNeighbours() {
-        return this.__showNeighbours;
+    get debugMode() {
+        return this.__debugMode;
     }
 
-    set showNeighbours(flag) {
-        this.__showNeighbours = flag;
+    set debugMode(flag) {
+        this.__debugMode = flag;
     }
 }
 
@@ -378,10 +381,10 @@ export class WallView2D extends BaseFloorplanViewElement2D {
 
     __drawSelectedState() {
         if (this.__frontEdge) {
-            this.__frontEdge.showNeighbours = true;
+            this.__frontEdge.debugMode = true;
         }
         if (this.__backEdge) {
-            this.__backEdge.showNeighbours = true;
+            this.__backEdge.debugMode = true;
         }
         this.__drawPolygon(0x049995, 1.0);
     }
@@ -390,10 +393,10 @@ export class WallView2D extends BaseFloorplanViewElement2D {
     }
     __drawHoveredOffState() {
         if (this.__frontEdge) {
-            this.__frontEdge.showNeighbours = false;
+            this.__frontEdge.debugMode = false;
         }
         if (this.__backEdge) {
-            this.__backEdge.showNeighbours = false;
+            this.__backEdge.debugMode = false;
         }
         this.__drawPolygon(0x000000, 1.0);
     }

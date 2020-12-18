@@ -5,12 +5,22 @@ import { EVENT_REDRAW, EVENT_UPDATE_TEXTURES, EVENT_DELETED } from '../core/even
 import { WallMaterial3D } from '../materials/WallMaterial3D.js';
 
 export class Edge3D extends EventDispatcher {
-    constructor(scene, edge, controls) {
+    constructor(scene, edge, controls, opts) {
         super();
         this.name = 'edge';
         this.scene = scene;
         this.edge = edge;
         this.controls = controls;
+
+        let options = { occludedWalls: false };
+        for (let opt in options) {
+            if (options.hasOwnProperty(opt) && opts.hasOwnProperty(opt)) {
+                options[opt] = opts[opt];
+            }
+        }
+
+        this.__options = options;
+
 
         this.wall = edge.wall;
         this.front = edge.front;
@@ -48,7 +58,7 @@ export class Edge3D extends EventDispatcher {
         let texturePack = this.edge.getTexture();
 
         if (!this.__wallMaterial3D) {
-            let side = (this.wall.isLocked) ? DoubleSide : FrontSide;
+            let side = (this.wall.isLocked || this.__options.occludedWalls) ? DoubleSide : FrontSide;
             if (!texturePack.color) {
                 texturePack.color = '#FF0000';
             }
@@ -161,7 +171,7 @@ export class Edge3D extends EventDispatcher {
     }
 
     updateVisibility() {
-        if (this.wall.isLocked) {
+        if (this.wall.isLocked || this.__options.occludedWalls) {
             return;
         }
         let scope = this;
@@ -236,21 +246,13 @@ export class Edge3D extends EventDispatcher {
         let exteriorStart = this.edge.exteriorStart();
         let exteriorEnd = this.edge.exteriorEnd();
 
-        // let fillerMaterial = new MeshBasicMaterial({
-        //     color: this.fillerColor,
-        //     side: DoubleSide,
-        //     // map: this.texture,
-        //     transparent: true,
-        //     opacity: 1.0,
-        //     wireframe: false,
-        // });
-        // fillerMaterial.visible = false;//Debug statement
-
         // exterior plane for real exterior walls
         //If the walls have corners that have more than one room attached
         //Then there is no need to construct an exterior wall
         if (this.edge.wall.start.getAttachedRooms().length < 2 || this.edge.wall.end.getAttachedRooms().length < 2) {
-            this.planes.push(this.makeWall(exteriorStart, exteriorEnd, this.edge.exteriorTransform, this.edge.invExteriorTransform, this.__wallMaterial3D));
+            // console.log('CONSTRUCT EXTERIOR WALLS');
+            let exteriorWall = this.makeWall(exteriorStart, exteriorEnd, this.edge.exteriorTransform, this.edge.invExteriorTransform, this.__wallMaterial3D);
+            this.planes.push(exteriorWall);
         }
         // interior plane
         // this.planes.push(this.makeWall(interiorStart, interiorEnd, this.edge.interiorTransform, this.edge.invInteriorTransform, wallMaterial));

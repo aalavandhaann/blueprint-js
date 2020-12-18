@@ -30,15 +30,16 @@ export class CornerView2D extends BaseFloorplanViewElement2D {
 
     __drawCornerState(radius, borderColor, fillColor) {
         this.clear();
+        let alpha = 1.0;//0.1;//
         if (isMobile) {
-            this.beginFill(borderColor, 1.0);
+            this.beginFill(borderColor, alpha);
             this.drawCircle(0, 0, radius * 2.5);
             this.endFill();
         }
-        this.beginFill(borderColor, 1.0);
+        this.beginFill(borderColor, alpha);
         this.drawCircle(0, 0, radius);
         this.endFill();
-        this.beginFill(fillColor, 1.0);
+        this.beginFill(fillColor, alpha);
         this.drawCircle(0, 0, radius * 0.55);
         this.endFill();
     }
@@ -88,6 +89,11 @@ export class CornerView2D extends BaseFloorplanViewElement2D {
             }
             this.__corner.move(cmCo.x, cmCo.y);
         }
+    }
+
+    __dragEnd(evt) {
+        super.__dragEnd(evt);
+        this.__floorplan.update();
     }
 
     __cornerDeleted(evt) {
