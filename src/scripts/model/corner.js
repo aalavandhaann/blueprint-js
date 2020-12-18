@@ -173,7 +173,7 @@ export class Corner extends EventDispatcher {
     /** @type {Number} elevation The elevation value at this corner*/
     set elevation(value) {
         let oldvalue = this._elevation;
-        if (value - this._elevation < 1e-6) {
+        if ((value - this._elevation) > 1e-6) {
             this._hasChanged = true;
         }
         this._elevation = Number(value); //Dimensioning.cmFromMeasureRaw(Number(value));

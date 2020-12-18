@@ -316,7 +316,7 @@ export class Edge3D extends EventDispatcher {
         // make UVs
         let totalDistance = this.edge.interiorDistance(); //Utils.distance(new Vector2(v1.x, v1.z), new Vector2(v2.x, v2.z));
 
-        let height = this.wall.height;
+        let height = Math.max(this.wall.startElevation, this.wall.endElevation);
         geometry.faceVertexUvs[0] = [];
 
         geometry.faces.forEach((face) => {

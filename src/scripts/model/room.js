@@ -1,6 +1,6 @@
 import { EventDispatcher, Vector2, Vector3, Face3, Geometry, Shape, ShapeGeometry, Mesh, MeshBasicMaterial, DoubleSide, Box3 } from 'three';
 import { Plane, Matrix4 } from 'three';
-import { EVENT_CHANGED, EVENT_ROOM_ATTRIBUTES_CHANGED, EVENT_MOVED, EVENT_UPDATED, EVENT_UPDATE_TEXTURES } from '../core/events.js';
+import { EVENT_CHANGED, EVENT_ROOM_ATTRIBUTES_CHANGED, EVENT_MOVED, EVENT_UPDATED, EVENT_UPDATE_TEXTURES, EVENT_CORNER_ATTRIBUTES_CHANGED } from '../core/events.js';
 import { Region } from '../core/utils.js';
 import { WallTypes, TEXTURE_DEFAULT_REPEAT, defaultFloorTexture } from '../core/constants.js';
 import { Utils } from '../core/utils.js';
@@ -58,6 +58,7 @@ export class Room extends EventDispatcher {
             c.attachRoom(this);
             cornerids.push(c.id);
             c.addEventListener(EVENT_MOVED, this.__roomUpdatedEvent);
+            c.addEventListener(EVENT_CORNER_ATTRIBUTES_CHANGED, this.__roomUpdatedEvent);
         }
 
         for (i = 0; i < this.__walls.length; i++) {

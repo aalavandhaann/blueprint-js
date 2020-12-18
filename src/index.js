@@ -79,7 +79,7 @@ let opts = {
     viewer3d: {
         id: 'bp3djs-viewer3d',
         viewer3dOptions:{
-            occludedWalls: true,
+            occludedWalls: false,
             occludedRoofs: true
         }
     },

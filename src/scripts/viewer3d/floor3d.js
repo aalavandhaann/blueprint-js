@@ -126,20 +126,30 @@ export class Floor3D extends EventDispatcher {
         let shapeGeometry = null;
         let roof = null;
 
-        this.room.interiorCorners.forEach((corner) => {
+        // this.room.interiorCorners.forEach((corner) => {
+        //     spoints.push(new Vector2(corner.x, corner.y));
+        // });
+
+        this.room.corners.forEach((corner) => {
             spoints.push(new Vector2(corner.x, corner.y));
         });
 
         shape = new Shape(spoints);
         shapeGeometry = new ShapeGeometry(shape);
-
+        let cornerIndex = shapeGeometry.vertices.length-1;
+        // console.log('===================================');
+        // console.log('COUNTS ::: ', this.room.corners.length, shapeGeometry.vertices.length);
         for (let i = 0; i < shapeGeometry.vertices.length; i++) {
-            let index = i % this.room.corners.length;
-            let corner = this.room.corners[index];
+            // let index = (this.room.corners.length-i)-1;
+            let corner = this.room.corners[cornerIndex];
             let vertex = shapeGeometry.vertices[i];
             vertex.z = vertex.y;
             vertex.y = corner.elevation+0.1;
+            cornerIndex--;
+            // console.log('CORNER LOCATION ::: ', corner.location);
+            // console.log('VERTEX ::: ', vertex);
         }
+        // console.log('===================================');
         roof = new Mesh(shapeGeometry, roofMaterial);
 
 
