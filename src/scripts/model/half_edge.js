@@ -251,6 +251,7 @@ export class HalfEdge extends EventDispatcher {
 
     generatePlane(){
         this.__plane = this.__generateEdgePlane(true, this.__plane);
+        // this.__exteriorPlane = this.__plane;
         // if (this.wall.start.getAttachedRooms().length < 2 || this.wall.end.getAttachedRooms().length < 2) {
         //     this.__exteriorPlane = this.__generateEdgePlane(false, this.__exteriorPlane);
         // }
@@ -291,13 +292,18 @@ export class HalfEdge extends EventDispatcher {
         ab = v2.clone().sub(v1);
         ac = v3.clone().sub(v1);
         this.__vertices = [v1, v2, v3, v4];
-        this.__normal = ab.cross(ac).normalize();
+        this.__normal = ab.cross(ac).normalize().negate();
         this.__mathPlane = new Plane();
         this.__mathPlane.setFromNormalAndCoplanarPoint(this.__normal.clone(), this.__vertices[0].clone());
 
         geometry.vertices = [v1, v2, v3, v4];
-        geometry.faces.push(new Face3(0, 1, 2));
-        geometry.faces.push(new Face3(0, 2, 3));
+        
+        // geometry.faces.push(new Face3(0, 1, 2));
+        // geometry.faces.push(new Face3(0, 2, 3));
+
+        geometry.faces.push(new Face3(2, 1, 0));
+        geometry.faces.push(new Face3(3, 2, 0));
+
         geometry.computeFaceNormals();
         geometry.computeBoundingBox();
 
