@@ -80,7 +80,7 @@ let opts = {
         id: 'bp3djs-viewer3d',
         viewer3dOptions:{
             occludedWalls: false,
-            occludedRoofs: true
+            occludedRoofs: false
         }
     },
     textureDir: "models/textures/",
