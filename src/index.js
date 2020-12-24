@@ -14,8 +14,8 @@ import * as floor_textures_json from './floor_textures.json';
 import * as wall_textures_json from './wall_textures.json';
 // import * as default_room_json from './parametrics_items.json';
 // import * as default_room_json from './empty_room.json';
-// import * as default_room_json from './design.json';
-import * as default_room_json from './LShape.json';
+import * as default_room_json from './design.json';
+// import * as default_room_json from './LShape.json';
 
 
 
