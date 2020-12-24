@@ -380,24 +380,24 @@ export class WallView2D extends BaseFloorplanViewElement2D {
     }
 
     __drawSelectedState() {
-        if (this.__frontEdge) {
-            this.__frontEdge.debugMode = true;
-        }
-        if (this.__backEdge) {
-            this.__backEdge.debugMode = true;
-        }
+        // if (this.__frontEdge) {
+        //     this.__frontEdge.debugMode = true;
+        // }
+        // if (this.__backEdge) {
+        //     this.__backEdge.debugMode = true;
+        // }
         this.__drawPolygon(0x049995, 1.0);
     }
     __drawHoveredOnState() {
         this.__drawPolygon(0x04A9F5, 1.0);
     }
     __drawHoveredOffState() {
-        if (this.__frontEdge) {
-            this.__frontEdge.debugMode = false;
-        }
-        if (this.__backEdge) {
-            this.__backEdge.debugMode = false;
-        }
+        // if (this.__frontEdge) {
+        //     this.__frontEdge.debugMode = false;
+        // }
+        // if (this.__backEdge) {
+        //     this.__backEdge.debugMode = false;
+        // }
         this.__drawPolygon(0x000000, 1.0);
     }
 
