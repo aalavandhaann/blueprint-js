@@ -79,8 +79,8 @@ let opts = {
     viewer3d: {
         id: 'bp3djs-viewer3d',
         viewer3dOptions:{
-            occludedWalls: true,
-            occludedRoofs: true
+            occludedWalls: false,
+            occludedRoofs: false
         }
     },
     textureDir: "models/textures/",
