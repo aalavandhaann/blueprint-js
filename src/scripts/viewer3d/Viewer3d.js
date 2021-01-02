@@ -12,6 +12,7 @@ import { Floor3D } from './floor3d.js';
 import { Lights3D } from './lights3d.js';
 import { Physical3DItem } from './Physical3DItem.js';
 import { DragRoomItemsControl3D } from './DragRoomItemsControl3D.js';
+import { Configuration, viewBounds } from '../core/configuration.js';
 
 export class Viewer3D extends Scene {
     constructor(model, element, opts) {
@@ -96,9 +97,9 @@ export class Viewer3D extends Scene {
         // scope.controls.autoRotate = this.__options['spin'];
         scope.controls.enableDamping = false;
         scope.controls.dampingFactor = 0.1;
-        scope.controls.maxPolarAngle = Math.PI * 1.0; //Math.PI * 0.5; //Math.PI * 0.35;
-        scope.controls.maxDistance = 7500; //2500
-        scope.controls.minDistance = 10; //1000; //1000
+        scope.controls.maxPolarAngle = Math.PI * 0.5; //Math.PI * 0.35;//Math.PI * 1.0; //
+        scope.controls.maxDistance = Configuration.getNumericValue(viewBounds);// 7500; //2500
+        scope.controls.minDistance = 100; //1000; //1000
         scope.controls.screenSpacePanning = true;
 
         scope.skybox = new Skybox(this, scope.renderer);

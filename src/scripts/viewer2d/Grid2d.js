@@ -1,4 +1,4 @@
-import { Configuration, gridSpacing } from '../core/configuration';
+import { Configuration, gridSpacing, viewBounds } from '../core/configuration';
 import { EVENT_CHANGED } from '../core/events';
 import { Graphics } from 'pixi.js';
 import { Vector2 } from 'three';
@@ -23,10 +23,11 @@ export class Grid2D extends Graphics {
     }
 
     __updateGrid() {
+        let gridSize = Dimensioning.cmToPixel(Configuration.getNumericValue(viewBounds) * 1);
         let spacingCMS = Configuration.getNumericValue(gridSpacing);
         let spacing = Dimensioning.cmToPixel(spacingCMS);
-        let totalLines = GRID_SIZE / spacing;
-        let halfSize = GRID_SIZE * 0.5;
+        let totalLines = gridSize / spacing;
+        let halfSize = gridSize * 0.5;
         let linewidth = 1.0 / this.__gridScale;
         let highlightLineWidth = 1.0 / this.__gridScale;
         let normalColor = 0xEBEBEB;
@@ -41,8 +42,15 @@ export class Grid2D extends Graphics {
                 this.lineStyle(linewidth, normalColor).moveTo(-halfSize, co).lineTo(halfSize, co);
                 this.lineStyle(linewidth, normalColor).moveTo(co, -halfSize).lineTo(co, halfSize);
             }
-
         }
+
+        // this.beginFill(0xFF0000, 1.0);
+        // this.drawCircle(-halfSize, -halfSize,20);
+        // this.drawCircle(halfSize, -halfSize,20);
+        // this.drawCircle(halfSize, halfSize,20);
+        // this.drawCircle(-halfSize, halfSize,20);
+        // this.drawCircle(0, 0, 20);
+        // this.endFill();
     }
 
     get gridScale() {

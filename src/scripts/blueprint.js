@@ -65,10 +65,10 @@ class BlueprintJS {
     }
 
     switchView() {
-        this.floorplanner.switchMode(floorplannerModes.MOVE);
         if (this.options.widget) {
             return;
         }
+        this.floorplanner.switchMode(floorplannerModes.MOVE);
         if (this.view_now === 3 && !this.options.widget) {
             this.view_now = 2;
             document.getElementById(this.options.viewer2d.id).style.visibility = "visible";

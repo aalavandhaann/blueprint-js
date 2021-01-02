@@ -1,7 +1,7 @@
 import { EventDispatcher, SphereGeometry, ShaderMaterial, Mesh, TextureLoader, Color, DoubleSide } from 'three';
 import { AxesHelper } from 'three';
 import { GridHelper } from 'three';
-import { Configuration, gridSpacing } from '../core/configuration';
+import { Configuration, gridSpacing, viewBounds } from '../core/configuration';
 import { EVENT_CHANGED } from '../core/events';
 
 export class Skybox extends EventDispatcher {
@@ -21,10 +21,13 @@ export class Skybox extends EventDispatcher {
         this.renderer = renderer;
 
         this.sphereRadius = 4000;
-        this.__gridSize = 10000;
+        this.__gridSize = Configuration.getNumericValue(viewBounds)*5.0;//10000;
         this.widthSegments = 32;
         this.heightSegments = 15;
         this.sky = null;
+
+        this.__fineGridFloor = null;
+        this.__coarseGridFloor = null;
 
         this.plainVertexShader = ['varying vec3 vWorldPosition;', 'void main() {', 'vec4 worldPosition = modelMatrix * vec4( position, 1.0 );', 'vWorldPosition = worldPosition.xyz;', 'gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0 );', '}'].join('\n');
         this.plainFragmentShader = ['uniform vec3 bottomColor;', 'uniform vec3 topColor;', 'uniform float offset;', 'uniform float exponent;', 'varying vec3 vWorldPosition;', 'void main() {', ' float h = normalize( vWorldPosition + offset ).y;', ' gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max(h, 0.0 ), exponent ), 0.0 ) ), 1.0 );', '}'].join('\n');
@@ -41,47 +44,45 @@ export class Skybox extends EventDispatcher {
         this.sky = new Mesh(this.skyGeo, this.skyMat);
         //		this.sky.position.x += this.sphereRadius*0.5;
 
-        this.ground = new GridHelper(this.__gridSize, Math.round(this.__gridSize / Configuration.getNumericValue(gridSpacing)), 0x0F0F0F, 0x808080);
-        this.ground.position.y = -10;
-
-        // this.scene.add(this.sky);
-        this.scene.add(this.ground);
-
         let axesHelper = new AxesHelper(1000);
         this.scene.add(axesHelper);
         // axesHelper.visible = false;
 
+        this.__createGridFloors();
         this.init();
         Configuration.getInstance().addEventListener(EVENT_CHANGED, this.__updateGrid.bind(this));
     }
 
-    __updateGrid(evt) {
-        this.scene.remove(this.ground);
-        this.ground = new GridHelper(this.__gridSize, Math.round(this.__gridSize / Configuration.getNumericValue(gridSpacing)), 0x0F0F0F, 0x808080);
-        this.ground.position.y = -10;
-        this.scene.add(this.ground);
+    __createGridFloors(){
+        if(this.__fineGridFloor){
+            this.scene.remove(this.__fineGridFloor);
+            this.scene.remove(this.__coarseGridFloor);
+        }
+        this.__fineGridFloor = new GridHelper(this.__gridSize, Math.round(this.__gridSize / Configuration.getNumericValue(gridSpacing)), 0x0F0F0F, 0x808080);
+        this.__coarseGridFloor = new GridHelper(this.__gridSize, Math.round(this.__gridSize / (Configuration.getNumericValue(gridSpacing)*5)), 0x0F0F0F, 0x303030);
+
+        this.__fineGridFloor.position.y = this.__coarseGridFloor.position.y = -10;
+
+        this.scene.add(this.__fineGridFloor);
+        this.scene.add(this.__coarseGridFloor);
+        
         this.scene.needsUpdate = true;
     }
+    
 
-    setEnabled(flag) {
-        if (!flag) {
-            this.scene.remove(this.sky);
-            this.scene.remove(this.ground);
-        } else {
-            this.scene.add(this.sky);
-            this.scene.add(this.ground);
-        }
-        //		this.sky.visible = this.ground.visible = flag;
+    __updateGrid(evt) {
+        this.__gridSize = Configuration.getNumericValue(viewBounds)*5.0;//10000;
+        this.__createGridFloors();
     }
 
     toggleEnvironment(flag) {
         this.useEnvironment = flag;
         if (!flag) {
-            this.ground.visible = true;
+            this.__fineGridFloor.visible = true;
             this.sky.material = this.plainSkyMat;
             this.sky.material.needsUpdate = true;
         } else {
-            this.ground.visible = false;
+            this.__fineGridFloor.visible = false;
             if (!this.skyMat) {
                 this.setEnvironmentMap(this.defaultEnvironment);
             } else {

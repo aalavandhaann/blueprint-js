@@ -8,7 +8,7 @@ import { WallView2D } from './WallView2D';
 import { RoomView2D } from './RoomView2D';
 import { Dimensioning } from '../core/dimensioning';
 import { KeyboardListener2D } from './KeyboardManager2D';
-import { Configuration, snapToGrid, snapTolerance } from '../core/configuration';
+import { Configuration, snapToGrid, snapTolerance, viewBounds } from '../core/configuration';
 import { IS_TOUCH_DEVICE } from '../../DeviceInfo';
 import { CornerGroupTransform2D } from './CornerGroupTransform2D';
 import Room from '../model/room';
@@ -147,7 +147,7 @@ export class Viewer2D extends Application {
         this.__canvasHolder.appendChild(this.view);
 
         this.__floorplanContainer.drag().pinch().wheel();
-
+        
         if (!this.__options.pannable) {
             this.__floorplanContainer.plugins.pause('drag');
         }
@@ -376,20 +376,38 @@ export class Viewer2D extends Application {
 
     __zoomed() {
         let zoom = this.__floorplanContainer.scale.x;
-        zoom = (zoom < 0.4) ? 0.4 : (zoom > 60) ? 60 : zoom;
+        let bounds = Dimensioning.cmToPixel(Configuration.getNumericValue(viewBounds));// * zoom;
+        let maxZoomOut = Math.max(window.innerWidth, window.innerHeight) / bounds;
+        zoom = (zoom < maxZoomOut) ? maxZoomOut : (zoom > 60) ? 60 : zoom;
         this.__floorplanContainer.scale.x = this.__floorplanContainer.scale.y = zoom;
         this.__grid2d.gridScale = this.__floorplanContainer.scale.x;
     }
 
     __panned() {
-        let yValue = this.__floorplanContainer.y;
-        let xValue = this.__floorplanContainer.x;
-        yValue = Math.max(-4100, yValue);
-        yValue = Math.min(4100, yValue);
-        xValue = Math.max(-3000, xValue);
-        xValue = Math.min(3000, xValue);
+        let zoom = this.__floorplanContainer.scale.x;
+        let bounds = Dimensioning.cmToPixel(Configuration.getNumericValue(viewBounds)) * zoom;
+
+        let xy = new Vector2(this.__floorplanContainer.x, this.__floorplanContainer.y);
+        let topleft = new Vector2((-(bounds*0.5)), (-(bounds*0.5)));
+        let bottomright = new Vector2(((bounds*0.5)), ((bounds*0.5)));
+        
+        let windowSize = new Vector2(window.innerWidth, window.innerHeight);        
+      
+        let xValue = Math.min(-topleft.x, xy.x);
+        let yValue = Math.min(-topleft.y, xy.y);
+
+        xValue = Math.max(windowSize.x-bottomright.x, xValue);
+        yValue = Math.max(windowSize.y-bottomright.y, yValue);
+        
+        
         this.__floorplanContainer.x = xValue;
         this.__floorplanContainer.y = yValue;
+        // console.log('---------------------------------------------');
+        // console.log('CURRENT ZOOM :: ', zoom);
+        // console.log('TOP LEFT :: ', topleft);
+        // console.log('BOTTOM RIGHT :: ', bottomright);
+        // console.log('WINDOW SIZE :: ', windowSize);
+        // console.log(`X=${xValue}, Y=${yValue}`);
     }
 
     __resetFloorplan(evt) {
@@ -494,6 +512,8 @@ export class Viewer2D extends Application {
         this.renderer.resize(w, h);
         this.__floorplanContainer.resize(w, h, this.__worldWidth, this.__worldHeight);
         this.renderer.render(this.stage);
+        this.__zoomed();
+        this.__panned();
     }
 
     addFloorplanListener(type, listener) {

@@ -24,9 +24,17 @@ export const dragOnlyY = 'dragOnlyY';
 export const snapTolerance = 'snapTolerance'; //In CMS
 export const boundsX = 'boundsX'; //In CMS
 export const boundsY = 'boundsY'; //In CMS
+export const viewBounds = 'viewBounds';//In CMS
 
 
-export var config = { dimUnit: dimCentiMeter, wallHeight: 250, wallThickness: 20, systemUI: false, scale: 1, snapToGrid: true, dragOnlyX: false, dragOnlyY: false, snapTolerance: 25, gridSpacing: 50, directionalDrag: true, boundsX: 500, boundsY: 500 };
+export var config = { dimUnit: dimCentiMeter, wallHeight: 250, 
+    wallThickness: 20, systemUI: false, 
+    scale: 1, snapToGrid: true, 
+    dragOnlyX: false, dragOnlyY: false, 
+    snapTolerance: 25, gridSpacing: 50, 
+    directionalDrag: true, 
+    boundsX: 500, boundsY: 500, 
+    viewBounds: 5000 };
 
 export var wallInformation = { exterior: false, interior: false, midline: true, labels: true, exteriorlabel: 'e:', interiorlabel: 'i:', midlinelabel: 'm:' };
 
@@ -61,7 +69,9 @@ export class Configuration extends EventDispatcher {
     static setValue(key, value) {
         //		this.data[key] = value;
         config[key] = value;
-        Configuration.getInstance().dispatchEvent({ type: EVENT_CHANGED, item: Configuration.getInstance(), 'key': key, 'value': value });
+        // if(key !== viewBounds){
+            Configuration.getInstance().dispatchEvent({ type: EVENT_CHANGED, item: Configuration.getInstance(), 'key': key, 'value': value });
+        // }        
     }
 
     /** Get a string configuration parameter. */
@@ -86,6 +96,7 @@ export class Configuration extends EventDispatcher {
             case gridSpacing:
             case boundsX:
             case boundsY:
+            case viewBounds:
                 //			return Number(this.data[key]);
                 return Number(Configuration.getData()[key]);
             default:
