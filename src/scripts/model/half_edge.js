@@ -577,17 +577,7 @@ export class HalfEdge extends EventDispatcher {
 
         u = v1.getEnd().location.clone().sub(v1.getStart().location).normalize();
         v = v2.getEnd().location.clone().sub(v2.getStart().location).normalize();
-        dot = u.dot(v);
-
-        if(dot > (1.0 - 1e-6) || dot < (1e-6 - 1.0)){
-            let w = u.clone().normalize().multiplyScalar(Math.min(v2.wall.thickness, v1.wall.thickness));
-            w = w.rotateAround(new Vector2(0, 0), Math.PI * 0.5);            
-            if(debug){
-                console.log('VECTOR ADDITION W LENGTH :: ', w.length());
-            } 
-            return w;
-        }
-
+        
         u = u.multiplyScalar(v2.wall.thickness);
         v = v.multiplyScalar(v1.wall.thickness);
         w = u.clone().add(v);
@@ -595,16 +585,48 @@ export class HalfEdge extends EventDispatcher {
         u3 = new Vector3(u.x, u.y, 0.0);
         v3 = new Vector3(v.x, v.y, 0.0);
         w3 = new Vector3(w.x, w.y, 0.0);
-        axis3 = u3.clone().cross(v3);        
-        
+        axis3 = u3.clone().normalize().cross(v3.clone().normalize());
+
         if(axis3.z < 0){
-            v = v.multiplyScalar(-1);
-            w = u.clone().add(v);
+            v = v.negate();//.multiplyScalar(-1);            
         }
         else{
-            u = u.multiplyScalar(-1);
-            w = u.clone().add(v);
+            u = u.negate();//.multiplyScalar(-1);
         }
+
+        u3.x = u.x;
+        u3.y = u.y;
+        v3.x = v.x;
+        v3.y = v.y;
+
+        dot = u.clone().normalize().dot(v.clone().normalize());
+
+        if(dot < 0.0){
+            let uvAngle = Math.acos(dot);
+            let offsetTheta = uvAngle - (Math.PI*0.5);
+            let v_temp = v.clone();
+            if(dot < (1e-6 - 1.0)){
+                u3.x += 1e-4;
+                u3.y += 1e-4;
+                v3.x += 1e-4;
+                v3.y += 1e-4;
+                axis3 = u3.clone().normalize().cross(v3.clone().normalize()).negate().normalize();
+            }
+            v3 = v3.clone().applyAxisAngle(axis3.clone().normalize(), offsetTheta);
+            v.x = v3.x;
+            v.y = v3.y;
+            if(debug){
+                console.log('AXIS OF ROTATION ::: ', axis3);
+                console.log('U VECTOR ::: ', u);
+                console.log('V BEFORE ::: ', v_temp);
+                console.log('V AFTER ::: ', v);
+                console.log('DOT PRODUCT ::: ', dot);
+                console.log('ANGLE UV ::: ', (uvAngle*180)/Math.PI);
+                console.log('OFFSET THETA ::: ', (offsetTheta*180)/Math.PI);
+            } 
+        }       
+        
+        w = u.clone().add(v);
 
         if(debug){
             console.log('==============================================');
