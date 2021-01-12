@@ -1,5 +1,6 @@
 import JSZip from "jszip";
 import FileSaver from 'file-saver';
+import FPS from 'fps-now';
 
 import { BlueprintJS } from './scripts/blueprint.js';
 import { EVENT_LOADED, EVENT_NOTHING_2D_SELECTED, EVENT_CORNER_2D_CLICKED, EVENT_WALL_2D_CLICKED, EVENT_ROOM_2D_CLICKED, EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED, EVENT_NO_ITEM_SELECTED, EVENT_ITEM_SELECTED, EVENT_GLTF_READY } from './scripts/core/events.js';
@@ -17,7 +18,8 @@ import * as wall_textures_json from './wall_textures.json';
 import * as default_room_json from './design.json';
 // import * as default_room_json from './LShape.json';
 
-
+const fps = FPS.of({x: 0, y: 0});
+fps.start();
 
 
 let default_room = JSON.stringify(default_room_json);

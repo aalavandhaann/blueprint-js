@@ -58,7 +58,7 @@ export class BoundaryView3D extends Mesh{
         geometry.computeFaceNormals();
         geometry.computeVertexNormals();
         geometry.uvsNeedUpdate = true;
-
+        console.log('COLOR FOR BOUNDARY REGION ::: ', this.__boundary.style.color);
         let material = new FloorMaterial3D({ color: this.__boundary.style.color, side: DoubleSide }, this.__boundary.style, this.__scene);
         let useGeometry = new BufferGeometry().fromGeometry(geometry);
 

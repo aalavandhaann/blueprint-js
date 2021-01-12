@@ -44,6 +44,7 @@
         "es6-enum": "^1.1.0",
         "file-save": "^0.2.0",
         "file-saver": "^2.0.5",
+        "fps-now": "^3.1.1",
         "gsap": "^3.5.0",
         "jszip": "^3.5.0",
         "line-intersect": "^2.2.1",

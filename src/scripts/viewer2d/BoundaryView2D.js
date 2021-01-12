@@ -55,7 +55,7 @@ export class BoundaryView2D extends BaseFloorplanViewElement2D {
             this.fill.texture = texture;
             this.fill.matrix = matrix;
         }
-        this.fill.color = new Color(this.__boundary.styleValue).getHex();
+        this.fill.color = new Color(this.__boundary.style.color).getHex();
         
         this.lineStyle(thickness, lineColor);
 
