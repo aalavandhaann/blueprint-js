@@ -50,6 +50,7 @@
         "parcel-bundler": "^1.12.4",
         "pixi-viewport": "^4.18.0",
         "pixi.js": "^5.3.3",
+        "point-in-polygon": "^1.0.1",
         "quicksettings": "^3.0.1",
         "three": "^0.118.3",
         "three-gltf-exporter": "0.0.1",

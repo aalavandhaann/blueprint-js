@@ -401,8 +401,23 @@ export class WallView2D extends BaseFloorplanViewElement2D {
         this.__drawPolygon(0x000000, 1.0);
     }
 
+    __getCornerLocation(vec2){
+        let s = this.__wall.start.location.clone();
+        let e = this.__wall.end.location.clone();
+        let vect = e.clone().sub(s);
+        let midPoint = s.clone().add(vect.clone().multiplyScalar(0.5));
+        let vectorSToMid = s.clone().sub(midPoint);
+        let vectorEToMid = e.clone().sub(midPoint);
+        let sNewLocation = vec2.clone().add(vectorSToMid);
+        let eNewLocation = vec2.clone().add(vectorEToMid);
+
+        return {start: sNewLocation, end: eNewLocation};
+    }
+
     __dragMove(evt) {
         super.__dragMove(evt);
+
+
         if (this.__isDragging) {
             let co = evt.data.getLocalPosition(this.parent);
             let cmCo = new Vector2(co.x, co.y);
@@ -431,6 +446,18 @@ export class WallView2D extends BaseFloorplanViewElement2D {
 
             if (!Configuration.getBooleanValue(dragOnlyX) && Configuration.getBooleanValue(dragOnlyY)) {
                 cmCo.x = this.__wall.location.x;
+            }
+
+            if(this.__floorplan.boundary){
+                if(this.__floorplan.boundary.isValid){
+                    let cornerPoints = this.__getCornerLocation(cmCo);
+                    if(
+                        !this.__floorplan.boundary.containsPoint(cornerPoints.start.x, cornerPoints.start.y) || 
+                        !this.__floorplan.boundary.containsPoint(cornerPoints.end.x, cornerPoints.end.y))
+                    {
+                        return;
+                    }
+                }
             }
 
             // this.__wall.move(cmCo.x, cmCo.y);

@@ -1,4 +1,4 @@
-import { EventDispatcher } from 'three';
+import { EventDispatcher, Vector2 } from 'three';
 import { Graphics } from 'pixi.js';
 import { EVENT_2D_SELECTED, EVENT_2D_UNSELECTED, EVENT_KEY_RELEASED, EVENT_KEY_PRESSED } from '../core/events';
 import { KeyboardListener2D } from './KeyboardManager2D';
@@ -8,7 +8,10 @@ export class BaseFloorplanViewElement2D extends Graphics {
     constructor(floorplan, options) {
         super();
         this.__floorplan = floorplan;
-        this.__options = options;
+        this.__options = {};
+        for (let opt in options){
+            this.__options[opt] = options[opt];
+        }
         this.__eventDispatcher = new EventDispatcher();
         this.__interactable = true;
         this.interactive = true;
@@ -60,9 +63,7 @@ export class BaseFloorplanViewElement2D extends Graphics {
     }
 
     __vectorToPixels(v) {
-        v.x = Dimensioning.cmToPixel(v.x);
-        v.y = Dimensioning.cmToPixel(v.y);
-        return v;
+        return new Vector2(Dimensioning.cmToPixel(v.x), Dimensioning.cmToPixel(v.y));
     }
 
     __drawSelectedState() {
@@ -78,6 +79,7 @@ export class BaseFloorplanViewElement2D extends Graphics {
     __click(evt) {
         this.selected = true; //!this.selected;
         this.__isDragging = true;
+        this.__dragStart(evt);
         this.__drawSelectedState();
         if (evt !== undefined) {
             evt.stopPropagation();
@@ -101,7 +103,9 @@ export class BaseFloorplanViewElement2D extends Graphics {
     }
     __dragStart(evt) {
         this.__isDragging = true;
-        evt.stopPropagation();
+        if(evt){
+            evt.stopPropagation();
+        }        
     }
 
     __dragEnd(evt) {
@@ -110,10 +114,10 @@ export class BaseFloorplanViewElement2D extends Graphics {
     }
 
     __dragMove(evt) {
-            if (this.__isDragging) {
-                evt.stopPropagation();
-            }
+        if (this.__isDragging) {
+            evt.stopPropagation();
         }
+    }
         /**
          * The below method is necessary if the remove event was
          * triggered from within this view class. For example, this view

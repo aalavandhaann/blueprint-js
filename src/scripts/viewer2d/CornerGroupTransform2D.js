@@ -9,8 +9,9 @@ import { Configuration, snapToGrid, snapTolerance } from "../core/configuration"
 
 
 class CornerGroupRectangle extends Graphics {
-    constructor(size, center) {
+    constructor(floorplan, size, center) {
         super();
+        this.__floorplan = floorplan;
         this.__size = size.clone();
         this.__center = center.clone();
         let halfSize = this.__size.clone().multiplyScalar(0.5);
@@ -36,15 +37,30 @@ class CornerGroupRectangle extends Graphics {
 
     translateByPosition(position) {
         let translateMatrix = new Matrix4().makeTranslation(position.x, position.y, 0);
+        let finalPoints = [];
         for (let i = 0; i < this.__vertices.length; i++) {
             //Reset current Scaling
             let co2 = this.__vertices[i].clone();
             let co = new Vector3(co2.x, co2.y, 0);
             // co = co.applyMatrix4(this.__currentRotationMatrix.clone().getInverse(this.__currentRotationMatrix.clone()));
             co = co.applyMatrix4(translateMatrix);
+            
+            if(this.__floorplan.boundary){
+                if(!this.__floorplan.boundary.containsPoint(Dimensioning.pixelToCm(co.x), Dimensioning.pixelToCm(co.y))){
+                    return;
+                }
+            }
+            finalPoints.push(co);
+        }   
+
+        for (let i =0;i < finalPoints.length;i++){
+            let co = finalPoints[i];
             this.__vertices[i].x = co.x;
             this.__vertices[i].y = co.y;
         }
+
+
+
         this.__center.y = this.__tr.y - this.__tl.y;
         this.__size.x = this.__tl.clone().sub(this.__tr).length();
         this.__size.y = this.__tl.clone().sub(this.__bl).length();
@@ -55,6 +71,7 @@ class CornerGroupRectangle extends Graphics {
     }
 
     rotateByRadians(radians) {
+        let finalPoints = [];
         let T = new Matrix4().makeTranslation(-this.__center.x, -this.__center.y, 0);
         let TInv = new Matrix4().makeTranslation(this.__center.x, this.__center.y, 0);
 
@@ -71,9 +88,23 @@ class CornerGroupRectangle extends Graphics {
             // co = co.applyMatrix4(this.__currentRotationMatrix.clone().getInverse(this.__currentRotationMatrix.clone()));
             co = co.applyMatrix4(resetRotationAboutOrigin);
             co = co.applyMatrix4(rotationAboutOrigin);
+
+
+            if(this.__floorplan.boundary){
+                if(!this.__floorplan.boundary.containsPoint(Dimensioning.pixelToCm(co.x), Dimensioning.pixelToCm(co.y))){
+                    return;
+                }
+            }
+            finalPoints.push(co);
+        }
+
+
+        for (let i =0;i < finalPoints.length;i++){
+            let co = finalPoints[i];
             this.__vertices[i].x = co.x;
             this.__vertices[i].y = co.y;
         }
+
 
         this.__currentRotationMatrix = rotationAboutOrigin.clone();
         this.__currentRadians = radians;
@@ -86,6 +117,9 @@ class CornerGroupRectangle extends Graphics {
     }
 
     scaleBySize(newWidth, newHeight, origin) {
+
+        let finalPoints = [];
+
         let scale = new Vector2(newWidth / this.__size.x, newHeight / this.__size.y);
         //Origin - The origin about which transformations happen
         let T = new Matrix4().makeTranslation(-origin.x, -origin.y, 0); //Translate to -origin of scaling
@@ -111,9 +145,24 @@ class CornerGroupRectangle extends Graphics {
             let co2 = this.__vertices[i].clone();
             let co = new Vector3(co2.x, co2.y, 0);
             co = co.applyMatrix4(transformMatrix);
+
+            if(this.__floorplan.boundary){
+                if(!this.__floorplan.boundary.containsPoint(Dimensioning.pixelToCm(co.x), Dimensioning.pixelToCm(co.y))){
+                    return;
+                }
+            }
+            finalPoints.push(co);
+            // this.__vertices[i].x = co.x;
+            // this.__vertices[i].y = co.y;
+        }
+
+
+        for (let i =0;i < finalPoints.length;i++){
+            let co = finalPoints[i];
             this.__vertices[i].x = co.x;
             this.__vertices[i].y = co.y;
         }
+
         this.__size.x = newWidth; //this.__tl.clone().sub(this.__tr).length();
         this.__size.y = newHeight; //this.__tl.clone().sub(this.__bl).length();
         this.__center = this.__br.clone().sub(this.__tl).multiplyScalar(0.5).add(this.__tl);
@@ -672,7 +721,7 @@ export class CornerGroupTransform2D extends Graphics {
             this.removeChild(this.__resizer);
         }
 
-        this.__resizer = new CornerGroupRectangle(this.__size, this.__center);
+        this.__resizer = new CornerGroupRectangle(this.__floorplan, this.__size, this.__center);
         // this.__resizer.position.set(this.__center.x, this.__center.y);
         this.addChild(this.__resizer);
         this.__setControlsPosition();

@@ -6,11 +6,23 @@ import { Configuration, snapTolerance, snapToGrid, dragOnlyX, dragOnlyY } from '
 import { isMobile } from 'detect-touch-device';
 
 
+
+// import {pointPolygon, pointBox} from 'intersects';
+
+
 export class CornerView2D extends BaseFloorplanViewElement2D {
     constructor(floorplan, options, corner) {
         super(floorplan, options);
+        this.__options['corner-radius'] = 12.5;
+        for (var opt in options) {
+            if (this.__options.hasOwnProperty(opt) && options.hasOwnProperty(opt)) {
+                this.__options[opt] = options[opt];
+            }
+        }
+
         this.__corner = corner;
         this.pivot.x = this.pivot.y = 0.5;
+        
         this.__cornerUpdateEvent = this.__updateWithModel.bind(this);
         this.__cornerDeletedEvent = this.__cornerDeleted.bind(this);
 
@@ -67,13 +79,24 @@ export class CornerView2D extends BaseFloorplanViewElement2D {
         this.position.y = yy;
     }
 
+    __dragStart(evt) {
+        super.__dragStart(evt);
+    }
+
     __dragMove(evt) {
         super.__dragMove(evt);
         if (this.__isDragging) {
             let co = evt.data.getLocalPosition(this.parent);
-            let cmCo = new Point(co.x, co.y);
+            let cmCo = new Point(co.x, co.y);            
+
             cmCo.x = Dimensioning.pixelToCm(cmCo.x);
             cmCo.y = Dimensioning.pixelToCm(cmCo.y);
+
+            if(this.__floorplan.boundary){
+                if(!this.__floorplan.boundary.containsPoint(cmCo.x, cmCo.y)){
+                    return;
+                }
+            }
 
             if (Configuration.getBooleanValue(snapToGrid) || this.__snapToGrid) {
                 cmCo.x = Math.floor(cmCo.x / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);

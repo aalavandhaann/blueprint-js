@@ -24,7 +24,7 @@ class BlueprintJS {
     constructor(options) {
         Configuration.setValue(configDimUnit, dimCentiMeter);
 
-        console.log('BLUEPRINT JS :: OPTIONS ::: ', options);
+        // console.log('BLUEPRINT JS :: OPTIONS ::: ', options);
 
         /**
          * @property {Object} options

@@ -13,6 +13,7 @@ import { Lights3D } from './lights3d.js';
 import { Physical3DItem } from './Physical3DItem.js';
 import { DragRoomItemsControl3D } from './DragRoomItemsControl3D.js';
 import { Configuration, viewBounds } from '../core/configuration.js';
+import { BoundaryView3D } from './BoundaryView3D.js';
 
 export class Viewer3D extends Scene {
     constructor(model, element, opts) {
@@ -59,6 +60,7 @@ export class Viewer3D extends Scene {
         this.__externalEdges3d = [];
         this.__externalFloors3d = [];
 
+        this.__boundaryRegion3D = null;
         this.__currentItemSelected = null;
 
         this.needsUpdate = true;
@@ -215,6 +217,19 @@ export class Viewer3D extends Scene {
 
     }
 
+
+    __drawBoundary(){
+        if(this.__boundaryRegion3D){
+            this.__boundaryRegion3D.removeFromScene();
+        }
+
+        if(this.floorplan.boundary){
+            if(this.floorplan.boundary.isValid){
+                this.__boundaryRegion3D = new BoundaryView3D(this, this.floorplan, this.__options, this.floorplan.boundary);
+            }            
+        }
+    }
+
     addRoomsAndWalls() {
         let scope = this;
         let i = 0;
@@ -234,6 +249,8 @@ export class Viewer3D extends Scene {
         scope.floors3d = [];
         let wallEdges = scope.floorplan.wallEdges();
         let rooms = scope.floorplan.getRooms();
+
+        this.__drawBoundary();
 
         // draw floors
         for (i = 0; i < rooms.length; i++) {
@@ -276,6 +293,8 @@ export class Viewer3D extends Scene {
 
         let wallEdges = scope.floorplan.externalWallEdges();
         let rooms = scope.floorplan.externalRooms;
+
+        this.__drawBoundary();
 
         // draw floors
         for (i = 0; i < rooms.length; i++) {

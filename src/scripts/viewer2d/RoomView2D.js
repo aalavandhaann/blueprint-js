@@ -80,13 +80,13 @@ export class RoomView2D extends BaseFloorplanViewElement2D {
     }
 
     __drawSelectedState() {
-        this.__drawPolygon(0x00BA8C, 0.4);
+        this.__drawPolygon(0x00BA8C, 1.0);
     }
     __drawHoveredOnState() {
-        this.__drawPolygon(0x008CBA, 0.4);
+        this.__drawPolygon(0x008CBA, 1.0);
     }
     __drawHoveredOffState() {
-        this.__drawPolygon(0xFEDAFF, 0.4);
+        this.__drawPolygon(0xFEDAFF, 1.0);
     }
 
     remove() {

@@ -14,6 +14,7 @@ import { Corner } from './corner.js';
 import { Wall } from './wall.js';
 import { Room } from './room.js';
 import { CornerGroups } from './cornergroups.js';
+import Boundary from './boundary.js';
 
 /** */
 export const defaultFloorPlanTolerance = 10.0;
@@ -48,6 +49,9 @@ export class Floorplan extends EventDispatcher {
          * @type {Room[]}
          */
         this.rooms = [];
+
+
+        this.__boundary = null;
 
         this.__externalCorners = [];
         this.__externalWalls = [];
@@ -583,6 +587,26 @@ export class Floorplan extends EventDispatcher {
             floorplans.carbonSheet['height'] = this.carbonSheet.height;
         }
 
+        if(this.__boundary){
+            if(this.__boundary.isValid){
+                let boundaryData = {};
+                let measurePoints = [];
+                for (let i =0;i < this.__boundary.points.length;i++){
+                    let cmPoint = this.__boundary.points[i];
+                    let measurePoint = {
+                        x: Dimensioning.cmToMeasureRaw(cmPoint.x), 
+                        y: Dimensioning.cmToMeasureRaw(cmPoint.y),
+                        elevation: Dimensioning.cmToMeasureRaw(cmPoint.elevation),
+                    };
+                    measurePoints.push(measurePoint);
+                }
+
+                boundaryData.points = measurePoints;
+                boundaryData.style = this.__boundary.style;
+                floorplans.boundary = boundaryData;
+            }
+        }
+
         floorplans.units = Configuration.getStringValue(configDimUnit);
 
         floorplans.newFloorTextures = this.floorTextures;
@@ -671,6 +695,25 @@ export class Floorplan extends EventDispatcher {
         if ('newFloorTextures' in floorplan) {
             this.floorTextures = floorplan.newFloorTextures;
         }
+
+        if('boundary' in floorplan){
+            if(floorplan.boundary.points){
+                let cmPoints = [];
+                for (let i =0;i < floorplan.boundary.points.length;i++){
+                    let point = floorplan.boundary.points[i];
+                    let cmPoint = {
+                        x: Dimensioning.cmFromMeasureRaw(point.x), 
+                        y: Dimensioning.cmFromMeasureRaw(point.y),
+                        elevation: Dimensioning.cmFromMeasureRaw(point.elevation),
+                    };
+                    cmPoints.push(cmPoint);
+                }
+
+                floorplan.boundary.points = cmPoints;
+                this.__boundary = new Boundary(this, floorplan.boundary);
+            }
+        }
+
         this.__updatesOn = true;
         this.metaroomsdata = floorplan.rooms;
         this.update();
@@ -779,6 +822,24 @@ export class Floorplan extends EventDispatcher {
                 newRoom.updateArea();
                 newRoom.isLocked = true;
                 this.__externalRooms.push(newRoom);
+            }
+        }
+
+        if('boundary' in floorplan){
+            if(floorplan.boundary.points){
+                let cmPoints = [];
+                for (let i =0;i < floorplan.boundary.points.length;i++){
+                    let point = floorplan.boundary.points[i];
+                    let cmPoint = {
+                        x: Dimensioning.cmFromMeasureRaw(point.x), 
+                        y: Dimensioning.cmFromMeasureRaw(point.y),
+                        elevation: Dimensioning.cmFromMeasureRaw(point.elevation),
+                    };
+                    cmPoints.push(cmPoint);
+                }
+
+                floorplan.boundary.points = cmPoints;
+                this.__boundary = new Boundary(this, floorplan.boundary);
             }
         }
 
@@ -1213,6 +1274,10 @@ export class Floorplan extends EventDispatcher {
 
     get externalRooms() {
         return this.__externalRooms;
+    }
+
+    get boundary(){
+        return this.__boundary;
     }
 }
 export default Floorplan;

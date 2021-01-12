@@ -66,6 +66,10 @@ let opts = {
         id: 'bp3djs-viewer2d',
         viewer2dOptions: {
             'corner-radius': 12.5,
+            'boundary-point-radius': 5.0,
+            'boundary-line-thickness': 2.0,
+            'boundary-point-color':'#030303',
+            'boundary-line-color':'#090909',
             pannable: true,
             zoomable: true,
             scale: false,

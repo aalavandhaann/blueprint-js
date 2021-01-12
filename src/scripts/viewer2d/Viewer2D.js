@@ -12,6 +12,7 @@ import { Configuration, snapToGrid, snapTolerance, viewBounds } from '../core/co
 import { IS_TOUCH_DEVICE } from '../../DeviceInfo';
 import { CornerGroupTransform2D } from './CornerGroupTransform2D';
 import Room from '../model/room';
+import { BoundaryView2D } from './BoundaryView2D';
 
 export const floorplannerModes = { MOVE: 0, DRAW: 1, EDIT_ISLANDS: 2 };
 
@@ -63,7 +64,22 @@ export class Viewer2D extends Application {
         super({ width: 512, height: 512, });
         this.__eventDispatcher = new EventDispatcher();
 
-        var opts = { 'corner-radius': 20, pannable: true, zoomable: true, dimlinecolor: '#3EDEDE', dimarrowcolor: '#000000', dimtextcolor: '#000000', scale: true, rotate: true, translate: true};
+        let opts = { 
+            'corner-radius': 20, 
+            'boundary-point-radius': 5.0,
+            'boundary-line-thickness': 1.0,
+            'boundary-point-color':'#D3D3D3',
+            'boundary-line-color':'#F3F3F3',
+            pannable: true, 
+            zoomable: true, 
+            dimlinecolor: '#3EDEDE', 
+            dimarrowcolor: '#000000', 
+            dimtextcolor: '#000000', 
+            scale: true, 
+            rotate: true, 
+            translate: true
+        };
+
         for (var opt in opts) {
             if (opts.hasOwnProperty(opt) && options.hasOwnProperty(opt)) {
                 opts[opt] = options[opt];
@@ -105,6 +121,8 @@ export class Viewer2D extends Application {
         this.__windowResizeEvent = this._handleWindowResize.bind(this);
         this.__resetFloorplanEvent = this.__resetFloorplan.bind(this);
 
+        this.__floorplanLoadedEvent = this.__drawBoundary.bind(this);
+
         this.__floorplanContainer = new Viewport({
             screenWidth: window.innerWidth,
             screenHeight: window.innerHeight,
@@ -115,13 +133,13 @@ export class Viewer2D extends Application {
 
         this.__snapToGrid = false;
         this.__keyboard = new KeyboardListener2D();
-        this.__keyListenerEvent = this.__keyListener.bind(this);
-        this.__keyboard.addEventListener(EVENT_KEY_RELEASED, this.__keyListenerEvent);
-        this.__keyboard.addEventListener(EVENT_KEY_PRESSED, this.__keyListenerEvent);
+        this.__keyListenerEvent = this.__keyListener.bind(this);        
 
         let origin = new Graphics();
         this.__floorplanElementsHolder = new Graphics();
+        this.__boundaryHolder = new Graphics();
         this.__grid2d = new Grid2D(this.view, options);
+        this.__boundaryRegion2D = null;
         this.__groupTransformer = new CornerGroupTransform2D(this.__floorplan, this.__options);
         this.__groupTransformer.visible = false;
         this.__groupTransformer.selected = null;
@@ -137,6 +155,7 @@ export class Viewer2D extends Application {
         this.__tempWall.visible = false;
 
         this.__floorplanContainer.addChild(this.__grid2d);
+        this.__floorplanContainer.addChild(this.__boundaryHolder);
         this.__floorplanContainer.addChild(this.__tempWall);
         this.__floorplanContainer.addChild(origin);
         this.__floorplanContainer.addChild(this.__floorplanElementsHolder);
@@ -157,6 +176,8 @@ export class Viewer2D extends Application {
             this.__floorplanContainer.plugins.pause('pinch');
         }
 
+        this.__keyboard.addEventListener(EVENT_KEY_RELEASED, this.__keyListenerEvent);
+        this.__keyboard.addEventListener(EVENT_KEY_PRESSED, this.__keyListenerEvent);
 
         this.__floorplanContainer.on('zoomed', this.__zoomedEvent);
         this.__floorplanContainer.on('moved', this.__pannedEvent);
@@ -180,7 +201,9 @@ export class Viewer2D extends Application {
         this.__floorplan.addEventListener(EVENT_MODE_RESET, this.__resetFloorplanEvent);
         this.__floorplan.addEventListener(EVENT_NEW, this.__redrawFloorplanEvent);
         this.__floorplan.addEventListener(EVENT_DELETED, this.__redrawFloorplanEvent);
-        // this.__floorplan.addEventListener(EVENT_LOADED, this.__redrawFloorplanEvent);
+
+        // this.__floorplan.addEventListener(EVENT_LOADED, this.__floorplanLoadedEvent);
+
         this.__floorplan.addEventListener(EVENT_NEW_ROOMS_ADDED, this.__redrawFloorplanEvent);
 
         this.__floorplan.addEventListener(EVENT_EXTERNAL_FLOORPLAN_LOADED, this.__drawExternalFloorplanEvent);
@@ -188,6 +211,20 @@ export class Viewer2D extends Application {
 
         window.addEventListener('resize', this.__windowResizeEvent);
         window.addEventListener('orientationchange', this.__windowResizeEvent);
+    }
+
+    __drawBoundary(){
+        // return;
+        if(this.__boundaryRegion2D){
+            this.__boundaryRegion2D.remove();
+        }
+
+        if(this.__floorplan.boundary){
+            if(this.__floorplan.boundary.isValid){
+                this.__boundaryRegion2D = new BoundaryView2D(this.__floorplan, this.__options, this.__floorplan.boundary);
+                this.__boundaryHolder.addChild(this.__boundaryRegion2D);
+            }            
+        }
     }
 
     __keyListener(evt) {
@@ -278,6 +315,12 @@ export class Viewer2D extends Application {
             if (Configuration.getBooleanValue(snapToGrid) || this.__snapToGrid) {
                 cmCo.x = Math.floor(cmCo.x / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
                 cmCo.y = Math.floor(cmCo.y / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
+            }
+
+            if(this.__floorplan.boundary){
+                if(!this.__floorplan.boundary.containsPoint(cmCo.x, cmCo.y)){
+                    return;
+                }
             }
 
             // This creates the corner already
@@ -427,6 +470,8 @@ export class Viewer2D extends Application {
             entity.remove();
         });
 
+        this.__drawBoundary();
+
         this.__corners2d = [];
         this.__walls2d = [];
         this.__rooms2d = [];
@@ -474,6 +519,7 @@ export class Viewer2D extends Application {
             entity.remove();
         });
 
+        this.__drawBoundary();
 
         this.__externalCorners2d = [];
         this.__externalWalls2d = [];
