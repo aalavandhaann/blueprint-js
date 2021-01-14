@@ -2,8 +2,8 @@ from mathutils import Vector;
 from Blueprint3DJSBPY.bp3dpy.core.utils import uid;
 
 class Corner():
-    def __init__(self, floorplan, x, y, elevation, id):
-        self.__id = id or uid();
+    def __init__(self, floorplan, x, y, elevation, idd=None):
+        self.__id = idd or uid();
         self.__floorplan = floorplan;
         self.__x = x;
         self.__y = y;
@@ -17,7 +17,7 @@ class Corner():
         self.__attachedRooms = [];
     
     def wallTo(self, corner):
-        for (wall in self.__wallStarts):
+        for wall in self.__wallStarts:
             if(wall.getEnd() == corner):
                 return wall;
         return None;

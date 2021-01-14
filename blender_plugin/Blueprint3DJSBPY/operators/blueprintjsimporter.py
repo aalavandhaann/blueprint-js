@@ -2,7 +2,9 @@ import bpy;
 import os;
 import zipfile;
 
+from Blueprint3DJSBPY.bp3dpy.core.utils import newCollection;
 from Blueprint3DJSBPY.bp3dpy.model.model import Model;
+from Blueprint3DJSBPY.bp3dpy.blender.blenderscene import BlenderSceneViewer;
 
 class BlueprintJSImporterOperator(bpy.types.Operator):
     bl_idname = "bp3djs.blueprintjsimporter"
@@ -30,9 +32,20 @@ class BlueprintJSImporterOperator(bpy.types.Operator):
 
         zip_file.extractall(zip_extract_path);
 
-        design_json_file = os.path.abspath(os.path.join(zip_extract_path, 'design.blueprint3d'));
-        
+        design_json_file = os.path.abspath(os.path.join(zip_extract_path, 'design.blueprint3d'));        
         model.loadSerialized(design_json_file);
+
+        # collection = bpy.data.collections.get('blueprint-js');
+        # if(collection):
+        #     # context.scene.collection.children.unlink(collection);
+        #     bpy.data.collections.remove(collection, do_unlink=True, do_id_user=True, do_ui_user=True);
+        # collection = bpy.data.collections.new('blueprint-js');
+
+        collection = newCollection('blueprint-js');
+        context.scene.collection.children.link(collection);
+        # collection.name = 'blueprint-js';
+
+        blenderscene = BlenderSceneViewer(context, model, context.scene, collection, zip_extract_path);
 
         return zip_file;
 

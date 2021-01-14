@@ -1,4 +1,5 @@
 from Blueprint3DJSBPY.bp3dpy.model.half_edge import HalfEdge;
+from mathutils import Vector;
 
 class Room():
     def __init__(self, name, floorplan, corners):
@@ -6,12 +7,17 @@ class Room():
         self.__floorplan = floorplan;
         self.__corners = corners;
         self.__walls = [];
+        self.__interiorCorners = [];
+        self.__interiorCorners3D = [];
         self.__edgePointer = None;
 
-        for corner in self.__corners:
-            corner.attachRoom(self);
+        self.__floorRectangleSize = None;
 
-    
+        self.updateWalls();
+        self.updateInteriorCorners();
+
+        for corner in self.__corners:
+            corner.attachRoom(self);    
 
     def updateWalls(self):
         prevEdge = None;
@@ -55,17 +61,52 @@ class Room():
         self.__edgePointer = firstEdge;
 
     def updateInteriorCorners(self):
+        minB, maxB = Vector((1e10, 1e10)), Vector((-1e10, -1e10));
         self.__interiorCorners = [];
-        
+        edge = self.__edgePointer;
+        iterateWhile = True;
+        while(iterateWhile):
+            iStart = edge.interiorStart();
+            cStart = edge.getStart();
 
+            minB.x = min(iStart.x, minB.x);
+            minB.y = min(iStart.y, minB.y);
+            maxB.x = max(maxB.x, iStart.x);
+            maxB.y = max(maxB.y, iStart.y);
+
+            self.__interiorCorners.append(iStart);
+            self.__interiorCorners3D.append(Vector((iStart.x, iStart.y, cStart.elevation)));
+            if(edge.next == self.__edgePointer):
+                break;
+            else:
+                edge = edge.next;
+
+        self.__floorRectangleSize = maxB - minB;
 
     def getUuid(self):
         cornerIds = [corner.id for corner in self.__corners];
         cornerIds = sorted(cornerIds);
         return ','.join(cornerIds);
 
+    def getTexture(self):
+        uuid = self.getUuid();
+        tex = self.__floorplan.getFloorTexture(uuid);
+        return tex;
 
+    @property
+    def floorRectangleSize(self):
+        return self.__floorRectangleSize;
 
     @property
     def edgePointer(self):
         return self.__edgePointer;
+
+    @property
+    def interiorCorners(self):
+        return self.__interiorCorners;
+    
+    @property
+    def interiorCorners3D(self):
+        return self.__interiorCorners3D;
+
+    

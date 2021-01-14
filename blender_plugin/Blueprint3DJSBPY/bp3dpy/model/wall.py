@@ -1,14 +1,14 @@
 from Blueprint3DJSBPY.bp3dpy.core.utils import uid;
 
 class Wall():
-    def __init__(self, thickness, startCorner, endCorner, id):
+    def __init__(self, thickness, startCorner, endCorner, idd=None):
 
         self.__name = 'Wall';
         self.__thickness = thickness;
         self.__start = startCorner;
         self.__end = endCorner;
 
-        self.__id = id or uid();
+        self.__id = idd or uid();
 
         self.__start.attachStart(self);
         self.__end.attachEnd(self);
@@ -23,6 +23,12 @@ class Wall():
     
     def addRoom(self, room):
         self.__attachedRooms.append(room);
+
+    def getStart(self):
+        return self.start;
+    
+    def getEnd(self):
+        return self.end;
 
     @property
     def name(self):
@@ -82,3 +88,15 @@ class Wall():
     @backTexture.setter
     def backTexture(self, texture):
         self.__backTexture = texture;
+
+    @property
+    def startElevation(self):
+        if (self.start):
+            return self.start.elevation;
+        return 0.0;
+
+    @property
+    def endElevation(self):
+        if (self.end):
+            return self.end.elevation;
+        return 0.0;

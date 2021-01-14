@@ -30,6 +30,7 @@ class Floorplan():
         
         if(floorplan.get('units')):
             currentUnit = floorplan.get('units');
+            print('SET UNIT SYSTEM TO ', currentUnit);
             if(currentUnit == dimInch):
                 Configuration.setValue(configDimUnit, dimInch);
             elif(currentUnit == dimFeetAndInch):
@@ -48,11 +49,11 @@ class Floorplan():
 
         for k in corners.keys():
             cornerData = corners[k];
-            x, y, elevation = Dimensioning.cmFromMeasureRaw(cornerData.get('x')), Dimensioning.cmFromMeasureRaw(cornerData.get('y')), Dimensioning.cmFromMeasureRaw(cornerData.get('elevation'));
+            # x, y, elevation = Dimensioning.cmFromMeasureRaw(cornerData.get('x')), Dimensioning.cmFromMeasureRaw(cornerData.get('y')), Dimensioning.cmFromMeasureRaw(cornerData.get('elevation'));
+            x, y, elevation = cornerData.get('x'), cornerData.get('y'), cornerData.get('elevation');
             corner = Corner(self, x, y, elevation, k);
             cornersById[corner.id] = corner;
             self.__corners.append(corner);
-            print('CORNER : ', corner);
 
         walls = floorplan.get('walls');
 
@@ -60,7 +61,8 @@ class Floorplan():
             startCorner, endCorner = cornersById[wallData.get('corner1')], cornersById[wallData.get('corner2')];
             frontTexture, backTexture = wallData.get('frontTexture'), wallData.get('backTexture');
             thickness = wallData.get('thickness');
-            wall = Wall(thickness, startCorner, endCorner, id);
+            # thickness = 0.2;#Testing purposes
+            wall = Wall(thickness, startCorner, endCorner);
             wall.frontTexture = frontTexture;
             wall.backTexture = backTexture;
             self.__walls.append(wall);
@@ -77,6 +79,21 @@ class Floorplan():
             if(roomTexture):
                 self.__floorTextures[room.getUuid()] = roomTexture;
     
+    def getFloorTexture(self, uuid):
+        if(uuid in self.__floorTextures.keys()):
+            floorTexture = self.__floorTextures[uuid];
+            if(floorTexture['colormap']):
+                return floorTexture;
+        return None;
+
+    def wallEdges(self):
+        edges = [];
+        for wall in self.__walls:
+            if(wall.frontEdge):
+                edges.append(wall.frontEdge);
+            if(wall.backEdge):
+                edges.append(wall.backEdge);
+        return edges;
 
     @property
     def corners(self):
