@@ -47786,24 +47786,29 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
     value: function getDimensions(center) {
       center = center || false; // otherwise, get size
 
-      var xMin = Infinity;
-      var xMax = -Infinity;
-      var zMin = Infinity;
-      var zMax = -Infinity;
+      var infinity = 1.0e10;
+      var xMin = infinity;
+      var xMax = -infinity;
+      var zMin = infinity;
+      var zMax = -infinity;
       this.corners.forEach(function (corner) {
-        if (corner.x < xMin) xMin = corner.x;
-        if (corner.x > xMax) xMax = corner.x;
-        if (corner.y < zMin) zMin = corner.y;
-        if (corner.y > zMax) zMax = corner.y;
-      });
+        xMin = Math.min(xMin, corner.x);
+        xMax = Math.max(xMax, corner.x);
+        zMin = Math.min(zMin, corner.y);
+        zMax = Math.max(zMax, corner.y); // if (corner.x < xMin) xMin = corner.x;
+        // if (corner.x > xMax) xMax = corner.x;
+        // if (corner.y < zMin) zMin = corner.y;
+        // if (corner.y > zMax) zMax = corner.y;
+      }); // console.log(xMin, xMax, zMin, zMax);        
+
       var ret;
 
-      if (xMin === Infinity || xMax === -Infinity || zMin === Infinity || zMax === -Infinity) {
+      if (xMin === infinity || xMax === -infinity || zMin === infinity || zMax === -infinity) {
         ret = new _three.Vector3();
       } else {
         if (center) {
           // center
-          ret = new _three.Vector3((xMin + xMax) * 0.5, 0, (zMin + zMax) * 0.5);
+          ret = new _three.Vector3(xMin + (xMax - xMin) * 0.5, 0, zMin + (zMax - zMin) * 0.5);
         } else {
           // size
           ret = new _three.Vector3(xMax - xMin, 0, zMax - zMin);
@@ -61256,8 +61261,8 @@ var BoundaryView3D = /*#__PURE__*/function (_Mesh) {
       geometry.faceVertexUvs[1] = geometry.faceVertexUvs[0];
       geometry.computeFaceNormals();
       geometry.computeVertexNormals();
-      geometry.uvsNeedUpdate = true;
-      console.log('COLOR FOR BOUNDARY REGION ::: ', this.__boundary.style.color);
+      geometry.uvsNeedUpdate = true; // console.log('COLOR FOR BOUNDARY REGION ::: ', this.__boundary.style.color);
+
       var material = new _FloorMaterial3D.FloorMaterial3D({
         color: this.__boundary.style.color,
         side: _three.DoubleSide
@@ -117681,7 +117686,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
     _this2.__drawExternalFloorplanEvent = _this2.__drawExternalFloorplan.bind(_assertThisInitialized(_this2));
     _this2.__windowResizeEvent = _this2._handleWindowResize.bind(_assertThisInitialized(_this2));
     _this2.__resetFloorplanEvent = _this2.__resetFloorplan.bind(_assertThisInitialized(_this2));
-    _this2.__floorplanLoadedEvent = _this2.__drawBoundary.bind(_assertThisInitialized(_this2));
+    _this2.__floorplanLoadedEvent = _this2.__center.bind(_assertThisInitialized(_this2));
     _this2.__floorplanContainer = new _pixiViewport.Viewport({
       screenWidth: window.innerWidth,
       screenHeight: window.innerHeight,
@@ -117763,12 +117768,13 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
     _this2.__floorplanContainer.on('touchmove', _this2.__drawModeMouseMoveEvent); // this.__floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.__redrawFloorplan(evt));
 
 
+    _this2.__floorplan.addEventListener(_events.EVENT_LOADED, _this2.__floorplanLoadedEvent);
+
     _this2.__floorplan.addEventListener(_events.EVENT_MODE_RESET, _this2.__resetFloorplanEvent);
 
     _this2.__floorplan.addEventListener(_events.EVENT_NEW, _this2.__redrawFloorplanEvent);
 
-    _this2.__floorplan.addEventListener(_events.EVENT_DELETED, _this2.__redrawFloorplanEvent); // this.__floorplan.addEventListener(EVENT_LOADED, this.__floorplanLoadedEvent);
-
+    _this2.__floorplan.addEventListener(_events.EVENT_DELETED, _this2.__redrawFloorplanEvent);
 
     _this2.__floorplan.addEventListener(_events.EVENT_NEW_ROOMS_ADDED, _this2.__redrawFloorplanEvent);
 
@@ -117778,6 +117784,8 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
     window.addEventListener('orientationchange', _this2.__windowResizeEvent);
 
     _this2._handleWindowResize();
+
+    _this2.__center();
 
     return _this2;
   }
@@ -118044,6 +118052,22 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
 
         this.__currentSelection = item;
       }
+    }
+  }, {
+    key: "__center",
+    value: function __center() {
+      var floorplanCenter = this.__floorplan.getCenter();
+
+      var zoom = this.__floorplanContainer.scale.x;
+      var windowSize = new _three.Vector2(this.__currentWidth, this.__currentHeight);
+      var bounds = _dimensioning.Dimensioning.cmToPixel(_configuration.Configuration.getNumericValue(_configuration.viewBounds)) * zoom; // console.log(windowSize.x, windowSize.y);
+
+      var x = windowSize.x * 0.5 - floorplanCenter.x * 0.5; // - (bounds*0.5);
+
+      var y = windowSize.y * 0.5 - floorplanCenter.z * 0.5; // - (bounds*0.5);
+
+      this.__floorplanContainer.x = x;
+      this.__floorplanContainer.y = y; // console.log(x, y, floorplanCenter);
     }
   }, {
     key: "__zoomed",

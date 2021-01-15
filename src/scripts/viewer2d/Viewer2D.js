@@ -1,6 +1,6 @@
 import { Application, Graphics, Text } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
-import { Vector2, EventDispatcher } from 'three';
+import { Vector2, EventDispatcher, CompressedPixelFormat } from 'three';
 import { EVENT_NEW, EVENT_DELETED, EVENT_LOADED, EVENT_2D_SELECTED, EVENT_NEW_ROOMS_ADDED, EVENT_KEY_RELEASED, EVENT_KEY_PRESSED, EVENT_WALL_2D_CLICKED, EVENT_CORNER_2D_CLICKED, EVENT_ROOM_2D_CLICKED, EVENT_NOTHING_2D_SELECTED, EVENT_MOVED, EVENT_MODE_RESET, EVENT_EXTERNAL_FLOORPLAN_LOADED } from '../core/events';
 import { Grid2D } from './Grid2d';
 import { CornerView2D } from './CornerView2D';
@@ -126,7 +126,7 @@ export class Viewer2D extends Application {
         this.__windowResizeEvent = this._handleWindowResize.bind(this);
         this.__resetFloorplanEvent = this.__resetFloorplan.bind(this);
 
-        this.__floorplanLoadedEvent = this.__drawBoundary.bind(this);
+        this.__floorplanLoadedEvent = this.__center.bind(this);
 
         this.__floorplanContainer = new Viewport({
             screenWidth: window.innerWidth,
@@ -202,12 +202,11 @@ export class Viewer2D extends Application {
 
         // this.__floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.__redrawFloorplan(evt));
 
+        this.__floorplan.addEventListener(EVENT_LOADED, this.__floorplanLoadedEvent);
 
         this.__floorplan.addEventListener(EVENT_MODE_RESET, this.__resetFloorplanEvent);
         this.__floorplan.addEventListener(EVENT_NEW, this.__redrawFloorplanEvent);
         this.__floorplan.addEventListener(EVENT_DELETED, this.__redrawFloorplanEvent);
-
-        // this.__floorplan.addEventListener(EVENT_LOADED, this.__floorplanLoadedEvent);
 
         this.__floorplan.addEventListener(EVENT_NEW_ROOMS_ADDED, this.__redrawFloorplanEvent);
 
@@ -218,6 +217,8 @@ export class Viewer2D extends Application {
         window.addEventListener('orientationchange', this.__windowResizeEvent);
 
         this._handleWindowResize();
+
+        this.__center();
     }
 
     __drawBoundary(){
@@ -422,6 +423,19 @@ export class Viewer2D extends Application {
             }
             this.__currentSelection = item;
         }
+    }
+
+    __center(){
+        let floorplanCenter = this.__floorplan.getCenter();
+        let zoom = this.__floorplanContainer.scale.x;
+        let windowSize = new Vector2(this.__currentWidth, this.__currentHeight); 
+        let bounds = Dimensioning.cmToPixel(Configuration.getNumericValue(viewBounds)) * zoom;
+        // console.log(windowSize.x, windowSize.y);
+        let x = (windowSize.x * 0.5)-(floorplanCenter.x*0.5);// - (bounds*0.5);
+        let y = (windowSize.y * 0.5)-(floorplanCenter.z*0.5);// - (bounds*0.5);
+        this.__floorplanContainer.x = x;
+        this.__floorplanContainer.y = y;
+        // console.log(x, y, floorplanCenter);
     }
 
     __zoomed() {

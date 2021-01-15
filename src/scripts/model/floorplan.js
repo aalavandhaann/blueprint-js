@@ -971,24 +971,29 @@ export class Floorplan extends EventDispatcher {
      */
     getDimensions(center) {
         center = center || false; // otherwise, get size
-
-        var xMin = Infinity;
-        var xMax = -Infinity;
-        var zMin = Infinity;
-        var zMax = -Infinity;
+        let infinity = 1.0e10;
+        let xMin = infinity;
+        let xMax = -infinity;
+        let zMin = infinity;
+        let zMax = -infinity;
         this.corners.forEach((corner) => {
-            if (corner.x < xMin) xMin = corner.x;
-            if (corner.x > xMax) xMax = corner.x;
-            if (corner.y < zMin) zMin = corner.y;
-            if (corner.y > zMax) zMax = corner.y;
+            xMin = Math.min(xMin, corner.x);
+            xMax = Math.max(xMax, corner.x);
+            zMin = Math.min(zMin, corner.y);
+            zMax = Math.max(zMax, corner.y);
+            // if (corner.x < xMin) xMin = corner.x;
+            // if (corner.x > xMax) xMax = corner.x;
+            // if (corner.y < zMin) zMin = corner.y;
+            // if (corner.y > zMax) zMax = corner.y;
         });
-        var ret;
-        if (xMin === Infinity || xMax === -Infinity || zMin === Infinity || zMax === -Infinity) {
+        // console.log(xMin, xMax, zMin, zMax);        
+        let ret;
+        if (xMin === infinity || xMax === -infinity || zMin === infinity || zMax === -infinity) {
             ret = new Vector3();
         } else {
             if (center) {
                 // center
-                ret = new Vector3((xMin + xMax) * 0.5, 0, (zMin + zMax) * 0.5);
+                ret = new Vector3(xMin + ((xMax - xMin)* 0.5), 0, zMin + ((zMax - zMin) * 0.5));
             } else {
                 // size
                 ret = new Vector3((xMax - xMin), 0, (zMax - zMin));
