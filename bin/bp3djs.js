@@ -47697,6 +47697,7 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
       });
       this.corners = [];
       this.walls = [];
+      this.rooms = [];
       this.__externalRooms = [];
       this.__externalCorners = [];
       this.__externalWalls = [];

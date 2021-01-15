@@ -898,6 +898,8 @@ export class Floorplan extends EventDispatcher {
         });
         this.corners = [];
         this.walls = [];
+        this.rooms = [];
+        this.metaroomsdata = {};
         this.__externalRooms = [];
         this.__externalCorners = [];
         this.__externalWalls = [];
