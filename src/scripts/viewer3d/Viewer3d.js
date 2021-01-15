@@ -18,12 +18,22 @@ import { BoundaryView3D } from './BoundaryView3D.js';
 export class Viewer3D extends Scene {
     constructor(model, element, opts) {
         super();
-        let options = { occludedRoofs: false, occludedWalls: false, resize: true, pushHref: false, spin: true, spinSpeed: .00002, clickPan: true, canMoveFixedItems: false };
+        let options = { 
+            occludedRoofs: false, 
+            occludedWalls: false, 
+            resize: true, 
+            pushHref: false, 
+            spin: true, 
+            spinSpeed: .00002, 
+            clickPan: true, 
+            canMoveFixedItems: false };
         for (let opt in options) {
             if (options.hasOwnProperty(opt) && opts.hasOwnProperty(opt)) {
                 options[opt] = opts[opt];
             }
         }
+
+        // console.log('VIEWER 3D ::: ', options);
 
         this.__physicalRoomItems = [];
         this.__enabled = true;
@@ -332,21 +342,15 @@ export class Viewer3D extends Scene {
     }
 
     updateWindowSize() {
-        var scope = this;
+        let heightMargin = this.domElement.offsetTop;
+        let widthMargin = this.domElement.offsetLeft;
+        let elementWidth = (this.__options.resize) ? window.innerWidth - widthMargin : this.domElement.clientWidth;
+        let elementHeight = (this.__options.resize) ? window.innerHeight - heightMargin : this.domElement.clientHeight;
 
-        scope.heightMargin = scope.domElement.offsetTop;
-        scope.widthMargin = scope.domElement.offsetLeft;
-        scope.elementWidth = scope.domElement.clientWidth;
-
-        if (scope.__options.resize) {
-            scope.elementHeight = window.innerHeight - scope.heightMargin;
-        } else {
-            scope.elementHeight = scope.domElement.clientHeight;
-        }
-        scope.camera.aspect = scope.elementWidth / scope.elementHeight;
-        scope.camera.updateProjectionMatrix();
-        scope.renderer.setSize(scope.elementWidth, scope.elementHeight);
-        scope.needsUpdate = true;
+        this.camera.aspect = elementWidth / elementHeight;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(elementWidth, elementHeight);
+        this.needsUpdate = true;
     }
 
     render() {

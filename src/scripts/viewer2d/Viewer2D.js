@@ -77,7 +77,8 @@ export class Viewer2D extends Application {
             dimtextcolor: '#000000', 
             scale: true, 
             rotate: true, 
-            translate: true
+            translate: true,
+            resize: true,
         };
 
         for (var opt in opts) {
@@ -85,6 +86,8 @@ export class Viewer2D extends Application {
                 opts[opt] = options[opt];
             }
         }
+
+        // console.log('VIEWER 2D ::: ', opts);
         this.__mode = floorplannerModes.MOVE;
         this.__canvasHolder = document.getElementById(canvasHolder);
         this.__floorplan = floorplan;
@@ -105,6 +108,8 @@ export class Viewer2D extends Application {
 
         this.__worldWidth = 3000;
         this.__worldHeight = 3000;
+        this.__currentWidth = 500;
+        this.__currentHeight = 500;
         this.__currentSelection = null;
 
         this.__zoomedEvent = this.__zoomed.bind(this);
@@ -211,6 +216,8 @@ export class Viewer2D extends Application {
 
         window.addEventListener('resize', this.__windowResizeEvent);
         window.addEventListener('orientationchange', this.__windowResizeEvent);
+
+        this._handleWindowResize();
     }
 
     __drawBoundary(){
@@ -434,7 +441,8 @@ export class Viewer2D extends Application {
         let topleft = new Vector2((-(bounds*0.5)), (-(bounds*0.5)));
         let bottomright = new Vector2(((bounds*0.5)), ((bounds*0.5)));
         
-        let windowSize = new Vector2(window.innerWidth, window.innerHeight);        
+        // let windowSize = new Vector2(window.innerWidth, window.innerHeight);
+        let windowSize = new Vector2(this.__currentWidth, this.__currentHeight);        
       
         let xValue = Math.min(-topleft.x, xy.x);
         let yValue = Math.min(-topleft.y, xy.y);
@@ -553,10 +561,20 @@ export class Viewer2D extends Application {
 
     /** */
     _handleWindowResize() {
-        let w = window.innerWidth;
-        let h = window.innerHeight;
+
+        let heightMargin = this.__canvasHolder.offsetTop;
+        let widthMargin = this.__canvasHolder.offsetLeft;
+
+        let w = (this.__options.resize)? window.innerWidth - widthMargin : this.__canvasHolder.clientWidth;
+        let h = (this.__options.resize)? window.innerHeight - heightMargin : this.__canvasHolder.clientHeight;
+        
+        this.__currentWidth = w;
+        this.__currentHeight = h;
+
         this.renderer.resize(w, h);
         this.__floorplanContainer.resize(w, h, this.__worldWidth, this.__worldHeight);
+
+
         this.renderer.render(this.stage);
         this.__zoomed();
         this.__panned();

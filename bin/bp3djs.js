@@ -177,7 +177,7 @@ var TEXTURE_DEFAULT_REPEAT = 300;
 exports.TEXTURE_DEFAULT_REPEAT = TEXTURE_DEFAULT_REPEAT;
 var defaultWallTexture = {
   color: '#FFFFFF',
-  repeat: 300,
+  repeat: TEXTURE_DEFAULT_REPEAT,
   normalmap: 'textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_normal.jpg',
   roughnessmap: 'textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_roughness.jpg',
   colormap: 'textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_basecolor.jpg',
@@ -186,8 +186,8 @@ var defaultWallTexture = {
 };
 exports.defaultWallTexture = defaultWallTexture;
 var defaultFloorTexture = {
-  reflective: 0.5,
   color: '#FFFFFF',
+  emissive: '#181818',
   repeat: TEXTURE_DEFAULT_REPEAT,
   ambientmap: 'textures/Floor/Marble_Tiles_001/Marble_Tiles_001_ambientOcclusion.jpg',
   colormap: 'textures/Floor/Marble_Tiles_001/Marble_Tiles_001_basecolor.jpg',
@@ -36411,7 +36411,7 @@ if (typeof __THREE_DEVTOOLS__ !== 'undefined') {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.EVENT_PARAMETRIC_GEOMETRY_UPATED = exports.EVENT_UPDATE_TEXTURES = exports.EVENT_KEY_RELEASED = exports.EVENT_KEY_PRESSED = exports.EVENT_ROOM_2D_HOVER = exports.EVENT_WALL_2D_HOVER = exports.EVENT_CORNER_2D_HOVER = exports.EVENT_ROOM_2D_DOUBLE_CLICKED = exports.EVENT_WALL_2D_DOUBLE_CLICKED = exports.EVENT_CORNER_2D_DOUBLE_CLICKED = exports.EVENT_NOTHING_2D_SELECTED = exports.EVENT_2D_SELECTED = exports.EVENT_2D_UNSELECTED = exports.EVENT_ROOM_2D_CLICKED = exports.EVENT_WALL_2D_CLICKED = exports.EVENT_CORNER_2D_CLICKED = exports.EVENT_ROOM_ATTRIBUTES_CHANGED = exports.EVENT_WALL_ATTRIBUTES_CHANGED = exports.EVENT_CORNER_ATTRIBUTES_CHANGED = exports.EVENT_NEW_ROOMS_ADDED = exports.EVENT_ROOM_NAME_CHANGED = exports.EVENT_NOTHING_CLICKED = exports.EVENT_FLOOR_CLICKED = exports.EVENT_ROOM_CLICKED = exports.EVENT_WALL_CLICKED = exports.EVENT_FPS_EXIT = exports.EVENT_CAMERA_VIEW_CHANGE = exports.EVENT_CAMERA_ACTIVE_STATUS = exports.EVENT_CAMERA_MOVED = exports.EVENT_MODE_RESET = exports.EVENT_NO_ITEM_SELECTED = exports.EVENT_ITEM_HOVEROFF = exports.EVENT_ITEM_HOVERON = exports.EVENT_ITEM_MOVE_FINISH = exports.EVENT_ITEM_MOVE = exports.EVENT_ITEM_SELECTED = exports.EVENT_ITEM_REMOVED = exports.EVENT_ITEM_LOADED = exports.EVENT_ITEM_LOADING = exports.EVENT_NEW_ITEM = exports.EVENT_NEW_PARAMETRIC_ITEM = exports.EVENT_GLTF_READY = exports.EVENT_CHANGED = exports.EVENT_SAVED = exports.EVENT_UPDATED = exports.EVENT_LOADING = exports.EVENT_LOADED = exports.EVENT_NEW = exports.EVENT_REDRAW = exports.EVENT_MOVED = exports.EVENT_DELETED = exports.EVENT_ACTION = void 0;
+exports.EVENT_PARAMETRIC_GEOMETRY_UPATED = exports.EVENT_UPDATE_TEXTURES = exports.EVENT_KEY_RELEASED = exports.EVENT_KEY_PRESSED = exports.EVENT_ROOM_2D_HOVER = exports.EVENT_WALL_2D_HOVER = exports.EVENT_CORNER_2D_HOVER = exports.EVENT_ROOM_2D_DOUBLE_CLICKED = exports.EVENT_WALL_2D_DOUBLE_CLICKED = exports.EVENT_CORNER_2D_DOUBLE_CLICKED = exports.EVENT_NOTHING_2D_SELECTED = exports.EVENT_2D_SELECTED = exports.EVENT_2D_UNSELECTED = exports.EVENT_ROOM_2D_CLICKED = exports.EVENT_WALL_2D_CLICKED = exports.EVENT_CORNER_2D_CLICKED = exports.EVENT_ROOM_ATTRIBUTES_CHANGED = exports.EVENT_WALL_ATTRIBUTES_CHANGED = exports.EVENT_CORNER_ATTRIBUTES_CHANGED = exports.EVENT_NEW_ROOMS_ADDED = exports.EVENT_ROOM_NAME_CHANGED = exports.EVENT_NOTHING_CLICKED = exports.EVENT_FLOOR_CLICKED = exports.EVENT_ROOM_CLICKED = exports.EVENT_WALL_CLICKED = exports.EVENT_FPS_EXIT = exports.EVENT_CAMERA_VIEW_CHANGE = exports.EVENT_CAMERA_ACTIVE_STATUS = exports.EVENT_CAMERA_MOVED = exports.EVENT_MODE_RESET = exports.EVENT_NO_ITEM_SELECTED = exports.EVENT_ITEM_HOVEROFF = exports.EVENT_ITEM_HOVERON = exports.EVENT_ITEM_MOVE_FINISH = exports.EVENT_ITEM_MOVE = exports.EVENT_ITEM_SELECTED = exports.EVENT_ITEM_REMOVED = exports.EVENT_ITEM_LOADED = exports.EVENT_ITEM_LOADING = exports.EVENT_NEW_ITEM = exports.EVENT_NEW_PARAMETRIC_ITEM = exports.EVENT_EXTERNAL_FLOORPLAN_LOADED = exports.EVENT_GLTF_READY = exports.EVENT_CHANGED = exports.EVENT_SAVED = exports.EVENT_UPDATED = exports.EVENT_LOADING = exports.EVENT_LOADED = exports.EVENT_NEW = exports.EVENT_REDRAW = exports.EVENT_MOVED = exports.EVENT_DELETED = exports.EVENT_ACTION = void 0;
 var EVENT_ACTION = 'ACTION_EVENT';
 exports.EVENT_ACTION = EVENT_ACTION;
 var EVENT_DELETED = 'DELETED_EVENT';
@@ -36434,6 +36434,8 @@ var EVENT_CHANGED = 'CHANGED_EVENT';
 exports.EVENT_CHANGED = EVENT_CHANGED;
 var EVENT_GLTF_READY = 'GLTF_READY_EVENT';
 exports.EVENT_GLTF_READY = EVENT_GLTF_READY;
+var EVENT_EXTERNAL_FLOORPLAN_LOADED = 'EXTERNAL_FLOORPLAN_LOADED_EVENT';
+exports.EVENT_EXTERNAL_FLOORPLAN_LOADED = EVENT_EXTERNAL_FLOORPLAN_LOADED;
 var EVENT_NEW_PARAMETRIC_ITEM = 'NEW_PARAMETRIC_ITEM_EVENT';
 exports.EVENT_NEW_PARAMETRIC_ITEM = EVENT_NEW_PARAMETRIC_ITEM;
 var EVENT_NEW_ITEM = 'NEW_ITEM_EVENT';
@@ -36522,7 +36524,7 @@ exports.EVENT_PARAMETRIC_GEOMETRY_UPATED = EVENT_PARAMETRIC_GEOMETRY_UPATED;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Configuration = exports.cornerTolerance = exports.wallInformation = exports.config = exports.boundsY = exports.boundsX = exports.snapTolerance = exports.dragOnlyY = exports.dragOnlyX = exports.directionalDrag = exports.snapToGrid = exports.gridSpacing = exports.scale = exports.configSystemUI = exports.configWallThickness = exports.configWallHeight = exports.configDimUnit = void 0;
+exports.Configuration = exports.cornerTolerance = exports.wallInformation = exports.config = exports.viewBounds = exports.boundsY = exports.boundsX = exports.snapTolerance = exports.dragOnlyY = exports.dragOnlyX = exports.directionalDrag = exports.snapToGrid = exports.gridSpacing = exports.scale = exports.configSystemUI = exports.configWallThickness = exports.configWallHeight = exports.configDimUnit = void 0;
 
 var _constants = require("./constants.js");
 
@@ -36589,20 +36591,24 @@ exports.boundsX = boundsX;
 var boundsY = 'boundsY'; //In CMS
 
 exports.boundsY = boundsY;
+var viewBounds = 'viewBounds'; //In CMS
+
+exports.viewBounds = viewBounds;
 var config = {
   dimUnit: _constants.dimCentiMeter,
   wallHeight: 250,
   wallThickness: 20,
   systemUI: false,
   scale: 1,
-  snapToGrid: false,
+  snapToGrid: true,
   dragOnlyX: false,
   dragOnlyY: false,
-  snapTolerance: 50,
+  snapTolerance: 25,
   gridSpacing: 50,
-  directionalDrag: false,
+  directionalDrag: true,
   boundsX: 500,
-  boundsY: 500
+  boundsY: 500,
+  viewBounds: 5000
 };
 exports.config = config;
 var wallInformation = {
@@ -36659,13 +36665,14 @@ var Configuration = /*#__PURE__*/function (_EventDispatcher) {
     key: "setValue",
     value: function setValue(key, value) {
       //		this.data[key] = value;
-      config[key] = value;
+      config[key] = value; // if(key !== viewBounds){
+
       Configuration.getInstance().dispatchEvent({
         type: _events.EVENT_CHANGED,
         item: Configuration.getInstance(),
         'key': key,
         'value': value
-      });
+      }); // }        
     }
     /** Get a string configuration parameter. */
 
@@ -36695,6 +36702,7 @@ var Configuration = /*#__PURE__*/function (_EventDispatcher) {
         case gridSpacing:
         case boundsX:
         case boundsY:
+        case viewBounds:
           //			return Number(this.data[key]);
           return Number(Configuration.getData()[key]);
 
@@ -36913,7 +36921,7 @@ var Utils = /*#__PURE__*/function () {
       var tParam = tDot / tLenSq;
       var tXx, tYy;
 
-      if (tParam < 0 || start.x == end.x && start.y == end.y) {
+      if (tParam < 0 || start.x === end.x && start.y === end.y) {
         tXx = start.x;
         tYy = start.y;
       } else if (tParam > 1) {
@@ -37056,7 +37064,7 @@ var Utils = /*#__PURE__*/function () {
         var tC1 = tNewPoints[tI];
         var tC2;
 
-        if (tI == tNewPoints.length - 1) {
+        if (tI === tNewPoints.length - 1) {
           tC2 = tNewPoints[0];
         } else {
           tC2 = tNewPoints[tI + 1];
@@ -37089,7 +37097,7 @@ var Utils = /*#__PURE__*/function () {
         var tFirstCorner = firstCorners[tI],
             tSecondCorner;
 
-        if (tI == firstCorners.length - 1) {
+        if (tI === firstCorners.length - 1) {
           tSecondCorner = firstCorners[0];
         } else {
           tSecondCorner = firstCorners[tI + 1];
@@ -37111,7 +37119,7 @@ var Utils = /*#__PURE__*/function () {
         var tFirstCorner = corners[tI],
             tSecondCorner;
 
-        if (tI == corners.length - 1) {
+        if (tI === corners.length - 1) {
           tSecondCorner = corners[0];
         } else {
           tSecondCorner = corners[tI + 1];
@@ -37220,7 +37228,7 @@ var Utils = /*#__PURE__*/function () {
         var tFirstCorner = corners[tI],
             tSecondCorner;
 
-        if (tI == corners.length - 1) {
+        if (tI === corners.length - 1) {
           tSecondCorner = corners[0];
         } else {
           tSecondCorner = corners[tI + 1];
@@ -37232,7 +37240,7 @@ var Utils = /*#__PURE__*/function () {
       } // odd intersections means the point is in the polygon
 
 
-      return tIntersects % 2 == 1;
+      return tIntersects % 2 === 1;
     }
     /** Checks if all corners of insideCorners are inside the polygon described by outsideCorners */
 
@@ -37368,6 +37376,45 @@ var Utils = /*#__PURE__*/function () {
         return Utils.hasValue(subArray, el);
       });
     }
+  }, {
+    key: "point2Dto3D",
+    value: function point2Dto3D(point2D) {
+      var elevation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+      return new _three.Vector3(point2D.x, elevation, point2D.y);
+    }
+  }, {
+    key: "point3Dto2D",
+    value: function point3Dto2D(point2D) {
+      return new _three.Vector2(point2D.x, point2D.z);
+    }
+  }, {
+    key: "barycentricFromCartesian",
+    value: function barycentricFromCartesian(triangle, point) {
+      //Vector ab
+      var ab = triangle[1].clone().sub(triangle[0]);
+      var ac = triangle[2].clone().sub(triangle[0]);
+      var ap = point.clone().sub(triangle[0]);
+      var dotAB = ab.dot(ab);
+      var dotAC = ac.dot(ac);
+      var dotABAC = ac.dot(ab);
+      var dotAPAB = ap.dot(ab);
+      var dotAPAC = ap.dot(ac); //Area of triangle ABC
+
+      var areaABAC = dotAB * dotAC - dotABAC * dotABAC;
+      var v = (dotAC * dotAPAB - dotABAC * dotAPAC) / areaABAC;
+      var w = (dotAB * dotAPAC - dotABAC * dotAPAB) / areaABAC;
+      var u = 1.0 - v - w;
+      return new _three.Vector3(u, v, w);
+    }
+  }, {
+    key: "cartesianFromBarycenter",
+    value: function cartesianFromBarycenter(triangle, uvw) {
+      var a = triangle[0].clone();
+      var b = triangle[1].clone();
+      var c = triangle[2].clone();
+      var cartesian = a.multiplyScalar(uvw.x).add(b.multiplyScalar(uvw.y).add(c.multiplyScalar(uvw.z)));
+      return cartesian;
+    }
   }]);
 
   return Utils;
@@ -37438,6 +37485,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Dimensioning = exports.dimensioningOptions = exports.cmPerPixel = exports.pixelsPerCm = exports.pixelsPerFoot = exports.cmPerFoot = exports.decimals = void 0;
 
+var _three = require("three");
+
 var _configuration = require("./configuration.js");
 
 var _constants = require("./constants.js");
@@ -37469,6 +37518,30 @@ var Dimensioning = /*#__PURE__*/function () {
   }
 
   _createClass(Dimensioning, null, [{
+    key: "cmToPixelVector2D",
+    value: function cmToPixelVector2D(cmV2d) {
+      var pixelV2d = new _three.Vector2(Dimensioning.cmToPixel(cmV2d.x), Dimensioning.cmToPixel(cmV2d.y));
+      return pixelV2d;
+    }
+  }, {
+    key: "cmToPixelVector3D",
+    value: function cmToPixelVector3D(cmV3d) {
+      var pixelV2d = new _three.Vector3(Dimensioning.cmToPixel(cmV3d.x), Dimensioning.cmToPixel(cmV3d.y), Dimensioning.cmToPixel(cmV3d.z));
+      return pixelV2d;
+    }
+  }, {
+    key: "pixelToCmVector2D",
+    value: function pixelToCmVector2D(pixelV2d) {
+      var cmV2d = new _three.Vector2(Dimensioning.cmToPixel(pixelV2d.x), Dimensioning.cmToPixel(pixelV2d.y));
+      return cmV2d;
+    }
+  }, {
+    key: "pixelToCmVector3D",
+    value: function pixelToCmVector3D(pixel3d) {
+      var cmV2d = new _three.Vector3(Dimensioning.cmToPixel(pixel3d.x), Dimensioning.cmToPixel(pixel3d.y), Dimensioning.cmToPixel(pixel3d.z));
+      return cmV2d;
+    }
+  }, {
     key: "cmToPixel",
     value: function cmToPixel(cm) {
       var apply_scale = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
@@ -37621,7 +37694,7 @@ var Dimensioning = /*#__PURE__*/function () {
 }();
 
 exports.Dimensioning = Dimensioning;
-},{"./configuration.js":"q2Ih","./constants.js":"XniJ"}],"ytID":[function(require,module,exports) {
+},{"three":"lKFo","./configuration.js":"q2Ih","./constants.js":"XniJ"}],"ytID":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -37694,8 +37767,6 @@ var _events = require("../core/events.js");
 var _utils = require("../core/utils.js");
 
 var _constants = require("../core/constants.js");
-
-var _three2 = require("three/build/three.module");
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -37772,7 +37843,7 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
      * @type {Room}
      **/
 
-    _this.room = room;
+    _this.room = room || null;
     /** 
      *  Reference to a Wall instance
      * @property {Wall} room Reference to a Wall instance
@@ -37816,7 +37887,8 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
      * @see https://threejs.org/docs/#api/en/objects/Mesh
      */
 
-    _this.plane = null;
+    _this.__plane = null;
+    _this.__exteriorPlane = null;
     /**
      * The interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall
      * @property {Matrix4} interiorTransform The interior transformation matrix that contains the homogeneous transformation of the plane based on the two corner positions of the wall
@@ -37856,14 +37928,25 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
 
     _this.redrawCallbacks = null;
     /**
+     * Is this an orphan edge?
+     */
+
+    _this.__isOrphan = false;
+    /**
      * Is this is the front edge or the back edge
      * @property {boolean} front Is this is the front edge or the back edge
      * @type {boolean}
      */
 
     _this.front = front || false;
+    _this.__vertices = null;
+    _this.__normal = null; //new Vector3(0, 0, 0);
+
+    _this.__mathPlane = null;
     _this.offset = wall.thickness / 2.0;
     _this.height = wall.height;
+    _this.__wallMovedEvent = _this.__wallMoved.bind(_assertThisInitialized(_this));
+    _this.__wallUpdatedEvent = _this.__wallUpdated.bind(_assertThisInitialized(_this));
 
     if (_this.front) {
       _this.wall.frontEdge = _assertThisInitialized(_this);
@@ -37871,36 +37954,44 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
       _this.wall.backEdge = _assertThisInitialized(_this);
     }
 
-    var scope = _assertThisInitialized(_this);
+    _this.wall.addEventListener(_events.EVENT_MOVED, _this.__wallMovedEvent);
 
-    _this.wall.addEventListener(_events.EVENT_MOVED, function () {
-      scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
-      scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
-      scope.dispatchEvent({
-        type: _events.EVENT_REDRAW,
-        item: scope
-      });
-    });
-
-    _this.wall.addEventListener(_events.EVENT_UPDATED, function () {
-      scope.offset = scope.wall.thickness * 0.5;
-      scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
-      scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
-      scope.dispatchEvent({
-        type: _events.EVENT_REDRAW,
-        item: scope
-      });
-    });
+    _this.wall.addEventListener(_events.EVENT_UPDATED, _this.__wallUpdatedEvent);
 
     return _this;
   }
-  /**
-   * Two separate textures are used for the walls. Based on which side of the wall this {HalfEdge} refers the texture is returned
-   * @return {Object} front/back Two separate textures are used for the walls. Based on which side of the wall this {@link HalfEdge} refers the texture is returned
-   */
-
 
   _createClass(HalfEdge, [{
+    key: "__wallMoved",
+    value: function __wallMoved(evt) {
+      var scope = this; // scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
+      // scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
+
+      this.generatePlane();
+      scope.dispatchEvent({
+        type: _events.EVENT_REDRAW,
+        item: scope
+      });
+    }
+  }, {
+    key: "__wallUpdated",
+    value: function __wallUpdated(evt) {
+      var scope = this;
+      scope.offset = scope.wall.thickness * 0.5; // scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
+      // scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
+
+      this.generatePlane();
+      scope.dispatchEvent({
+        type: _events.EVENT_REDRAW,
+        item: scope
+      });
+    }
+    /**
+     * Two separate textures are used for the walls. Based on which side of the wall this {HalfEdge} refers the texture is returned
+     * @return {Object} front/back Two separate textures are used for the walls. Based on which side of the wall this {@link HalfEdge} refers the texture is returned
+     */
+
+  }, {
     key: "getTexture",
     value: function getTexture() {
       if (this.front) {
@@ -37985,52 +38076,88 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
     value: function transformCorner(corner) {
       return new _three.Vector3(corner.x, 0, corner.y);
     }
+  }, {
+    key: "generatePlane",
+    value: function generatePlane() {
+      this.__plane = this.__generateEdgePlane(true, this.__plane); // this.__exteriorPlane = this.__plane;
+      // if (this.wall.start.getAttachedRooms().length < 2 || this.wall.end.getAttachedRooms().length < 2) {
+      //     this.__exteriorPlane = this.__generateEdgePlane(false, this.__exteriorPlane);
+      // }
+      // else{
+      //     this.__exteriorPlane = null;
+      // }
+    }
     /**
      * This generates the invisible planes in the scene that are used for interesection testing for the wall items
      */
 
   }, {
-    key: "generatePlane",
-    value: function generatePlane() {
+    key: "__generateEdgePlane",
+    value: function __generateEdgePlane() {
+      var interior = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+      var plane = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       var geometry = new _three.Geometry();
-      var v1 = this.transformCorner(this.interiorStart());
-      var v2 = this.transformCorner(this.interiorEnd());
+      var v1 = null;
+      var v2 = null;
+
+      if (interior) {
+        v1 = this.transformCorner(this.interiorEnd());
+        v2 = this.transformCorner(this.interiorStart());
+      } else {
+        v1 = this.transformCorner(this.exteriorStart());
+        v2 = this.transformCorner(this.exteriorEnd());
+      }
+
       var v3 = v2.clone();
-      var v4 = v1.clone(); // v3.y = this.wall.height;
+      var v4 = v1.clone();
+      var ab = null;
+      var ac = null; // v3.y = this.wall.height;
       // v4.y = this.wall.height;
 
       v3.y = this.wall.startElevation;
       v4.y = this.wall.endElevation;
-      geometry.vertices = [v1, v2, v3, v4];
-      geometry.faces.push(new _three.Face3(0, 1, 2));
-      geometry.faces.push(new _three.Face3(0, 2, 3));
+      ab = v2.clone().sub(v1);
+      ac = v3.clone().sub(v1);
+      this.__vertices = [v1, v2, v3, v4];
+      this.__normal = ab.cross(ac).normalize().negate();
+      this.__mathPlane = new _three.Plane();
+
+      this.__mathPlane.setFromNormalAndCoplanarPoint(this.__normal.clone(), this.__vertices[0].clone());
+
+      geometry.vertices = [v1, v2, v3, v4]; // geometry.faces.push(new Face3(0, 1, 2));
+      // geometry.faces.push(new Face3(0, 2, 3));
+
+      geometry.faces.push(new _three.Face3(2, 1, 0));
+      geometry.faces.push(new _three.Face3(3, 2, 0));
       geometry.computeFaceNormals();
       geometry.computeBoundingBox();
 
-      if (!this.plane) {
-        this.plane = new _three.Mesh(new _three2.BufferGeometry().fromGeometry(geometry), new _three.MeshBasicMaterial({
+      if (!plane) {
+        plane = new _three.Mesh(new _three.BufferGeometry().fromGeometry(geometry), new _three.MeshBasicMaterial({
           visible: true
         }));
       } else {
-        this.plane.geometry = this.plane.geometry.fromGeometry(geometry);
+        plane.geometry.dispose();
+        plane.geometry = new _three.BufferGeometry().fromGeometry(geometry); //this.__plane.geometry.fromGeometry(geometry);
       } //The below line was originally setting the plane visibility to false
       //Now its setting visibility to true. This is necessary to be detected
       //with the raycaster objects to click walls and floors.
 
 
-      this.plane.visible = true;
-      this.plane.edge = this; // js monkey patch
+      plane.visible = true;
+      plane.edge = this; // js monkey patch
 
-      this.plane.wall = this.wall;
-      this.plane.geometry.computeBoundingBox();
-      this.plane.geometry.computeFaceNormals();
+      plane.wall = this.wall;
+      plane.geometry.computeBoundingBox();
+      plane.geometry.computeFaceNormals();
       this.computeTransforms(this.interiorTransform, this.invInteriorTransform, this.interiorStart(), this.interiorEnd());
       this.computeTransforms(this.exteriorTransform, this.invExteriorTransform, this.exteriorStart(), this.exteriorEnd());
       var b3 = new _three.Box3();
-      b3.setFromObject(this.plane);
+      b3.setFromObject(plane);
       this.min = b3.min.clone();
       this.max = b3.max.clone();
       this.center = this.max.clone().sub(this.min).multiplyScalar(0.5).add(this.min);
+      return plane;
     }
     /**
      * Calculate the transformation matrix for the edge (front/back) baesd on the parameters. 
@@ -38171,8 +38298,19 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "interiorStart",
     value: function interiorStart() {
-      var vec = this.halfAngleVector(this.prev, this);
-      return new _three.Vector2(this.getStart().x + vec.x, this.getStart().y + vec.y); // return {x:this.getStart().x + vec.x, y:this.getStart().y + vec.y};
+      var debug = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+      if (debug) {
+        console.log('*************************');
+        console.log('CALCULATE INTERIOR START');
+      }
+
+      var vec = this.interiorPointByEdges(this.prev, this, debug); //this.interiorPoint(this.prev, true);//        
+
+      vec = vec.multiplyScalar(0.5);
+      return this.getStart().location.clone().add(vec); // let vec = this.halfAngleVector(this.prev, this);
+      // return new Vector2(this.getStart().x + vec.x, this.getStart().y + vec.y);
+      // return {x:this.getStart().x + vec.x, y:this.getStart().y + vec.y};
     }
     /**
      * Return the 2D interior location that is at the end. 
@@ -38184,20 +38322,19 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "interiorEnd",
     value: function interiorEnd() {
-      var vec = this.halfAngleVector(this, this.next);
-      return new _three.Vector2(this.getEnd().x + vec.x, this.getEnd().y + vec.y); // return {x:this.getEnd().x + vec.x, y:this.getEnd().y + vec.y};
-    }
-    /**
-     * Return the 2D exterior location that is at the end. 
-     * @return {Vector2} Return an object with attributes x, y
-     * @see https://threejs.org/docs/#api/en/math/Vector2
-     */
+      var debug = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
-  }, {
-    key: "exteriorEnd",
-    value: function exteriorEnd() {
-      var vec = this.halfAngleVector(this, this.next);
-      return new _three.Vector2(this.getEnd().x - vec.x, this.getEnd().y - vec.y);
+      if (debug) {
+        console.log('*************************');
+        console.log('CALCULATE INTERIOR END');
+      }
+
+      var vec = this.interiorPointByEdges(this, this.next, debug); //this.interiorPoint(this.next, false);//
+
+      vec = vec.multiplyScalar(0.5);
+      return this.getEnd().location.clone().add(vec); // let vec = this.halfAngleVector(this, this.next);
+      // return new Vector2(this.getEnd().x + vec.x, this.getEnd().y + vec.y);
+      // return {x:this.getEnd().x + vec.x, y:this.getEnd().y + vec.y};
     }
     /**
      * Return the 2D exterior location that is at the start. 
@@ -38208,8 +38345,30 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "exteriorStart",
     value: function exteriorStart() {
-      var vec = this.halfAngleVector(this.prev, this);
-      return new _three.Vector2(this.getStart().x - vec.x, this.getStart().y - vec.y);
+      var debug = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+      var vec = this.interiorPointByEdges(this.prev, this); //this.interiorPoint(this.prev, true);//
+
+      vec = vec.multiplyScalar(-0.5);
+      return this.getStart().location.clone().add(vec); // let vec = this.halfAngleVector(this.prev, this);
+      // return new Vector2(this.getStart().x - vec.x, this.getStart().y - vec.y);
+      // return new Vector2(this.getStart().x, this.getStart().y);
+    }
+    /**
+     * Return the 2D exterior location that is at the end. 
+     * @return {Vector2} Return an object with attributes x, y
+     * @see https://threejs.org/docs/#api/en/math/Vector2
+     */
+
+  }, {
+    key: "exteriorEnd",
+    value: function exteriorEnd() {
+      var debug = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+      var vec = this.interiorPointByEdges(this, this.next); //this.interiorPoint(this.next, false);//
+
+      vec = vec.multiplyScalar(-0.5);
+      return this.getEnd().location.clone().add(vec); // let vec = this.halfAngleVector(this, this.next);
+      // return new Vector2(this.getEnd().x - vec.x, this.getEnd().y - vec.y);
+      // return new Vector2(this.getEnd().x, this.getEnd().y);
     }
     /**
      * Return the 2D exterior location that is at the center/middle. 
@@ -38257,39 +38416,276 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
     key: "corners",
     value: function corners() {
       return [this.interiorStart(), this.interiorEnd(), this.exteriorEnd(), this.exteriorStart()];
-    } //	curvedCorners()
-    //	{
-    //		if(this.wall)
-    //		{
-    //			var curves = [];
-    //			var o = new Vector2(0, 0);
-    //			var s = this.wall.start.location;
-    //			var e = this.wall.end.location;
-    //			
-    ////			var avect = this.wall.a.clone().sub(this.wall.start);
-    ////			var bvect = this.wall.b.clone().sub(this.wall.start);
-    //			
-    //			var sevect = s.clone().sub(e).normalize();
-    //			var se90plus = sevect.clone().rotateAround(o, 3.14*0.5).multiplyScalar(this.wall.thickness*0.5);
-    //			var se90minus = sevect.clone().rotateAround(o, -3.14*0.5).multiplyScalar(this.wall.thickness*0.5);
-    //			
-    //			var s1 = se90plus.clone().add(s);
-    //			var e1 = se90plus.clone().add(e);
-    //			var e2 = se90minus.clone().add(e);
-    //			var s2 = se90minus.clone().add(s);
-    //			
-    //			curves.push([s1]);
-    //			curves.push([this.wall.a.clone().add(se90plus), this.wall.b.clone().add(se90plus), e1]);
-    //			curves.push([e2]);
-    //			curves.push([this.wall.b.clone().add(se90minus), this.wall.a.clone().add(se90minus), s2]);
-    ////			curves.push([s2]);
-    //			
-    //			
-    //			return curves;			
-    //		}
-    //		return [];
-    //	}
+    }
+  }, {
+    key: "interiorPointByEdges",
+    value: function interiorPointByEdges(v1, v2) {
+      var debug = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
+      if (!v1 || !v2) {
+        // throw new Error('Need a valid next or previous edge');            
+        console.warn('Need a valid next or previous edge');
+        return this.halfAngleVector(v1, v2).multiplyScalar(2.0);
+      }
+
+      var u = null,
+          v = null,
+          w = null,
+          u3 = null,
+          v3 = null,
+          w3 = null,
+          axis3 = null;
+      var dot = 0;
+      var angle_u_v_w = 0.0;
+      u = v1.getEnd().location.clone().sub(v1.getStart().location).normalize();
+      v = v2.getEnd().location.clone().sub(v2.getStart().location).normalize();
+      u = u.multiplyScalar(v2.wall.thickness);
+      v = v.multiplyScalar(v1.wall.thickness);
+      w = u.clone().add(v);
+      u3 = new _three.Vector3(u.x, u.y, 0.0);
+      v3 = new _three.Vector3(v.x, v.y, 0.0);
+      w3 = new _three.Vector3(w.x, w.y, 0.0);
+      axis3 = u3.clone().normalize().cross(v3.clone().normalize());
+
+      if (axis3.z < 0) {
+        v = v.negate(); //.multiplyScalar(-1);            
+      } else {
+        u = u.negate(); //.multiplyScalar(-1);
+      }
+
+      u3.x = u.x;
+      u3.y = u.y;
+      v3.x = v.x;
+      v3.y = v.y;
+      dot = u.clone().normalize().dot(v.clone().normalize());
+
+      if (dot < 0.0) {
+        var uvAngle = Math.acos(dot);
+        var offsetTheta = uvAngle - Math.PI * 0.5;
+        var v_temp = v.clone();
+
+        if (dot < 1e-6 - 1.0) {
+          u3.x += 1e-4;
+          u3.y += 1e-4;
+          v3.x += 1e-4;
+          v3.y += 1e-4;
+          axis3 = u3.clone().normalize().cross(v3.clone().normalize()).negate().normalize();
+        }
+
+        v3 = v3.clone().applyAxisAngle(axis3.clone().normalize(), offsetTheta);
+        v.x = v3.x;
+        v.y = v3.y;
+
+        if (debug) {
+          console.log('AXIS OF ROTATION ::: ', axis3);
+          console.log('U VECTOR ::: ', u);
+          console.log('V BEFORE ::: ', v_temp);
+          console.log('V AFTER ::: ', v);
+          console.log('DOT PRODUCT ::: ', dot);
+          console.log('ANGLE UV ::: ', uvAngle * 180 / Math.PI);
+          console.log('OFFSET THETA ::: ', offsetTheta * 180 / Math.PI);
+        }
+      }
+
+      w = u.clone().add(v);
+
+      if (debug) {
+        console.log('==============================================');
+        console.log('F :: ', u);
+        console.log('G :: ', v);
+        console.log('F FORCE :: ', u.length());
+        console.log('G FORCE :: ', v.length());
+        console.log('DOT PRODUCT VALUE  :: ', dot);
+        console.log('ANGLE BETWEEN F AND G  :: ', Math.acos(dot) * 180.0 / Math.PI);
+        console.log('VECTOR ADDITION W LENGTH :: ', w.length());
+        console.log('----------------------------------------------');
+      }
+
+      return w;
+    }
+    /**
+         * This is the resultant of two forces at obtuse angles (angle > 90)
+         * So implement the cosine law for the actual vector calculation;
+    */
+
+  }, {
+    key: "interiorPointByEdges_V2",
+    value: function interiorPointByEdges_V2(v1, v2) {
+      var debug = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+      if (!v1 || !v2) {
+        // throw new Error('Need a valid next or previous edge');            
+        // console.warn('Need a valid next or previous edge');
+        return this.halfAngleVector(v1, v2).multiplyScalar(2.0);
+      }
+
+      var f = null,
+          g = null,
+          o_f = null,
+          o_g = null,
+          w = null,
+          f3 = null,
+          g3 = null,
+          axis3 = null;
+      var dot = 0,
+          abs_dot = 0.0,
+          dot_acos = 0.0,
+          abs_dot_acos = 0.0,
+          magnitude = 0.0,
+          theta = 0.0;
+      f = v1.getEnd().location.clone().sub(v1.getStart().location).normalize();
+      g = v2.getEnd().location.clone().sub(v2.getStart().location).normalize();
+      o_f = f.clone();
+      o_g = g.clone();
+      dot = f.dot(g);
+      abs_dot = -dot; //Equivalent to 180 - degrees(math.cos(dot))
+
+      if (dot > 1.0 - 1e-6 || dot < 1e-6 - 1.0) {
+        w = f.clone().normalize().multiplyScalar(Math.min(v2.wall.thickness, v1.wall.thickness));
+        w = w.rotateAround(new _three.Vector2(0, 0), -Math.PI * 0.5);
+
+        if (debug) {
+          console.log('DOT PRODUCT TRIGGER ', dot);
+        }
+
+        return w;
+      }
+
+      f3 = new _three.Vector3(f.x, f.y, 0.0);
+      g3 = new _three.Vector3(g.x, g.y, 0.0);
+      axis3 = f3.clone().cross(g3); // if(axis3.z < 0){
+      //     f = f.negate();//.multiplyScalar(-1);
+      // }
+      // else{
+      //     g = g.negate();//.multiplyScalar(-1);
+      // }
+
+      f = f.multiplyScalar(v2.wall.thickness);
+      g = g.multiplyScalar(v1.wall.thickness);
+      o_f = o_f.multiplyScalar(v2.wall.thickness);
+      o_g = o_g.multiplyScalar(v1.wall.thickness);
+      dot_acos = Math.acos(dot);
+      abs_dot_acos = Math.acos(abs_dot); // magnitude = Math.sqrt((Math.pow(f.length(),2) + Math.pow(g.length(), 2)) + (2 * f.length() * g.length() * abs_dot));
+
+      magnitude = Math.pow(Math.pow(f.length(), 2) + Math.pow(g.length(), 2) + 2 * f.length() * g.length() * abs_dot, 0.5);
+      theta = Math.asin(g.length() * Math.sin(abs_dot_acos) / magnitude);
+      w = f.clone().rotateAround(new _three.Vector2(), -theta).normalize().multiplyScalar(magnitude);
+
+      if (debug) {
+        var w3 = f3.clone().add(g3);
+        var angle3 = w3.angleTo(f3);
+        console.log('==============================================');
+        console.log('F :: ', f);
+        console.log('G :: ', g);
+        console.log('F FORCE :: ', f.length());
+        console.log('G FORCE :: ', g.length());
+        console.log('DOT PRODUCT VALUE  :: ', dot);
+        console.log('ABS DOT PRODUCT VALUE  :: ', abs_dot);
+        console.log('ANGLE ::: ', angle3 * 180.0 / Math.PI);
+        console.log('ANGLE3 (sum f + g) ', theta * 180.0 / Math.PI);
+        console.log('CROSS AXIS :: ', axis3);
+        console.log('MAGNITUDE VALUE : ', magnitude);
+        console.log('VECTOR ADDITION W LENGTH :: ', w.length());
+        console.log('----------------------------------------------');
+      }
+
+      return w;
+    }
+    /**
+     * 
+     * @param {HalfEdge} v1 
+     * @param {HalfEdge} v2 
+     * @description Get the point inside the room for interior ends Calculation
+     * @returns {Vector2}
+     */
+
+  }, {
+    key: "interiorPointByEdgesOLD",
+    value: function interiorPointByEdgesOLD(v1, v2) {
+      var directionSelf = null,
+          directionOther = null;
+
+      if (!v1 || !v2) {
+        if (!v1) {
+          directionSelf = this.getEnd().location.clone().sub(this.getStart().location).normalize();
+          directionSelf = directionSelf.multiplyScalar(this.wall.thickness);
+          directionSelf = directionSelf.rotateAround(new _three.Vector2(), -0.785398); //Rotate by 45 degrees CW
+        } else if (!v2) {
+          directionSelf = this.getStart().location.clone().sub(this.getEnd().location).normalize();
+          directionSelf = directionSelf.multiplyScalar(this.wall.thickness);
+          directionSelf = directionSelf.rotateAround(new _three.Vector2(), 0.785398); //Rotate by 45 degrees CW
+        }
+
+        return directionSelf;
+      }
+
+      var d1 = null,
+          d2 = null;
+      var dot = 0;
+      d1 = v1.getEnd().location.clone().sub(v1.getStart().location).normalize();
+      d2 = v2.getStart().location.clone().sub(v2.getEnd().location).normalize();
+      dot = d1.dot(d2);
+
+      if (dot > 1.0 - 1e-6 || dot < 1e-6 - 1.0) {
+        var maxThickness = Math.max(v1.wall.thickness, v2.wall.thickness);
+        d1 = d1.multiplyScalar(maxThickness);
+        d2 = d2.multiplyScalar(maxThickness);
+      } else {
+        d1 = d1.multiplyScalar(v2.wall.thickness);
+        d2 = d2.multiplyScalar(v1.wall.thickness);
+      }
+
+      return d1.add(d2); // directionSelf = v2.getEnd().location.clone().sub(v2.getStart().location).normalize();
+      // directionOther = v1.getStart().location.clone().sub(v1.getEnd().location).normalize();
+      // directionOther = directionOther.multiplyScalar(v2.wall.thickness);
+      // directionSelf = directionSelf.multiplyScalar(v1.wall.thickness);
+      // return directionSelf.add(directionOther);
+    }
+    /**
+     * 
+     * @param {HalfEdge} v1 
+     * @param {HalfEdge} v2 
+     * @description Get the point inside the room for interior ends Calculation
+     * @returns {Vector2}
+     */
+
+  }, {
+    key: "interiorPoint",
+    value: function interiorPoint(nextOrPrev) {
+      var isFromStart = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+      var directionOther = null,
+          directionSelf = null;
+
+      if (!nextOrPrev) {
+        if (isFromStart) {
+          directionSelf = this.getEnd().location.clone().sub(this.getStart().location).normalize();
+          directionSelf = directionSelf.multiplyScalar(this.wall.thickness);
+          directionSelf = directionSelf.rotateAround(new _three.Vector2(), -0.785398); //Rotate by 45 degrees CW
+        } else {
+          directionSelf = this.getStart().location.clone().sub(this.getEnd().location).normalize();
+          directionSelf = directionSelf.multiplyScalar(this.wall.thickness);
+          directionSelf = directionSelf.rotateAround(new _three.Vector2(), 0.785398); //Rotate by 45 degrees CW
+        }
+
+        return directionSelf;
+      }
+
+      if (isFromStart) {
+        directionSelf = this.getEnd().location.clone().sub(this.getStart().location).normalize(); // Two connected edges have their end corners that will be either start or end in one, 
+        // and vice-versa for the other one
+
+        directionOther = nextOrPrev.getStart().location.clone().sub(nextOrPrev.getEnd().location).normalize();
+      } else {
+        directionSelf = this.getStart().location.clone().sub(this.getEnd().location).normalize(); // Two connected edges have their end corners that will be either start or end in one, 
+        // and vice-versa for the other one
+
+        directionOther = nextOrPrev.getEnd().location.clone().sub(nextOrPrev.getStart().location).normalize();
+      }
+
+      directionOther = directionOther.multiplyScalar(this.wall.thickness);
+      directionSelf = directionSelf.multiplyScalar(nextOrPrev.wall.thickness);
+      return directionSelf.add(directionOther);
+    }
     /**
      * Gets CCW angle from v1 to v2
      * @param {Vector2} v1 The point a
@@ -38347,14 +38743,49 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
 
       var mag = _utils.Utils.distance(new _three.Vector2(0, 0), new _three.Vector2(vx, vy));
 
-      var desiredMag = this.offset / sn;
+      var desiredMag = this.wall.thickness * 0.5 / sn;
       var scalar = desiredMag / mag;
-      var halfAngleVector = {
-        x: vx * scalar,
-        y: vy * scalar
-      }; //new Vector2(vx * scalar, vy * scalar);
+      var halfAngleVector = new _three.Vector2(vx * scalar, vy * scalar); //{ x: vx * scalar, y: vy * scalar }; //
 
       return halfAngleVector;
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      this.__plane = null; // this.wall = null;
+
+      this.__isOrphan = true;
+      this.wall.removeEventListener(_events.EVENT_MOVED, this.__wallMovedEvent);
+      this.wall.removeEventListener(_events.EVENT_UPDATED, this.__wallUpdatedEvent);
+      this.dispatchEvent({
+        type: _events.EVENT_DELETED,
+        edge: this
+      });
+    }
+  }, {
+    key: "vertices",
+    get: function get() {
+      return this.__vertices;
+    }
+  }, {
+    key: "normal",
+    get: function get() {
+      return this.__normal;
+    }
+  }, {
+    key: "isOrphan",
+    get: function get() {
+      return this.__isOrphan;
+    }
+  }, {
+    key: "plane",
+    get: function get() {
+      return this.__plane;
+    }
+  }, {
+    key: "exteriorPlane",
+    get: function get() {
+      return this.__exteriorPlane;
     }
   }]);
 
@@ -38364,7 +38795,7 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
 exports.HalfEdge = HalfEdge;
 var _default = HalfEdge;
 exports.default = _default;
-},{"three":"lKFo","../core/events.js":"rskn","../core/utils.js":"qdyh","../core/constants.js":"XniJ","three/build/three.module":"lKFo"}],"RKpz":[function(require,module,exports) {
+},{"three":"lKFo","../core/events.js":"rskn","../core/utils.js":"qdyh","../core/constants.js":"XniJ"}],"RKpz":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -38504,6 +38935,7 @@ var Corner = /*#__PURE__*/function (_EventDispatcher) {
      **/
 
     _this._hasChanged = false;
+    _this.__isLocked = false;
     return _this;
   }
 
@@ -38647,17 +39079,16 @@ var Corner = /*#__PURE__*/function (_EventDispatcher) {
         }
       }
 
-      this.dispatchEvent({
-        type: _events.EVENT_MOVED,
-        item: this,
-        position: new _three.Vector2(newX, newY)
-      }); //      this.moved_callbacks.fire(this.x, this.y);
-
       this.wallStarts.forEach(function (wall) {
         wall.fireMoved();
       });
       this.wallEnds.forEach(function (wall) {
         wall.fireMoved();
+      });
+      this.dispatchEvent({
+        type: _events.EVENT_MOVED,
+        item: this,
+        position: new _three.Vector2(newX, newY)
       });
     }
     /** Moves corner relatively to new position.
@@ -39145,6 +39576,14 @@ var Corner = /*#__PURE__*/function (_EventDispatcher) {
       }
     }
   }, {
+    key: "isLocked",
+    set: function set(flag) {
+      this.__isLocked = flag;
+    },
+    get: function get() {
+      return this.__isLocked;
+    }
+  }, {
     key: "uuid",
     get: function get() {
       return this.id;
@@ -39243,7 +39682,7 @@ var Corner = /*#__PURE__*/function (_EventDispatcher) {
     set: function set(value) {
       var oldvalue = this._elevation;
 
-      if (value - this._elevation < 1e-6) {
+      if (value - this._elevation > 1e-6) {
         this._hasChanged = true;
       }
 
@@ -41579,7 +42018,7 @@ var DoorHandleGenerator = /*#__PURE__*/function () {
           handle.applyMatrix4(new _three.Matrix4().makeTranslation(-offset, 0, 0));
         } else if (doorSide === 'Left' && doorOpenDirection !== 'BOTH_SIDES') {
           handle.applyMatrix4(new _three.Matrix4().makeTranslation(offset, 0, 0));
-        } else if (doorSide !== 'Right' && doorOpenDirection == 'BOTH_SIDES') {
+        } else if (doorSide !== 'Right' && doorOpenDirection === 'BOTH_SIDES') {
           handle.applyMatrix4(new _three.Matrix4().makeRotationAxis(new _three.Vector3(0, 0, 1), -Math.PI));
         }
 
@@ -42117,7 +42556,7 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
           minx = 0,
           maxx = 0; // # Open to right or left
 
-      if (openingDirection == DOOR_OPEN_DIRECTIONS.RIGHT) {
+      if (openingDirection === DOOR_OPEN_DIRECTIONS.RIGHT) {
         side = 1;
         minx = wf * -1;
         maxx = 0.0;
@@ -42465,7 +42904,7 @@ var ParametricDoorType2 = /*#__PURE__*/function (_ParametricBaseDoor) {
           minx = 0,
           maxx = 0; // # Open to right or left
 
-      if (openingDirection == _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
+      if (openingDirection === _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
         side = 1;
         minx = wf * -1;
         maxx = 0.0;
@@ -42576,7 +43015,7 @@ var ParametricDoorType3 = /*#__PURE__*/function (_ParametricBaseDoor) {
           minx = 0,
           maxx = 0; // # Open to right or left
 
-      if (openingDirection == _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
+      if (openingDirection === _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
         side = 1;
         minx = wf * -1;
         maxx = 0.0;
@@ -42687,7 +43126,7 @@ var ParametricDoorType4 = /*#__PURE__*/function (_ParametricBaseDoor) {
           minx = 0,
           maxx = 0; // # Open to right or left
 
-      if (openingDirection == _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
+      if (openingDirection === _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
         side = 1;
         minx = wf * -1;
         maxx = 0.0;
@@ -42798,7 +43237,7 @@ var ParametricDoorType5 = /*#__PURE__*/function (_ParametricBaseDoor) {
           minx = 0,
           maxx = 0; // # Open to right or left
 
-      if (openingDirection == _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
+      if (openingDirection === _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
         side = 1;
         minx = wf * -1;
         maxx = 0.0;
@@ -42909,7 +43348,7 @@ var ParametricDoorType6 = /*#__PURE__*/function (_ParametricBaseDoor) {
           minx = 0,
           maxx = 0; // # Open to right or left
 
-      if (openingDirection == _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
+      if (openingDirection === _ParametricBaseDoor2.DOOR_OPEN_DIRECTIONS.RIGHT) {
         side = 1;
         minx = wf * -1;
         maxx = 0.0;
@@ -43174,6 +43613,7 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
     _this.__frontVisible = false;
     _this.__backVisible = false;
     _this.__visible = true;
+    _this.__offlineUpdate = false;
     _this.__isParametric = false;
     _this.__baseParametricType = _ParametricFactory.BASE_PARAMETRIC_TYPES.DOOR;
     _this.__subParametricType = 1;
@@ -43182,6 +43622,9 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
     _this.__currentFloor = null;
     _this.__currentWallNormal = null;
     _this.__currentWallSnapPoint = null;
+    _this.__isWallDependent = false;
+    _this.__followWallEvent = _this.__followWall.bind(_assertThisInitialized(_this));
+    _this.__edgeDeletedEvent = _this.__edgeDeleted.bind(_assertThisInitialized(_this));
     _this.__parametricGeometryUpdateEvent = _this.__parametricGeometryUpdate.bind(_assertThisInitialized(_this));
     _this.castShadow = false;
     _this.receiveShadow = false;
@@ -43214,20 +43657,6 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
         this.__halfSize = this.__size.clone().multiplyScalar(0.5);
       }
 
-      if (this.__metadata.wall) {
-        var walls = this.__model.floorplan.walls;
-
-        for (var i = 0; i < walls.length; i++) {
-          var wall = walls[i];
-
-          if (wall.id === this.__metadata.wall) {
-            wall.addItem(this);
-            this.__currentWall = wall;
-            break;
-          }
-        }
-      }
-
       if (this.__metadata.isParametric) {
         this.__isParametric = this.__metadata.isParametric;
 
@@ -43257,7 +43686,25 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
 
         this.__parametricClass.addEventListener(_events.EVENT_PARAMETRIC_GEOMETRY_UPATED, this.__parametricGeometryUpdateEvent);
       } else {
-        this.__metadata.isParametric = false;
+        this.__isParametric = false;
+      }
+
+      if (this.__metadata.wall) {
+        var walls = this.__model.floorplan.walls;
+
+        for (var i = 0; i < walls.length; i++) {
+          var wall = walls[i];
+
+          if (wall.id === this.__metadata.wall) {
+            var wallEdge = this.__metadata.wallSide === 'front' ? wall.frontEdge : wall.backEdge;
+            var wallSurfacePoint = this.__metadata.wallSurfacePoint;
+            this.__currentWallSnapPoint = new _three.Vector3(wallSurfacePoint[0], wallSurfacePoint[1], wallSurfacePoint[2]);
+
+            this.__addToAWall(wall, wallEdge);
+
+            break;
+          }
+        }
       }
     }
   }, {
@@ -43269,27 +43716,68 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
       this.__halfSize = this.__size.clone().multiplyScalar(0.5);
 
       if (this.__currentWall && updateForWall) {
-        this.position = this.__position;
+        var point = _utils.Utils.cartesianFromBarycenter(this.__currentWallEdge.vertices, this.__barycentricLocation);
 
-        this.__currentWall.addItem(this);
+        this.snapToWall(point, this.__currentWall, this.__currentWallEdge); // this.position = this.__position;
+        // this.__currentWall.addItem(this);
+      }
+    }
+  }, {
+    key: "__edgeDeleted",
+    value: function __edgeDeleted(evt) {
+      if (this.__currentWall) {
+        var wallEdge = this.__metadata.wallSide === 'front' ? this.__currentWall.frontEdge : this.__currentWall.backEdge;
+        this.__currentWallEdge = null;
+
+        var point = _utils.Utils.cartesianFromBarycenter(wallEdge.vertices, this.__barycentricLocation);
+
+        this.snapToWall(point, this.__currentWall, wallEdge);
+      }
+    }
+  }, {
+    key: "__followWall",
+    value: function __followWall(evt) {
+      if (this.__isWallDependent && this.__currentWall && !this.__offlineUpdate) {
+        var point = _utils.Utils.cartesianFromBarycenter(this.__currentWallEdge.vertices, this.__barycentricLocation);
+
+        this.snapToWall(point, this.__currentWall, this.__currentWallEdge);
       }
     }
   }, {
     key: "__addToAWall",
-    value: function __addToAWall(intersectingPlane, toWall) {
-      var wall = toWall ? toWall : intersectingPlane.wall;
-
-      if (wall === undefined || !wall || wall === 'undefined') {
+    value: function __addToAWall(toWall, toWallEdge) {
+      if (toWall === undefined || !toWall || toWall === 'undefined') {
         return;
       }
 
-      if (this.__currentWall && this.__currentWall !== wall) {
+      if (this.__currentWall && this.__currentWall !== toWall) {
+        this.__currentWall.removeEventListener(_events.EVENT_MOVED, this.__followWallEvent);
+
+        this.__currentWallEdge.removeEventListener(_events.EVENT_DELETED, this.__edgeDeletedEvent);
+
         this.__currentWall.removeItem(this);
       }
 
-      wall.addItem(this);
-      this.__currentWall = wall;
+      var barycentricUVW = _utils.Utils.barycentricFromCartesian(toWallEdge.vertices, this.__currentWallSnapPoint);
+
+      this.__currentWall = toWall;
+      this.__currentWallEdge = toWallEdge;
+      this.__barycentricLocation = barycentricUVW.clone();
       this.__metadata.wall = this.__currentWall.id;
+      this.__metadata.wallSide = toWallEdge.front ? 'front' : 'back';
+      this.__metadata.wallSurfacePoint = [this.__currentWallSnapPoint.x, this.__currentWallSnapPoint.y, this.__currentWallSnapPoint.z];
+      this.__offlineUpdate = true; //Really important as it will lead to a lot of recursion
+
+      this.__currentWall.addItem(this); //This causes wall to dispatch event_moved triggering followWall, which will trigger this method again
+
+
+      this.__offlineUpdate = false; //Really important as it will lead to a lot of recursion
+
+      if (!this.__currentWall.hasEventListener(_events.EVENT_MOVED, this.__followWallEvent)) {
+        this.__currentWall.addEventListener(_events.EVENT_MOVED, this.__followWallEvent);
+
+        this.__currentWallEdge.addEventListener(_events.EVENT_DELETED, this.__edgeDeletedEvent);
+      }
     }
     /** */
 
@@ -43329,6 +43817,31 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
     key: "snapToPoint",
     value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
       this.position = point;
+    }
+  }, {
+    key: "snapToWall",
+    value: function snapToWall(point, wall, wallEdge) {}
+  }, {
+    key: "newWallEdge",
+    value: function newWallEdge() {
+      var wallEdge = this.__metadata.wallSide === 'front' ? this.__currentWall.frontEdge : this.__currentWall.backEdge;
+      this.__currentWallEdge = null;
+      this.__currentWallEdge = wallEdge;
+    }
+  }, {
+    key: "dispose",
+    value: function dispose() {
+      if (this.isParametric && this.__parametricClass) {
+        this.__parametricClass.removeEventListener(_events.EVENT_PARAMETRIC_GEOMETRY_UPATED, this.__parametricGeometryUpdateEvent);
+      }
+
+      if (this.__currentWall) {
+        this.__currentWall.removeEventListener(_events.EVENT_MOVED, this.__followWallEvent);
+      }
+
+      if (this.__currentWallEdge) {
+        this.__currentWallEdge.removeEventListener(_events.EVENT_DELETED, this.__edgeDeletedEvent);
+      }
     }
   }, {
     key: "id",
@@ -43504,6 +44017,21 @@ var Item = /*#__PURE__*/function (_EventDispatcher) {
     get: function get() {
       return this.__customIntersectionPlanes;
     }
+  }, {
+    key: "isWallDependent",
+    get: function get() {
+      return this.__isWallDependent;
+    }
+  }, {
+    key: "offlineUpdate",
+    get: function get() {
+      return this.__offlineUpdate;
+    }
+  }, {
+    key: "wallSide",
+    get: function get() {
+      return this.__metadata.wallSide;
+    }
   }]);
 
   return Item;
@@ -43564,6 +44092,7 @@ var WallItem = /*#__PURE__*/function (_Item) {
     _classCallCheck(this, WallItem);
 
     _this = _super.call(this, model, metadata, id);
+    _this.__isWallDependent = true;
     _this.__boundToFloor = false;
     _this.__allowRotate = false;
     _this.__freePosition = false;
@@ -43572,26 +44101,53 @@ var WallItem = /*#__PURE__*/function (_Item) {
   }
 
   _createClass(WallItem, [{
+    key: "__fitToWallBounds",
+    value: function __fitToWallBounds(point, wallEdge) {
+      var point2d = new _three.Vector2(point.x, point.z);
+      var wallEdgeVector = wallEdge.interiorEnd().clone().sub(wallEdge.interiorStart());
+      var sizeX = this.__halfSize.x + 5;
+      var sizeVector = wallEdgeVector.clone().normalize().multiplyScalar(sizeX);
+      var positionMinusSize = point2d.clone().sub(sizeVector);
+      var positionPlusSize = point2d.clone().add(sizeVector);
+      var startToPlusSizeVector = positionPlusSize.sub(wallEdge.interiorStart());
+      var endToMinusSizeVector = positionMinusSize.sub(wallEdge.interiorEnd());
+
+      if (startToPlusSizeVector.length() > wallEdgeVector.length()) {
+        var p = wallEdge.interiorEnd().clone().sub(sizeVector);
+        return new _three.Vector3(p.x, point.y, p.y);
+      }
+
+      if (endToMinusSizeVector.length() > wallEdgeVector.length()) {
+        var _p = wallEdge.interiorStart().clone().add(sizeVector);
+
+        return new _three.Vector3(_p.x, point.y, _p.y);
+      }
+
+      return point;
+    }
+  }, {
     key: "snapToPoint",
     value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
+      this.snapToWall(point, intersectingPlane.wall, intersectingPlane.edge);
+    }
+  }, {
+    key: "snapToWall",
+    value: function snapToWall(point, wall, wallEdge) {
+      _get(_getPrototypeOf(WallItem.prototype), "snapToWall", this).call(this, point, wall, wallEdge);
+
+      point = this.__fitToWallBounds(point, wallEdge);
+      var normal = wallEdge.normal;
       var normal2d = new _three.Vector2(normal.x, normal.z);
 
       var angle = _utils.Utils.angle(_item.UP_VECTOR, normal2d);
 
-      var rotatedSize = this.halfSize.clone();
-      rotatedSize.applyAxisAngle(_item.UP_VECTOR, angle); // The below needs to done so the size is always positive
-      // The rotation of size might lead to negative values based on the angle of rotation
-
-      rotatedSize.x = Math.abs(rotatedSize.x);
-      rotatedSize.y = Math.abs(rotatedSize.y);
-      rotatedSize.z = Math.abs(rotatedSize.z);
       this.__currentWallNormal = normal.clone();
       this.__currentWallSnapPoint = point.clone();
-      point = point.clone().add(normal.clone().multiplyScalar(this.halfSize.z + intersectingPlane.edge.wall.thickness * 0.25));
+      point = point.clone().add(normal.clone().multiplyScalar(this.halfSize.z + wall.thickness * 0.25));
       this.position = point;
       this.rotation = new _three.Vector3(0, angle, 0);
 
-      this.__addToAWall(intersectingPlane, toWall, toFloor, toRoof);
+      this.__addToAWall(wall, wallEdge);
     }
   }, {
     key: "__parametricGeometryUpdate",
@@ -43672,14 +44228,22 @@ var InWallItem = /*#__PURE__*/function (_WallItem) {
   _createClass(InWallItem, [{
     key: "snapToPoint",
     value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
+      this.snapToWall(point, intersectingPlane.wall, intersectingPlane.edge);
+    }
+  }, {
+    key: "snapToWall",
+    value: function snapToWall(point, wall, wallEdge) {
+      point = this.__fitToWallBounds(point, wallEdge);
+      var normal = wallEdge.normal;
       var normal2d = new _three.Vector2(normal.x, normal.z);
 
       var angle = _utils.Utils.angle(_item.UP_VECTOR, normal2d);
 
       this.rotation = new _three.Vector3(0, angle, 0);
       this.position = point;
+      this.__currentWallSnapPoint = point.clone();
 
-      this.__addToAWall(intersectingPlane, toWall);
+      this.__addToAWall(wall, wallEdge);
     }
   }]);
 
@@ -43748,6 +44312,13 @@ var InWallFloorItem = /*#__PURE__*/function (_InWallItem) {
   _createClass(InWallFloorItem, [{
     key: "snapToPoint",
     value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
+      this.snapToWall(point, intersectingPlane.wall, intersectingPlane.edge);
+    }
+  }, {
+    key: "snapToWall",
+    value: function snapToWall(point, wall, wallEdge) {
+      point = this.__fitToWallBounds(point, wallEdge);
+      var normal = wallEdge.normal;
       var normal2d = new _three.Vector2(normal.x, normal.z);
 
       var angle = _utils.Utils.angle(_item.UP_VECTOR, normal2d);
@@ -43755,9 +44326,10 @@ var InWallFloorItem = /*#__PURE__*/function (_InWallItem) {
       this.rotation = new _three.Vector3(0, angle, 0);
       point.y = this.halfSize.y + 5;
       this.position = point;
+      this.__currentWallSnapPoint = point.clone();
       this.__currentWallNormal = normal.clone();
 
-      this.__addToAWall(intersectingPlane, toWall);
+      this.__addToAWall(wall, wallEdge);
     }
   }, {
     key: "__parametricGeometryUpdate",
@@ -43842,25 +44414,25 @@ var WallFloorItem = /*#__PURE__*/function (_WallItem) {
   _createClass(WallFloorItem, [{
     key: "snapToPoint",
     value: function snapToPoint(point, normal, intersectingPlane, toWall, toFloor, toRoof) {
+      this.snapToWall(point, intersectingPlane.wall, intersectingPlane.edge);
+    }
+  }, {
+    key: "snapToWall",
+    value: function snapToWall(point, wall, wallEdge) {
+      point = this.__fitToWallBounds(point, wallEdge);
+      var normal = wallEdge.normal;
       var normal2d = new _three.Vector2(normal.x, normal.z);
 
       var angle = _utils.Utils.angle(_item.UP_VECTOR, normal2d);
 
-      var rotatedSize = this.halfSize.clone();
-      rotatedSize.applyAxisAngle(_item.UP_VECTOR, angle); // The below needs to done so the size is always positive
-      // The rotation of size might lead to negative values based on the angle of rotation
-
-      rotatedSize.x = Math.abs(rotatedSize.x);
-      rotatedSize.y = Math.abs(rotatedSize.y);
-      rotatedSize.z = Math.abs(rotatedSize.z);
       this.__currentWallNormal = normal.clone();
       this.__currentWallSnapPoint = point.clone();
-      point = point.clone().add(normal.clone().multiplyScalar(this.halfSize.z + intersectingPlane.edge.wall.thickness * 0.25));
+      point = point.clone().add(normal.clone().multiplyScalar(this.halfSize.z + wall.thickness * 0.25));
       point.y = this.halfSize.y + 5;
       this.rotation = new _three.Vector3(0, angle, 0);
       this.position = point;
 
-      this.__addToAWall(intersectingPlane, toWall);
+      this.__addToAWall(wall, wallEdge);
     }
   }, {
     key: "__parametricGeometryUpdate",
@@ -44006,10 +44578,10 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
     /** Front is the plane from start to end. */
 
 
-    _this.frontEdge = null;
+    _this.__frontEdge = null;
     /** Back is the plane from end to start. */
 
-    _this.backEdge = null;
+    _this.__backEdge = null;
     _this.__attachedRooms = [];
     /** */
 
@@ -44045,6 +44617,7 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
     /** Actions to be applied explicitly. */
 
     _this.action_callbacks = null;
+    _this.__isLocked = false;
     _this.__location = new _three.Vector2();
     _this.__wallPlane2D = new _three.Plane();
     _this.__wallNormal2D = new _three.Vector2();
@@ -44086,6 +44659,11 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
     key: "__cornerMoved",
     value: function __cornerMoved() {
       this.updateControlVectors();
+      this.dispatchEvent({
+        type: _events.EVENT_MOVED,
+        item: this,
+        position: null
+      });
     }
   }, {
     key: "__cornerAttributesChanged",
@@ -44109,13 +44687,7 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
     value: function addItem(item) {
       if (item instanceof _in_wall_item.InWallItem || item instanceof _in_wall_floor_item.InWallFloorItem) {
         if (!_utils.Utils.hasValue(this.__inWallItems, item)) {
-          var vect = this.end.location.clone().sub(this.start.location);
-          var itemVect = item.position2d.clone().sub(this.start.location);
-          var ratio = itemVect.length() / vect.length();
-
           this.__inWallItems.push(item);
-
-          this.__inWallItemsSnappedRatios.push(ratio);
         }
 
         this.dispatchEvent({
@@ -44127,16 +44699,14 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
 
       if (item instanceof _wall_item.WallItem || item instanceof _wall_floor_item.WallFloorItem) {
         if (!_utils.Utils.hasValue(this.__onWallItems, item)) {
-          var _vect = this.end.location.clone().sub(this.start.location);
-
-          var _itemVect = item.position2d.clone().sub(this.start.location);
-
-          var _ratio = _itemVect.length() / _vect.length();
-
           this.__onWallItems.push(item);
-
-          this.__onWallItemsSnappedRatios.push(_ratio);
         }
+
+        this.dispatchEvent({
+          type: _events.EVENT_MOVED,
+          item: this,
+          position: null
+        });
       }
     }
   }, {
@@ -44144,28 +44714,26 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
     value: function removeItem(item) {
       if (item instanceof _in_wall_item.InWallItem || item instanceof _in_wall_floor_item.InWallFloorItem) {
         if (_utils.Utils.hasValue(this.__inWallItems, item)) {
-          var i = _utils.Utils.removeValue(this.__inWallItems, item);
-
-          var snappedPositionRatio = this.__inWallItemsSnappedRatios[i];
-
-          _utils.Utils.removeValue(this.__inWallItemsSnappedRatios, snappedPositionRatio);
-
-          this.dispatchEvent({
-            type: _events.EVENT_MOVED,
-            item: this,
-            position: null
-          });
+          _utils.Utils.removeValue(this.__inWallItems, item);
         }
+
+        this.dispatchEvent({
+          type: _events.EVENT_MOVED,
+          item: this,
+          position: null
+        });
       }
 
       if (item instanceof _wall_item.WallItem || item instanceof _wall_floor_item.WallFloorItem) {
         if (_utils.Utils.hasValue(this.__onWallItems, item)) {
-          var _i = _utils.Utils.removeValue(this.__onWallItems, item);
-
-          var _snappedPositionRatio = this.__onWallItemsSnappedRatios[_i];
-
-          _utils.Utils.removeValue(this.__onWallItemsSnappedRatios, _snappedPositionRatio);
+          _utils.Utils.removeValue(this.__onWallItems, item);
         }
+
+        this.dispatchEvent({
+          type: _events.EVENT_MOVED,
+          item: this,
+          position: null
+        });
       }
     }
   }, {
@@ -44233,6 +44801,14 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "resetFrontBack",
     value: function resetFrontBack() {
+      if (this.frontEdge) {
+        this.frontEdge.destroy();
+      }
+
+      if (this.backEdge) {
+        this.backEdge.destroy();
+      }
+
       this.frontEdge = null;
       this.backEdge = null;
       this.orphan = false;
@@ -44497,6 +45073,14 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
       this.__attachedRooms = [];
     }
   }, {
+    key: "isLocked",
+    set: function set(flag) {
+      this.__isLocked = flag;
+    },
+    get: function get() {
+      return this.__isLocked;
+    }
+  }, {
     key: "wallSize",
     set: function set(value) {
       if (this.wallType === _constants.WallTypes.STRAIGHT) {
@@ -44560,10 +45144,8 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
     },
     set: function set(thick) {
       this._thickness = thick;
-      this.dispatchEvent({
-        type: _events.EVENT_UPDATED,
-        item: this
-      }); //This is stupid. You need to say what event exactly happened
+      this.start.move(this.start.location.x, this.start.location.y);
+      this.end.move(this.end.location.x, this.end.location.y); // this.dispatchEvent({ type: EVENT_UPDATED, item: this }); //This is stupid. You need to say what event exactly happened
     }
   }, {
     key: "uuid",
@@ -44655,6 +45237,46 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
       this.start.move(sNewLocation.x, sNewLocation.y);
       this.end.move(eNewLocation.x, eNewLocation.y);
       this.__location = vec2;
+    }
+  }, {
+    key: "frontEdge",
+    get: function get() {
+      return this.__frontEdge;
+    },
+    set: function set(edge) {
+      if (this.__frontEdge) {
+        this.__frontEdge.destroy();
+      }
+
+      this.__frontEdge = edge;
+
+      this.__inWallItems.forEach(function (item) {
+        item.newWallEdge();
+      });
+
+      this.__onWallItems.forEach(function (item) {
+        item.newWallEdge();
+      });
+    }
+  }, {
+    key: "backEdge",
+    get: function get() {
+      return this.__backEdge;
+    },
+    set: function set(edge) {
+      if (this.__backEdge) {
+        this.__backEdge.destroy();
+      }
+
+      this.__backEdge = edge;
+
+      this.__inWallItems.forEach(function (item) {
+        item.newWallEdge();
+      });
+
+      this.__onWallItems.forEach(function (item) {
+        item.newWallEdge();
+      });
     }
   }]);
 
@@ -44750,6 +45372,7 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
     _this.customTexture = false;
     _this.floorChangeCallbacks = null;
     _this.__destroyed = false;
+    _this.__isLocked = false;
 
     _this.updateWalls();
 
@@ -44769,6 +45392,7 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
       c.attachRoom(_assertThisInitialized(_this));
       cornerids.push(c.id);
       c.addEventListener(_events.EVENT_MOVED, _this.__roomUpdatedEvent);
+      c.addEventListener(_events.EVENT_CORNER_ATTRIBUTES_CHANGED, _this.__roomUpdatedEvent);
     }
 
     for (i = 0; i < _this.__walls.length; i++) {
@@ -44791,6 +45415,14 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
       });
     }
   }, {
+    key: "_roomUpdated",
+    value: function _roomUpdated() {
+      this.updateInteriorCorners();
+      this.updateArea();
+      this.generateFloorPlane();
+      this.generateRoofPlane();
+    }
+  }, {
     key: "destroy",
     value: function destroy() {
       var i = 0;
@@ -44810,12 +45442,6 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
         type: _events.EVENT_CHANGED,
         item: this
       });
-    }
-  }, {
-    key: "_roomUpdated",
-    value: function _roomUpdated() {
-      this.updateInteriorCorners();
-      this.updateArea();
     }
   }, {
     key: "__getOrderedCorners",
@@ -44956,6 +45582,11 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
     value: function getTexture() {
       var uuid = this.getUuid();
       var tex = this.floorplan.getFloorTexture(uuid);
+
+      if (!tex) {
+        this.floorplan.setFloorTexture(uuid, _constants.defaultFloorTexture);
+      }
+
       return tex || _constants.defaultFloorTexture;
     }
     /**
@@ -45020,26 +45651,19 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "generateRoofPlane",
     value: function generateRoofPlane() {
-      if (this.roofPlane && this.roofPlane != null) {
-        if (this.roofPlane.parent != null) {
-          this.roofPlane.parent.remove(this.roofPlane);
-        }
-      } // setup texture
-
-
+      // setup texture
       var geometry = new _three.Geometry();
       this.corners.forEach(function (corner) {
-        var vertex = new _three.Vector3(corner.x, corner.elevation, corner.y);
+        var vertex = new _three.Vector3(corner.location.x, corner.elevation, corner.location.y);
         geometry.vertices.push(vertex);
       });
 
       for (var _i = 2; _i < geometry.vertices.length; _i++) {
         var face = new _three.Face3(0, _i - 1, _i);
         geometry.faces.push(face);
-      }
+      } // geometry.computeBoundingBox();
+      // geometry.computeFaceNormals();
 
-      geometry.computeBoundingBox();
-      geometry.computeFaceNormals();
 
       if (!this.roofPlane) {
         var buffGeometry = new _three2.BufferGeometry().fromGeometry(geometry);
@@ -45048,9 +45672,12 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
           visible: false
         }));
       } else {
-        this.roofPlane.geometry = this.roofPlane.geometry.fromGeometry(geometry);
+        this.roofPlane.geometry.dispose();
+        this.roofPlane.geometry = new _three2.BufferGeometry().fromGeometry(geometry); //this.roofPlane.geometry.fromGeometry(geometry);            
       }
 
+      this.roofPlane.geometry.computeBoundingBox();
+      this.roofPlane.geometry.computeFaceNormals();
       this.roofPlane.room = this;
     }
   }, {
@@ -45070,7 +45697,8 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
           visible: false
         }));
       } else {
-        this.floorPlane.geometry = this.floorPlane.geometry.fromGeometry(geometry);
+        this.floorPlane.geometry.dispose();
+        this.floorPlane.geometry = new _three2.BufferGeometry().fromGeometry(geometry); //this.floorPlane.geometry.fromGeometry(geometry);
       } //The below line was originally setting the plane visibility to false
       //Now its setting visibility to true. This is necessary to be detected
       //with the raycaster objects to click walls and floors.
@@ -45111,7 +45739,7 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
     key: "updateInteriorCorners",
     value: function updateInteriorCorners() {
       var minB = new _three.Vector2(Number.MAX_VALUE, Number.MAX_VALUE);
-      var maxB = new _three.Vector2(Number.MIN_VALUE, Number.MIN_VALUE);
+      var maxB = new _three.Vector2(-Number.MAX_VALUE, -Number.MAX_VALUE);
       var edge = this.edgePointer;
       var iterateWhile = true;
       this.interiorCorners = [];
@@ -45409,6 +46037,14 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
       this.edgePointer = firstEdge;
     }
   }, {
+    key: "isLocked",
+    set: function set(flag) {
+      this.__isLocked = flag;
+    },
+    get: function get() {
+      return this.__isLocked;
+    }
+  }, {
     key: "uuid",
     get: function get() {
       return this.getUuid();
@@ -45466,7 +46102,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.CornerGroups = exports.CornerGroup = void 0;
 
-var _three = require("three/build/three.module");
+var _three = require("three");
 
 var _events = require("../core/events");
 
@@ -45486,7 +46122,11 @@ var CornerGroup = /*#__PURE__*/function () {
 
     this.__corners = corners;
     this.__size = new _three.Vector2();
-    this.__center = new _three.Vector2();
+    this.__center = null;
+    this.__currentCenter = new _three.Vector2();
+    this.__deltaTranslation = new _three.Vector2();
+    this.__radians = 0.0;
+    this.__originalCornerPositions = null;
     this.__tl = null;
     this.__br = null;
     this.__tr = null;
@@ -45501,8 +46141,7 @@ var CornerGroup = /*#__PURE__*/function () {
 
   _createClass(CornerGroup, [{
     key: "__cornerMoved",
-    value: function __cornerMoved() {
-      this.__update();
+    value: function __cornerMoved() {// this.__update();
     }
   }, {
     key: "__addCornerListeners",
@@ -45514,8 +46153,9 @@ var CornerGroup = /*#__PURE__*/function () {
   }, {
     key: "__update",
     value: function __update() {
+      this.__originalCornerPositions = [];
       var minPoint = new _three.Vector2(Number.MAX_VALUE, Number.MAX_VALUE);
-      var maxPoint = new _three.Vector2(Number.MIN_VALUE, Number.MIN_VALUE);
+      var maxPoint = new _three.Vector2(-Number.MAX_VALUE, -Number.MAX_VALUE);
 
       for (var i = 0; i < this.__corners.length; i++) {
         var corner = this.__corners[i];
@@ -45523,56 +46163,51 @@ var CornerGroup = /*#__PURE__*/function () {
         minPoint.y = Math.min(minPoint.y, corner.location.y);
         maxPoint.x = Math.max(maxPoint.x, corner.location.x);
         maxPoint.y = Math.max(maxPoint.y, corner.location.y);
+
+        this.__originalCornerPositions.push(corner.location.clone());
       }
 
+      this.__minPoint = minPoint.clone();
+      this.__maxPoint = maxPoint.clone();
       this.__size = maxPoint.clone().sub(minPoint);
-      this.__center = this.__size.clone().multiplyScalar(0.5).add(minPoint);
-      this.__tl = minPoint.sub(this.__center);
-      this.__br = maxPoint.sub(this.__center);
-      this.__tr = new _three.Vector2(this.__br.x, this.__tl.y);
-      this.__bl = new _three.Vector2(this.__tl.x, this.__br.y);
+      this.__size.x = Math.abs(this.__size.x);
+      this.__size.y = Math.abs(this.__size.y); // if (!this.__center) {
+
+      this.__center = this.__size.clone().multiplyScalar(0.5).add(minPoint); // }
+
+      this.__currentCenter = this.__size.clone().multiplyScalar(0.5).add(minPoint);
       this.__matrix = this.__matrix.identity();
     }
   }, {
     key: "__applyTransformations",
-    value: function __applyTransformations(m4) {
-      console.log('=================================================');
-      console.log('APPLY MATRIX 4 ', m4.elements);
+    value: function __applyTransformations(scale, radians, origin) {
+      var translation = origin.clone().sub(this.__center);
+      var translationMatrix = new _three.Matrix4().makeTranslation(translation.x, translation.y, 0);
+      var T = new _three.Matrix4().makeTranslation(-origin.x, -origin.y, 0); //Translate to -origin of scaling
 
-      for (var i = 0; i < this.__corners.length; i++) {
-        var location = this.__corners[i].location;
+      var TInv = new _three.Matrix4().makeTranslation(origin.x, origin.y, 0); //Translate to origin of scaling (inverse)
+
+      var rotationMatrix = TInv.clone().multiply(new _three.Matrix4().makeRotationAxis(new _three.Vector3(0, 0, 1), radians)).multiply(T);
+      var scaleMatrix = TInv.clone().multiply(new _three.Matrix4().makeScale(scale.x, scale.y, 1)).multiply(T);
+      var transformMatrix = rotationMatrix.multiply(scaleMatrix).multiply(translationMatrix);
+      var i = 0;
+
+      for (i = 0; i < this.__corners.length; i++) {
+        var location = this.__originalCornerPositions[i].clone();
+
         var location3 = new _three.Vector3(location.x, location.y, 0);
-        location3 = location3.applyMatrix4(m4);
-        console.log(location, location3); // this.__corners[i].move(location3.x, location3.y);
-      }
+        location3.applyMatrix4(transformMatrix); // this.__corners[i].location = new Vector2(location3.x, location3.y);
 
-      var tl3 = new _three.Vector3(this.__tl.x, this.__tl.y, 0).applyMatrix4(m4);
-      var tr3 = new _three.Vector3(this.__tr.x, this.__tr.y, 0).applyMatrix4(m4);
-      var br3 = new _three.Vector3(this.__br.x, this.__br.y, 0).applyMatrix4(m4);
-      var bl3 = new _three.Vector3(this.__bl.x, this.__bl.y, 0).applyMatrix4(m4);
-      this.__tl.x = tl3.x;
-      this.__tl.x = tl3.x;
-      this.__tr.x = tr3.x;
-      this.__tr.x = tr3.x;
-      this.__br.x = br3.x;
-      this.__br.x = br3.x;
-      this.__bl.x = bl3.x;
-      this.__bl.x = bl3.x;
+        this.__corners[i].move(location3.x, location3.y);
+      } // if (this.__corners[0]) {
+      //     this.__corners[0].floorplan.update();
+      // }
+
     }
   }, {
-    key: "applyMatrix",
-    value: function applyMatrix(matrix4) {
-      /**
-       * Reset matrix is undo the current matrix
-       * for sanity check if you multiply the inverse with itself you should get identity
-       */
-      var reset = this.__matrix.clone().getInverse(this.__matrix.clone());
-
-      this.__applyTransformations(reset);
-
-      this.__matrix = matrix4;
-
-      this.__applyTransformations(this.__matrix);
+    key: "applyTransformations",
+    value: function applyTransformations(scale, radians, origin) {
+      this.__applyTransformations(scale, radians, origin);
     }
   }, {
     key: "contains",
@@ -45584,6 +46219,11 @@ var CornerGroup = /*#__PURE__*/function () {
       }
 
       return false; // return Utils.hasValue(this.__corners, corner);
+    }
+  }, {
+    key: "update",
+    value: function update() {
+      this.__update();
     }
   }, {
     key: "destroy",
@@ -45598,6 +46238,9 @@ var CornerGroup = /*#__PURE__*/function () {
     key: "matrix",
     get: function get() {
       return this.__matrix;
+    },
+    set: function set(mat) {
+      this.__matrix = mat;
     }
   }, {
     key: "corners",
@@ -45605,24 +46248,14 @@ var CornerGroup = /*#__PURE__*/function () {
       return this.__corners;
     }
   }, {
-    key: "tl",
-    get: function get() {
-      return this.__tl;
-    }
-  }, {
-    key: "br",
-    get: function get() {
-      return this.__br;
-    }
-  }, {
     key: "size",
     get: function get() {
-      return this.__size;
+      return this.__size.clone();
     }
   }, {
     key: "center",
     get: function get() {
-      return this.__center;
+      return this.__center.clone();
     }
   }]);
 
@@ -45731,7 +46364,221 @@ var CornerGroups = /*#__PURE__*/function () {
 }();
 
 exports.CornerGroups = CornerGroups;
-},{"three/build/three.module":"lKFo","../core/events":"rskn"}],"HdH0":[function(require,module,exports) {
+},{"three":"lKFo","../core/events":"rskn"}],"nqWM":[function(require,module,exports) {
+module.exports = function (point, vs) {
+    // ray-casting algorithm based on
+    // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+    
+    var x = point[0], y = point[1];
+    
+    var inside = false;
+    for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+        var xi = vs[i][0], yi = vs[i][1];
+        var xj = vs[j][0], yj = vs[j][1];
+        
+        var intersect = ((yi > y) != (yj > y))
+            && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+    }
+    
+    return inside;
+};
+
+},{}],"gGOF":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _three = require("three");
+
+var _pointInPolygon = _interopRequireDefault(require("point-in-polygon"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var Boundary = /*#__PURE__*/function (_EventDispatcher) {
+  _inherits(Boundary, _EventDispatcher);
+
+  var _super = _createSuper(Boundary);
+
+  function Boundary(floorplan, boundaryMetaData) {
+    var _this;
+
+    _classCallCheck(this, Boundary);
+
+    _this = _super.call(this);
+    _this.__floorplan = floorplan;
+    _this.__metadata = {
+      points: [],
+      style: {
+        type: 'color',
+        color: '#00FF00',
+        repeat: 50,
+        colormap: null
+      }
+    };
+
+    for (var opt in _this.__metadata) {
+      if (_this.__metadata.hasOwnProperty(opt) && boundaryMetaData.hasOwnProperty(opt)) {
+        _this.__metadata[opt] = boundaryMetaData[opt];
+      }
+    }
+
+    _this.__polygonAsArray = null;
+    _this.__width = 0;
+    _this.__height = 0;
+    _this.__isValid = _this.__metadata.points.length > 0;
+
+    if (_this.__isValid) {
+      var minX = Number.MAX_VALUE;
+      var minY = Number.MAX_VALUE;
+      var maxX = -Number.MAX_VALUE;
+      var maxY = -Number.MAX_VALUE;
+      var pts = _this.points;
+
+      for (var i = 0; i < pts.length; i++) {
+        var point = pts[i];
+        minX = Math.min(minX, point.x);
+        minY = Math.min(minY, point.y);
+        maxX = Math.max(maxX, point.x);
+        maxY = Math.max(maxY, point.y);
+      }
+
+      _this.__width = maxX - minX;
+      _this.__height = maxY - minY;
+
+      _this.__updatePoints();
+    }
+
+    return _this;
+  }
+
+  _createClass(Boundary, [{
+    key: "__updatePoints",
+    value: function __updatePoints() {
+      if (!this.__isValid) {
+        return;
+      }
+
+      var points = this.points;
+      this.__polygonAsArray = [];
+
+      for (var i = 0; i < points.length; i++) {
+        var point = points[i];
+
+        this.__polygonAsArray.push([point.x, point.y]);
+      }
+    }
+  }, {
+    key: "containsPoint",
+    value: function containsPoint(x, y) {
+      if (!this.__isValid) {
+        return true;
+      }
+
+      return (0, _pointInPolygon.default)([x, y], this.__polygonAsArray);
+    }
+  }, {
+    key: "width",
+    get: function get() {
+      return this.__width;
+    }
+  }, {
+    key: "height",
+    get: function get() {
+      return this.__height;
+    }
+  }, {
+    key: "styleRepeat",
+    get: function get() {
+      return this.__metadata.style.repeat;
+    }
+    /**
+     * return if style type is color or texture
+     */
+
+  }, {
+    key: "styleType",
+    get: function get() {
+      return this.__metadata.style.type;
+    },
+    set: function set(type) {
+      this.__metadata.style.type = type;
+    }
+  }, {
+    key: "style",
+    get: function get() {
+      return this.__metadata.style;
+    }
+    /**
+     * return a hexacolor string if styleType is color
+     * return a path to the ground texture if styleType is texture
+     */
+
+  }, {
+    key: "styleValue",
+    get: function get() {
+      return this.__metadata.style.value;
+    },
+    set: function set(value) {
+      this.__metadata.style.value = value;
+    }
+  }, {
+    key: "points",
+    get: function get() {
+      return this.__metadata.points;
+    },
+    set: function set(points) {
+      this.__isValid = false;
+
+      if (!points) {
+        console.error('Setting invalid type for boundary points');
+      }
+
+      this.__metadata.points = points;
+
+      if (points.length) {
+        this.__isValid = points.length > 0;
+      }
+
+      this.__updatePoints();
+    }
+  }, {
+    key: "isValid",
+    get: function get() {
+      return this.__isValid;
+    }
+  }]);
+
+  return Boundary;
+}(_three.EventDispatcher);
+
+exports.default = Boundary;
+},{"three":"lKFo","point-in-polygon":"nqWM"}],"HdH0":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -45762,6 +46609,10 @@ var _wall = require("./wall.js");
 var _room = require("./room.js");
 
 var _cornergroups = require("./cornergroups.js");
+
+var _boundary = _interopRequireDefault(require("./boundary.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -45830,6 +46681,10 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
      */
 
     _this.rooms = [];
+    _this.__boundary = null;
+    _this.__externalCorners = [];
+    _this.__externalWalls = [];
+    _this.__externalRooms = [];
     _this.__roofPlanesForIntersection = [];
     _this.__floorPlanesForIntersection = [];
     _this.__wallPlanesForIntersection = [];
@@ -45895,12 +46750,29 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
     _this.__cornerDeletedEvent = _this.__cornerDeleted.bind(_assertThisInitialized(_this));
     return _this;
   }
-  /**
-   * @return {HalfEdge[]} edges The array of {@link HalfEdge}
-   */
-
 
   _createClass(Floorplan, [{
+    key: "externalWallEdges",
+    value: function externalWallEdges() {
+      var edges = [];
+
+      this.__externalWalls.forEach(function (wall) {
+        if (wall.frontEdge) {
+          edges.push(wall.frontEdge);
+        }
+
+        if (wall.backEdge) {
+          edges.push(wall.backEdge);
+        }
+      });
+
+      return edges;
+    }
+    /**
+     * @return {HalfEdge[]} edges The array of {@link HalfEdge}
+     */
+
+  }, {
     key: "wallEdges",
     value: function wallEdges() {
       var edges = [];
@@ -45994,10 +46866,18 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
       this.walls.forEach(function (wall) {
         if (wall.frontEdge) {
           planes.push(wall.frontEdge.plane);
+
+          if (wall.frontEdge.exteriorPlane) {
+            planes.push(wall.frontEdge.exteriorPlane);
+          }
         }
 
         if (wall.backEdge) {
           planes.push(wall.backEdge.plane);
+
+          if (wall.backEdge.exteriorPlane) {
+            planes.push(wall.backEdge.exteriorPlane);
+          }
         }
       });
       return planes;
@@ -46068,7 +46948,7 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
         };
         var iPoint;
 
-        if (twall.wallType == _constants.WallTypes.CURVED) {
+        if (twall.wallType === _constants.WallTypes.CURVED) {
           iPoint = twall.bezier.intersects(line);
 
           if (iPoint.length) {
@@ -46280,9 +47160,9 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
     value: function overlappedControlPoint(wall, x, y, tolerance) {
       tolerance = tolerance || defaultFloorPlanTolerance * 5;
 
-      if (wall.a.distanceTo(new _three.Vector2(x, y)) < tolerance && wall.wallType == _constants.WallTypes.CURVED) {
+      if (wall.a.distanceTo(new _three.Vector2(x, y)) < tolerance && wall.wallType === _constants.WallTypes.CURVED) {
         return wall.a;
-      } else if (wall.b.distanceTo(new _three.Vector2(x, y)) < tolerance && wall.wallType == _constants.WallTypes.CURVED) {
+      } else if (wall.b.distanceTo(new _three.Vector2(x, y)) < tolerance && wall.wallType === _constants.WallTypes.CURVED) {
         return wall.b;
       }
 
@@ -46444,6 +47324,27 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
         floorplans.carbonSheet['height'] = this.carbonSheet.height;
       }
 
+      if (this.__boundary) {
+        if (this.__boundary.isValid) {
+          var boundaryData = {};
+          var measurePoints = [];
+
+          for (var i = 0; i < this.__boundary.points.length; i++) {
+            var cmPoint = this.__boundary.points[i];
+            var measurePoint = {
+              x: _dimensioning.Dimensioning.cmToMeasureRaw(cmPoint.x),
+              y: _dimensioning.Dimensioning.cmToMeasureRaw(cmPoint.y),
+              elevation: _dimensioning.Dimensioning.cmToMeasureRaw(cmPoint.elevation)
+            };
+            measurePoints.push(measurePoint);
+          }
+
+          boundaryData.points = measurePoints;
+          boundaryData.style = this.__boundary.style;
+          floorplans.boundary = boundaryData;
+        }
+      }
+
       floorplans.units = _configuration.Configuration.getStringValue(_configuration.configDimUnit);
       floorplans.newFloorTextures = this.floorTextures;
       return floorplans;
@@ -46463,7 +47364,7 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
       this.__updatesOn = false;
       var corners = {};
 
-      if (floorplan == null || !('corners' in floorplan) || !('walls' in floorplan)) {
+      if (floorplan === null || !('corners' in floorplan) || !('walls' in floorplan)) {
         return;
       }
 
@@ -46537,7 +47438,7 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
           newWall.a = wall.a;
           newWall.b = wall.b;
 
-          if (wall.wallType == 'CURVED') {
+          if (wall.wallType === 'CURVED') {
             newWall.wallType = _constants.WallTypes.CURVED;
           } else {
             newWall.wallType = _constants.WallTypes.STRAIGHT;
@@ -46549,6 +47450,25 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
         this.floorTextures = floorplan.newFloorTextures;
       }
 
+      if ('boundary' in floorplan) {
+        if (floorplan.boundary.points) {
+          var cmPoints = [];
+
+          for (var i = 0; i < floorplan.boundary.points.length; i++) {
+            var point = floorplan.boundary.points[i];
+            var cmPoint = {
+              x: _dimensioning.Dimensioning.cmFromMeasureRaw(point.x),
+              y: _dimensioning.Dimensioning.cmFromMeasureRaw(point.y),
+              elevation: _dimensioning.Dimensioning.cmFromMeasureRaw(point.elevation)
+            };
+            cmPoints.push(cmPoint);
+          }
+
+          floorplan.boundary.points = cmPoints;
+          this.__boundary = new _boundary.default(this, floorplan.boundary);
+        }
+      }
+
       this.__updatesOn = true;
       this.metaroomsdata = floorplan.rooms;
       this.update();
@@ -46557,6 +47477,159 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
 
       this.dispatchEvent({
         type: _events.EVENT_LOADED,
+        item: this
+      }); // this.roomLoadedCallbacks.fire();
+    } // Load the floorplan from a previously saved json object file
+
+    /**
+     * @param {JSON}
+     *            floorplan
+     * @return {void}
+     * @emits {EVENT_LOADED}
+     */
+
+  }, {
+    key: "loadLockedFloorplan",
+    value: function loadLockedFloorplan(floorplan) {
+      var _this2 = this;
+
+      if (floorplan === null || !('corners' in floorplan) || !('walls' in floorplan)) {
+        return;
+      }
+
+      var currentUnit = _configuration.Configuration.getStringValue(_configuration.configDimUnit);
+
+      if (floorplan.units) {
+        switch (floorplan.units) {
+          case _constants.dimInch:
+            _configuration.Configuration.setValue(_configuration.configDimUnit, _constants.dimInch);
+
+            break;
+
+          case _constants.dimFeetAndInch:
+            _configuration.Configuration.setValue(_configuration.configDimUnit, _constants.dimFeetAndInch);
+
+            break;
+
+          case _constants.dimMeter:
+            _configuration.Configuration.setValue(_configuration.configDimUnit, _constants.dimMeter);
+
+            break;
+
+          case _constants.dimCentiMeter:
+            _configuration.Configuration.setValue(_configuration.configDimUnit, _constants.dimCentiMeter);
+
+            break;
+
+          case _constants.dimMilliMeter:
+            _configuration.Configuration.setValue(_configuration.configDimUnit, _constants.dimMilliMeter);
+
+            break;
+        }
+      }
+
+      var externalNewCorners = {};
+
+      for (var id in floorplan.corners) {
+        var cornerData = floorplan.corners[id];
+        var corner = new _corner.Corner(this, _dimensioning.Dimensioning.cmFromMeasureRaw(cornerData.x), _dimensioning.Dimensioning.cmFromMeasureRaw(cornerData.y));
+        corner.elevation = _dimensioning.Dimensioning.cmFromMeasureRaw(cornerData.elevation);
+        corner.isLocked = true;
+        externalNewCorners[id] = corner;
+
+        this.__externalCorners.push(corner);
+      }
+
+      floorplan.walls.forEach(function (wall) {
+        var corner1 = externalNewCorners[wall.corner1];
+        var corner2 = externalNewCorners[wall.corner2];
+        var newWall = new _wall.Wall(corner1, corner2);
+        newWall.isLocked = true;
+
+        if (wall.frontTexture) {
+          if (wall.frontTexture.colormap) {
+            newWall.frontTexture = wall.frontTexture;
+          } else {
+            newWall.frontTexture = _constants.defaultWallTexture;
+          }
+        }
+
+        if (wall.backTexture) {
+          if (wall.backTexture.colormap) {
+            newWall.backTexture = wall.backTexture;
+          } else {
+            newWall.backTexture = _constants.defaultWallTexture;
+          }
+        }
+
+        if (wall.thickness) {
+          newWall.thickness = _dimensioning.Dimensioning.cmFromMeasureRaw(wall.thickness);
+        } // Adding of a, b, wallType (straight, curved) for walls happened
+        // with introduction of 0.0.2a
+
+
+        if (_version.Version.isVersionHigherThan(floorplan.version, '0.0.2a')) {
+          newWall.a = wall.a;
+          newWall.b = wall.b;
+
+          if (wall.wallType === 'CURVED') {
+            newWall.wallType = _constants.WallTypes.CURVED;
+          } else {
+            newWall.wallType = _constants.WallTypes.STRAIGHT;
+          }
+        }
+
+        _this2.__externalWalls.push(newWall);
+      });
+
+      for (var roomKey in floorplan.rooms) {
+        var cornerIds = roomKey.split(',');
+        var roomCorners = [];
+        var isValidRoom = true;
+
+        for (var j = 0; j < cornerIds.length; j++) {
+          var cornerId = cornerIds[j];
+
+          if (!externalNewCorners[cornerId]) {
+            isValidRoom = false;
+            break;
+          }
+
+          roomCorners.push(externalNewCorners[cornerId]);
+        }
+
+        if (isValidRoom) {
+          var newRoom = new _room.Room(this, roomCorners);
+          newRoom.updateArea();
+          newRoom.isLocked = true;
+
+          this.__externalRooms.push(newRoom);
+        }
+      }
+
+      if ('boundary' in floorplan) {
+        if (floorplan.boundary.points) {
+          var cmPoints = [];
+
+          for (var i = 0; i < floorplan.boundary.points.length; i++) {
+            var point = floorplan.boundary.points[i];
+            var cmPoint = {
+              x: _dimensioning.Dimensioning.cmFromMeasureRaw(point.x),
+              y: _dimensioning.Dimensioning.cmFromMeasureRaw(point.y),
+              elevation: _dimensioning.Dimensioning.cmFromMeasureRaw(point.elevation)
+            };
+            cmPoints.push(cmPoint);
+          }
+
+          floorplan.boundary.points = cmPoints;
+          this.__boundary = new _boundary.default(this, floorplan.boundary);
+        }
+      }
+
+      _configuration.Configuration.setValue(_configuration.configDimUnit, currentUnit);
+
+      this.dispatchEvent({
+        type: _events.EVENT_EXTERNAL_FLOORPLAN_LOADED,
         item: this
       }); // this.roomLoadedCallbacks.fire();
     }
@@ -46624,6 +47697,12 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
       });
       this.corners = [];
       this.walls = [];
+      this.__externalRooms = [];
+      this.__externalCorners = [];
+      this.__externalWalls = [];
+      this.dispatchEvent({
+        type: _events.EVENT_MODE_RESET
+      });
     }
     /**
      * @param {Object}
@@ -46667,7 +47746,7 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
     key: "getSize3",
     value: function getSize3() {
       var size2D = this.getDimensions();
-      var size3D = new _three.Vector3(size2D.x, size2D.z, Number.MIN_VALUE);
+      var size3D = new _three.Vector3(size2D.x, size2D.z, -Number.MAX_VALUE);
 
       for (var i = 0; i < this.corners.length; i++) {
         var corner = this.corners[i];
@@ -46719,7 +47798,7 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
       });
       var ret;
 
-      if (xMin == Infinity || xMax == -Infinity || zMin == Infinity || zMax == -Infinity) {
+      if (xMin === Infinity || xMax === -Infinity || zMin === Infinity || zMax === -Infinity) {
         ret = new _three.Vector3();
       } else {
         if (center) {
@@ -46745,10 +47824,18 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
       // give them edges
       var orphanWalls = [];
       this.walls.forEach(function (wall) {
+        // if (!wall.backEdge) {
+        //     let back = new HalfEdge(null, wall, false);
+        //     back.generatePlane();
+        // }
+        // if (!wall.frontEdge) {
+        //     let front = new HalfEdge(null, wall, true);
+        //     front.generatePlane();
+        // }
         if (!wall.backEdge && !wall.frontEdge) {
-          wall.orphan = true;
           var back = new _half_edge.HalfEdge(null, wall, false);
           var front = new _half_edge.HalfEdge(null, wall, true);
+          wall.orphan = true;
           back.generatePlane();
           front.generatePlane();
           orphanWalls.push(wall);
@@ -46822,6 +47909,9 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
         if (scope.metaroomsdata) {
           if (scope.metaroomsdata[room.roomByCornersId]) {
             room.name = scope.metaroomsdata[room.roomByCornersId]['name'];
+          } else {
+            scope.metaroomsdata[room.roomByCornersId] = {};
+            scope.metaroomsdata[room.roomByCornersId]['name'] = room.name;
           }
         }
       });
@@ -46850,7 +47940,8 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
     }
     /**
      * Find the "rooms" in our planar straight-line graph. Rooms are set of the
-     * smallest (by area) possible cycles in this graph.
+     * smallest (by area) possible cycles in this graph. The room corners are always
+     * ordered in clockwise direction
      * 
      * @param corners
      *            The corners of the floorplan.
@@ -47025,6 +48116,26 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
     get: function get() {
       return this.__cornerGroups;
     }
+  }, {
+    key: "externalCorners",
+    get: function get() {
+      return this.__externalCorners;
+    }
+  }, {
+    key: "externalWalls",
+    get: function get() {
+      return this.__externalWalls;
+    }
+  }, {
+    key: "externalRooms",
+    get: function get() {
+      return this.__externalRooms;
+    }
+  }, {
+    key: "boundary",
+    get: function get() {
+      return this.__boundary;
+    }
   }]);
 
   return Floorplan;
@@ -47033,7 +48144,7 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
 exports.Floorplan = Floorplan;
 var _default = Floorplan;
 exports.default = _default;
-},{"../core/events.js":"rskn","three":"lKFo","../core/utils.js":"qdyh","../core/dimensioning.js":"I1ZD","../core/constants.js":"XniJ","../core/version.js":"ytID","../core/configuration.js":"q2Ih","./half_edge.js":"KlkX","./corner.js":"RKpz","./wall.js":"j7sX","./room.js":"HEbc","./cornergroups.js":"ZQLT"}],"rkPy":[function(require,module,exports) {
+},{"../core/events.js":"rskn","three":"lKFo","../core/utils.js":"qdyh","../core/dimensioning.js":"I1ZD","../core/constants.js":"XniJ","../core/version.js":"ytID","../core/configuration.js":"q2Ih","./half_edge.js":"KlkX","./corner.js":"RKpz","./wall.js":"j7sX","./room.js":"HEbc","./cornergroups.js":"ZQLT","./boundary.js":"gGOF"}],"rkPy":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -47376,6 +48487,16 @@ var Model = /*#__PURE__*/function (_EventDispatcher) {
       });
     }
   }, {
+    key: "loadLockedSerialized",
+    value: function loadLockedSerialized(json) {
+      var data = JSON.parse(json);
+      this.floorplan.loadLockedFloorplan(data.floorplan);
+      this.dispatchEvent({
+        type: _events.EVENT_EXTERNAL_FLOORPLAN_LOADED,
+        item: this
+      });
+    }
+  }, {
     key: "exportSerialized",
     value: function exportSerialized() {
       var floorplanJSON = this.floorplan.saveFloorplan();
@@ -47405,6 +48526,15 @@ var Model = /*#__PURE__*/function (_EventDispatcher) {
 
         this.__roomItems.push(item);
       }
+    }
+  }, {
+    key: "reset",
+    value: function reset() {
+      this.floorplan.reset();
+      this.__roomItems.length = 0;
+      this.dispatchEvent({
+        type: _events.EVENT_MODE_RESET
+      });
     }
     /** Gets the items.
      * @returns The items.
@@ -50006,6 +51136,10 @@ exports.Skybox = void 0;
 
 var _three = require("three");
 
+var _configuration = require("../core/configuration");
+
+var _events = require("../core/events");
+
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -50068,9 +51202,13 @@ var Skybox = /*#__PURE__*/function (_EventDispatcher) {
     _this.scene = scene;
     _this.renderer = renderer;
     _this.sphereRadius = 4000;
+    _this.__gridSize = _configuration.Configuration.getNumericValue(_configuration.viewBounds) * 5.0; //10000;
+
     _this.widthSegments = 32;
     _this.heightSegments = 15;
     _this.sky = null;
+    _this.__fineGridFloor = null;
+    _this.__coarseGridFloor = null;
     _this.plainVertexShader = ['varying vec3 vWorldPosition;', 'void main() {', 'vec4 worldPosition = modelMatrix * vec4( position, 1.0 );', 'vWorldPosition = worldPosition.xyz;', 'gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0 );', '}'].join('\n');
     _this.plainFragmentShader = ['uniform vec3 bottomColor;', 'uniform vec3 topColor;', 'uniform float offset;', 'uniform float exponent;', 'varying vec3 vWorldPosition;', 'void main() {', ' float h = normalize( vWorldPosition + offset ).y;', ' gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max(h, 0.0 ), exponent ), 0.0 ) ), 1.0 );', '}'].join('\n');
     _this.vertexShader = ['varying vec2 vUV;', 'void main() {', '  vUV=uv;', '  vec4 pos = vec4(position, 1.0);', '   gl_Position = projectionMatrix * modelViewMatrix * pos;', '}'].join('\n');
@@ -50087,34 +51225,41 @@ var Skybox = /*#__PURE__*/function (_EventDispatcher) {
     _this.skyGeo = new _three.SphereGeometry(_this.sphereRadius, _this.widthSegments, _this.heightSegments);
     _this.sky = new _three.Mesh(_this.skyGeo, _this.skyMat); //		this.sky.position.x += this.sphereRadius*0.5;
 
-    _this.ground = new _three.GridHelper(10000, 100, 0x0F0F0F, 0x808080);
-    _this.ground.position.y = -10;
-
-    _this.scene.add(_this.sky);
-
-    _this.scene.add(_this.ground);
-
     var axesHelper = new _three.AxesHelper(1000);
 
     _this.scene.add(axesHelper); // axesHelper.visible = false;
 
 
+    _this.__createGridFloors();
+
     _this.init();
+
+    _configuration.Configuration.getInstance().addEventListener(_events.EVENT_CHANGED, _this.__updateGrid.bind(_assertThisInitialized(_this)));
 
     return _this;
   }
 
   _createClass(Skybox, [{
-    key: "setEnabled",
-    value: function setEnabled(flag) {
-      if (!flag) {
-        this.scene.remove(this.sky);
-        this.scene.remove(this.ground);
-      } else {
-        this.scene.add(this.sky);
-        this.scene.add(this.ground);
-      } //		this.sky.visible = this.ground.visible = flag;
+    key: "__createGridFloors",
+    value: function __createGridFloors() {
+      if (this.__fineGridFloor) {
+        this.scene.remove(this.__fineGridFloor);
+        this.scene.remove(this.__coarseGridFloor);
+      }
 
+      this.__fineGridFloor = new _three.GridHelper(this.__gridSize, Math.round(this.__gridSize / _configuration.Configuration.getNumericValue(_configuration.gridSpacing)), 0x0F0F0F, 0x808080);
+      this.__coarseGridFloor = new _three.GridHelper(this.__gridSize, Math.round(this.__gridSize / (_configuration.Configuration.getNumericValue(_configuration.gridSpacing) * 5)), 0x0F0F0F, 0x303030);
+      this.__fineGridFloor.position.y = this.__coarseGridFloor.position.y = -10;
+      this.scene.add(this.__fineGridFloor);
+      this.scene.add(this.__coarseGridFloor);
+      this.scene.needsUpdate = true;
+    }
+  }, {
+    key: "__updateGrid",
+    value: function __updateGrid(evt) {
+      this.__gridSize = _configuration.Configuration.getNumericValue(_configuration.viewBounds) * 5.0; //10000;
+
+      this.__createGridFloors();
     }
   }, {
     key: "toggleEnvironment",
@@ -50122,11 +51267,11 @@ var Skybox = /*#__PURE__*/function (_EventDispatcher) {
       this.useEnvironment = flag;
 
       if (!flag) {
-        this.ground.visible = true;
+        this.__fineGridFloor.visible = true;
         this.sky.material = this.plainSkyMat;
         this.sky.material.needsUpdate = true;
       } else {
-        this.ground.visible = false;
+        this.__fineGridFloor.visible = false;
 
         if (!this.skyMat) {
           this.setEnvironmentMap(this.defaultEnvironment);
@@ -50174,7 +51319,7 @@ var Skybox = /*#__PURE__*/function (_EventDispatcher) {
 }(_three.EventDispatcher);
 
 exports.Skybox = Skybox;
-},{"three":"lKFo"}],"g5rc":[function(require,module,exports) {
+},{"three":"lKFo","../core/configuration":"q2Ih","../core/events":"rskn"}],"g5rc":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -50223,13 +51368,16 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
     _this = _super.call(this, parameters);
     _this.__scene = scene;
     _this.__reflectsScene = reflectsScene;
-    _this.__mirrorCamera = null;
-    _this.roughness = !textureMapPack.reflective ? 0.5 : textureMapPack.reflective;
+    _this.__mirrorCamera = null; // this.roughness = (!textureMapPack.reflective) ? 0.5 : textureMapPack.reflective;
+
     _this.__repeat = !textureMapPack.repeat ? _constants.TEXTURE_DEFAULT_REPEAT : textureMapPack.repeat;
+    _this.__repeatX = null;
+    _this.__repeatY = null;
 
     if (_this.__reflectsScene) {
       _this.__mirrorCamera = _this.__scene.environmentCamera;
       _this.envMap = _this.__mirrorCamera.renderTarget.texture;
+      _this.envMap.mapping = _three.CubeReflectionMapping;
     }
 
     _this.__textureMapPack = textureMapPack;
@@ -50238,93 +51386,138 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
     _this.__dimensions = new _three.Vector2();
     _this.__repeatPerCentimeter = 1.0 / _this.__repeat; //Repeat for every 'x' centimeters
 
+    _this.__repeatPerCentimeterX = null;
+    _this.__repeatPerCentimeterY = null;
     _this.__colorTexture = null;
     _this.__normalTexture = null;
     _this.__roughnessTexture = null;
     _this.__ambientTexture = null;
     _this.__bumpTexture = null;
+    _this.__metalTexture = null; // this.__applyNewTextures();
+    // this.normalScale.set(-10, 10);
 
-    _this.__applyNewTextures();
-
-    _this.normalScale.set(-10, 10);
-
+    _this.textureMapPack = textureMapPack;
     return _this;
   }
 
   _createClass(Material3D, [{
-    key: "__updateTextures",
-    value: function __updateTextures() {
-      var flag = false;
-
+    key: "__updateColorMap",
+    value: function __updateColorMap(texture) {
       if (this.__colorTexture) {
-        flag = true;
+        this.__colorTexture.encoding = _three.sRGBEncoding;
         this.__colorTexture.wrapS = this.__colorTexture.wrapT = _three.RepeatWrapping;
 
         this.__colorTexture.repeat.set(this.__uRatio, this.__vRatio);
 
         this.__colorTexture.needsUpdate = true;
+        this.map = this.__colorTexture;
       }
 
+      this.__updateTextures();
+    }
+  }, {
+    key: "__updateNormalMap",
+    value: function __updateNormalMap(texture) {
       if (this.__normalTexture) {
+        this.__normalTexture.encoding = _three.sRGBEncoding;
         this.__normalTexture.wrapS = this.__normalTexture.wrapT = _three.RepeatWrapping;
 
         this.__normalTexture.repeat.set(this.__uRatio, this.__vRatio);
 
         this.__normalTexture.needsUpdate = true;
+        this.normalMap = this.__normalTexture;
       }
 
+      this.__updateTextures();
+    }
+  }, {
+    key: "__updateRoughnessMap",
+    value: function __updateRoughnessMap(texture) {
       if (this.__roughnessTexture) {
+        this.__roughnessTexture.encoding = _three.sRGBEncoding;
         this.__roughnessTexture.wrapS = this.__roughnessTexture.wrapT = _three.RepeatWrapping;
 
         this.__roughnessTexture.repeat.set(this.__uRatio, this.__vRatio);
 
         this.__roughnessTexture.needsUpdate = true;
+        this.roughnessMap = this.__roughnessTexture;
       }
 
+      this.__updateTextures();
+    }
+  }, {
+    key: "__updateAmbientMap",
+    value: function __updateAmbientMap(texture) {
       if (this.__ambientTexture) {
+        this.__ambientTexture.encoding = _three.sRGBEncoding;
         this.__ambientTexture.wrapS = this.__ambientTexture.wrapT = _three.RepeatWrapping;
 
         this.__ambientTexture.repeat.set(this.__uRatio, this.__vRatio);
 
         this.__ambientTexture.needsUpdate = true;
+        this.aoMap = this.__ambientTexture; // this.aoMapIntensity = 1.0;
       }
 
+      this.__updateTextures();
+    }
+  }, {
+    key: "__updateMetallicMap",
+    value: function __updateMetallicMap(texture) {
+      if (this.__metalTexture) {
+        this.__metalTexture.encoding = _three.sRGBEncoding;
+        this.__metalTexture.wrapS = this.__metalTexture.wrapT = _three.RepeatWrapping;
+
+        this.__metalTexture.repeat.set(this.__uRatio, this.__vRatio);
+
+        this.__metalTexture.needsUpdate = true;
+        this.metalnessMap = this.__metalTexture;
+      }
+
+      this.__updateTextures();
+    }
+  }, {
+    key: "__updateBumpMap",
+    value: function __updateBumpMap(texture) {
       if (this.__bumpTexture) {
+        this.__bumpTexture.encoding = _three.sRGBEncoding;
         this.__bumpTexture.wrapS = this.__bumpTexture.wrapT = _three.RepeatWrapping;
 
         this.__bumpTexture.repeat.set(this.__uRatio, this.__vRatio);
 
         this.__bumpTexture.needsUpdate = true;
+        this.displacementMap = this.__bumpTexture;
         this.displacementMap.needsUpdate = true;
       }
 
-      if (flag) {
-        this.needsUpdate = true;
-        this.__scene.needsUpdate = true;
-      }
+      this.__updateTextures();
+    }
+  }, {
+    key: "__updateTextures",
+    value: function __updateTextures() {
+      this.needsUpdate = true;
+      this.__scene.needsUpdate = true;
     }
   }, {
     key: "__applyNewTextures",
     value: function __applyNewTextures() {
       if (this.__textureMapPack.colormap) {
-        this.__colorTexture = new _three.TextureLoader().load(this.__textureMapPack.colormap, this.__updateTextures.bind(this));
-        this.map = this.__colorTexture;
+        this.__colorTexture = new _three.TextureLoader().load(this.__textureMapPack.colormap, this.__updateColorMap.bind(this));
       }
 
       if (this.__textureMapPack.normalmap) {
-        this.__normalTexture = new _three.TextureLoader().load(this.__textureMapPack.normalmap, this.__updateTextures.bind(this));
-        this.normalMap = this.__normalTexture;
+        this.__normalTexture = new _three.TextureLoader().load(this.__textureMapPack.normalmap, this.__updateNormalMap.bind(this));
       }
 
       if (this.__textureMapPack.roughnessmap) {
-        this.__roughnessTexture = new _three.TextureLoader().load(this.__textureMapPack.roughnessmap, this.__updateTextures.bind(this));
-        this.roughnessMap = this.__roughnessTexture;
+        this.__roughnessTexture = new _three.TextureLoader().load(this.__textureMapPack.roughnessmap, this.__updateRoughnessMap.bind(this));
       }
 
       if (this.__textureMapPack.ambientmap) {
-        this.__ambientTexture = new _three.TextureLoader().load(this.__textureMapPack.ambientmap, this.__updateTextures.bind(this));
-        this.aoMap = this.__ambientTexture;
-        this.aoMapIntensity = 1.0;
+        this.__ambientTexture = new _three.TextureLoader().load(this.__textureMapPack.ambientmap, this.__updateAmbientMap.bind(this));
+      }
+
+      if (this.__textureMapPack.metalmap) {
+        this.__metalTexture = new _three.TextureLoader().load(this.__textureMapPack.metalmap, this.__updateMetallicMap.bind(this));
       } // if (this.__textureMapPack.bumpmap) {
       //     console.log('APPLY DISPLACEMENT MAP ::: ');
       //     this.__bumpTexture = new TextureLoader().load(this.__textureMapPack.bumpmap, this.__updateTextures.bind(this));
@@ -50340,10 +51533,20 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
       this.__uRatio = uRatio;
       this.__vRatio = vRatio;
 
-      this.__updateTextures();
+      this.__updateColorMap();
 
-      this.needsUpdate = true;
-      this.__scene.needsUpdate = true;
+      this.__updateNormalMap();
+
+      this.__updateRoughnessMap();
+
+      this.__updateMetallicMap();
+
+      this.__updateAmbientMap();
+
+      this.__updateBumpMap(); // this.__updateTextures();
+      // this.needsUpdate = true;
+      // this.__scene.needsUpdate = true;
+
     }
     /**
      * 
@@ -50371,10 +51574,20 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
     },
     set: function set(textureMapPack) {
       this.__textureMapPack = textureMapPack;
+      textureMapPack.color = textureMapPack.color || '#FFFFFF';
+      textureMapPack.emissive = textureMapPack.emissive || '#000000';
+      textureMapPack.reflective = textureMapPack.reflective || 0.5;
+      textureMapPack.shininess = textureMapPack.shininess || 0.5;
       this.color = new _three.Color(textureMapPack.color);
-      this.roughness = !textureMapPack.reflective ? 0.5 : textureMapPack.reflective;
+      this.emissive = new _three.Color(textureMapPack.emissive);
+      this.roughness = textureMapPack.reflective;
+      this.metalness = textureMapPack.shininess;
       this.__repeat = !textureMapPack.repeat ? _constants.TEXTURE_DEFAULT_REPEAT : textureMapPack.repeat;
       this.__repeatPerCentimeter = 1.0 / this.__repeat;
+      this.__repeatX = textureMapPack.repeatX || textureMapPack.repeat;
+      this.__repeatY = textureMapPack.repeatY || textureMapPack.repeat;
+      this.__repeatPerCentimeterX = 1.0 / this.__repeatX;
+      this.__repeatPerCentimeterY = 1.0 / this.__repeatY;
 
       this.__applyNewTextures();
     }
@@ -50382,13 +51595,12 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
     key: "repeat",
     get: function get() {
       return this.__repeat;
-    },
-    set: function set(value) {
-      this.__repeat = value;
-      this.__repeatPerCentimeter = 1.0 / this.__repeat;
+    } // set repeat(value) {
+    //     this.__repeat = value;
+    //     this.__repeatPerCentimeter = 1.0 / this.__repeat;
+    //     this.__updateDimensions(this.__dimensions.x, this.__dimensions.y);
+    // }
 
-      this.__updateDimensions(this.__dimensions.x, this.__dimensions.y);
-    }
   }, {
     key: "dimensions",
     get: function get() {
@@ -50398,6 +51610,11 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
       this.__dimensions = vec2.clone();
 
       this.__updateDimensions(this.__dimensions.x, this.__dimensions.y);
+    }
+  }, {
+    key: "isReflective",
+    get: function get() {
+      return this.__reflectsScene;
     }
   }]);
 
@@ -50439,14 +51656,9 @@ var WallMaterial3D = /*#__PURE__*/function (_Material3D) {
   var _super = _createSuper(WallMaterial3D);
 
   function WallMaterial3D(parameters, textureMapPack, scene) {
-    var _this;
-
     _classCallCheck(this, WallMaterial3D);
 
-    _this = _super.call(this, parameters, textureMapPack, scene, false);
-    _this.roughness = 0.7; // this.normalScale.set(100, 100);
-
-    return _this;
+    return _super.call(this, parameters, textureMapPack, scene, false);
   }
 
   return WallMaterial3D;
@@ -50496,7 +51708,7 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
 
   var _super = _createSuper(Edge3D);
 
-  function Edge3D(scene, edge, controls) {
+  function Edge3D(scene, edge, controls, opts) {
     var _this;
 
     _classCallCheck(this, Edge3D);
@@ -50506,6 +51718,17 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
     _this.scene = scene;
     _this.edge = edge;
     _this.controls = controls;
+    var options = {
+      occludedWalls: false
+    };
+
+    for (var opt in options) {
+      if (options.hasOwnProperty(opt) && opts.hasOwnProperty(opt)) {
+        options[opt] = opts[opt];
+      }
+    }
+
+    _this.__options = options;
     _this.wall = edge.wall;
     _this.front = edge.front;
     _this.planes = [];
@@ -50528,6 +51751,7 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
 
     _this.showallevent = _this.__showAll.bind(_assertThisInitialized(_this)); //() => { scope.showAll(); };
 
+    _this.__edgeDeletedEvent = _this.__edgeDeleted.bind(_assertThisInitialized(_this));
     _this.__updateTexturePackEvent = _this.__updateTexturePack.bind(_assertThisInitialized(_this));
     _this.visibilityfactor = true;
     _this.__wallMaterial3D = null;
@@ -50547,13 +51771,15 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
       var texturePack = this.edge.getTexture();
 
       if (!this.__wallMaterial3D) {
+        var side = this.wall.isLocked || this.__options.occludedWalls ? _three.DoubleSide : _three.FrontSide;
+
         if (!texturePack.color) {
           texturePack.color = '#FF0000';
         }
 
         this.__wallMaterial3D = new _WallMaterial3D.WallMaterial3D({
           color: texturePack.color,
-          side: _three.FrontSide,
+          side: side,
           transparent: true,
           wireframe: false
         }, texturePack, this.scene);
@@ -50564,6 +51790,11 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
 
       this.redraw();
       this.scene.needsUpdate = true;
+    }
+  }, {
+    key: "__edgeDeleted",
+    value: function __edgeDeleted(evt) {
+      this.remove();
     }
   }, {
     key: "__redraw",
@@ -50581,16 +51812,9 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
       this.__showAll();
     }
   }, {
-    key: "remove",
-    value: function remove() {
-      this.edge.removeEventListener(_events.EVENT_UPDATE_TEXTURES, this.__updateTexturePackEvent);
-      this.edge.removeEventListener(_events.EVENT_REDRAW, this.redrawevent);
-      this.controls.removeEventListener('change', this.visibilityevent);
-      this.removeFromScene();
-    }
-  }, {
     key: "init",
     value: function init() {
+      this.edge.addEventListener(_events.EVENT_DELETED, this.__edgeDeletedEvent);
       this.edge.addEventListener(_events.EVENT_UPDATE_TEXTURES, this.__updateTexturePackEvent);
       this.edge.addEventListener(_events.EVENT_REDRAW, this.redrawevent);
       this.controls.addEventListener('change', this.visibilityevent);
@@ -50609,6 +51833,9 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "removeFromScene",
     value: function removeFromScene() {
+      // if (this.wall.isLocked) {
+      //     console.trace('REMOVE MYSELF FROM SCENE');
+      // }
       var scope = this;
       scope.planes.forEach(function (plane) {
         scope.scene.remove(plane);
@@ -50621,6 +51848,15 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
       });
       scope.planes = [];
       scope.basePlanes = [];
+    }
+  }, {
+    key: "remove",
+    value: function remove() {
+      this.edge.removeEventListener(_events.EVENT_DELETED, this.__edgeDeletedEvent);
+      this.edge.removeEventListener(_events.EVENT_UPDATE_TEXTURES, this.__updateTexturePackEvent);
+      this.edge.removeEventListener(_events.EVENT_REDRAW, this.redrawevent);
+      this.controls.removeEventListener('change', this.visibilityevent);
+      this.removeFromScene();
     }
   }, {
     key: "addToScene",
@@ -50666,6 +51902,10 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "updateVisibility",
     value: function updateVisibility() {
+      if (this.wall.isLocked || this.__options.occludedWalls) {
+        return;
+      }
+
       var scope = this; // finds the normal from the specified edge
 
       var start = scope.edge.interiorStart();
@@ -50718,7 +51958,7 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "updateTexture",
     value: function updateTexture(callback) {
-      if (this.edge == null) {
+      if (this.edge === null) {
         return;
       }
 
@@ -50732,27 +51972,21 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
       var extStartCorner = this.edge.getStart();
       var extEndCorner = this.edge.getEnd();
 
-      if (extStartCorner == null || extEndCorner == null) {
+      if (extStartCorner === null || extEndCorner === null) {
         return;
       }
 
       var interiorStart = this.edge.interiorStart();
       var interiorEnd = this.edge.interiorEnd();
       var exteriorStart = this.edge.exteriorStart();
-      var exteriorEnd = this.edge.exteriorEnd();
-      var fillerMaterial = new _three.MeshBasicMaterial({
-        color: this.fillerColor,
-        side: _three.DoubleSide,
-        // map: this.texture,
-        transparent: true,
-        opacity: 1.0,
-        wireframe: false
-      }); // exterior plane for real exterior walls
+      var exteriorEnd = this.edge.exteriorEnd(); // exterior plane for real exterior walls
       //If the walls have corners that have more than one room attached
       //Then there is no need to construct an exterior wall
 
       if (this.edge.wall.start.getAttachedRooms().length < 2 || this.edge.wall.end.getAttachedRooms().length < 2) {
-        this.planes.push(this.makeWall(exteriorStart, exteriorEnd, this.edge.exteriorTransform, this.edge.invExteriorTransform, fillerMaterial));
+        // console.log('CONSTRUCT EXTERIOR WALLS');
+        var exteriorWall = this.makeWall(exteriorStart, exteriorEnd, this.edge.exteriorTransform, this.edge.invExteriorTransform, this.__wallMaterial3D);
+        this.planes.push(exteriorWall);
       } // interior plane
       // this.planes.push(this.makeWall(interiorStart, interiorEnd, this.edge.interiorTransform, this.edge.invInteriorTransform, wallMaterial));
 
@@ -50788,19 +52022,21 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
       });
       var spoints = [new _three.Vector2(points[0].x, points[0].y), new _three.Vector2(points[1].x, points[1].y), new _three.Vector2(points[2].x, points[2].y), new _three.Vector2(points[3].x, points[3].y)];
       var shape = new _three.Shape(spoints); // add holes for each wall item
-      // this.wall.items.forEach((item) => {
 
-      this.wall.inWallItems.forEach(function (item) {
+      for (var i = 0; i < this.wall.inWallItems.length; i++) {
+        var item = this.wall.inWallItems[i];
         var pos = item.position.clone();
-        pos.applyMatrix4(transform);
-        var halfSize = item.halfSize;
-        var min = halfSize.clone().multiplyScalar(-1);
+        var halfSize = item.halfSize.clone();
+        var min = halfSize.clone().negate();
         var max = halfSize.clone();
+        var holePoints = null;
+        pos.applyMatrix4(transform);
         min.add(pos);
         max.add(pos);
-        var holePoints = [new _three.Vector2(min.x, min.y), new _three.Vector2(max.x, min.y), new _three.Vector2(max.x, max.y), new _three.Vector2(min.x, max.y)];
+        holePoints = [new _three.Vector2(min.x, min.y), new _three.Vector2(max.x, min.y), new _three.Vector2(max.x, max.y), new _three.Vector2(min.x, max.y)];
         shape.holes.push(new _three.Path(holePoints));
-      });
+      }
+
       var geometry = new _three.ShapeGeometry(shape);
       geometry.vertices.forEach(function (v) {
         v.applyMatrix4(invTransform);
@@ -50808,7 +52044,7 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
 
       var totalDistance = this.edge.interiorDistance(); //Utils.distance(new Vector2(v1.x, v1.z), new Vector2(v2.x, v2.z));
 
-      var height = this.wall.height;
+      var height = Math.max(this.wall.startElevation, this.wall.endElevation);
       geometry.faceVertexUvs[0] = [];
       geometry.faces.forEach(function (face) {
         var vertA = geometry.vertices[face.a];
@@ -50855,11 +52091,7 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
       var a = this.toVec3(edge.exteriorStart(), this.edge.getStart().elevation);
       var b = this.toVec3(edge.exteriorEnd(), this.edge.getEnd().elevation);
       var c = this.toVec3(edge.interiorEnd(), this.edge.getEnd().elevation);
-      var d = this.toVec3(edge.interiorStart(), this.edge.getStart().elevation); //		var a = this.toVec3(edge.exteriorStart(), this.wall.getClosestCorner(edge.exteriorStart()).elevation);
-      //		var b = this.toVec3(edge.exteriorEnd(), this.wall.getClosestCorner(edge.exteriorEnd()).elevation);
-      //		var c = this.toVec3(edge.interiorEnd(), this.wall.getClosestCorner(edge.interiorEnd()).elevation);
-      //		var d = this.toVec3(edge.interiorStart(), this.wall.getClosestCorner(edge.interiorStart()).elevation);
-
+      var d = this.toVec3(edge.interiorStart(), this.edge.getStart().elevation);
       var fillerMaterial = new _three.MeshBasicMaterial({
         color: color,
         side: side
@@ -50939,8 +52171,7 @@ var FloorMaterial3D = /*#__PURE__*/function (_Material3D) {
   function FloorMaterial3D(parameters, textureMapPack, scene) {
     _classCallCheck(this, FloorMaterial3D);
 
-    return _super.call(this, parameters, textureMapPack, scene, true); // this.metalness = 1.0;
-    // this.normalScale.set(-10, -10);
+    return _super.call(this, parameters, textureMapPack, scene, false);
   }
 
   return FloorMaterial3D;
@@ -50992,12 +52223,23 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
 
   var _super = _createSuper(Floor3D);
 
-  function Floor3D(scene, room, controls) {
+  function Floor3D(scene, room, controls, opts) {
     var _this;
 
     _classCallCheck(this, Floor3D);
 
     _this = _super.call(this);
+    var options = {
+      occludedRoofs: false
+    };
+
+    for (var opt in options) {
+      if (options.hasOwnProperty(opt) && opts.hasOwnProperty(opt)) {
+        options[opt] = opts[opt];
+      }
+    }
+
+    _this.__options = options;
     _this.scene = scene;
     _this.room = room;
     _this.controls = controls;
@@ -51008,7 +52250,7 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
     _this.__updateReflectionsEvent = _this.__updateReflections.bind(_assertThisInitialized(_this));
     _this.__floorMaterial3D = null;
 
-    _this.init();
+    _this.room.addEventListener(_events.EVENT_ROOM_ATTRIBUTES_CHANGED, _this.changedevent);
 
     _this.room.addEventListener(_events.EVENT_CHANGED, _this.changedevent);
 
@@ -51016,15 +52258,19 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
 
     _this.controls.addEventListener('change', _this.__updateReflectionsEvent);
 
+    _this.init();
+
     return _this;
   }
 
   _createClass(Floor3D, [{
     key: "__updateReflections",
     value: function __updateReflections() {
-      if (this.__floorMaterial3D && this.scene.enabled) {
+      if (this.__floorMaterial3D && this.__floorMaterial3D.isReflective && this.scene.enabled) {
         var floorSize = this.room.floorRectangleSize.clone();
         this.floorPlane.visible = false;
+
+        this.__floorMaterial3D.envMapCamera.clear(this.scene.renderer);
 
         this.__floorMaterial3D.envMapCamera.position.set(floorSize.x, 0, floorSize.y);
 
@@ -51105,7 +52351,9 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
 
       this.__floorMaterial3D.dimensions = floorSize;
 
-      this.__floorMaterial3D.envMapCamera.position.copy(new _three.Vector3(floorSize.x, 0, floorSize.y));
+      if (this.__floorMaterial3D.envMapCamera) {
+        this.__floorMaterial3D.envMapCamera.position.copy(new _three.Vector3(floorSize.x, 0, floorSize.y));
+      }
 
       var floor = new _three.Mesh(useGeometry, this.__floorMaterial3D);
       floor.rotation.set(Math.PI * 0.5, 0, 0);
@@ -51114,23 +52362,49 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "buildRoofVaryingHeight",
     value: function buildRoofVaryingHeight() {
-      // setup texture
+      var side = this.room.isLocked || this.__options.occludedRoofs ? _three.DoubleSide : _three.FrontSide; // setup texture
+
       var roofMaterial = new _three.MeshBasicMaterial({
-        side: _three.FrontSide,
+        side: side,
         color: 0xe5e5e5
       });
-      var geometry = new _three.Geometry();
+      var spoints = [];
+      var shape = null;
+      var shapeGeometry = null;
+      var roof = null; // this.room.interiorCorners.forEach((corner) => {
+      //     spoints.push(new Vector2(corner.x, corner.y));
+      // });
+
       this.room.corners.forEach(function (corner) {
-        var vertex = new _three.Vector3(corner.x, corner.elevation, corner.y);
-        geometry.vertices.push(vertex);
+        spoints.push(new _three.Vector2(corner.x, corner.y));
       });
+      shape = new _three.Shape(spoints);
+      shapeGeometry = new _three.ShapeGeometry(shape);
+      var cornerIndex = shapeGeometry.vertices.length - 1; // console.log('===================================');
+      // console.log('COUNTS ::: ', this.room.corners.length, shapeGeometry.vertices.length);
 
-      for (var i = 2; i < geometry.vertices.length; i++) {
-        var face = new _three.Face3(0, i - 1, i);
-        geometry.faces.push(face);
-      }
+      for (var i = 0; i < shapeGeometry.vertices.length; i++) {
+        // let index = (this.room.corners.length-i)-1;
+        var corner = this.room.corners[cornerIndex];
+        var vertex = shapeGeometry.vertices[i];
+        vertex.z = vertex.y;
+        vertex.y = corner.elevation + 0.1;
+        cornerIndex--; // console.log('CORNER LOCATION ::: ', corner.location);
+        // console.log('VERTEX ::: ', vertex);
+      } // console.log('===================================');
 
-      var roof = new _three.Mesh(geometry, roofMaterial); // roof.rotation.set(Math.PI / 2, 0, 0);
+
+      roof = new _three.Mesh(shapeGeometry, roofMaterial); // let geometry = new Geometry();
+      // this.room.corners.forEach((corner) => {
+      //     let vertex = new Vector3(corner.x, corner.elevation, corner.y);
+      //     geometry.vertices.push(vertex);
+      // });
+      // for (let i = 2; i < geometry.vertices.length; i++) {
+      //     let face = new Face3(0, i - 1, i);
+      //     geometry.faces.push(face);
+      // }
+      // let roof = new Mesh(geometry, roofMaterial);
+      // roof.rotation.set(Math.PI / 2, 0, 0);
       // roof.position.y = Configuration.getNumericValue(configWallHeight);
 
       return roof;
@@ -51271,11 +52545,11 @@ var Lights3D = /*#__PURE__*/function (_EventDispatcher) {
       this.dirLight.shadow.camera.far = this.height + this.tol;
       this.dirLight.shadow.bias = -0.0001;
       this.dirLight.visible = true;
+      this.dirLight.intensity = 0.15;
       this.scene.add(light); // this.scene.add(this.dirLight);
       // this.scene.add(this.dirLight.target);
 
-      this.scene.add(this.ambLight);
-      this.floorplan.addEventListener(_events.EVENT_UPDATED, this.updatedroomsevent);
+      this.scene.add(this.ambLight); // this.floorplan.addEventListener(EVENT_UPDATED, this.updatedroomsevent);
     }
   }, {
     key: "updateShadowCamera",
@@ -59237,7 +60511,7 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
 
   var _super = _createSuper(Physical3DItem);
 
-  function Physical3DItem(itemModel) {
+  function Physical3DItem(itemModel, opts) {
     var _this;
 
     _classCallCheck(this, Physical3DItem);
@@ -59248,6 +60522,7 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
     _this.__center = null;
     _this.__size = null;
     _this.__selected = false;
+    _this.__options = opts;
     _this.__selectedMaterial = new _three.LineBasicMaterial({
       color: 0x0000F0,
       linewidth: 5
@@ -59304,61 +60579,67 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
     key: "__itemUpdated",
     value: function __itemUpdated(evt) {
       var scope = this;
-      var duration = 0.15;
+      var duration = 0.25;
+
+      if (!scope.parent) {
+        return;
+      }
 
       function __tinyUpdate() {
-        scope.parent.needsUpdate = true;
+        if (scope.parent) {
+          scope.parent.needsUpdate = true;
+        }
       }
 
-      if (evt.property === 'position') {
-        _gsap.default.to(this.position, {
-          duration: duration,
-          x: this.__itemModel.position.x,
-          onUpdate: __tinyUpdate
-        });
+      if (!this.__itemModel.offlineUpdate) {
+        if (evt.property === 'position') {
+          this.position.set(this.__itemModel.position.x, this.__itemModel.position.y, this.__itemModel.position.z); // gsap.to(this.position, { duration: duration, x: this.__itemModel.position.x, onUpdate: __tinyUpdate });
+          // gsap.to(this.position, { duration: duration, y: this.__itemModel.position.y });
+          // gsap.to(this.position, { duration: duration, z: this.__itemModel.position.z });
+        }
 
-        _gsap.default.to(this.position, {
-          duration: duration,
-          y: this.__itemModel.position.y
-        });
+        if (evt.property === 'rotation') {
+          _gsap.default.to(this.__loadedItem.rotation, {
+            duration: duration,
+            x: this.__itemModel.rotation.x,
+            onUpdate: __tinyUpdate
+          });
 
-        _gsap.default.to(this.position, {
-          duration: duration,
-          z: this.__itemModel.position.z
-        });
-      }
+          _gsap.default.to(this.__loadedItem.rotation, {
+            duration: duration,
+            y: this.__itemModel.rotation.y
+          });
 
-      if (evt.property === 'rotation') {
-        _gsap.default.to(this.__loadedItem.rotation, {
-          duration: duration,
-          x: this.__itemModel.rotation.x,
-          onUpdate: __tinyUpdate
-        });
+          _gsap.default.to(this.__loadedItem.rotation, {
+            duration: duration,
+            z: this.__itemModel.rotation.z
+          });
 
-        _gsap.default.to(this.__loadedItem.rotation, {
-          duration: duration,
-          y: this.__itemModel.rotation.y
-        });
+          _gsap.default.to(this.__boxhelper.rotation, {
+            duration: duration,
+            x: this.__itemModel.rotation.x
+          });
 
-        _gsap.default.to(this.__loadedItem.rotation, {
-          duration: duration,
-          z: this.__itemModel.rotation.z
-        });
+          _gsap.default.to(this.__boxhelper.rotation, {
+            duration: duration,
+            y: this.__itemModel.rotation.y
+          });
 
-        _gsap.default.to(this.__boxhelper.rotation, {
-          duration: duration,
-          x: this.__itemModel.rotation.x
-        });
+          _gsap.default.to(this.__boxhelper.rotation, {
+            duration: duration,
+            z: this.__itemModel.rotation.z
+          });
+        }
+      } else {
+        if (evt.property === 'position') {
+          this.position.set(this.__itemModel.position.x, this.__itemModel.position.y, this.__itemModel.position.z);
+        }
 
-        _gsap.default.to(this.__boxhelper.rotation, {
-          duration: duration,
-          y: this.__itemModel.rotation.y
-        });
+        if (evt.property === 'rotation') {
+          this.__loadedItem.rotation.set(this.__itemModel.rotation.x, this.__itemModel.rotation.y, this.__itemModel.rotation.z);
 
-        _gsap.default.to(this.__boxhelper.rotation, {
-          duration: duration,
-          z: this.__itemModel.rotation.z
-        });
+          this.__boxhelper.rotation.set(this.__itemModel.rotation.x, this.__itemModel.rotation.y, this.__itemModel.rotation.z);
+        }
       }
 
       if (evt.property === 'visible') {
@@ -59399,7 +60680,13 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
   }, {
     key: "__gltfLoaded",
     value: function __gltfLoaded(gltfModel) {
-      this.__loadedItem = gltfModel.scene;
+      this.__loadedItem = gltfModel.scene; // this.__loadedItem.children.forEach((child) => {
+      //     if (child.material) {
+      //         if (child.material.map) {
+      //             child.material.map.encoding = sRGBEncoding;
+      //         }
+      //     }
+      // });
 
       this.__initializeChildItem();
 
@@ -59441,6 +60728,8 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
   }, {
     key: "dispose",
     value: function dispose() {
+      this.__itemModel.dispose();
+
       this.__itemModel.removeEventListener(_events.EVENT_UPDATED, this.__itemUpdatedEvent);
 
       this.parent.remove(this);
@@ -59449,6 +60738,11 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
     key: "snapToPoint",
     value: function snapToPoint(coordinate3d, normal, intersectingPlane) {
       this.__itemModel.snapToPoint(coordinate3d, normal, intersectingPlane);
+    }
+  }, {
+    key: "snapToWall",
+    value: function snapToWall(coordinate3d, wall, wallEdge) {
+      this.__itemModel.snapToWall(coordinate3d, wall, wallEdge);
     }
   }, {
     key: "selected",
@@ -59481,6 +60775,29 @@ var Physical3DItem = /*#__PURE__*/function (_Mesh) {
 
   return Physical3DItem;
 }(_three.Mesh);
+/**
+export class Physical3DItem {
+    constructor(itemModel) {
+        console.log(this);
+        return new Proxy(new Physical3DItemNonProxy(itemModel), {
+            get(target, name, receiver) {
+                console.log('USING REFLECT.GET ', target);
+                if (!Reflect.has(target, name) && !Reflect.has(target.itemModel, name)) {
+                    return undefined;
+                }
+                if (Reflect.has(target, name)) {
+                    return Reflect.get(target, name);
+                }
+                if (Reflect.has(target.itemModel, name)) {
+                    return Reflect.get(target.itemModel, name);
+                }
+                return undefined;
+            }
+        });
+    }
+}
+ */
+
 
 exports.Physical3DItem = Physical3DItem;
 },{"three":"lKFo","three/examples/jsm/loaders/GLTFLoader":"SNim","../core/events":"rskn","gsap":"QSxm"}],"m8ur":[function(require,module,exports) {
@@ -59724,8 +61041,9 @@ var DragRoomItemsControl3D = /*#__PURE__*/function (_EventDispatcher) {
             this.__intersection = intersectionData.point;
             var _location = intersectionData.point;
             var normal = intersectionData.face.normal;
+            var intersectingPlane = intersectionData.object;
 
-            this.__selected.snapToPoint(_location, normal, intersectionData.object);
+            this.__selected.snapToPoint(_location, normal, intersectingPlane);
           }
         }
 
@@ -59831,7 +61149,132 @@ var DragRoomItemsControl3D = /*#__PURE__*/function (_EventDispatcher) {
 }(_three.EventDispatcher);
 
 exports.DragRoomItemsControl3D = DragRoomItemsControl3D;
-},{"three":"lKFo","three/build/three.module":"lKFo","../core/events":"rskn","../../DeviceInfo":"m8ur"}],"Tfig":[function(require,module,exports) {
+},{"three":"lKFo","three/build/three.module":"lKFo","../core/events":"rskn","../../DeviceInfo":"m8ur"}],"csvq":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.BoundaryView3D = void 0;
+
+var _three = require("three");
+
+var _FloorMaterial3D = require("../materials/FloorMaterial3D");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var BoundaryView3D = /*#__PURE__*/function (_Mesh) {
+  _inherits(BoundaryView3D, _Mesh);
+
+  var _super = _createSuper(BoundaryView3D);
+
+  function BoundaryView3D(scene, floorplan, options, boundary) {
+    var _this;
+
+    _classCallCheck(this, BoundaryView3D);
+
+    _this = _super.call(this);
+    _this.__scene = scene;
+    _this.__boundary = boundary;
+    _this.__floorplan = floorplan;
+    _this.__floorPlane = null;
+
+    _this.__drawBoundary();
+
+    return _this;
+  }
+
+  _createClass(BoundaryView3D, [{
+    key: "removeFromScene",
+    value: function removeFromScene() {
+      if (!this.__floorPlane) {
+        return;
+      }
+
+      this.__scene.remove(this.__floorPlane);
+    }
+  }, {
+    key: "__drawBoundary",
+    value: function __drawBoundary() {
+      if (this.__boundary) {
+        if (this.__boundary.isValid) {
+          this.removeFromScene();
+          this.__floorPlane = this.__buildFloor();
+          this.__floorPlane.position.y = -0.5;
+
+          this.__scene.add(this.__floorPlane);
+        }
+      }
+    }
+  }, {
+    key: "__buildFloor",
+    value: function __buildFloor() {
+      var points = [];
+
+      this.__boundary.points.forEach(function (corner) {
+        points.push(new _three.Vector2(corner.x, corner.y));
+      });
+
+      var floorSize = new _three.Vector2(this.__boundary.width, this.__boundary.height); //this.room.floorRectangleSize.clone();
+
+      var shape = new _three.Shape(points);
+      var geometry = new _three.ShapeGeometry(shape);
+      geometry.faceVertexUvs[0] = [];
+      geometry.faces.forEach(function (face) {
+        var vertA = geometry.vertices[face.a];
+        var vertB = geometry.vertices[face.b];
+        var vertC = geometry.vertices[face.c];
+        geometry.faceVertexUvs[0].push([vertexToUv(vertA), vertexToUv(vertB), vertexToUv(vertC)]);
+      });
+
+      function vertexToUv(vertex) {
+        var x = vertex.x / floorSize.x;
+        var y = vertex.y / floorSize.y;
+        return new _three.Vector2(x, y);
+      }
+
+      geometry.faceVertexUvs[1] = geometry.faceVertexUvs[0];
+      geometry.computeFaceNormals();
+      geometry.computeVertexNormals();
+      geometry.uvsNeedUpdate = true;
+      console.log('COLOR FOR BOUNDARY REGION ::: ', this.__boundary.style.color);
+      var material = new _FloorMaterial3D.FloorMaterial3D({
+        color: this.__boundary.style.color,
+        side: _three.DoubleSide
+      }, this.__boundary.style, this.__scene);
+      var useGeometry = new _three.BufferGeometry().fromGeometry(geometry);
+      material.dimensions = new _three.Vector2(this.__boundary.width, this.__boundary.height);
+      var floor = new _three.Mesh(useGeometry, material);
+      floor.rotation.set(Math.PI * 0.5, 0, 0);
+      return floor;
+    }
+  }]);
+
+  return BoundaryView3D;
+}(_three.Mesh);
+
+exports.BoundaryView3D = BoundaryView3D;
+},{"three":"lKFo","../materials/FloorMaterial3D":"PF7Y"}],"Tfig":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -59858,6 +61301,10 @@ var _lights3d = require("./lights3d.js");
 var _Physical3DItem = require("./Physical3DItem.js");
 
 var _DragRoomItemsControl3D = require("./DragRoomItemsControl3D.js");
+
+var _configuration = require("../core/configuration.js");
+
+var _BoundaryView3D = require("./BoundaryView3D.js");
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -59893,6 +61340,8 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
 
     _this = _super.call(this);
     var options = {
+      occludedRoofs: false,
+      occludedWalls: false,
       resize: true,
       pushHref: false,
       spin: true,
@@ -59905,19 +61354,20 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
       if (options.hasOwnProperty(opt) && opts.hasOwnProperty(opt)) {
         options[opt] = opts[opt];
       }
-    }
+    } // console.log('VIEWER 3D ::: ', options);
+
 
     _this.__physicalRoomItems = [];
     _this.__enabled = true;
     _this.model = model;
     _this.floorplan = _this.model.floorplan;
-    _this.options = options;
+    _this.__options = options;
     _this.domElement = document.getElementById(element);
     _this.perspectivecamera = null;
     _this.camera = null;
     _this.__environmentCamera = null;
     _this.cameraNear = 10;
-    _this.cameraFar = 10000;
+    _this.cameraFar = 100000;
     _this.controls = null;
     _this.renderer = null;
     _this.controller = null;
@@ -59930,6 +61380,9 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
     _this.pauseRender = false;
     _this.edges3d = [];
     _this.floors3d = [];
+    _this.__externalEdges3d = [];
+    _this.__externalFloors3d = [];
+    _this.__boundaryRegion3D = null;
     _this.__currentItemSelected = null;
     _this.needsUpdate = true;
     _this.__newItemEvent = _this.__addNewItem.bind(_assertThisInitialized(_this));
@@ -59939,6 +61392,7 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
     _this.__roomItemUnselectedEvent = _this.__roomItemUnselected.bind(_assertThisInitialized(_this));
     _this.__roomItemDraggedEvent = _this.__roomItemDragged.bind(_assertThisInitialized(_this));
     _this.__roomItemDragFinishEvent = _this.__roomItemDragFinish.bind(_assertThisInitialized(_this));
+    _this.__resetDesignEvent = _this.__resetDesign.bind(_assertThisInitialized(_this));
 
     _this.init();
 
@@ -59957,20 +61411,21 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
         minFilter: _three.LinearMipmapLinearFilter
       });
       scope.__environmentCamera = new _three.CubeCamera(1, 100000, cubeRenderTarget);
+      scope.__environmentCamera.renderTarget.texture.encoding = _three.sRGBEncoding;
       scope.renderer = scope.getARenderer();
       scope.domElement.appendChild(scope.renderer.domElement);
       scope.lights = new _lights3d.Lights3D(this, scope.floorplan); // scope.dragcontrols = new DragControls(this.physicalRoomItems, scope.camera, scope.renderer.domElement);
 
       scope.dragcontrols = new _DragRoomItemsControl3D.DragRoomItemsControl3D(this.floorplan.wallPlanesForIntersection, this.floorplan.floorPlanesForIntersection, this.physicalRoomItems, scope.camera, scope.renderer.domElement);
-      scope.controls = new _OrbitControls.OrbitControls(scope.camera, scope.domElement); // scope.controls.autoRotate = this.options['spin'];
+      scope.controls = new _OrbitControls.OrbitControls(scope.camera, scope.domElement); // scope.controls.autoRotate = this.__options['spin'];
 
       scope.controls.enableDamping = false;
       scope.controls.dampingFactor = 0.1;
-      scope.controls.maxPolarAngle = Math.PI * 1.0; //Math.PI * 0.5; //Math.PI * 0.35;
+      scope.controls.maxPolarAngle = Math.PI * 0.5; //Math.PI * 0.35;//Math.PI * 1.0; //
 
-      scope.controls.maxDistance = 2500; //2500
+      scope.controls.maxDistance = _configuration.Configuration.getNumericValue(_configuration.viewBounds); // 7500; //2500
 
-      scope.controls.minDistance = 10; //1000; //1000
+      scope.controls.minDistance = 100; //1000; //1000
 
       scope.controls.screenSpacePanning = true;
       scope.skybox = new _skybox.Skybox(this, scope.renderer);
@@ -59980,7 +61435,7 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
 
       scope.updateWindowSize();
 
-      if (scope.options.resize) {
+      if (scope.__options.resize) {
         window.addEventListener('resize', function () {
           scope.updateWindowSize();
         });
@@ -59989,20 +61444,14 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
         });
       }
 
-      function animate() {
-        scope.renderer.setAnimationLoop(function () {
-          scope.render();
-        });
-        scope.render();
-      }
-
       scope.model.addEventListener(_events.EVENT_NEW_ITEM, scope.__newItemEvent);
-      scope.model.addEventListener(_events.EVENT_LOADED, function (evt) {
-        return scope.addRoomItems(evt);
-      });
-      scope.floorplan.addEventListener(_events.EVENT_UPDATED, function (evt) {
-        return scope.addWalls(evt);
-      });
+      scope.model.addEventListener(_events.EVENT_MODE_RESET, scope.__resetDesignEvent); // scope.model.addEventListener(EVENT_LOADED, (evt) => scope.addRoomItems(evt));
+      // scope.floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.addWalls(evt));
+
+      scope.model.addEventListener(_events.EVENT_LOADED, scope.addRoomItems.bind(scope)); // scope.floorplan.addEventListener(EVENT_UPDATED, scope.addRoomsAndWalls.bind(scope));
+
+      scope.floorplan.addEventListener(_events.EVENT_NEW_ROOMS_ADDED, scope.addRoomsAndWalls.bind(scope));
+      scope.floorplan.addEventListener(_events.EVENT_EXTERNAL_FLOORPLAN_LOADED, scope.addExternalRoomsAndWalls.bind(scope));
       this.controls.addEventListener('change', function () {
         scope.needsUpdate = true;
       });
@@ -60012,8 +61461,10 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
       scope.dragcontrols.addEventListener(_events.EVENT_NO_ITEM_SELECTED, this.__roomItemUnselectedEvent);
       scope.dragcontrols.addEventListener(_events.EVENT_WALL_CLICKED, this.__wallSelectedEvent);
       scope.dragcontrols.addEventListener(_events.EVENT_ROOM_CLICKED, this.__roomSelectedEvent); // scope.controls.enabled = false;//To test the drag controls
+      //SEt the animation loop
 
-      animate();
+      scope.renderer.setAnimationLoop(scope.render.bind(this));
+      scope.render();
     }
   }, {
     key: "__wallSelected",
@@ -60069,7 +61520,7 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
         return;
       }
 
-      var physicalRoomItem = new _Physical3DItem.Physical3DItem(evt.item);
+      var physicalRoomItem = new _Physical3DItem.Physical3DItem(evt.item, this.__options);
       this.add(physicalRoomItem);
 
       this.__physicalRoomItems.push(physicalRoomItem);
@@ -60078,6 +61529,13 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
         type: _events.EVENT_ITEM_SELECTED,
         item: physicalRoomItem
       });
+    }
+  }, {
+    key: "__resetDesign",
+    value: function __resetDesign(evt) {
+      this.addRoomItems();
+      this.addRoomsAndWalls();
+      this.addExternalRoomsAndWalls();
     }
   }, {
     key: "addRoomItems",
@@ -60095,15 +61553,28 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
       var roomItems = this.model.roomItems;
 
       for (i = 0; i < roomItems.length; i++) {
-        var physicalRoomItem = new _Physical3DItem.Physical3DItem(roomItems[i]);
+        var physicalRoomItem = new _Physical3DItem.Physical3DItem(roomItems[i], this.__options);
         this.add(physicalRoomItem);
 
         this.__physicalRoomItems.push(physicalRoomItem);
       }
     }
   }, {
-    key: "addWalls",
-    value: function addWalls() {
+    key: "__drawBoundary",
+    value: function __drawBoundary() {
+      if (this.__boundaryRegion3D) {
+        this.__boundaryRegion3D.removeFromScene();
+      }
+
+      if (this.floorplan.boundary) {
+        if (this.floorplan.boundary.isValid) {
+          this.__boundaryRegion3D = new _BoundaryView3D.BoundaryView3D(this, this.floorplan, this.__options, this.floorplan.boundary);
+        }
+      }
+    }
+  }, {
+    key: "addRoomsAndWalls",
+    value: function addRoomsAndWalls() {
       var scope = this;
       var i = 0; // clear scene
 
@@ -60118,16 +61589,62 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
       scope.edges3d = [];
       scope.floors3d = [];
       var wallEdges = scope.floorplan.wallEdges();
-      var rooms = scope.floorplan.getRooms(); // draw floors
+      var rooms = scope.floorplan.getRooms();
+
+      this.__drawBoundary(); // draw floors
+
 
       for (i = 0; i < rooms.length; i++) {
-        var threeFloor = new _floor3d.Floor3D(scope, rooms[i], scope.controls);
+        var threeFloor = new _floor3d.Floor3D(scope, rooms[i], scope.controls, this.__options);
         scope.floors3d.push(threeFloor);
       }
 
       for (i = 0; i < wallEdges.length; i++) {
-        var edge3d = new _edge3d.Edge3D(scope, wallEdges[i], scope.controls);
+        var edge3d = new _edge3d.Edge3D(scope, wallEdges[i], scope.controls, this.__options);
         scope.edges3d.push(edge3d);
+      }
+
+      scope.shouldRender = true;
+      var floorplanCenter = scope.floorplan.getDimensions(true);
+      scope.controls.target = floorplanCenter.clone();
+      scope.camera.position.set(floorplanCenter.x, 300, floorplanCenter.z * 5);
+      scope.controls.update();
+    }
+  }, {
+    key: "addExternalRoomsAndWalls",
+    value: function addExternalRoomsAndWalls() {
+      // console.trace('ADD EXTERNAL ROOMS AND WALLS');
+      var scope = this;
+      var i = 0; // clear scene
+
+      scope.__externalFloors3d.forEach(function (floor) {
+        floor.destroy();
+        floor = null;
+      });
+
+      scope.__externalEdges3d.forEach(function (edge3d) {
+        edge3d.remove();
+        edge3d = null;
+      });
+
+      scope.__externalEdges3d = [];
+      scope.__externalFloors3d = [];
+      var wallEdges = scope.floorplan.externalWallEdges();
+      var rooms = scope.floorplan.externalRooms;
+
+      this.__drawBoundary(); // draw floors
+
+
+      for (i = 0; i < rooms.length; i++) {
+        var threeFloor = new _floor3d.Floor3D(scope, rooms[i], scope.controls, this.__options);
+
+        scope.__externalFloors3d.push(threeFloor);
+      }
+
+      for (i = 0; i < wallEdges.length; i++) {
+        var edge3d = new _edge3d.Edge3D(scope, wallEdges[i], scope.controls, this.__options);
+
+        scope.__externalEdges3d.push(edge3d);
       }
 
       scope.shouldRender = true;
@@ -60144,33 +61661,28 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
         alpha: true
       }); // scope.renderer.autoClear = false;
 
-      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.enabled = false;
       renderer.shadowMapSoft = true;
       renderer.shadowMap.type = _three.PCFSoftShadowMap;
       renderer.setClearColor(0xFFFFFF, 1);
-      renderer.localClippingEnabled = false; //		renderer.setPixelRatio(window.devicePixelRatio);
-      // renderer.sortObjects = false;
+      renderer.localClippingEnabled = false; // renderer.gammaOutput = false;
+
+      renderer.outputEncoding = _three.sRGBEncoding;
+      renderer.setPixelRatio(window.devicePixelRatio); // renderer.sortObjects = false;
 
       return renderer;
     }
   }, {
     key: "updateWindowSize",
     value: function updateWindowSize() {
-      var scope = this;
-      scope.heightMargin = scope.domElement.offsetTop;
-      scope.widthMargin = scope.domElement.offsetLeft;
-      scope.elementWidth = scope.domElement.clientWidth;
-
-      if (scope.options.resize) {
-        scope.elementHeight = window.innerHeight - scope.heightMargin;
-      } else {
-        scope.elementHeight = scope.domElement.clientHeight;
-      }
-
-      scope.camera.aspect = scope.elementWidth / scope.elementHeight;
-      scope.camera.updateProjectionMatrix();
-      scope.renderer.setSize(scope.elementWidth, scope.elementHeight);
-      scope.needsUpdate = true;
+      var heightMargin = this.domElement.offsetTop;
+      var widthMargin = this.domElement.offsetLeft;
+      var elementWidth = this.__options.resize ? window.innerWidth - widthMargin : this.domElement.clientWidth;
+      var elementHeight = this.__options.resize ? window.innerHeight - heightMargin : this.domElement.clientHeight;
+      this.camera.aspect = elementWidth / elementHeight;
+      this.camera.updateProjectionMatrix();
+      this.renderer.setSize(elementWidth, elementHeight);
+      this.needsUpdate = true;
     }
   }, {
     key: "render",
@@ -60249,7 +61761,7 @@ var Viewer3D = /*#__PURE__*/function (_Scene) {
 }(_three.Scene);
 
 exports.Viewer3D = Viewer3D;
-},{"three":"lKFo","three/examples/jsm/controls/OrbitControls.js":"MGXp","three/examples/jsm/exporters/GLTFExporter":"T8mK","../core/events.js":"rskn","./skybox.js":"zwH6","./edge3d.js":"ukt1","./floor3d.js":"QmHq","./lights3d.js":"O7Sj","./Physical3DItem.js":"dN18","./DragRoomItemsControl3D.js":"sFn4"}],"rzFO":[function(require,module,exports) {
+},{"three":"lKFo","three/examples/jsm/controls/OrbitControls.js":"MGXp","three/examples/jsm/exporters/GLTFExporter":"T8mK","../core/events.js":"rskn","./skybox.js":"zwH6","./edge3d.js":"ukt1","./floor3d.js":"QmHq","./lights3d.js":"O7Sj","./Physical3DItem.js":"dN18","./DragRoomItemsControl3D.js":"sFn4","../core/configuration.js":"q2Ih","./BoundaryView3D.js":"csvq"}],"rzFO":[function(require,module,exports) {
 var global = arguments[3];
 var define;
 (function(global){
@@ -60962,6 +62474,7 @@ var _isMobile = _interopRequireWildcard(require("./isMobile"));
 Object.keys(_isMobile).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _isMobile[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -87873,7 +89386,8 @@ exports.Extract = Extract;
 },{"@pixi/utils":"xS69","@pixi/math":"bSXT","@pixi/core":"CJJk"}],"rC3H":[function(require,module,exports) {
 'use strict';
 
-module.exports = function parseURI(str, opts) {
+function parseURI(str, opts) {
+  if (!str) return undefined;
   opts = opts || {};
   var o = {
     key: ['source', 'protocol', 'authority', 'userInfo', 'user', 'password', 'host', 'port', 'relative', 'path', 'directory', 'file', 'query', 'anchor'],
@@ -87897,7 +89411,9 @@ module.exports = function parseURI(str, opts) {
     if ($1) uri[o.q.name][$1] = $2;
   });
   return uri;
-};
+}
+
+module.exports = parseURI;
 },{}],"XUKS":[function(require,module,exports) {
 'use strict';
 
@@ -107053,6 +108569,7 @@ var _accessibility = require("@pixi/accessibility");
 Object.keys(_accessibility).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _accessibility[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107066,6 +108583,7 @@ var _interaction = require("@pixi/interaction");
 Object.keys(_interaction).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _interaction[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107079,6 +108597,7 @@ var _app = require("@pixi/app");
 Object.keys(_app).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _app[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107092,6 +108611,7 @@ var _core = require("@pixi/core");
 Object.keys(_core).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _core[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107105,6 +108625,7 @@ var _extract = require("@pixi/extract");
 Object.keys(_extract).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _extract[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107118,6 +108639,7 @@ var _loaders = require("@pixi/loaders");
 Object.keys(_loaders).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _loaders[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107131,6 +108653,7 @@ var _particles = require("@pixi/particles");
 Object.keys(_particles).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _particles[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107144,6 +108667,7 @@ var _prepare = require("@pixi/prepare");
 Object.keys(_prepare).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _prepare[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107157,6 +108681,7 @@ var _spritesheet = require("@pixi/spritesheet");
 Object.keys(_spritesheet).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _spritesheet[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107170,6 +108695,7 @@ var _spriteTiling = require("@pixi/sprite-tiling");
 Object.keys(_spriteTiling).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _spriteTiling[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107183,6 +108709,7 @@ var _textBitmap = require("@pixi/text-bitmap");
 Object.keys(_textBitmap).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _textBitmap[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107196,6 +108723,7 @@ var _ticker = require("@pixi/ticker");
 Object.keys(_ticker).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _ticker[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107227,6 +108755,7 @@ var _constants = require("@pixi/constants");
 Object.keys(_constants).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _constants[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107240,6 +108769,7 @@ var _display = require("@pixi/display");
 Object.keys(_display).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _display[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107253,6 +108783,7 @@ var _graphics = require("@pixi/graphics");
 Object.keys(_graphics).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _graphics[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107266,6 +108797,7 @@ var _math = require("@pixi/math");
 Object.keys(_math).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _math[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107279,6 +108811,7 @@ var _mesh = require("@pixi/mesh");
 Object.keys(_mesh).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _mesh[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107292,6 +108825,7 @@ var _meshExtras = require("@pixi/mesh-extras");
 Object.keys(_meshExtras).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _meshExtras[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107305,6 +108839,7 @@ var _runner = require("@pixi/runner");
 Object.keys(_runner).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _runner[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107318,6 +108853,7 @@ var _sprite = require("@pixi/sprite");
 Object.keys(_sprite).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _sprite[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107331,6 +108867,7 @@ var _spriteAnimated = require("@pixi/sprite-animated");
 Object.keys(_spriteAnimated).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _spriteAnimated[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107344,6 +108881,7 @@ var _text = require("@pixi/text");
 Object.keys(_text).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _text[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -107357,6 +108895,7 @@ var _settings = require("@pixi/settings");
 Object.keys(_settings).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _settings[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
@@ -108979,8 +110518,8 @@ class InputManager {
     if (this.count() === 1) {
       this.last = event.data.global.clone(); // clicked event does not fire if viewport is decelerating or bouncing
 
-      const decelerate = this.viewport.plugins.get('decelerate');
-      const bounce = this.viewport.plugins.get('bounce');
+      const decelerate = this.viewport.plugins.get('decelerate', true);
+      const bounce = this.viewport.plugins.get('bounce', true);
 
       if ((!decelerate || !decelerate.isActive()) && (!bounce || !bounce.isActive())) {
         this.clickedAvailable = true;
@@ -108996,6 +110535,16 @@ class InputManager {
     if (stop && this.viewport.options.stopPropagation) {
       event.stopPropagation();
     }
+  }
+  /**
+   * clears all pointer events
+   */
+
+
+  clear() {
+    this.isMouseDown = false;
+    this.touches = [];
+    this.last = null;
   }
   /**
    * @param {number} change
@@ -109196,11 +110745,18 @@ class PluginManager {
   /**
    * get plugin
    * @param {string} name of plugin
+   * @param {boolean} [ignorePaused] return null if plugin is paused
    * @return {Plugin}
    */
 
 
-  get(name) {
+  get(name, ignorePaused) {
+    if (ignorePaused) {
+      if (typeof this.plugins[name] !== 'undefined' && this.plugins[name].paused) {
+        return null;
+      }
+    }
+
     return this.plugins[name];
   }
   /**
@@ -109560,7 +111116,7 @@ class Drag extends Plugin {
     const isMouse = event.data.pointerType === 'mouse';
     const count = this.parent.input.count();
 
-    if (count === 1 || count > 1 && !this.parent.plugins.get('pinch')) {
+    if (count === 1 || count > 1 && !this.parent.plugins.get('pinch', true)) {
       if (!isMouse || this.mouse[event.data.button]) {
         return true;
       }
@@ -109618,7 +111174,7 @@ class Drag extends Plugin {
       const y = event.data.global.y;
       const count = this.parent.input.count();
 
-      if (count === 1 || count > 1 && !this.parent.plugins.get('pinch')) {
+      if (count === 1 || count > 1 && !this.parent.plugins.get('pinch', true)) {
         const distX = x - this.last.x;
         const distY = y - this.last.y;
 
@@ -109712,7 +111268,7 @@ class Drag extends Plugin {
     }
 
     if (this.options.wheel) {
-      const wheel = this.parent.plugins.get('wheel');
+      const wheel = this.parent.plugins.get('wheel', true);
 
       if (!wheel) {
         if (this.xDirection) {
@@ -109748,7 +111304,7 @@ class Drag extends Plugin {
   }
 
   clamp() {
-    const decelerate = this.parent.plugins.get('decelerate') || {};
+    const decelerate = this.parent.plugins.get('decelerate', true) || {};
 
     if (this.options.clampWheel !== 'y') {
       if (this.parent.screenWorldWidth < this.parent.screenWidth) {
@@ -109807,15 +111363,17 @@ class Drag extends Plugin {
 /**
  * @typedef {object} PinchOptions
  * @property {boolean} [noDrag] disable two-finger dragging
- * @property {number} [percent=1.0] percent to modify pinch speed
+ * @property {number} [percent=1] percent to modify pinch speed
+ * @property {number} [factor=1] factor to multiply two-finger drag to increase the speed of movement
  * @property {PIXI.Point} [center] place this point at center during zoom instead of center of two fingers
  */
 
 
 const pinchOptions = {
   noDrag: false,
-  percent: 1.0,
-  center: null
+  percent: 1,
+  center: null,
+  factor: 1
 };
 
 class Pinch extends Plugin {
@@ -109882,9 +111440,10 @@ class Pinch extends Plugin {
         this.parent.scale.y += change;
         this.parent.emit('zoomed', {
           viewport: this.parent,
-          type: 'pinch'
+          type: 'pinch',
+          center: point
         });
-        const clamp = this.parent.plugins.get('clamp-zoom');
+        const clamp = this.parent.plugins.get('clamp-zoom', true);
 
         if (clamp) {
           clamp.clamp();
@@ -109894,8 +111453,8 @@ class Pinch extends Plugin {
           this.parent.moveCenter(this.options.center);
         } else {
           const newPoint = this.parent.toGlobal(oldPoint);
-          this.parent.x += point.x - newPoint.x;
-          this.parent.y += point.y - newPoint.y;
+          this.parent.x += (point.x - newPoint.x) * this.options.factor;
+          this.parent.y += (point.y - newPoint.y) * this.options.factor;
           this.parent.emit('moved', {
             viewport: this.parent,
             type: 'pinch'
@@ -109903,8 +111462,8 @@ class Pinch extends Plugin {
         }
 
         if (!this.options.noDrag && this.lastCenter) {
-          this.parent.x += point.x - this.lastCenter.x;
-          this.parent.y += point.y - this.lastCenter.y;
+          this.parent.x += (point.x - this.lastCenter.x) * this.options.factor;
+          this.parent.y += (point.y - this.lastCenter.y) * this.options.factor;
           this.parent.emit('moved', {
             viewport: this.parent,
             type: 'pinch'
@@ -110278,10 +111837,15 @@ class ClampZoom extends Plugin {
 
 
 const decelerateOptions = {
-  friction: 0.95,
+  friction: 0.98,
   bounce: 0.8,
   minSpeed: 0.01
 };
+/**
+ * Time period of decay (1 frame)
+ */
+
+const TP = 16;
 
 class Decelerate extends Plugin {
   /**
@@ -110293,6 +111857,7 @@ class Decelerate extends Plugin {
     super(parent);
     this.options = Object.assign({}, decelerateOptions, options);
     this.saved = [];
+    this.timeSinceRelease = 0;
     this.reset();
     this.parent.on('moved', data => this.moved(data));
   }
@@ -110317,7 +111882,7 @@ class Decelerate extends Plugin {
 
     const count = this.parent.input.count();
 
-    if (count === 1 || count > 1 && !this.parent.plugins.get('pinch')) {
+    if (count === 1 || count > 1 && !this.parent.plugins.get('pinch', true)) {
       this.saved.push({
         x: this.parent.x,
         y: this.parent.y,
@@ -110356,6 +111921,7 @@ class Decelerate extends Plugin {
           this.x = (this.parent.x - save.x) / time;
           this.y = (this.parent.y - save.y) / time;
           this.percentChangeX = this.percentChangeY = this.options.friction;
+          this.timeSinceRelease = 0;
           break;
         }
       }
@@ -110387,29 +111953,41 @@ class Decelerate extends Plugin {
     if (this.paused) {
       return;
     }
+    /*
+     * See https://github.com/davidfig/pixi-viewport/issues/271 for math.
+     *
+     * The viewport velocity (this.x, this.y) decays expoenential by the the decay factor
+     * (this.percentChangeX, this.percentChangeY) each frame. This velocity function is integrated
+     * to calculate the displacement.
+     */
 
-    let moved;
+
+    const moved = this.x || this.y;
+    const ti = this.timeSinceRelease;
+    const tf = this.timeSinceRelease + elapsed;
 
     if (this.x) {
-      this.parent.x += this.x * elapsed;
-      this.x *= this.percentChangeX;
-
-      if (Math.abs(this.x) < this.options.minSpeed) {
-        this.x = 0;
-      }
-
-      moved = true;
+      const k = this.percentChangeX;
+      const lnk = Math.log(k);
+      this.parent.x += this.x * TP / lnk * (Math.pow(k, tf / TP) - Math.pow(k, ti / TP));
     }
 
     if (this.y) {
-      this.parent.y += this.y * elapsed;
-      this.y *= this.percentChangeY;
+      const k = this.percentChangeY;
+      const lnk = Math.log(k);
+      this.parent.y += this.y * TP / lnk * (Math.pow(k, tf / TP) - Math.pow(k, ti / TP));
+    }
 
-      if (Math.abs(this.y) < this.options.minSpeed) {
-        this.y = 0;
-      }
+    this.timeSinceRelease += elapsed;
+    this.x *= Math.pow(this.percentChangeX, elapsed / TP);
+    this.y *= Math.pow(this.percentChangeY, elapsed / TP);
 
-      moved = true;
+    if (Math.abs(this.x) < this.options.minSpeed) {
+      this.x = 0;
+    }
+
+    if (Math.abs(this.y) < this.options.minSpeed) {
+      this.y = 0;
     }
 
     if (moved) {
@@ -110428,10 +112006,18 @@ class Decelerate extends Plugin {
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
-function createCommonjsModule(fn, module) {
+function createCommonjsModule(fn, basedir, module) {
   return module = {
-    exports: {}
+    path: basedir,
+    exports: {},
+    require: function (path, base) {
+      return commonjsRequire(path, base === undefined || base === null ? module.path : base);
+    }
   }, fn(module, module.exports), module.exports;
+}
+
+function commonjsRequire() {
+  throw new Error('Dynamic requires are not currently supported by @rollup/plugin-commonjs');
 }
 
 var penner = createCommonjsModule(function (module, exports) {
@@ -110901,7 +112487,7 @@ class Bounce extends Plugin {
     }
 
     let oob;
-    let decelerate = this.parent.plugins.get('decelerate');
+    let decelerate = this.parent.plugins.get('decelerate', true);
 
     if (decelerate && (decelerate.x || decelerate.y)) {
       if (decelerate.x && decelerate.percentChangeX === decelerate.options.friction || decelerate.y && decelerate.percentChangeY === decelerate.options.friction) {
@@ -110917,8 +112503,8 @@ class Bounce extends Plugin {
       }
     }
 
-    const drag = this.parent.plugins.get('drag') || {};
-    const pinch = this.parent.plugins.get('pinch') || {};
+    const drag = this.parent.plugins.get('drag', true) || {};
+    const pinch = this.parent.plugins.get('pinch', true) || {};
     decelerate = decelerate || {};
 
     if (!drag.active && !pinch.active && (!this.toX || !this.toY) && (!decelerate.x || !decelerate.y)) {
@@ -111051,7 +112637,7 @@ class Snap extends Plugin {
 
   up() {
     if (this.parent.input.count() === 0) {
-      const decelerate = this.parent.plugins.get('decelerate');
+      const decelerate = this.parent.plugins.get('decelerate', true);
 
       if (decelerate && (decelerate.x || decelerate.y)) {
         decelerate.percentChangeX = decelerate.percentChangeY = this.options.friction;
@@ -111180,12 +112766,16 @@ class SnapZoom extends Plugin {
 
   createSnapping() {
     const scale = this.parent.scale;
+    const startWorldScreenWidth = this.parent.worldScreenWidth;
+    const startWorldScreenHeight = this.parent.worldScreenHeight;
+    const endWorldScreenWidth = this.parent.screenWidth / this.xScale;
+    const endWorldScreenHeight = this.parent.screenHeight / this.yScale;
     this.snapping = {
       time: 0,
-      startX: scale.x,
-      startY: scale.y,
-      deltaX: this.xScale - scale.x,
-      deltaY: this.yScale - scale.y
+      startX: startWorldScreenWidth,
+      startY: startWorldScreenHeight,
+      deltaX: endWorldScreenWidth - startWorldScreenWidth,
+      deltaY: endWorldScreenHeight - startWorldScreenHeight
     };
     this.parent.emit('snap-zoom-start', this.parent);
   }
@@ -111253,11 +112843,13 @@ class SnapZoom extends Plugin {
         this.snapping = null;
       } else {
         const snapping = this.snapping;
-        this.parent.scale.x = this.ease(snapping.time, snapping.startX, snapping.deltaX, this.options.time);
-        this.parent.scale.y = this.ease(snapping.time, snapping.startY, snapping.deltaY, this.options.time);
+        const worldScreenWidth = this.ease(snapping.time, snapping.startX, snapping.deltaX, this.options.time);
+        const worldScreenHeight = this.ease(snapping.time, snapping.startY, snapping.deltaY, this.options.time);
+        this.parent.scale.x = this.parent.screenWidth / worldScreenWidth;
+        this.parent.scale.y = this.parent.screenHeight / worldScreenHeight;
       }
 
-      const clamp = this.parent.plugins.get('clamp-zoom');
+      const clamp = this.parent.plugins.get('clamp-zoom', true);
 
       if (clamp) {
         clamp.clamp();
@@ -111443,7 +113035,7 @@ class Wheel extends Plugin {
         viewport: this.parent,
         type: 'wheel'
       });
-      const clamp = this.parent.plugins.get('clamp-zoom');
+      const clamp = this.parent.plugins.get('clamp-zoom', true);
 
       if (clamp) {
         clamp.clamp();
@@ -111503,7 +113095,7 @@ class Wheel extends Plugin {
         viewport: this.parent,
         type: 'wheel'
       });
-      const clamp = this.parent.plugins.get('clamp-zoom');
+      const clamp = this.parent.plugins.get('clamp-zoom', true);
 
       if (clamp) {
         clamp.clamp();
@@ -111602,12 +113194,20 @@ class MouseEdges extends Plugin {
   }
 
   down() {
+    if (this.paused) {
+      return;
+    }
+
     if (!this.options.allowButtons) {
       this.horizontal = this.vertical = null;
     }
   }
 
   move(event) {
+    if (this.paused) {
+      return;
+    }
+
     if (event.data.pointerType !== 'mouse' && event.data.identifier !== 1 || !this.options.allowButtons && event.data.buttons !== 0) {
       return;
     }
@@ -111662,7 +113262,7 @@ class MouseEdges extends Plugin {
   }
 
   decelerateHorizontal() {
-    const decelerate = this.parent.plugins.get('decelerate');
+    const decelerate = this.parent.plugins.get('decelerate', true);
 
     if (this.horizontal && decelerate && !this.options.noDecelerate) {
       decelerate.activate({
@@ -111672,7 +113272,7 @@ class MouseEdges extends Plugin {
   }
 
   decelerateVertical() {
-    const decelerate = this.parent.plugins.get('decelerate');
+    const decelerate = this.parent.plugins.get('decelerate', true);
 
     if (this.vertical && decelerate && !this.options.noDecelerate) {
       decelerate.activate({
@@ -111682,6 +113282,10 @@ class MouseEdges extends Plugin {
   }
 
   up() {
+    if (this.paused) {
+      return;
+    }
+
     if (this.horizontal) {
       this.decelerateHorizontal();
     }
@@ -112366,7 +113970,7 @@ class Viewport extends PIXI.Container {
       this.scale.y = this.scale.x;
     }
 
-    const clampZoom = this.plugins.get('clamp-zoom');
+    const clampZoom = this.plugins.get('clamp-zoom', true);
 
     if (!noClamp && clampZoom) {
       clampZoom.clamp();
@@ -112401,7 +114005,7 @@ class Viewport extends PIXI.Container {
       this.scale.x = this.scale.y;
     }
 
-    const clampZoom = this.plugins.get('clamp-zoom');
+    const clampZoom = this.plugins.get('clamp-zoom', true);
 
     if (!noClamp && clampZoom) {
       clampZoom.clamp();
@@ -112436,7 +114040,7 @@ class Viewport extends PIXI.Container {
       this.scale.x = this.scale.y;
     }
 
-    const clampZoom = this.plugins.get('clamp-zoom');
+    const clampZoom = this.plugins.get('clamp-zoom', true);
 
     if (clampZoom) {
       clampZoom.clamp();
@@ -112473,7 +114077,7 @@ class Viewport extends PIXI.Container {
       this.scale.x = this.scale.y;
     }
 
-    const clampZoom = this.plugins.get('clamp-zoom');
+    const clampZoom = this.plugins.get('clamp-zoom', true);
 
     if (clampZoom) {
       clampZoom.clamp();
@@ -112484,6 +114088,14 @@ class Viewport extends PIXI.Container {
     }
 
     return this;
+  }
+
+  set visible(value) {
+    if (!value) {
+      this.input.clear();
+    }
+
+    super.visible = value;
   }
   /**
    * zoom viewport to specific value
@@ -112501,7 +114113,7 @@ class Viewport extends PIXI.Container {
     }
 
     this.scale.set(scale);
-    const clampZoom = this.plugins.get('clamp-zoom');
+    const clampZoom = this.plugins.get('clamp-zoom', true);
 
     if (clampZoom) {
       clampZoom.clamp();
@@ -113135,12 +114747,14 @@ var Grid2D = /*#__PURE__*/function (_Graphics) {
   _createClass(Grid2D, [{
     key: "__updateGrid",
     value: function __updateGrid() {
+      var gridSize = _dimensioning.Dimensioning.cmToPixel(_configuration.Configuration.getNumericValue(_configuration.viewBounds) * 1);
+
       var spacingCMS = _configuration.Configuration.getNumericValue(_configuration.gridSpacing);
 
       var spacing = _dimensioning.Dimensioning.cmToPixel(spacingCMS);
 
-      var totalLines = GRID_SIZE / spacing;
-      var halfSize = GRID_SIZE * 0.5;
+      var totalLines = gridSize / spacing;
+      var halfSize = gridSize * 0.5;
       var linewidth = 1.0 / this.__gridScale;
       var highlightLineWidth = 1.0 / this.__gridScale;
       var normalColor = 0xEBEBEB;
@@ -113157,7 +114771,14 @@ var Grid2D = /*#__PURE__*/function (_Graphics) {
           this.lineStyle(linewidth, normalColor).moveTo(-halfSize, co).lineTo(halfSize, co);
           this.lineStyle(linewidth, normalColor).moveTo(co, -halfSize).lineTo(co, halfSize);
         }
-      }
+      } // this.beginFill(0xFF0000, 1.0);
+      // this.drawCircle(-halfSize, -halfSize,20);
+      // this.drawCircle(halfSize, -halfSize,20);
+      // this.drawCircle(halfSize, halfSize,20);
+      // this.drawCircle(-halfSize, halfSize,20);
+      // this.drawCircle(0, 0, 20);
+      // this.endFill();
+
     }
   }, {
     key: "__configurationUpdate",
@@ -113280,6 +114901,8 @@ var _events = require("../core/events");
 
 var _KeyboardManager2D = require("./KeyboardManager2D");
 
+var _dimensioning = require("../core/dimensioning");
+
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -113314,8 +114937,14 @@ var BaseFloorplanViewElement2D = /*#__PURE__*/function (_Graphics) {
 
     _this = _super.call(this);
     _this.__floorplan = floorplan;
-    _this.__options = options;
+    _this.__options = {};
+
+    for (var opt in options) {
+      _this.__options[opt] = options[opt];
+    }
+
     _this.__eventDispatcher = new _three.EventDispatcher();
+    _this.__interactable = true;
     _this.interactive = true;
     _this.buttonMode = true;
     _this.__isDragging = false;
@@ -113349,6 +114978,15 @@ var BaseFloorplanViewElement2D = /*#__PURE__*/function (_Graphics) {
   }
 
   _createClass(BaseFloorplanViewElement2D, [{
+    key: "__deactivate",
+    value: function __deactivate() {
+      this.off('mousedown', this.__mouseClickEvent).off('touchstart', this.__mouseClickEvent);
+      this.off('mouseupoutside', this.__mouseUpEvent).off('touchendoutside', this.__mouseUpEvent);
+      this.off('mouseup', this.__mouseUpEvent).off('touchend', this.__mouseUpEvent);
+      this.off('mousemove', this.__mouseMoveEvent).off('touchmove', this.__mouseMoveEvent);
+      this.off('mouseover', this.__mouseOverEvent).off('mouseout', this.__mouseOutEvent);
+    }
+  }, {
     key: "__keyListener",
     value: function __keyListener(evt) {
       if (this.selected && evt.key === 'Delete') {
@@ -113362,6 +115000,11 @@ var BaseFloorplanViewElement2D = /*#__PURE__*/function (_Graphics) {
       if (evt.type === _events.EVENT_KEY_RELEASED && evt.key === 'Shift') {
         this.__snapToGrid = false;
       }
+    }
+  }, {
+    key: "__vectorToPixels",
+    value: function __vectorToPixels(v) {
+      return new _three.Vector2(_dimensioning.Dimensioning.cmToPixel(v.x), _dimensioning.Dimensioning.cmToPixel(v.y));
     }
   }, {
     key: "__drawSelectedState",
@@ -113378,6 +115021,8 @@ var BaseFloorplanViewElement2D = /*#__PURE__*/function (_Graphics) {
       this.selected = true; //!this.selected;
 
       this.__isDragging = true;
+
+      this.__dragStart(evt);
 
       this.__drawSelectedState();
 
@@ -113409,7 +115054,10 @@ var BaseFloorplanViewElement2D = /*#__PURE__*/function (_Graphics) {
     key: "__dragStart",
     value: function __dragStart(evt) {
       this.__isDragging = true;
-      evt.stopPropagation();
+
+      if (evt) {
+        evt.stopPropagation();
+      }
     }
   }, {
     key: "__dragEnd",
@@ -113490,13 +115138,23 @@ var BaseFloorplanViewElement2D = /*#__PURE__*/function (_Graphics) {
         });
       }
     }
+  }, {
+    key: "interactable",
+    get: function get() {
+      return this.__interactable;
+    },
+    set: function set(flag) {
+      this.__interactable = flag;
+      this.interactive = flag;
+      this.buttonMode = flag;
+    }
   }]);
 
   return BaseFloorplanViewElement2D;
 }(_pixi.Graphics);
 
 exports.BaseFloorplanViewElement2D = BaseFloorplanViewElement2D;
-},{"three":"lKFo","pixi.js":"FmRY","../core/events":"rskn","./KeyboardManager2D":"sxco"}],"xRsI":[function(require,module,exports) {
+},{"three":"lKFo","pixi.js":"FmRY","../core/events":"rskn","./KeyboardManager2D":"sxco","../core/dimensioning":"I1ZD"}],"xRsI":[function(require,module,exports) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function isdeviceTouchFriendly() {
@@ -113575,6 +115233,7 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
+// import {pointPolygon, pointBox} from 'intersects';
 var CornerView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
   _inherits(CornerView2D, _BaseFloorplanViewEle);
 
@@ -113586,10 +115245,24 @@ var CornerView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
     _classCallCheck(this, CornerView2D);
 
     _this = _super.call(this, floorplan, options);
+    _this.__options['corner-radius'] = 12.5;
+
+    for (var opt in options) {
+      if (_this.__options.hasOwnProperty(opt) && options.hasOwnProperty(opt)) {
+        _this.__options[opt] = options[opt];
+      }
+    }
+
     _this.__corner = corner;
     _this.pivot.x = _this.pivot.y = 0.5;
     _this.__cornerUpdateEvent = _this.__updateWithModel.bind(_assertThisInitialized(_this));
     _this.__cornerDeletedEvent = _this.__cornerDeleted.bind(_assertThisInitialized(_this));
+    _this.interactive = corner.isLocked;
+    _this.buttonMode = corner.isLocked;
+
+    if (corner.isLocked) {
+      _this.__deactivate();
+    }
 
     _this.__drawHoveredOffState();
 
@@ -113606,17 +115279,18 @@ var CornerView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
     key: "__drawCornerState",
     value: function __drawCornerState(radius, borderColor, fillColor) {
       this.clear();
+      var alpha = 1.0; //0.1;//
 
       if (_detectTouchDevice.isMobile) {
-        this.beginFill(borderColor, 0.1);
+        this.beginFill(borderColor, alpha);
         this.drawCircle(0, 0, radius * 2.5);
         this.endFill();
       }
 
-      this.beginFill(borderColor);
+      this.beginFill(borderColor, alpha);
       this.drawCircle(0, 0, radius);
       this.endFill();
-      this.beginFill(fillColor);
+      this.beginFill(fillColor, alpha);
       this.drawCircle(0, 0, radius * 0.55);
       this.endFill();
     }
@@ -113658,6 +115332,11 @@ var CornerView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
       this.position.y = yy;
     }
   }, {
+    key: "__dragStart",
+    value: function __dragStart(evt) {
+      _get(_getPrototypeOf(CornerView2D.prototype), "__dragStart", this).call(this, evt);
+    }
+  }, {
     key: "__dragMove",
     value: function __dragMove(evt) {
       _get(_getPrototypeOf(CornerView2D.prototype), "__dragMove", this).call(this, evt);
@@ -113667,6 +115346,12 @@ var CornerView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
         var cmCo = new _pixi.Point(co.x, co.y);
         cmCo.x = _dimensioning.Dimensioning.pixelToCm(cmCo.x);
         cmCo.y = _dimensioning.Dimensioning.pixelToCm(cmCo.y);
+
+        if (this.__floorplan.boundary) {
+          if (!this.__floorplan.boundary.containsPoint(cmCo.x, cmCo.y)) {
+            return;
+          }
+        }
 
         if (_configuration.Configuration.getBooleanValue(_configuration.snapToGrid) || this.__snapToGrid) {
           cmCo.x = Math.floor(cmCo.x / _configuration.Configuration.getNumericValue(_configuration.snapTolerance)) * _configuration.Configuration.getNumericValue(_configuration.snapTolerance);
@@ -113683,6 +115368,13 @@ var CornerView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
 
         this.__corner.move(cmCo.x, cmCo.y);
       }
+    }
+  }, {
+    key: "__dragEnd",
+    value: function __dragEnd(evt) {
+      _get(_getPrototypeOf(CornerView2D.prototype), "__dragEnd", this).call(this, evt);
+
+      this.__floorplan.update();
     }
   }, {
     key: "__cornerDeleted",
@@ -113721,7 +115413,7 @@ exports.CornerView2D = CornerView2D;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.WallView2D = exports.WallDimensions2D = void 0;
+exports.WallView2D = exports.Edge2D = exports.WallDimensions2D = void 0;
 
 var _BaseFloorplanViewElement2D = require("./BaseFloorplanViewElement2D.js");
 
@@ -113851,7 +115543,7 @@ var WallDimensions2D = /*#__PURE__*/function (_Graphics) {
 
       var wallOutDirection = this.__wallNormal();
 
-      if (wallOutDirection == null) {
+      if (wallOutDirection === null) {
         wallOutDirection = new _three.Vector3(0, 1, 0);
       }
 
@@ -113954,66 +115646,44 @@ var WallDimensions2D = /*#__PURE__*/function (_Graphics) {
 
 exports.WallDimensions2D = WallDimensions2D;
 
-var WallView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
-  _inherits(WallView2D, _BaseFloorplanViewEle);
+var Edge2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
+  _inherits(Edge2D, _BaseFloorplanViewEle);
 
-  var _super2 = _createSuper(WallView2D);
+  var _super2 = _createSuper(Edge2D);
 
-  function WallView2D(floorplan, options, wall) {
+  function Edge2D(floorplan, options, wall, edge) {
     var _this2;
 
-    _classCallCheck(this, WallView2D);
+    _classCallCheck(this, Edge2D);
 
     _this2 = _super2.call(this, floorplan, options);
-    _this2.__options = options;
     _this2.__wall = wall;
-    _this2.__wallUpdatedEvent = _this2.__drawUpdatedWall.bind(_assertThisInitialized(_this2));
-    _this2.__wallDeletedEvent = _this2.__wallDeleted.bind(_assertThisInitialized(_this2)); //this.remove.bind(this);
+    _this2.__edge = edge;
+    _this2.__debugMode = false;
 
-    _this2.__info = new WallDimensions2D(floorplan, options, wall);
-    _this2.viewDimensions = false;
-
-    _this2.addChild(_this2.__info);
-
-    _this2.__wall.addEventListener(_events.EVENT_MOVED, _this2.__wallUpdatedEvent);
-
-    _this2.__wall.addEventListener(_events.EVENT_UPDATED, _this2.__wallUpdatedEvent);
-
-    _this2.__wall.addEventListener(_events.EVENT_DELETED, _this2.__wallDeletedEvent);
-
-    _this2.__mouseOut();
+    _this2.__deactivate();
 
     return _this2;
   }
 
-  _createClass(WallView2D, [{
+  _createClass(Edge2D, [{
     key: "__getCornerCoordinates",
     value: function __getCornerCoordinates() {
-      var sPoint = this.__wall.start.location.clone();
+      var sPoint = _dimensioning.Dimensioning.cmToPixelVector2D(this.__wall.start.location.clone());
 
-      var ePoint = this.__wall.end.location.clone();
+      var ePoint = _dimensioning.Dimensioning.cmToPixelVector2D(this.__wall.end.location.clone());
 
-      sPoint.x = _dimensioning.Dimensioning.cmToPixel(sPoint.x);
-      sPoint.y = _dimensioning.Dimensioning.cmToPixel(sPoint.y);
-      ePoint.x = _dimensioning.Dimensioning.cmToPixel(ePoint.x);
-      ePoint.y = _dimensioning.Dimensioning.cmToPixel(ePoint.y);
       return [sPoint, ePoint];
     }
   }, {
     key: "__getPolygonCoordinates",
-    value: function __getPolygonCoordinates() {
-      var edge = this.__wall.frontEdge !== null ? this.__wall.frontEdge : this.__wall.backEdge !== null ? this.__wall.backEdge : null;
-
-      if (edge === null) {
-        return [];
-      }
-
-      var points = [edge.exteriorStart(), edge.exteriorEnd(), edge.interiorEnd(), edge.interiorStart()];
+    value: function __getPolygonCoordinates(forEdge) {
+      var points = [forEdge.exteriorStart(this.__debugMode), forEdge.exteriorEnd(this.__debugMode), forEdge.interiorEnd(this.__debugMode), forEdge.interiorStart(this.__debugMode)];
 
       if (_detectTouchDevice.isMobile) {
         var pixelPoints = [];
-        var start = edge.getStart().location;
-        var end = edge.getEnd().location;
+        var start = forEdge.getStart().location;
+        var end = forEdge.getEnd().location;
         var origins = [start, end, end, start];
 
         for (var i = 0; i < points.length; i++) {
@@ -114021,7 +115691,10 @@ var WallView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
           var origin = origins[i];
           var vect = point.clone().sub(origin);
           vect = vect.multiplyScalar(3.0).add(origin);
-          var pixelPoint = new _three.Vector2(_dimensioning.Dimensioning.cmToPixel(vect.x), _dimensioning.Dimensioning.cmToPixel(vect.y));
+
+          var pixelPoint = _dimensioning.Dimensioning.cmToPixelVector2D(vect); //new Vector2(Dimensioning.cmToPixel(vect.x), Dimensioning.cmToPixel(vect.y));
+
+
           pixelPoints.push(pixelPoint);
         }
 
@@ -114029,23 +115702,49 @@ var WallView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
       }
 
       for (var _i = 0; _i < points.length; _i++) {
-        points[_i].x = _dimensioning.Dimensioning.cmToPixel(points[_i].x);
-        points[_i].y = _dimensioning.Dimensioning.cmToPixel(points[_i].y);
+        points[_i] = _dimensioning.Dimensioning.cmToPixelVector2D(points[_i]);
       }
 
       return points;
     }
   }, {
-    key: "__drawPolygon",
-    value: function __drawPolygon() {
-      var color = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0xDDDDDD;
-      var alpha = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1.0;
+    key: "__drawEdgeArrow",
+    value: function __drawEdgeArrow(forEdge) {
+      var color = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0xDDDDDD;
+      var alpha = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1.0;
 
-      var points = this.__getPolygonCoordinates();
+      var start = _dimensioning.Dimensioning.cmToPixelVector2D(forEdge.getStart().location.clone());
 
-      this.clear(); // this.beginFill(color, alpha);
+      var end = _dimensioning.Dimensioning.cmToPixelVector2D(forEdge.getEnd().location.clone());
 
-      this.beginFill(color, 0.05); //
+      var vect = end.clone().sub(start);
+      var midPoint = start.clone().add(vect.multiplyScalar(0.5));
+      var lineThickness = 3.0;
+      var arrowSize = 7;
+      var dotSize = 5;
+      this.lineStyle(lineThickness, color, alpha);
+      this.moveTo(start.x, start.y);
+      this.lineTo(midPoint.x, midPoint.y);
+      this.beginFill(color, alpha);
+      this.drawCircle(start.x, start.y, dotSize);
+      this.drawRect(midPoint.x - arrowSize * 0.5, midPoint.y - arrowSize * 0.5, arrowSize, arrowSize);
+      this.endFill();
+    }
+  }, {
+    key: "__drawEdgePolygon",
+    value: function __drawEdgePolygon(forEdge) {
+      var color = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0xDDDDDD;
+      var alpha = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1.0;
+
+      var points = this.__getPolygonCoordinates(forEdge);
+
+      this.clear();
+      var lineThickness = 2.5;
+      this.lineStyle(lineThickness, color, 1.0);
+      this.moveTo(points[2].x, points[2].y);
+      this.lineTo(points[3].x, points[3].y);
+      this.lineStyle(lineThickness, color, 0.0);
+      this.beginFill(color, alpha);
 
       for (var i = 0; i < points.length; i++) {
         var pt = points[i];
@@ -114058,19 +115757,197 @@ var WallView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
       }
 
       this.endFill();
+    }
+  }, {
+    key: "drawEdge",
+    value: function drawEdge() {
+      var color = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0xDDDDDD;
+      var alpha = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1.0;
+      this.clear(); // if(!this.__edge.room){
+      //     return;
+      // }
 
-      var cornerLine = this.__getCornerCoordinates();
+      var alpha_new = this.__debugMode ? 0.1 : alpha;
 
-      this.lineStyle(_dimensioning.Dimensioning.cmToPixel(this.__wall.thickness), color, alpha, 0.5);
-      this.moveTo(cornerLine[0].x, cornerLine[0].y);
-      this.lineTo(cornerLine[1].x, cornerLine[1].y);
-      this.lineStyle(1, 0xFFFFFF);
-      this.moveTo(cornerLine[0].x, cornerLine[0].y);
-      this.lineTo(cornerLine[1].x, cornerLine[1].y);
+      this.__drawEdgePolygon(this.__edge, color, alpha_new); //0.1);//
+
+
+      if (this.__debugMode) {
+        this.__drawEdgeArrow(this.__edge, 0x000000, alpha);
+
+        if (this.__edge.prev) {
+          //Red for previous edge
+          this.__drawEdgeArrow(this.__edge.prev, 0xFF0000, alpha);
+        }
+
+        if (this.__edge.next) {
+          //Blue for Next edge
+          this.__drawEdgeArrow(this.__edge.next, 0x0000FF, alpha);
+        }
+      }
+
+      if (!this.__debugMode) {
+        var cornerLine = this.__getCornerCoordinates();
+
+        var lineThickness = 1.5; //Math.min(Dimensioning.cmToPixel(this.__wall.thickness * 0.25), 1.0);
+
+        this.lineStyle(lineThickness, 0xF0F0F0);
+        this.moveTo(cornerLine[1].x, cornerLine[1].y);
+        this.lineTo(cornerLine[0].x, cornerLine[0].y);
+      }
+    }
+  }, {
+    key: "edge",
+    get: function get() {
+      return this.__edge;
+    }
+  }, {
+    key: "debugMode",
+    get: function get() {
+      return this.__debugMode;
+    },
+    set: function set(flag) {
+      this.__debugMode = flag;
+    }
+  }]);
+
+  return Edge2D;
+}(_BaseFloorplanViewElement2D.BaseFloorplanViewElement2D);
+
+exports.Edge2D = Edge2D;
+
+var WallView2D = /*#__PURE__*/function (_BaseFloorplanViewEle2) {
+  _inherits(WallView2D, _BaseFloorplanViewEle2);
+
+  var _super3 = _createSuper(WallView2D);
+
+  function WallView2D(floorplan, options, wall) {
+    var _this3;
+
+    _classCallCheck(this, WallView2D);
+
+    _this3 = _super3.call(this, floorplan, options);
+    _this3.__options = options;
+    _this3.__wall = wall;
+    _this3.__frontEdge = null;
+    _this3.__backEdge = null;
+    _this3.__info = new WallDimensions2D(floorplan, options, wall);
+    _this3.viewDimensions = false;
+    _this3.interactive = wall.isLocked;
+    _this3.buttonMode = wall.isLocked;
+
+    if (wall.isLocked) {
+      _this3.__deactivate();
+    }
+
+    _this3.__wallUpdatedEvent = _this3.__drawUpdatedWall.bind(_assertThisInitialized(_this3));
+    _this3.__wallDeletedEvent = _this3.__wallDeleted.bind(_assertThisInitialized(_this3)); //this.remove.bind(this);
+
+    _this3.__wall.addEventListener(_events.EVENT_MOVED, _this3.__wallUpdatedEvent);
+
+    _this3.__wall.addEventListener(_events.EVENT_UPDATED, _this3.__wallUpdatedEvent);
+
+    _this3.__wall.addEventListener(_events.EVENT_DELETED, _this3.__wallDeletedEvent);
+
+    if (wall.backEdge) {
+      _this3.__backEdge = new Edge2D(_this3.__floorplan, options, _this3.__wall, wall.backEdge);
+
+      _this3.addChild(_this3.__backEdge);
+    }
+
+    if (wall.frontEdge) {
+      _this3.__frontEdge = new Edge2D(_this3.__floorplan, options, _this3.__wall, wall.frontEdge);
+
+      _this3.addChild(_this3.__frontEdge);
+    }
+
+    _this3.addChild(_this3.__info);
+
+    _this3.__mouseOut();
+
+    return _this3;
+  }
+
+  _createClass(WallView2D, [{
+    key: "__getCornerCoordinates",
+    value: function __getCornerCoordinates() {
+      var sPoint = _dimensioning.Dimensioning.cmToPixelVector2D(this.__wall.start.location.clone());
+
+      var ePoint = _dimensioning.Dimensioning.cmToPixelVector2D(this.__wall.end.location.clone()); // sPoint.x = Dimensioning.cmToPixel(sPoint.x);
+      // sPoint.y = Dimensioning.cmToPixel(sPoint.y);
+      // ePoint.x = Dimensioning.cmToPixel(ePoint.x);
+      // ePoint.y = Dimensioning.cmToPixel(ePoint.y);
+
+
+      return [sPoint, ePoint];
+    }
+  }, {
+    key: "__drawInWallItems",
+    value: function __drawInWallItems() {
+      this.lineStyle(0, 0xF0F0F0);
+      var inWallItems = this.__wall.inWallItems; // let depth = this.__wall.thickness * 0.5;
+
+      var wallDirection = this.__wall.wallDirectionNormalized();
+
+      for (var i = 0; i < inWallItems.length; i++) {
+        var item = inWallItems[i];
+        var pos = new _three.Vector2(item.position.x, item.position.z);
+        var width = item.halfSize.x;
+        var depth = item.halfSize.z;
+        var right = wallDirection.clone().multiplyScalar(width);
+        var left = wallDirection.clone().multiplyScalar(width).multiplyScalar(-1);
+        var up = wallDirection.clone().rotateAround(new _three.Vector2(), Math.PI * 0.5).multiplyScalar(depth);
+        var down = up.clone().multiplyScalar(-1);
+        var a = pos.clone().add(right.clone().add(up));
+        var b = pos.clone().add(right.clone().sub(up));
+        var c = pos.clone().add(left.clone().add(down));
+        var d = pos.clone().add(left.clone().sub(down));
+        var points = [new _pixi.Point(_dimensioning.Dimensioning.cmToPixel(a.x), _dimensioning.Dimensioning.cmToPixel(a.y)), new _pixi.Point(_dimensioning.Dimensioning.cmToPixel(b.x), _dimensioning.Dimensioning.cmToPixel(b.y)), new _pixi.Point(_dimensioning.Dimensioning.cmToPixel(c.x), _dimensioning.Dimensioning.cmToPixel(c.y)), new _pixi.Point(_dimensioning.Dimensioning.cmToPixel(d.x), _dimensioning.Dimensioning.cmToPixel(d.y))];
+        this.beginFill(0x0000F0, 0.85);
+        this.drawPolygon(points);
+        this.endFill();
+      }
+    }
+  }, {
+    key: "__drawPolygon",
+    value: function __drawPolygon() {
+      var color = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0xDDDDDD;
+      var alpha = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1.0;
+      this.clear();
+      /**
+       * Front edge color is blue
+       */
+
+      var frontColor = color; //0x0000FF; //
+
+      /**
+       * Back Edge color is red
+       */
+
+      var backColor = color; //0xFF0000; //
+
+      if (this.__frontEdge) {
+        this.__frontEdge.drawEdge(frontColor, alpha);
+      }
+
+      if (this.__backEdge) {
+        this.__backEdge.drawEdge(backColor, alpha);
+      } // if(!this.__frontEdge && !this.__backEdge){
+      //     console.log('NO FRONT OR BACK EDGE TO DRAW ', this.__wall.wallSize);
+      // }
+
+
+      this.__drawInWallItems();
     }
   }, {
     key: "__drawSelectedState",
     value: function __drawSelectedState() {
+      // if (this.__frontEdge) {
+      //     this.__frontEdge.debugMode = true;
+      // }
+      // if (this.__backEdge) {
+      //     this.__backEdge.debugMode = true;
+      // }
       this.__drawPolygon(0x049995, 1.0);
     }
   }, {
@@ -114081,7 +115958,31 @@ var WallView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
   }, {
     key: "__drawHoveredOffState",
     value: function __drawHoveredOffState() {
+      // if (this.__frontEdge) {
+      //     this.__frontEdge.debugMode = false;
+      // }
+      // if (this.__backEdge) {
+      //     this.__backEdge.debugMode = false;
+      // }
       this.__drawPolygon(0x000000, 1.0);
+    }
+  }, {
+    key: "__getCornerLocation",
+    value: function __getCornerLocation(vec2) {
+      var s = this.__wall.start.location.clone();
+
+      var e = this.__wall.end.location.clone();
+
+      var vect = e.clone().sub(s);
+      var midPoint = s.clone().add(vect.clone().multiplyScalar(0.5));
+      var vectorSToMid = s.clone().sub(midPoint);
+      var vectorEToMid = e.clone().sub(midPoint);
+      var sNewLocation = vec2.clone().add(vectorSToMid);
+      var eNewLocation = vec2.clone().add(vectorEToMid);
+      return {
+        start: sNewLocation,
+        end: eNewLocation
+      };
     }
   }, {
     key: "__dragMove",
@@ -114121,6 +116022,16 @@ var WallView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
 
         if (!_configuration.Configuration.getBooleanValue(_configuration.dragOnlyX) && _configuration.Configuration.getBooleanValue(_configuration.dragOnlyY)) {
           cmCo.x = this.__wall.location.x;
+        }
+
+        if (this.__floorplan.boundary) {
+          if (this.__floorplan.boundary.isValid) {
+            var cornerPoints = this.__getCornerLocation(cmCo);
+
+            if (!this.__floorplan.boundary.containsPoint(cornerPoints.start.x, cornerPoints.start.y) || !this.__floorplan.boundary.containsPoint(cornerPoints.end.x, cornerPoints.end.y)) {
+              return;
+            }
+          }
         } // this.__wall.move(cmCo.x, cmCo.y);
 
 
@@ -114275,6 +116186,12 @@ var RoomView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
     });
     _this.__roomAreaField.alpha = 0.5;
     _this.__roomNameField.alpha = 0.5;
+    _this.interactive = room.isLocked;
+    _this.buttonMode = room.isLocked;
+
+    if (room.isLocked) {
+      _this.__deactivate();
+    }
 
     _this.addChild(_this.__roomNameField);
 
@@ -114317,7 +116234,9 @@ var RoomView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
     value: function __drawUpdatedRoom() {
       this.__drawUpdatedLabel();
 
-      this.__mouseOut();
+      this.__drawPolygon();
+
+      this.__drawHoveredOffState();
     }
   }, {
     key: "__drawPolygon",
@@ -114325,9 +116244,11 @@ var RoomView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
       var alpha = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1.0;
       var points = [];
       this.clear();
-      this.beginFill(color, alpha);
+      this.beginFill(color, alpha); // this.__room.interiorCorners.forEach((corner) => {
+      //     points.push(new Vector2(corner.x, corner.y));
+      // });
 
-      this.__room.interiorCorners.forEach(function (corner) {
+      this.__room.corners.forEach(function (corner) {
         points.push(new _three.Vector2(corner.x, corner.y));
       });
 
@@ -114336,7 +116257,7 @@ var RoomView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
 
         var y = _dimensioning.Dimensioning.cmToPixel(points[i].y);
 
-        if (i == 0) {
+        if (i === 0) {
           this.moveTo(x, y);
         } else {
           this.lineTo(x, y);
@@ -114348,17 +116269,17 @@ var RoomView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
   }, {
     key: "__drawSelectedState",
     value: function __drawSelectedState() {
-      this.__drawPolygon(0x00BA8C, 0.4);
+      this.__drawPolygon(0x00BA8C, 1.0);
     }
   }, {
     key: "__drawHoveredOnState",
     value: function __drawHoveredOnState() {
-      this.__drawPolygon(0x008CBA, 0.4);
+      this.__drawPolygon(0x008CBA, 1.0);
     }
   }, {
     key: "__drawHoveredOffState",
     value: function __drawHoveredOffState() {
-      this.__drawPolygon(0xFEDAFF, 0.4);
+      this.__drawPolygon(0xFEDAFF, 1.0);
     }
   }, {
     key: "remove",
@@ -114404,6 +116325,8 @@ var _three = require("three");
 
 var _utils = require("../core/utils");
 
+var _configuration = require("../core/configuration");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -114428,17 +116351,414 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-var CornerGroupScalePoint = /*#__PURE__*/function (_Graphics) {
-  _inherits(CornerGroupScalePoint, _Graphics);
+var CornerGroupRectangle = /*#__PURE__*/function (_Graphics) {
+  _inherits(CornerGroupRectangle, _Graphics);
 
-  var _super = _createSuper(CornerGroupScalePoint);
+  var _super = _createSuper(CornerGroupRectangle);
 
-  function CornerGroupScalePoint(parameters) {
+  function CornerGroupRectangle(floorplan, size, center) {
     var _this;
+
+    _classCallCheck(this, CornerGroupRectangle);
+
+    _this = _super.call(this);
+    _this.__floorplan = floorplan;
+    _this.__size = size.clone();
+    _this.__center = center.clone();
+
+    var halfSize = _this.__size.clone().multiplyScalar(0.5);
+
+    _this.__tl = _this.__center.clone().sub(halfSize);
+    _this.__br = _this.__center.clone().add(halfSize);
+    _this.__tr = new _three.Vector2(_this.__br.x, _this.__tl.y);
+    _this.__bl = new _three.Vector2(_this.__tl.x, _this.__br.y);
+    _this.__vertices = [_this.__tl, _this.__tr, _this.__br, _this.__bl];
+    _this.__originalSize = _this.__size.clone();
+    _this.__originalCenter = _this.__center.clone();
+    _this.__currentRadians = 0;
+    _this.__currentScaleMatrix = new _three.Matrix4(); //Keeps track of the absolute scaling
+
+    _this.__currentRotationMatrix = new _three.Matrix4(); //Keeps track of the absolute rotation
+
+    _this.__currentTranslationMatrix = new _three.Matrix4(); //Keeps track of translation
+
+    _this.__drawRectangle();
+
+    _this.__ticker = _pixi.Ticker.shared; // this.__ticker.add(this.__tick, this);
+
+    return _this;
+  }
+
+  _createClass(CornerGroupRectangle, [{
+    key: "translateByPosition",
+    value: function translateByPosition(position) {
+      var translateMatrix = new _three.Matrix4().makeTranslation(position.x, position.y, 0);
+      var finalPoints = [];
+
+      for (var i = 0; i < this.__vertices.length; i++) {
+        //Reset current Scaling
+        var co2 = this.__vertices[i].clone();
+
+        var co = new _three.Vector3(co2.x, co2.y, 0); // co = co.applyMatrix4(this.__currentRotationMatrix.clone().getInverse(this.__currentRotationMatrix.clone()));
+
+        co = co.applyMatrix4(translateMatrix);
+
+        if (this.__floorplan.boundary) {
+          if (!this.__floorplan.boundary.containsPoint(_dimensioning.Dimensioning.pixelToCm(co.x), _dimensioning.Dimensioning.pixelToCm(co.y))) {
+            return;
+          }
+        }
+
+        finalPoints.push(co);
+      }
+
+      for (var _i = 0; _i < finalPoints.length; _i++) {
+        var _co = finalPoints[_i];
+        this.__vertices[_i].x = _co.x;
+        this.__vertices[_i].y = _co.y;
+      }
+
+      this.__center.y = this.__tr.y - this.__tl.y;
+      this.__size.x = this.__tl.clone().sub(this.__tr).length();
+      this.__size.y = this.__tl.clone().sub(this.__bl).length();
+      this.__center = this.__br.clone().sub(this.__tl).multiplyScalar(0.5).add(this.__tl);
+
+      var delta = this.__center.clone().sub(this.__originalCenter);
+
+      this.__currentTranslationMatrix = new _three.Matrix4().makeTranslation(delta.x, delta.y, 0);
+
+      this.__drawRectangle();
+    }
+  }, {
+    key: "rotateByRadians",
+    value: function rotateByRadians(radians) {
+      var finalPoints = [];
+      var T = new _three.Matrix4().makeTranslation(-this.__center.x, -this.__center.y, 0);
+      var TInv = new _three.Matrix4().makeTranslation(this.__center.x, this.__center.y, 0);
+      var rotationMatrix = new _three.Matrix4().makeRotationAxis(new _three.Vector3(0, 0, 1), radians);
+      var rotationAboutOrigin = TInv.clone().multiply(rotationMatrix).multiply(T);
+      var resetRotation = new _three.Matrix4().makeRotationAxis(new _three.Vector3(0, 0, 1), -this.__currentRadians);
+      var resetRotationAboutOrigin = TInv.clone().multiply(resetRotation).multiply(T);
+
+      for (var i = 0; i < this.__vertices.length; i++) {
+        //Reset current Scaling
+        var co2 = this.__vertices[i].clone();
+
+        var co = new _three.Vector3(co2.x, co2.y, 0); // co = co.applyMatrix4(this.__currentRotationMatrix.clone().getInverse(this.__currentRotationMatrix.clone()));
+
+        co = co.applyMatrix4(resetRotationAboutOrigin);
+        co = co.applyMatrix4(rotationAboutOrigin);
+
+        if (this.__floorplan.boundary) {
+          if (!this.__floorplan.boundary.containsPoint(_dimensioning.Dimensioning.pixelToCm(co.x), _dimensioning.Dimensioning.pixelToCm(co.y))) {
+            return;
+          }
+        }
+
+        finalPoints.push(co);
+      }
+
+      for (var _i2 = 0; _i2 < finalPoints.length; _i2++) {
+        var _co2 = finalPoints[_i2];
+        this.__vertices[_i2].x = _co2.x;
+        this.__vertices[_i2].y = _co2.y;
+      }
+
+      this.__currentRotationMatrix = rotationAboutOrigin.clone();
+      this.__currentRadians = radians; // this.__center.x = this.__tr.x - this.__tl.x;
+
+      this.__center.y = this.__tr.y - this.__tl.y;
+      this.__size.x = this.__tl.clone().sub(this.__tr).length();
+      this.__size.y = this.__tl.clone().sub(this.__bl).length();
+      this.__center = this.__br.clone().sub(this.__tl).multiplyScalar(0.5).add(this.__tl);
+
+      this.__drawRectangle();
+    }
+  }, {
+    key: "scaleBySize",
+    value: function scaleBySize(newWidth, newHeight, origin) {
+      var finalPoints = [];
+      var scale = new _three.Vector2(newWidth / this.__size.x, newHeight / this.__size.y); //Origin - The origin about which transformations happen
+
+      var T = new _three.Matrix4().makeTranslation(-origin.x, -origin.y, 0); //Translate to -origin of scaling
+
+      var TInv = new _three.Matrix4().makeTranslation(origin.x, origin.y, 0); //Translate to origin of scaling (inverse)
+
+      var rotation = new _three.Matrix4().makeRotationAxis(new _three.Vector3(0, 0, 1), this.__currentRadians); //Calculate the current rotation matrix
+
+      var scaleMatrix = new _three.Matrix4().makeScale(scale.x, scale.y, 1); //Calculate the relative scaling to apply
+
+      var scaleAboutOrigin = TInv.clone().multiply(scaleMatrix).multiply(T); //Now scale about the origin. This matrix has no rotation so scaling along x,y
+
+      var rotateAboutOrigin = TInv.clone().multiply(rotation).multiply(T); //Now rotate about the origin. 
+
+      var resetRotationAboutOrigin = rotateAboutOrigin.clone().getInverse(rotateAboutOrigin.clone()); //Ensure to reset the rotation of currentRadians
+
+      /**
+       * The final transformation matrix is composition of matrices from right to left
+       * 1- So the first thing is reset the current rotation, 
+       * 2- Then apply scaling along normal x,y axis, 
+       * 3 -Finally apply the current rotation 
+       */
+
+      var transformMatrix = rotateAboutOrigin.clone().multiply(scaleAboutOrigin).multiply(resetRotationAboutOrigin);
+
+      for (var i = 0; i < this.__vertices.length; i++) {
+        var co2 = this.__vertices[i].clone();
+
+        var co = new _three.Vector3(co2.x, co2.y, 0);
+        co = co.applyMatrix4(transformMatrix);
+
+        if (this.__floorplan.boundary) {
+          if (!this.__floorplan.boundary.containsPoint(_dimensioning.Dimensioning.pixelToCm(co.x), _dimensioning.Dimensioning.pixelToCm(co.y))) {
+            return;
+          }
+        }
+
+        finalPoints.push(co); // this.__vertices[i].x = co.x;
+        // this.__vertices[i].y = co.y;
+      }
+
+      for (var _i3 = 0; _i3 < finalPoints.length; _i3++) {
+        var _co3 = finalPoints[_i3];
+        this.__vertices[_i3].x = _co3.x;
+        this.__vertices[_i3].y = _co3.y;
+      }
+
+      this.__size.x = newWidth; //this.__tl.clone().sub(this.__tr).length();
+
+      this.__size.y = newHeight; //this.__tl.clone().sub(this.__bl).length();
+
+      this.__center = this.__br.clone().sub(this.__tl).multiplyScalar(0.5).add(this.__tl);
+
+      var delta = this.__center.clone().sub(this.__originalCenter);
+
+      this.__currentRotationMatrix = rotation.clone();
+      this.__currentScaleMatrix = this.__currentScaleMatrix.multiply(scaleMatrix);
+      this.__currentTranslationMatrix = new _three.Matrix4().makeTranslation(delta.x, delta.y, 0);
+
+      this.__drawRectangle();
+    }
+  }, {
+    key: "__tick",
+    value: function __tick() {
+      console.log('TICK TICK TICK');
+    }
+  }, {
+    key: "__drawRectangle",
+    value: function __drawRectangle() {
+      this.clear();
+      this.beginFill(0xCCCCCC, 0.5);
+      this.moveTo(this.__tl.x, this.__tl.y);
+      this.lineTo(this.__tr.x, this.__tr.y);
+      this.lineTo(this.__br.x, this.__br.y);
+      this.lineTo(this.__bl.x, this.__bl.y);
+      this.endFill(); // this.beginFill(0xFF0000, 1.0);
+      // this.drawCircle(this.__center.x, this.__center.y, 10);
+      // this.endFill();
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      this.__ticker.remove(this.__tick, this);
+
+      this.__ticker.destroy();
+    }
+  }, {
+    key: "tl",
+    get: function get() {
+      return this.__tl;
+    }
+  }, {
+    key: "tr",
+    get: function get() {
+      return this.__tr;
+    }
+  }, {
+    key: "br",
+    get: function get() {
+      return this.__br;
+    }
+  }, {
+    key: "bl",
+    get: function get() {
+      return this.__bl;
+    }
+  }, {
+    key: "size",
+    get: function get() {
+      return this.__size;
+    }
+  }, {
+    key: "center",
+    get: function get() {
+      return this.__center;
+    }
+  }, {
+    key: "rotationMatrix",
+    get: function get() {
+      return this.__currentRotationMatrix.clone();
+    }
+  }, {
+    key: "scalingMatrix",
+    get: function get() {
+      return this.__currentScaleMatrix;
+    }
+  }, {
+    key: "translationMatrix",
+    get: function get() {
+      return this.__currentTranslationMatrix;
+    }
+  }, {
+    key: "rotationRadians",
+    get: function get() {
+      return this.__currentRadians;
+    }
+  }, {
+    key: "origin",
+    get: function get() {
+      return this.__center;
+    }
+  }, {
+    key: "matrix4",
+    get: function get() {
+      var scale = new _three.Vector3().setFromMatrixScale(this.__currentScaleMatrix);
+      var rotation = new _three.Quaternion().setFromRotationMatrix(this.__currentRotationMatrix);
+      var translation = new _three.Vector3().setFromMatrixPosition(this.__currentTranslationMatrix);
+      var sMatrix = new _three.Matrix4().makeScale(scale.x, scale.y, 1);
+      var rMatrix = new _three.Matrix4().makeRotationFromQuaternion(rotation);
+      var tMatrix = new _three.Matrix4().makeTranslation(translation.x, translation.y, translation.z);
+      return rMatrix.multiply(sMatrix).multiply(tMatrix);
+    }
+  }]);
+
+  return CornerGroupRectangle;
+}(_pixi.Graphics);
+
+var CornerGroupTransformationPoint = /*#__PURE__*/function (_Sprite) {
+  _inherits(CornerGroupTransformationPoint, _Sprite);
+
+  var _super2 = _createSuper(CornerGroupTransformationPoint);
+
+  function CornerGroupTransformationPoint() {
+    var _this2;
+
+    var svg = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'icons/rotateGroup.svg';
+
+    _classCallCheck(this, CornerGroupTransformationPoint);
+
+    _this2 = _super2.call(this, new _pixi.Texture.from(svg));
+    _this2.__eventDispatcher = new _three.EventDispatcher();
+    _this2.__mouseUpEvent = _this2.__dragEnd.bind(_assertThisInitialized(_this2));
+    _this2.__mouseMoveEvent = _this2.__dragMove.bind(_assertThisInitialized(_this2));
+    _this2.__mouseOverEvent = _this2.__mouseOver.bind(_assertThisInitialized(_this2));
+    _this2.__mouseOutEvent = _this2.__mouseOut.bind(_assertThisInitialized(_this2));
+    _this2.__mouseDownEvent = _this2.__mouseDown.bind(_assertThisInitialized(_this2));
+
+    _this2.on('mousedown', _this2.__mouseDownEvent).on('touchstart', _this2.__mouseDownEvent);
+
+    _this2.on('mouseupoutside', _this2.__mouseUpEvent).on('touchendoutside', _this2.__mouseUpEvent);
+
+    _this2.on('mouseup', _this2.__mouseUpEvent).on('touchend', _this2.__mouseUpEvent);
+
+    _this2.on('mousemove', _this2.__mouseMoveEvent).on('touchmove', _this2.__mouseMoveEvent);
+
+    _this2.on('mouseover', _this2.__mouseOverEvent).on('mouseout', _this2.__mouseOutEvent);
+
+    _this2.interactive = true;
+    _this2.buttonMode = true;
+
+    _this2.scale.set(0.05, 0.05);
+
+    _this2.anchor.set(0.5);
+
+    return _this2;
+  }
+
+  _createClass(CornerGroupTransformationPoint, [{
+    key: "__mouseDown",
+    value: function __mouseDown(evt) {
+      evt.stopPropagation();
+      this.__isDragged = true;
+      var co = evt.data.getLocalPosition(this.parent);
+
+      this.__eventDispatcher.dispatchEvent({
+        type: 'DragStart',
+        position: co,
+        handle: this
+      });
+    }
+  }, {
+    key: "__mouseOver",
+    value: function __mouseOver(evt) {
+      evt.stopPropagation();
+    }
+  }, {
+    key: "__mouseOut",
+    value: function __mouseOut(evt) {
+      evt.stopPropagation();
+    }
+  }, {
+    key: "__dragEnd",
+    value: function __dragEnd(evt) {
+      evt.stopPropagation();
+      this.__isDragged = false;
+      var co = evt.data.getLocalPosition(this.parent);
+
+      this.__eventDispatcher.dispatchEvent({
+        type: 'DragEnd',
+        position: co,
+        handle: this
+      });
+    }
+  }, {
+    key: "__dragMove",
+    value: function __dragMove(evt) {
+      if (this.__isDragged) {
+        evt.stopPropagation();
+
+        var snapping = _configuration.Configuration.getBooleanValue(_configuration.snapToGrid);
+
+        var co = evt.data.getLocalPosition(this.parent);
+
+        if (snapping) {
+          co.x = Math.floor(co.x / _configuration.Configuration.getNumericValue(_configuration.snapTolerance)) * _configuration.Configuration.getNumericValue(_configuration.snapTolerance);
+          co.y = Math.floor(co.y / _configuration.Configuration.getNumericValue(_configuration.snapTolerance)) * _configuration.Configuration.getNumericValue(_configuration.snapTolerance);
+        }
+
+        this.__eventDispatcher.dispatchEvent({
+          type: 'DragMove',
+          position: co,
+          handle: this
+        });
+      }
+    }
+  }, {
+    key: "addFloorplanListener",
+    value: function addFloorplanListener(type, listener) {
+      this.__eventDispatcher.addEventListener(type, listener);
+    }
+  }, {
+    key: "removeFloorplanListener",
+    value: function removeFloorplanListener(type, listener) {
+      this.__eventDispatcher.removeEventListener(type, listener);
+    }
+  }]);
+
+  return CornerGroupTransformationPoint;
+}(_pixi.Sprite);
+
+var CornerGroupScalePoint = /*#__PURE__*/function (_Graphics2) {
+  _inherits(CornerGroupScalePoint, _Graphics2);
+
+  var _super3 = _createSuper(CornerGroupScalePoint);
+
+  function CornerGroupScalePoint(index, parameters) {
+    var _this3;
 
     _classCallCheck(this, CornerGroupScalePoint);
 
-    _this = _super.call(this);
+    _this3 = _super3.call(this);
     var opts = {
       radius: 10,
       outerColor: 0x00FF00,
@@ -114465,35 +116785,48 @@ var CornerGroupScalePoint = /*#__PURE__*/function (_Graphics) {
       }
     }
 
-    _this.id = _utils.Utils.guide();
-    _this.__isDragged = false;
-    _this.__center = new _three.Vector2();
-    _this.__size = new _three.Vector2();
-    _this.__parameters = opts;
-    _this.__opposite = null;
-    _this.__eventDispatcher = new _three.EventDispatcher();
-    _this.__mouseUpEvent = _this.__dragEnd.bind(_assertThisInitialized(_this));
-    _this.__mouseMoveEvent = _this.__dragMove.bind(_assertThisInitialized(_this));
-    _this.__mouseOverEvent = _this.__mouseOver.bind(_assertThisInitialized(_this));
-    _this.__mouseOutEvent = _this.__mouseOut.bind(_assertThisInitialized(_this));
-    _this.__mouseDownEvent = _this.__mouseDown.bind(_assertThisInitialized(_this));
+    _this3.id = _utils.Utils.guide();
+    _this3.__index = index;
+    _this3.__isDragged = false;
+    _this3.__center = new _three.Vector2();
+    _this3.__size = new _three.Vector2();
+    _this3.__parameters = opts;
+    _this3.__parameters.move = new _three.Vector2(opts.move.x, opts.move.y);
+    _this3.__opposite = null;
+    _this3.__matrix4 = new _three.Matrix4();
+    _this3.__eventDispatcher = new _three.EventDispatcher();
+    _this3.__textfield = new _pixi.Text(_this3.__index, {
+      fontFamily: 'Arial',
+      fontSize: 12,
+      fill: 0x000000,
+      align: 'center'
+    });
+    _this3.__textfield.pivot.x = 3;
+    _this3.__textfield.pivot.y = 6;
+    _this3.__mouseUpEvent = _this3.__dragEnd.bind(_assertThisInitialized(_this3));
+    _this3.__mouseMoveEvent = _this3.__dragMove.bind(_assertThisInitialized(_this3));
+    _this3.__mouseOverEvent = _this3.__mouseOver.bind(_assertThisInitialized(_this3));
+    _this3.__mouseOutEvent = _this3.__mouseOut.bind(_assertThisInitialized(_this3));
+    _this3.__mouseDownEvent = _this3.__mouseDown.bind(_assertThisInitialized(_this3));
 
-    _this.on('mousedown', _this.__mouseDownEvent).on('touchstart', _this.__mouseDownEvent);
+    _this3.on('mousedown', _this3.__mouseDownEvent).on('touchstart', _this3.__mouseDownEvent);
 
-    _this.on('mouseupoutside', _this.__mouseUpEvent).on('touchendoutside', _this.__mouseUpEvent);
+    _this3.on('mouseupoutside', _this3.__mouseUpEvent).on('touchendoutside', _this3.__mouseUpEvent);
 
-    _this.on('mouseup', _this.__mouseUpEvent).on('touchend', _this.__mouseUpEvent);
+    _this3.on('mouseup', _this3.__mouseUpEvent).on('touchend', _this3.__mouseUpEvent);
 
-    _this.on('mousemove', _this.__mouseMoveEvent).on('touchmove', _this.__mouseMoveEvent);
+    _this3.on('mousemove', _this3.__mouseMoveEvent).on('touchmove', _this3.__mouseMoveEvent);
 
-    _this.on('mouseover', _this.__mouseOverEvent).on('mouseout', _this.__mouseOutEvent);
+    _this3.on('mouseover', _this3.__mouseOverEvent).on('mouseout', _this3.__mouseOutEvent);
 
-    _this.interactive = true;
-    _this.buttonMode = true;
+    _this3.interactive = true;
+    _this3.buttonMode = true;
 
-    _this.__drawPoint();
+    _this3.addChild(_this3.__textfield);
 
-    return _this;
+    _this3.__drawPoint();
+
+    return _this3;
   }
 
   _createClass(CornerGroupScalePoint, [{
@@ -114538,11 +116871,6 @@ var CornerGroupScalePoint = /*#__PURE__*/function (_Graphics) {
     key: "__dragEnd",
     value: function __dragEnd(evt) {
       evt.stopPropagation();
-
-      if (this.__isDragged) {
-        console.log('RELEASE MOUSE ');
-      }
-
       this.__isDragged = false;
       var co = evt.data.getLocalPosition(this.parent);
 
@@ -114558,7 +116886,15 @@ var CornerGroupScalePoint = /*#__PURE__*/function (_Graphics) {
     value: function __dragMove(evt) {
       if (this.__isDragged) {
         evt.stopPropagation();
+
+        var snapping = _configuration.Configuration.getBooleanValue(_configuration.snapToGrid);
+
         var co = evt.data.getLocalPosition(this.parent);
+
+        if (snapping) {
+          co.x = Math.floor(co.x / _configuration.Configuration.getNumericValue(_configuration.snapTolerance)) * _configuration.Configuration.getNumericValue(_configuration.snapTolerance);
+          co.y = Math.floor(co.y / _configuration.Configuration.getNumericValue(_configuration.snapTolerance)) * _configuration.Configuration.getNumericValue(_configuration.snapTolerance);
+        }
 
         this.__eventDispatcher.dispatchEvent({
           type: 'DragMove',
@@ -114587,6 +116923,16 @@ var CornerGroupScalePoint = /*#__PURE__*/function (_Graphics) {
       this.__eventDispatcher.removeEventListener(type, listener);
     }
   }, {
+    key: "location",
+    get: function get() {
+      return new _three.Vector2(this.position.x, this.position.y);
+    }
+  }, {
+    key: "index",
+    get: function get() {
+      return this.__index;
+    }
+  }, {
     key: "opposite",
     get: function get() {
       return this.__opposite;
@@ -114604,22 +116950,30 @@ var CornerGroupScalePoint = /*#__PURE__*/function (_Graphics) {
     get: function get() {
       return this.__parameters.offset;
     }
+  }, {
+    key: "matrix4",
+    get: function get() {
+      return this.__matrix4;
+    },
+    set: function set(mat) {
+      this.__matrix4 = mat.clone();
+    }
   }]);
 
   return CornerGroupScalePoint;
 }(_pixi.Graphics);
 
-var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics2) {
-  _inherits(CornerGroupTransform2D, _Graphics2);
+var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics3) {
+  _inherits(CornerGroupTransform2D, _Graphics3);
 
-  var _super2 = _createSuper(CornerGroupTransform2D);
+  var _super4 = _createSuper(CornerGroupTransform2D);
 
   function CornerGroupTransform2D(floorplan, parameters) {
-    var _this2;
+    var _this4;
 
     _classCallCheck(this, CornerGroupTransform2D);
 
-    _this2 = _super2.call(this);
+    _this4 = _super4.call(this);
     var opts = {
       scale: true,
       rotate: true,
@@ -114634,26 +116988,51 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics2) {
       }
     }
 
-    _this2.__parameters = opts;
-    _this2.__floorplan = floorplan;
-    _this2.__groups = _this2.__floorplan.cornerGroups;
-    _this2.__currentGroup = null;
-    _this2.__currentScale = new _three.Vector2(1, 1);
-    _this2.__originalWidth = 100;
-    _this2.__originalHeight = 100;
-    _this2.__originalPositions = [];
-    _this2.__size = null;
-    _this2.__center = null;
-    _this2.__scalingHandles = [];
-    _this2.__scaleHandleDragStartEvent = _this2.__scaleHandleDragStart.bind(_assertThisInitialized(_this2));
-    _this2.__scaleHandleDragEndEvent = _this2.__scaleHandleDragEnd.bind(_assertThisInitialized(_this2));
-    _this2.__scaleHandleDragMoveEvent = _this2.__scaleHandleDragMove.bind(_assertThisInitialized(_this2));
+    _this4.__parameters = opts;
+    _this4.__floorplan = floorplan;
+    _this4.__groups = _this4.__floorplan.cornerGroups;
+    _this4.__currentGroup = null;
+    _this4.__cornerPointer = null;
+    _this4.__isActive = false;
+    _this4.__originalPositions = [];
+    _this4.__size = null;
+    _this4.__center = null;
+    _this4.__scalingHandles = [];
+    _this4.__rotateHandle = new CornerGroupTransformationPoint();
+    _this4.__translateHandle = new CornerGroupTransformationPoint('icons/translateGroup.svg');
+    _this4.__resizer = null;
+    _this4.__scaleHandleDragStartEvent = _this4.__scaleHandleDragStart.bind(_assertThisInitialized(_this4));
+    _this4.__scaleHandleDragEndEvent = _this4.__scaleHandleDragEnd.bind(_assertThisInitialized(_this4));
+    _this4.__scaleHandleDragMoveEvent = _this4.__scaleHandleDragMove.bind(_assertThisInitialized(_this4));
+    _this4.__rotateHandleDragStartEvent = _this4.__rotateHandleDragStart.bind(_assertThisInitialized(_this4));
+    _this4.__rotateHandleDragEndEvent = _this4.__rotateHandleDragEnd.bind(_assertThisInitialized(_this4));
+    _this4.__rotateHandleDragMoveEvent = _this4.__rotateHandleDragMove.bind(_assertThisInitialized(_this4));
 
-    if (_this2.__parameters.scale) {
-      _this2.__createScalingHandles();
+    if (_this4.__parameters.scale) {
+      _this4.__createScalingHandles();
     }
 
-    return _this2;
+    if (_this4.__parameters.rotate) {
+      _this4.__rotateHandle.addFloorplanListener('DragStart', _this4.__rotateHandleDragStartEvent);
+
+      _this4.__rotateHandle.addFloorplanListener('DragMove', _this4.__rotateHandleDragMoveEvent);
+
+      _this4.__rotateHandle.addFloorplanListener('DragEnd', _this4.__rotateHandleDragEndEvent);
+
+      _this4.addChild(_this4.__rotateHandle);
+    }
+
+    if (_this4.__parameters.translate) {
+      _this4.__translateHandle.addFloorplanListener('DragStart', _this4.__rotateHandleDragStartEvent);
+
+      _this4.__translateHandle.addFloorplanListener('DragMove', _this4.__rotateHandleDragMoveEvent);
+
+      _this4.__translateHandle.addFloorplanListener('DragEnd', _this4.__rotateHandleDragEndEvent);
+
+      _this4.addChild(_this4.__translateHandle);
+    }
+
+    return _this4;
   }
   /**
    * array of handles
@@ -114679,6 +117058,7 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics2) {
       var yTransform = 0;
       var xOffsets = [-0.5, 0.0, 0.5, 0.5, 0.5, 0, -0.5, -0.5];
       var yOffsets = [-0.5, -0.5, -0.5, 0.0, 0.5, 0.5, 0.5, -0.0];
+      var resizerIndices = [0, -1, 1, -1, 2, -1, 3, -1];
 
       for (; i < totalHandles; i++) {
         var xMove = 1;
@@ -114691,7 +117071,7 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics2) {
           yMove = yTransform;
         }
 
-        var handle = new CornerGroupScalePoint({
+        var handle = new CornerGroupScalePoint(i, {
           move: {
             x: xMove,
             y: yMove
@@ -114712,19 +117092,8 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics2) {
       for (i = 0; i < totalHandles; i++) {
         var _handle = this.__scalingHandles[i];
         var oppositeIndex = (i + 4) % totalHandles;
+        _handle.extraIndex = resizerIndices[i];
         _handle.opposite = this.__scalingHandles[oppositeIndex];
-      }
-    }
-  }, {
-    key: "__updateScalingHandles",
-    value: function __updateScalingHandles() {
-      if (this.__parameters.scale) {
-        for (var i = 0; i < this.__scalingHandles.length; i++) {
-          var handle = this.__scalingHandles[i];
-          handle.updateCenterAndSize(this.__center, this.__size);
-
-          this.__originalPositions.push(new _three.Vector2(handle.position.x, handle.position.y));
-        }
       }
     }
   }, {
@@ -114733,64 +117102,119 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics2) {
   }, {
     key: "__scaleHandleDragMove",
     value: function __scaleHandleDragMove(evt) {
-      var co = new _three.Vector2(evt.position.x, evt.position.y);
+      this.__isActive = true;
+      var co = new _three.Vector3(evt.position.x, evt.position.y, 0);
       var handle = evt.handle;
       var opposite = evt.opposite;
-      var start = co;
-      var end = new _three.Vector2(opposite.position.x, opposite.position.y);
-      var vect = end.clone().sub(start);
+      var opposite3 = new _three.Vector3(opposite.location.x, opposite.location.y, 0);
+      var vect = opposite3.clone().sub(co);
+      var sizeX = this.__resizer.size.x;
+      var sizeY = this.__resizer.size.y;
 
-      var scale = this.__currentScale.clone(); //Keeps the current x and y
+      if (handle.move.x && handle.move.y) {
+        var hVect = null;
+        var vVect = null;
+        var co2 = new _three.Vector2(evt.position.x, evt.position.y);
 
+        switch (handle.extraIndex) {
+          case 0:
+            hVect = co2.clone().sub(this.__resizer.tr.clone());
+            vVect = co2.clone().sub(this.__resizer.bl.clone());
+            break;
 
-      var offset = null;
-      var m = new _three.Matrix4();
-      var origin = new _three.Matrix4().makeTranslation(-opposite.position.x, -opposite.position.y, 0);
-      var transformations = new _three.Matrix4(); //Contains all transformations (rotation, and scaling)
+          case 1:
+            hVect = co2.clone().sub(this.__resizer.tl.clone());
+            vVect = co2.clone().sub(this.__resizer.br.clone());
+            break;
 
-      if (handle.move.x) {
-        scale.x = Math.abs(vect.x / this.__originalWidth);
-      }
+          case 2:
+            hVect = co2.clone().sub(this.__resizer.bl.clone());
+            vVect = co2.clone().sub(this.__resizer.tr.clone());
+            break;
 
-      if (handle.move.y) {
-        scale.y = Math.abs(vect.y / this.__originalHeight);
-      }
-
-      transformations.makeScale(scale.x, scale.y, 1); //Apply the absolute scale
-
-      m = origin.clone().getInverse(origin.clone()).multiply(transformations).multiply(origin); //The current transformations in absolute sense
-
-      offset = this.__matrix.clone().getInverse(this.__matrix.clone()).multiply(m); //Offset from previous transformations
-
-      console.log('++++++++++++++++++++++++++++++++++++++');
-      console.log(opposite.position.x, opposite.position.y);
-
-      for (var i = 0; i < this.__scalingHandles.length; i++) {
-        var handle2 = this.__scalingHandles[i];
-
-        if (handle2 === opposite) {
-          continue;
+          default:
+            hVect = co2.clone().sub(this.__resizer.br.clone());
+            vVect = co2.clone().sub(this.__resizer.tl.clone());
+            break;
         }
 
-        var p3 = new _three.Vector3(handle2.position.x, handle2.position.y, 0);
-        p3.applyMatrix4(m);
-        handle2.position.x = p3.x;
-        handle2.position.y = p3.y;
+        sizeX = hVect.length(); //vect.length(); //
+
+        sizeY = vVect.length(); //vect.length(); //
+      } else if (handle.move.x) {
+        sizeX = vect.length();
+      } else if (handle.move.y) {
+        sizeY = vect.length();
       }
 
-      this.__matrix = m;
-      console.log(opposite.position.x, opposite.position.y);
-      this.__currentScale = scale.clone();
+      this.__resizer.scaleBySize(sizeX, sizeY, opposite.location);
+
+      this.__setControlsPosition();
     }
   }, {
     key: "__scaleHandleDragEnd",
-    value: function __scaleHandleDragEnd(evt) {}
+    value: function __scaleHandleDragEnd(evt) {
+      if (!this.__isActive) {
+        return;
+      } // let matrix = this.__resizer.scalingMatrix.clone().multiply(this.__resizer.rotationMatrix);
+
+
+      this.__setControlsPosition();
+
+      this.__updateMatrixOfGroup();
+
+      this.__isActive = false;
+    }
   }, {
-    key: "__setRadians",
-    value: function __setRadians(angle) {
-      this.__currentRadians = angle;
-      this.__rotateHandle.x = Math.cos(angle) * this.__ringRadius;
-      this.__rotateHandle.y = Math.sin(angle) * this.__ringRadius;
+    key: "__rotateHandleDragStart",
+    value: function __rotateHandleDragStart(evt) {}
+  }, {
+    key: "__rotateHandleDragMove",
+    value: function __rotateHandleDragMove(evt) {
+      this.__isActive = true;
+      var handle = evt.handle;
+
+      if (handle === this.__rotateHandle) {
+        var co = new _three.Vector2(evt.position.x, evt.position.y);
+        var vect = co.sub(this.__resizer.center);
+        var radians = Math.atan2(vect.y, vect.x);
+
+        this.__resizer.rotateByRadians(radians);
+      } else if (handle === this.__translateHandle) {
+        var _co4 = new _three.Vector2(evt.position.x, evt.position.y);
+
+        var delta = _co4.sub(this.__resizer.center);
+
+        this.__resizer.translateByPosition(delta);
+      }
+
+      this.__setControlsPosition();
+    }
+  }, {
+    key: "__rotateHandleDragEnd",
+    value: function __rotateHandleDragEnd(evt) {
+      if (!this.__isActive) {
+        return;
+      }
+
+      this.__setControlsPosition();
+
+      this.__updateMatrixOfGroup();
+
+      this.__isActive = false;
+    }
+  }, {
+    key: "__updateMatrixOfGroup",
+    value: function __updateMatrixOfGroup() {
+      var matrix = this.__resizer.matrix4;
+      var scale = new _three.Vector3().setFromMatrixScale(matrix);
+
+      this.__currentGroup.applyTransformations(scale, this.__resizer.rotationRadians, this.__toUnits(this.__resizer.origin.clone())); // let newMatrix = this.__currentGroup.matrix;
+      // if(this.__cornerPointer){
+      //     this.__currentGroup = this.__groups.getContainingGroup(this.__cornerPointer);
+      //     this.__updateTransformControls();
+      // }        
+
     }
   }, {
     key: "__toPixels",
@@ -114800,16 +117224,67 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics2) {
       return vector;
     }
   }, {
+    key: "__toUnits",
+    value: function __toUnits(pixels) {
+      pixels.x = _dimensioning.Dimensioning.pixelToCm(pixels.x);
+      pixels.y = _dimensioning.Dimensioning.pixelToCm(pixels.y);
+      return pixels;
+    }
+  }, {
+    key: "__setControlsPosition",
+    value: function __setControlsPosition() {
+      if (this.__parameters.scale) {
+        var center = this.__resizer.center;
+
+        var horizontal = this.__resizer.tr.clone().sub(this.__resizer.tl);
+
+        var vertical = this.__resizer.bl.clone().sub(this.__resizer.tl);
+
+        for (var i = 0; i < this.__scalingHandles.length; i++) {
+          var handle = this.__scalingHandles[i];
+          var hvect = horizontal.clone().multiplyScalar(handle.offset.x);
+          var vvect = vertical.clone().multiplyScalar(handle.offset.y);
+          var vect = hvect.add(vvect);
+          var position = center.clone().add(vect);
+          handle.position.set(position.x, position.y); // handle.updateCenterAndSize(center, size);
+
+          this.__originalPositions.push(new _three.Vector2(handle.position.x, handle.position.y));
+        }
+      }
+
+      if (this.__parameters.rotate) {
+        var midPoint = this.__resizer.br.clone().sub(this.__resizer.tr).multiplyScalar(0.5).add(this.__resizer.tr);
+
+        var direction = this.__resizer.bl.clone().sub(this.__resizer.br).normalize().negate();
+
+        var _position = midPoint.add(direction.multiplyScalar(50));
+
+        this.__rotateHandle.position.set(_position.x, _position.y);
+      }
+
+      if (this.__parameters.translate) {
+        this.__translateHandle.position.set(this.__resizer.center.x, this.__resizer.center.y);
+      }
+    }
+  }, {
     key: "__updateTransformControls",
     value: function __updateTransformControls() {
       this.__currentScale = new _three.Vector2(1, 1);
       this.__size = this.__toPixels(this.__currentGroup.size.clone());
       this.__center = this.__toPixels(this.__currentGroup.center.clone());
       this.__matrix = this.__currentGroup.matrix.clone();
-      this.__originalWidth = this.__size.x;
-      this.__originalHeight = this.__size.y;
 
-      this.__updateScalingHandles();
+      if (this.__resizer) {
+        this.__resizer.destroy();
+
+        this.removeChild(this.__resizer);
+      }
+
+      this.__resizer = new CornerGroupRectangle(this.__floorplan, this.__size, this.__center); // this.__resizer.position.set(this.__center.x, this.__center.y);
+
+      this.addChild(this.__resizer);
+
+      this.__setControlsPosition();
     }
   }, {
     key: "selected",
@@ -114817,6 +117292,10 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics2) {
       return this.__selected;
     },
     set: function set(instanceOfCornerOrWallOrRoom) {
+      if (this.__currentGroup) {
+        this.__currentGroup.update();
+      }
+
       this.__selected = instanceOfCornerOrWallOrRoom;
 
       if (this.__selected) {
@@ -114833,8 +117312,15 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics2) {
         }
 
         this.__currentGroup = this.__groups.getContainingGroup(corner);
+        this.__cornerPointer = corner;
 
         this.__updateTransformControls();
+      } else {
+        if (this.__resizer) {
+          this.__resizer.destroy();
+        }
+
+        this.__cornerPointer = null;
       }
     }
   }]);
@@ -114843,7 +117329,154 @@ var CornerGroupTransform2D = /*#__PURE__*/function (_Graphics2) {
 }(_pixi.Graphics);
 
 exports.CornerGroupTransform2D = CornerGroupTransform2D;
-},{"pixi.js":"FmRY","../model/corner":"RKpz","../model/wall":"j7sX","../model/room":"HEbc","../core/dimensioning":"I1ZD","three":"lKFo","../core/utils":"qdyh"}],"gIq0":[function(require,module,exports) {
+},{"pixi.js":"FmRY","../model/corner":"RKpz","../model/wall":"j7sX","../model/room":"HEbc","../core/dimensioning":"I1ZD","three":"lKFo","../core/utils":"qdyh","../core/configuration":"q2Ih"}],"rSgF":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.BoundaryView2D = void 0;
+
+var _three = require("three");
+
+var _pixi = require("pixi.js");
+
+var _BaseFloorplanViewElement2D = require("./BaseFloorplanViewElement2D");
+
+var _detectTouchDevice = require("detect-touch-device");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var BoundaryView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
+  _inherits(BoundaryView2D, _BaseFloorplanViewEle);
+
+  var _super = _createSuper(BoundaryView2D);
+
+  function BoundaryView2D(floorplan, options, boundary) {
+    var _this;
+
+    _classCallCheck(this, BoundaryView2D);
+
+    _this = _super.call(this, floorplan, options);
+    _this.__options['boundary-point-radius'] = 12.5;
+    _this.__options['boundary-line-thickness'] = 12.5;
+    _this.__options['boundary-point-color'] = '#000000';
+    _this.__options['boundary-line-color'] = '#CC33CC';
+
+    for (var opt in options) {
+      if (_this.__options.hasOwnProperty(opt) && options.hasOwnProperty(opt)) {
+        _this.__options[opt] = options[opt];
+      }
+    }
+
+    _this.__options['boundary-point-color'] = new _three.Color(_this.__options['boundary-point-color']).getHex();
+    _this.__options['boundary-line-color'] = new _three.Color(_this.__options['boundary-line-color']).getHex();
+    _this.__boundary = boundary;
+    _this.pivot.x = _this.pivot.y = 0.5;
+    _this.interactive = false;
+    _this.buttonMode = false;
+
+    _this.__drawHoveredOffState();
+
+    return _this;
+  }
+
+  _createClass(BoundaryView2D, [{
+    key: "__drawBoundaryRegion",
+    value: function __drawBoundaryRegion(pointsColor, lineColor) {
+      this.clear();
+      var alpha = 1.0; //0.1;//
+
+      var fillAlpha = 1.0;
+      var radius = this.__options['boundary-point-radius'];
+      var thickness = this.__options['boundary-line-thickness'];
+
+      if (_detectTouchDevice.isMobile) {} // console.log('BEFORE ::: ', this.fill, this.__boundary.styleType);
+
+
+      this.fill.visible = true;
+      this.fill.alpha = fillAlpha;
+
+      if (this.__boundary.style.colormap) {
+        var matrix = new _pixi.Matrix();
+
+        var scale = Math.min(this.__boundary.width, this.__boundary.height) / this.__boundary.styleRepeat;
+
+        matrix = matrix.scale(scale, scale);
+
+        var texture = _pixi.Texture.from(this.__boundary.style.colormap);
+
+        this.fill.texture = texture;
+        this.fill.matrix = matrix;
+      }
+
+      this.fill.color = new _three.Color(this.__boundary.style.color).getHex();
+      this.lineStyle(thickness, lineColor);
+
+      for (var i = 0; i <= this.__boundary.points.length; i++) {
+        var index = i % this.__boundary.points.length;
+        var cmPoint = this.__boundary.points[index];
+
+        var pixelPoint = this.__vectorToPixels(cmPoint);
+
+        if (i === 0) {
+          this.moveTo(pixelPoint.x, pixelPoint.y);
+        } else {
+          this.lineTo(pixelPoint.x, pixelPoint.y);
+        }
+      } // this.endFill();
+
+
+      this.beginFill(pointsColor, alpha);
+
+      for (var _i = 0; _i < this.__boundary.points.length; _i++) {
+        var _cmPoint = this.__boundary.points[_i];
+
+        var _pixelPoint = this.__vectorToPixels(_cmPoint);
+
+        this.drawCircle(_pixelPoint.x, _pixelPoint.y, radius);
+      }
+
+      this.endFill();
+    }
+  }, {
+    key: "__drawHoveredOffState",
+    value: function __drawHoveredOffState() {
+      _get(_getPrototypeOf(BoundaryView2D.prototype), "__drawHoveredOffState", this).call(this);
+
+      this.__drawBoundaryRegion(this.__options['boundary-point-color'], this.__options['boundary-line-color']);
+    }
+  }]);
+
+  return BoundaryView2D;
+}(_BaseFloorplanViewElement2D.BaseFloorplanViewElement2D);
+
+exports.BoundaryView2D = BoundaryView2D;
+},{"three":"lKFo","pixi.js":"FmRY","./BaseFloorplanViewElement2D":"s4WB","detect-touch-device":"xRsI"}],"gIq0":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -114876,6 +117509,12 @@ var _configuration = require("../core/configuration");
 var _DeviceInfo = require("../../DeviceInfo");
 
 var _CornerGroupTransform2D = require("./CornerGroupTransform2D");
+
+var _room = _interopRequireDefault(require("../model/room"));
+
+var _BoundaryView2D = require("./BoundaryView2D");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -114990,18 +117629,27 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
     _this2.__eventDispatcher = new _three.EventDispatcher();
     var opts = {
       'corner-radius': 20,
+      'boundary-point-radius': 5.0,
+      'boundary-line-thickness': 1.0,
+      'boundary-point-color': '#D3D3D3',
+      'boundary-line-color': '#F3F3F3',
       pannable: true,
       zoomable: true,
       dimlinecolor: '#3EDEDE',
       dimarrowcolor: '#000000',
-      dimtextcolor: '#000000'
+      dimtextcolor: '#000000',
+      scale: true,
+      rotate: true,
+      translate: true,
+      resize: true
     };
 
     for (var opt in opts) {
       if (opts.hasOwnProperty(opt) && options.hasOwnProperty(opt)) {
         opts[opt] = options[opt];
       }
-    }
+    } // console.log('VIEWER 2D ::: ', opts);
+
 
     _this2.__mode = floorplannerModes.MOVE;
     _this2.__canvasHolder = document.getElementById(canvasHolder);
@@ -115013,8 +117661,15 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
     _this2.__walls2d = [];
     _this2.__rooms2d = [];
     _this2.__entities2D = [];
+    _this2.__externalCorners2d = [];
+    _this2.__externalWalls2d = [];
+    _this2.__externalRooms2d = [];
+    _this2.__externalEntities2d = [];
     _this2.__worldWidth = 3000;
     _this2.__worldHeight = 3000;
+    _this2.__currentWidth = 500;
+    _this2.__currentHeight = 500;
+    _this2.__currentSelection = null;
     _this2.__zoomedEvent = _this2.__zoomed.bind(_assertThisInitialized(_this2));
     _this2.__pannedEvent = _this2.__panned.bind(_assertThisInitialized(_this2));
     _this2.__selectionMonitorEvent = _this2.__selectionMonitor.bind(_assertThisInitialized(_this2));
@@ -115023,7 +117678,10 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
     _this2.__drawModeMouseUpEvent = _this2.__drawModeMouseUp.bind(_assertThisInitialized(_this2));
     _this2.__drawModeMouseMoveEvent = _this2.__drawModeMouseMove.bind(_assertThisInitialized(_this2));
     _this2.__redrawFloorplanEvent = _this2.__redrawFloorplan.bind(_assertThisInitialized(_this2));
+    _this2.__drawExternalFloorplanEvent = _this2.__drawExternalFloorplan.bind(_assertThisInitialized(_this2));
     _this2.__windowResizeEvent = _this2._handleWindowResize.bind(_assertThisInitialized(_this2));
+    _this2.__resetFloorplanEvent = _this2.__resetFloorplan.bind(_assertThisInitialized(_this2));
+    _this2.__floorplanLoadedEvent = _this2.__drawBoundary.bind(_assertThisInitialized(_this2));
     _this2.__floorplanContainer = new _pixiViewport.Viewport({
       screenWidth: window.innerWidth,
       screenHeight: window.innerHeight,
@@ -115034,16 +117692,14 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
     _this2.__snapToGrid = false;
     _this2.__keyboard = new _KeyboardManager2D.KeyboardListener2D();
     _this2.__keyListenerEvent = _this2.__keyListener.bind(_assertThisInitialized(_this2));
-
-    _this2.__keyboard.addEventListener(_events.EVENT_KEY_RELEASED, _this2.__keyListenerEvent);
-
-    _this2.__keyboard.addEventListener(_events.EVENT_KEY_PRESSED, _this2.__keyListenerEvent);
-
     var origin = new _pixi.Graphics();
     _this2.__floorplanElementsHolder = new _pixi.Graphics();
+    _this2.__boundaryHolder = new _pixi.Graphics();
     _this2.__grid2d = new _Grid2d.Grid2D(_this2.view, options);
-    _this2.__groupTransformer = new _CornerGroupTransform2D.CornerGroupTransform2D(_this2.__floorplan);
+    _this2.__boundaryRegion2D = null;
+    _this2.__groupTransformer = new _CornerGroupTransform2D.CornerGroupTransform2D(_this2.__floorplan, _this2.__options);
     _this2.__groupTransformer.visible = false;
+    _this2.__groupTransformer.selected = null;
     origin.beginFill(0xFF0000);
     origin.drawCircle(0, 0, 5);
 
@@ -115054,6 +117710,8 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
     _this2.__tempWall.visible = false;
 
     _this2.__floorplanContainer.addChild(_this2.__grid2d);
+
+    _this2.__floorplanContainer.addChild(_this2.__boundaryHolder);
 
     _this2.__floorplanContainer.addChild(_this2.__tempWall);
 
@@ -115079,6 +117737,10 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
       _this2.__floorplanContainer.plugins.pause('pinch');
     }
 
+    _this2.__keyboard.addEventListener(_events.EVENT_KEY_RELEASED, _this2.__keyListenerEvent);
+
+    _this2.__keyboard.addEventListener(_events.EVENT_KEY_PRESSED, _this2.__keyListenerEvent);
+
     _this2.__floorplanContainer.on('zoomed', _this2.__zoomedEvent);
 
     _this2.__floorplanContainer.on('moved', _this2.__pannedEvent);
@@ -115101,19 +117763,42 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
     _this2.__floorplanContainer.on('touchmove', _this2.__drawModeMouseMoveEvent); // this.__floorplan.addEventListener(EVENT_UPDATED, (evt) => scope.__redrawFloorplan(evt));
 
 
+    _this2.__floorplan.addEventListener(_events.EVENT_MODE_RESET, _this2.__resetFloorplanEvent);
+
     _this2.__floorplan.addEventListener(_events.EVENT_NEW, _this2.__redrawFloorplanEvent);
 
-    _this2.__floorplan.addEventListener(_events.EVENT_DELETED, _this2.__redrawFloorplanEvent); // this.__floorplan.addEventListener(EVENT_LOADED, this.__redrawFloorplanEvent);
+    _this2.__floorplan.addEventListener(_events.EVENT_DELETED, _this2.__redrawFloorplanEvent); // this.__floorplan.addEventListener(EVENT_LOADED, this.__floorplanLoadedEvent);
 
 
     _this2.__floorplan.addEventListener(_events.EVENT_NEW_ROOMS_ADDED, _this2.__redrawFloorplanEvent);
 
+    _this2.__floorplan.addEventListener(_events.EVENT_EXTERNAL_FLOORPLAN_LOADED, _this2.__drawExternalFloorplanEvent);
+
     window.addEventListener('resize', _this2.__windowResizeEvent);
     window.addEventListener('orientationchange', _this2.__windowResizeEvent);
+
+    _this2._handleWindowResize();
+
     return _this2;
   }
 
   _createClass(Viewer2D, [{
+    key: "__drawBoundary",
+    value: function __drawBoundary() {
+      // return;
+      if (this.__boundaryRegion2D) {
+        this.__boundaryRegion2D.remove();
+      }
+
+      if (this.__floorplan.boundary) {
+        if (this.__floorplan.boundary.isValid) {
+          this.__boundaryRegion2D = new _BoundaryView2D.BoundaryView2D(this.__floorplan, this.__options, this.__floorplan.boundary);
+
+          this.__boundaryHolder.addChild(this.__boundaryRegion2D);
+        }
+      }
+    }
+  }, {
     key: "__keyListener",
     value: function __keyListener(evt) {
       if (evt.type === _events.EVENT_KEY_PRESSED && evt.key === 'Shift') {
@@ -115131,6 +117816,10 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
   }, {
     key: "switchMode",
     value: function switchMode(mode) {
+      if (this.__mode === floorplannerModes.EDIT_ISLANDS && mode !== floorplannerModes.EDIT_ISLANDS) {
+        this.__floorplan.update();
+      }
+
       switch (mode) {
         case floorplannerModes.DRAW:
           this.__mode = floorplannerModes.DRAW;
@@ -115147,11 +117836,19 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
 
           this.__tempWall.visible = true;
           this.__groupTransformer.visible = false;
+          this.__groupTransformer.selected = null;
           break;
 
         case floorplannerModes.EDIT_ISLANDS:
           this.__mode = floorplannerModes.EDIT_ISLANDS;
-          this.__groupTransformer.visible = false;
+
+          if (this.__currentSelection instanceof _room.default) {
+            this.__groupTransformer.visible = true;
+            this.__groupTransformer.selected = this.__currentSelection;
+          } else {
+            this.__groupTransformer.visible = false;
+            this.__groupTransformer.selected = null;
+          }
 
           this.__floorplanContainer.plugins.pause('drag');
 
@@ -115176,6 +117873,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
 
           this.__tempWall.visible = false;
           this.__groupTransformer.visible = false;
+          this.__groupTransformer.selected = null;
           this.__lastNode = null;
 
           this.__floorplanContainer.plugins.resume('drag');
@@ -115206,7 +117904,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
   }, {
     key: "__drawModeMouseUp",
     value: function __drawModeMouseUp(evt) {
-      if (this.__mode == floorplannerModes.DRAW) {
+      if (this.__mode === floorplannerModes.DRAW) {
         var co = evt.data.getLocalPosition(this.__floorplanContainer);
         var cmCo = new _three.Vector2(co.x, co.y);
         cmCo.x = _dimensioning.Dimensioning.pixelToCm(cmCo.x);
@@ -115215,6 +117913,12 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
         if (_configuration.Configuration.getBooleanValue(_configuration.snapToGrid) || this.__snapToGrid) {
           cmCo.x = Math.floor(cmCo.x / _configuration.Configuration.getNumericValue(_configuration.snapTolerance)) * _configuration.Configuration.getNumericValue(_configuration.snapTolerance);
           cmCo.y = Math.floor(cmCo.y / _configuration.Configuration.getNumericValue(_configuration.snapTolerance)) * _configuration.Configuration.getNumericValue(_configuration.snapTolerance);
+        }
+
+        if (this.__floorplan.boundary) {
+          if (!this.__floorplan.boundary.containsPoint(cmCo.x, cmCo.y)) {
+            return;
+          }
         } // This creates the corner already
 
 
@@ -115252,7 +117956,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
   }, {
     key: "__drawModeMouseMove",
     value: function __drawModeMouseMove(evt) {
-      if (this.__mode == floorplannerModes.DRAW) {
+      if (this.__mode === floorplannerModes.DRAW) {
         var co = evt.data.getLocalPosition(this.__floorplanContainer);
         var cmCo = new _three.Vector2(co.x, co.y);
         var lastNode = undefined;
@@ -115274,12 +117978,19 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
   }, {
     key: "__cornerMoved",
     value: function __cornerMoved(evt) {
+      if (this.__mode === floorplannerModes.EDIT_ISLANDS) {
+        return;
+      }
+
       this.__groupTransformer.visible = false;
+      this.__groupTransformer.selected = null;
     }
   }, {
     key: "__selectionMonitor",
     value: function __selectionMonitor(evt) {
+      this.__currentSelection = null;
       this.__groupTransformer.visible = false;
+      this.__groupTransformer.selected = null;
 
       this.__eventDispatcher.dispatchEvent({
         type: _events.EVENT_NOTHING_2D_SELECTED
@@ -115289,7 +118000,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
         var entity = this.__entities2D[i];
 
         if (evt.item !== undefined) {
-          if (evt.item == entity) {
+          if (evt.item === entity) {
             continue;
           }
         }
@@ -115330,27 +118041,53 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
           this.__groupTransformer.visible = true;
           this.__groupTransformer.selected = item;
         }
+
+        this.__currentSelection = item;
       }
     }
   }, {
     key: "__zoomed",
     value: function __zoomed() {
       var zoom = this.__floorplanContainer.scale.x;
-      zoom = zoom < 0.4 ? 0.4 : zoom > 60 ? 60 : zoom;
+
+      var bounds = _dimensioning.Dimensioning.cmToPixel(_configuration.Configuration.getNumericValue(_configuration.viewBounds)); // * zoom;
+
+
+      var maxZoomOut = Math.max(window.innerWidth, window.innerHeight) / bounds;
+      zoom = zoom < maxZoomOut ? maxZoomOut : zoom > 60 ? 60 : zoom;
       this.__floorplanContainer.scale.x = this.__floorplanContainer.scale.y = zoom;
       this.__grid2d.gridScale = this.__floorplanContainer.scale.x;
     }
   }, {
     key: "__panned",
     value: function __panned() {
-      var yValue = this.__floorplanContainer.y;
-      var xValue = this.__floorplanContainer.x;
-      yValue = Math.max(-4100, yValue);
-      yValue = Math.min(4100, yValue);
-      xValue = Math.max(-3000, xValue);
-      xValue = Math.min(3000, xValue);
+      var zoom = this.__floorplanContainer.scale.x;
+      var bounds = _dimensioning.Dimensioning.cmToPixel(_configuration.Configuration.getNumericValue(_configuration.viewBounds)) * zoom;
+      var xy = new _three.Vector2(this.__floorplanContainer.x, this.__floorplanContainer.y);
+      var topleft = new _three.Vector2(-(bounds * 0.5), -(bounds * 0.5));
+      var bottomright = new _three.Vector2(bounds * 0.5, bounds * 0.5); // let windowSize = new Vector2(window.innerWidth, window.innerHeight);
+
+      var windowSize = new _three.Vector2(this.__currentWidth, this.__currentHeight);
+      var xValue = Math.min(-topleft.x, xy.x);
+      var yValue = Math.min(-topleft.y, xy.y);
+      xValue = Math.max(windowSize.x - bottomright.x, xValue);
+      yValue = Math.max(windowSize.y - bottomright.y, yValue);
       this.__floorplanContainer.x = xValue;
-      this.__floorplanContainer.y = yValue;
+      this.__floorplanContainer.y = yValue; // console.log('---------------------------------------------');
+      // console.log('CURRENT ZOOM :: ', zoom);
+      // console.log('TOP LEFT :: ', topleft);
+      // console.log('BOTTOM RIGHT :: ', bottomright);
+      // console.log('WINDOW SIZE :: ', windowSize);
+      // console.log(`X=${xValue}, Y=${yValue}`);
+    }
+  }, {
+    key: "__resetFloorplan",
+    value: function __resetFloorplan(evt) {
+      this.__mode = floorplannerModes.MOVE;
+      this.__groupTransformer.visible = false;
+      this.__groupTransformer.selected = null;
+
+      this.__drawExternalFloorplan();
     }
   }, {
     key: "__redrawFloorplan",
@@ -115364,6 +118101,8 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
         entity.removeFloorplanListener(_events.EVENT_2D_SELECTED, _this3.__selectionMonitorEvent);
         entity.remove();
       });
+
+      this.__drawBoundary();
 
       this.__corners2d = [];
       this.__walls2d = [];
@@ -115418,18 +118157,78 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
 
       this._handleWindowResize();
     }
+  }, {
+    key: "__drawExternalFloorplan",
+    value: function __drawExternalFloorplan() {
+      var scope = this;
+      var i = 0; // clear scene
+
+      scope.__externalEntities2d.forEach(function (entity) {
+        entity.remove();
+      });
+
+      this.__drawBoundary();
+
+      this.__externalCorners2d = [];
+      this.__externalWalls2d = [];
+      this.__externalRooms2d = [];
+      var rooms = this.__floorplan.externalRooms;
+
+      for (i = 0; i < rooms.length; i++) {
+        var modelRoom = rooms[i];
+        var roomView = new _RoomView2D.RoomView2D(this.__floorplan, this.__options, modelRoom);
+
+        this.__floorplanElementsHolder.addChild(roomView);
+
+        this.__externalRooms2d.push(roomView);
+
+        this.__externalEntities2d.push(roomView);
+      }
+
+      for (i = 0; i < this.__floorplan.externalWalls.length; i++) {
+        var modelWall = this.__floorplan.externalWalls[i];
+        var wallView = new _WallView2D.WallView2D(this.__floorplan, this.__options, modelWall);
+
+        this.__floorplanElementsHolder.addChild(wallView);
+
+        this.__externalWalls2d.push(wallView);
+
+        this.__externalEntities2d.push(wallView);
+      }
+
+      for (i = 0; i < this.__floorplan.externalCorners.length; i++) {
+        var modelCorner = this.__floorplan.externalCorners[i];
+        var cornerView = new _CornerView2D.CornerView2D(this.__floorplan, this.__options, modelCorner);
+
+        this.__floorplanElementsHolder.addChild(cornerView);
+
+        this.__externalCorners2d.push(cornerView);
+
+        this.__externalEntities2d.push(cornerView);
+      }
+
+      this._handleWindowResize();
+    }
     /** */
 
   }, {
     key: "_handleWindowResize",
     value: function _handleWindowResize() {
-      var w = window.innerWidth;
-      var h = window.innerHeight;
+      var heightMargin = this.__canvasHolder.offsetTop;
+      var widthMargin = this.__canvasHolder.offsetLeft;
+      var w = this.__options.resize ? window.innerWidth - widthMargin : this.__canvasHolder.clientWidth;
+      var h = this.__options.resize ? window.innerHeight - heightMargin : this.__canvasHolder.clientHeight;
+      this.__currentWidth = w;
+      this.__currentHeight = h;
       this.renderer.resize(w, h);
 
       this.__floorplanContainer.resize(w, h, this.__worldWidth, this.__worldHeight);
 
       this.renderer.render(this.stage);
+
+      this.__zoomed();
+
+      this.__panned();
     }
   }, {
     key: "addFloorplanListener",
@@ -115466,7 +118265,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
 }(_pixi.Application);
 
 exports.Viewer2D = Viewer2D;
-},{"pixi.js":"FmRY","pixi-viewport":"iW04","three":"lKFo","../core/events":"rskn","./Grid2d":"K8zm","./CornerView2D":"IFZt","./WallView2D":"aRQZ","./RoomView2D":"vUa4","../core/dimensioning":"I1ZD","./KeyboardManager2D":"sxco","../core/configuration":"q2Ih","../../DeviceInfo":"m8ur","./CornerGroupTransform2D":"c93z"}],"l84Y":[function(require,module,exports) {
+},{"pixi.js":"FmRY","pixi-viewport":"iW04","three":"lKFo","../core/events":"rskn","./Grid2d":"K8zm","./CornerView2D":"IFZt","./WallView2D":"aRQZ","./RoomView2D":"vUa4","../core/dimensioning":"I1ZD","./KeyboardManager2D":"sxco","../core/configuration":"q2Ih","../../DeviceInfo":"m8ur","./CornerGroupTransform2D":"c93z","../model/room":"HEbc","./BoundaryView2D":"rSgF"}],"l84Y":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -115854,7 +118653,7 @@ var RoomPlannerHelper = /*#__PURE__*/function () {
       this.__model.addItem(item); // console.log(this.__selectedEdgePoint, this.__selectedEdgeNormal);
 
 
-      item.snapToPoint(this.__selectedEdgePoint, this.__selectedEdgeNormal, null, this.__selectedEdge.wall);
+      item.snapToWall(this.__selectedEdgePoint, this.__selectedEdge.wall, this.__selectedEdge);
     }
   }, {
     key: "wallThickness",
@@ -115982,7 +118781,8 @@ var BlueprintJS = /*#__PURE__*/function () {
   function BlueprintJS(options) {
     _classCallCheck(this, BlueprintJS);
 
-    _configuration.Configuration.setValue(_configuration.configDimUnit, _constants.dimCentiMeter);
+    _configuration.Configuration.setValue(_configuration.configDimUnit, _constants.dimCentiMeter); // console.log('BLUEPRINT JS :: OPTIONS ::: ', options);
+
     /**
      * @property {Object} options
      * @type {Object}
@@ -116007,7 +118807,10 @@ var BlueprintJS = /*#__PURE__*/function () {
      * @type {Main}
      **/
 
-    this.roomplanner = new _Viewer3d.Viewer3D(this.model, options.viewer3d, this.options);
+    var viewer3dOptions = this.options.viewer3d.viewer3dOptions || {}; // console.log('OPTIONS ::: ', this.options);
+
+    viewer3dOptions.resize = this.options.resize ? true : false;
+    this.roomplanner = new _Viewer3d.Viewer3D(this.model, options.viewer3d.id, viewer3dOptions);
     this.configurationHelper = new _ConfigurationHelper.ConfigurationHelper();
     this.floorplanningHelper = null;
     this.roomplanningHelper = new _RoomplannerHelper.RoomPlannerHelper(this.model, this.model.floorplan, this.roomplanner);
@@ -116018,7 +118821,9 @@ var BlueprintJS = /*#__PURE__*/function () {
        * @type {Floorplanner2D}
        **/
       // this.floorplanner = new Floorplanner2D(options.floorplannerElement, this.model.floorplan);
-      this.floorplanner = new _Viewer2D.Viewer2D(options.viewer2d.id, this.model.floorplan, this.options.viewer2d.viewer2dOptions);
+      var viewer2dOptions = this.options.viewer2d.viewer2dOptions || {};
+      viewer2dOptions.resize = this.options.resize ? true : false;
+      this.floorplanner = new _Viewer2D.Viewer2D(options.viewer2d.id, this.model.floorplan, viewer2dOptions);
       this.floorplanningHelper = new _FloorplannerHelper.FloorPlannerHelper(this.model.floorplan, this.floorplanner);
     }
 
@@ -116033,15 +118838,17 @@ var BlueprintJS = /*#__PURE__*/function () {
         return;
       }
 
+      this.floorplanner.switchMode(_Viewer2D.floorplannerModes.MOVE);
+
       if (this.view_now === 3 && !this.options.widget) {
         this.view_now = 2;
         document.getElementById(this.options.viewer2d.id).style.visibility = "visible";
-        document.getElementById(this.options.viewer3d).style.visibility = "hidden";
+        document.getElementById(this.options.viewer3d.id).style.visibility = "hidden";
         this.roomplanner.enabled = false;
       } else if (this.view_now === 2 && !this.options.widget) {
         this.view_now = 3;
         document.getElementById(this.options.viewer2d.id).style.visibility = "hidden";
-        document.getElementById(this.options.viewer3d).style.visibility = "visible";
+        document.getElementById(this.options.viewer3d.id).style.visibility = "visible";
         this.roomplanner.enabled = true;
       }
     }

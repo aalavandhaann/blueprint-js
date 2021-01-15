@@ -45,7 +45,11 @@ class BlueprintJS {
          * @property {Main} three
          * @type {Main}
          **/
-        this.roomplanner = new Viewer3D(this.model, options.viewer3d.id, this.options.viewer3d.viewer3dOptions);
+        let viewer3dOptions = this.options.viewer3d.viewer3dOptions || {};
+
+        // console.log('OPTIONS ::: ', this.options);
+        viewer3dOptions.resize = (this.options.resize) ? true : false;
+        this.roomplanner = new Viewer3D(this.model, options.viewer3d.id, viewer3dOptions);
 
         this.configurationHelper = new ConfigurationHelper();
         this.floorplanningHelper = null;
@@ -56,7 +60,9 @@ class BlueprintJS {
              * @type {Floorplanner2D}
              **/
             // this.floorplanner = new Floorplanner2D(options.floorplannerElement, this.model.floorplan);
-            this.floorplanner = new Viewer2D(options.viewer2d.id, this.model.floorplan, this.options.viewer2d.viewer2dOptions);
+            let viewer2dOptions = this.options.viewer2d.viewer2dOptions || {};
+            viewer2dOptions.resize = (this.options.resize) ? true : false;
+            this.floorplanner = new Viewer2D(options.viewer2d.id, this.model.floorplan, viewer2dOptions);
             this.floorplanningHelper = new FloorPlannerHelper(this.model.floorplan, this.floorplanner);
         }
 
