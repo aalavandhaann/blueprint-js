@@ -39,8 +39,21 @@ class HalfEdge3D():
         wall_one, wall_two = None, None;
         if(not self.__wall.frontEdge or not self.__wall.backEdge):
             wall_one = self.__makeWall(exterior_wall_name, self.__collection, exteriorStart, exteriorEnd);
-            
+        
+        # print('#'*40);
+        # print('WALL NAME ', interior_wall_name);
         wall_two = self.__makeWall(interior_wall_name, self.__collection, interiorStart, interiorEnd);
+
+        for f in wall_two.data.polygons:
+            if(f.normal.x < 0 or f.normal.y < 0 or f.normal.z < 0):
+                f.normal.negate();
+
+        # for i,vert in enumerate(wall_two.data.vertices):
+        #     if(i > 1 and i < 3):
+        #         a = vert.co - wall_two.data.vertices[i-1].co;
+        #         b = wall_two.data.vertices[i-1].co - wall_two.data.vertices[i-2].co;
+        #         print('AXIS ::: ', a.normalized().cross(b.normalized()).normalized());
+        #         break;
 
 
         width, height = self.__edge.interiorDistance(), max(self.__wall.startElevation, self.__wall.endElevation);
@@ -152,7 +165,7 @@ class HalfEdge3D():
             vert = bm.verts.new(p);
             if(i > 0):
                 edge = bm.edges.new((verts[i-1], vert));
-                edges.append(edge);
+                edges.append(edge);            
             verts.append(vert);
 
         edge = bm.edges.new((verts[-1], verts[0]));

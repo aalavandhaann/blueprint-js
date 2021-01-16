@@ -1,4 +1,11 @@
 {
+    "Plain_White_Wall_001": {
+        "repeat": 200,
+        "color": "#FFFFFF",
+        "normalmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_normal.jpg",
+        "ambientmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_ambientOcclusion.jpg",
+        "roughnessmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_roughness.jpg" 
+    },
     "Concrete_Wall_005_SD": {
         "repeat": 200,
         "colormap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_BaseColor.jpg",
@@ -49,8 +56,8 @@
     },
     "Stone-Wall-015": {
         "repeat": 200,
-        "normalmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_normal.jpg",
         "colormap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_basecolor.jpg",
+        "normalmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_normal.jpg",
         "ambientmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_ambientOcclusion.jpg",
         "bumpmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_height.png",
         "roughnessmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_roughness.jpg"

@@ -5,7 +5,7 @@ import FPS from 'fps-now';
 import { BlueprintJS } from './scripts/blueprint.js';
 import { EVENT_LOADED, EVENT_NOTHING_2D_SELECTED, EVENT_CORNER_2D_CLICKED, EVENT_WALL_2D_CLICKED, EVENT_ROOM_2D_CLICKED, EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED, EVENT_NO_ITEM_SELECTED, EVENT_ITEM_SELECTED, EVENT_GLTF_READY } from './scripts/core/events.js';
 import { Configuration, configDimUnit, viewBounds } from './scripts/core/configuration.js';
-import { dimMeter } from './scripts/core/constants.js';
+import { dimMeter, TEXTURE_NO_PREVIEW } from './scripts/core/constants.js';
 import QuickSettings from 'quicksettings';
 
 import { Dimensioning } from './scripts/core/dimensioning.js';
@@ -99,7 +99,12 @@ function selectFloorTexture(data) {
         data = settingsSelectedRoom3D.getValue('Floor Textures');
     }
     let floor_texture_pack = floor_textures[data.value];
-    settingsSelectedRoom3D.setValue('Floor Texture:', floor_texture_pack.colormap);
+    if(floor_texture_pack.colormap){
+        settingsSelectedRoom3D.setValue('Floor Texture:', floor_texture_pack.colormap);
+    }
+    else{
+        settingsSelectedRoom3D.setValue('Floor Texture:', TEXTURE_NO_PREVIEW);
+    }
     roomplanningHelper.roomTexturePack = floor_texture_pack;
 }
 
@@ -113,12 +118,38 @@ function selectWallTexture(data) {
 
     }
     let wall_texture_pack = wall_textures[data.value];
+    let colormap = wall_texture_pack.colormap;
     if (settingsSelectedWall3D._hidden && !settingsSelectedRoom3D._hidden) {
-        settingsSelectedRoom3D.setValue('All Wall Texture:', wall_texture_pack.colormap);
+        if(colormap){
+            settingsSelectedRoom3D.setValue('All Wall Texture:', colormap);
+        } 
+        else{
+            settingsSelectedRoom3D.setValue('All Wall Texture:', TEXTURE_NO_PREVIEW);
+        }
         roomplanningHelper.roomWallsTexturePack = wall_texture_pack;
     } else {
-        settingsSelectedWall3D.setValue('Wall Texture:', wall_texture_pack.colormap);
+        if(colormap){
+            settingsSelectedWall3D.setValue('Wall Texture:', wall_texture_pack.colormap);
+        }  
+        else{
+            settingsSelectedWall3D.setValue('Wall Texture:', TEXTURE_NO_PREVIEW);
+        }      
         roomplanningHelper.wallTexturePack = wall_texture_pack;
+    }
+}
+
+
+function selectFloorTextureColor(data) {
+    roomplanningHelper.setRoomFloorColor(data);
+}
+
+function selectWallTextureColor(data) {   
+    
+    if (settingsSelectedWall3D._hidden && !settingsSelectedRoom3D._hidden) {
+        roomplanningHelper.setRoomWallsTextureColor(data);
+    } 
+    else {
+        roomplanningHelper.setWallColor(data);
     }
 }
 
@@ -448,15 +479,18 @@ if (!opts.widget) {
     // settingsViewer3d.addButton('Apply', selectWallTexture);
 
     settingsSelectedRoom3D.addDropDown('Floor Textures', floor_texture_keys, selectFloorTexture);
-    settingsSelectedRoom3D.addImage('Floor Texture:', floor_textures[floor_texture_keys[0]].colormap, null);
+    settingsSelectedRoom3D.addImage('Floor Texture:', floor_textures[floor_texture_keys[0]].colormap || TEXTURE_NO_PREVIEW, null);
+    settingsSelectedRoom3D.addColor('Floor Texture Color:', floor_textures[floor_texture_keys[0]].color || '#FFFFFF', selectFloorTextureColor);
     settingsSelectedRoom3D.addButton('Apply', selectFloorTexture);
 
     settingsSelectedRoom3D.addDropDown('All Wall Textures', wall_texture_keys, selectWallTexture);
-    settingsSelectedRoom3D.addImage('All Wall Texture:', wall_textures[wall_texture_keys[0]].colormap, null);
+    settingsSelectedRoom3D.addImage('All Wall Texture:', wall_textures[wall_texture_keys[0]].colormap || TEXTURE_NO_PREVIEW, selectWallTexture);
+    settingsSelectedRoom3D.addColor('All Wall Texture Color:', wall_textures[wall_texture_keys[0]].color || '#FFFFFF', selectWallTextureColor);
     settingsSelectedRoom3D.addButton('Apply', selectWallTexture);
 
     settingsSelectedWall3D.addDropDown('Wall Textures', wall_texture_keys, selectWallTexture);
-    settingsSelectedWall3D.addImage('Wall Texture:', wall_textures[wall_texture_keys[0]].colormap, null);
+    settingsSelectedWall3D.addImage('Wall Texture:', wall_textures[wall_texture_keys[0]].colormap || TEXTURE_NO_PREVIEW, null);
+    settingsSelectedWall3D.addColor('Wall Texture Color:', wall_textures[wall_texture_keys[0]].color || '#FFFFFF', selectWallTextureColor);
     settingsSelectedWall3D.addButton('Apply', selectWallTexture);
 
     settingsSelectedWall3D.addDropDown('Select Door', doorTypes, selectDoorForWall);

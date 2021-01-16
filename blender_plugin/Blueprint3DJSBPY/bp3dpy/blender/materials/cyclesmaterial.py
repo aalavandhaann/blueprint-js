@@ -32,6 +32,11 @@ class CyclesMaterial():
 
 
     def __createNodeCyclesMaterial(self):
+        def __rgba(hexstring):
+            h = hexstring.lstrip('#');
+            rgb = tuple(float(int(h[i:i+2], 16))/ 255.0 for i in (0, 2, 4));
+            return (rgb[0], rgb[1], rgb[2], 1.0);
+
         uv_map = self.__mesh.data.uv_layers[0];#.get(self.__mesh.name);
 
         texpack = self.__texturepack;
@@ -47,17 +52,30 @@ class CyclesMaterial():
         principled = nodes.get('Principled BSDF') or nodes.new('ShaderNodeBsdfPrincipled');
         matout = nodes.get('Material Output') or nodes.new('ShaderNodeOutputMaterial');
 
+        final_base_color = nodes.get('Final Base Color') or nodes.new('ShaderNodeMixRGB');
+        final_base_color.name = 'Final Base Color';
+        final_base_color.blend_type = 'MULTIPLY';#'MULTIPLY'#Looks like threejs is using ADD Equation for blending
+        final_base_color.use_clamp = True;
+        
+
         repeatX, repeatY = self.__textureRepeatScale();
         mapping.inputs[3].default_value = (repeatX, repeatY, repeatY);
-
         node_tree.links.new(texcoord.outputs[2], mapping.inputs[0]);
 
+        
+        final_base_color.inputs[2].default_value = __rgba(texpack.get('color') or '#FFFFFF');
+        # print('RGBA :: ', texpack.get('color'), __rgba(texpack.get('color') or '#FFFFFF'));
+        node_tree.links.new(final_base_color.outputs[0], principled.inputs[0]);
+
+
+        # principled.inputs[1].default_value = 1.0;        
 
         if(texpack.get('colormap')):
             color_map_image_name, color_map_image_path = self.__getPath(texpack.get('colormap'));
             color_map_image_node = self.__getImageNode(nodes, color_map_image_name, color_map_image_path);
+
             node_tree.links.new(mapping.outputs[0], color_map_image_node.inputs[0]);
-            node_tree.links.new(color_map_image_node.outputs[0], principled.inputs[0]);
+            node_tree.links.new(color_map_image_node.outputs[0], final_base_color.inputs[1]);
         
         if(texpack.get('normalmap')):
             normal_map_image_name, normal_map_image_path = self.__getPath(texpack.get('normalmap'));
@@ -69,7 +87,7 @@ class CyclesMaterial():
             node_tree.links.new(mapping.outputs[0], normal_map_image_node.inputs[0]);
             node_tree.links.new(normal_map_image_node.outputs[0], normal_map_nmap_node.inputs[1]);
 
-            node_tree.links.new(normal_map_image_node.outputs[0], principled.inputs[19]);
+            node_tree.links.new(normal_map_nmap_node.outputs[0], principled.inputs[19]);
         
         if(texpack.get('roughnessmap')):
             roughness_map_image_name, roughness_map_image_path = self.__getPath(texpack.get('roughnessmap'));
@@ -95,13 +113,14 @@ class CyclesMaterial():
             
             mix_rgb_node = nodes.get('Mix') or nodes.new('ShaderNodeMixRGB');
             mix_rgb_node.blend_type = 'MULTIPLY';
+            mix_rgb_node.use_clamp = True;
 
             node_tree.links.new(mapping.outputs[0], ambient_map_image_node.inputs[0]);
 
             node_tree.links.new(color_map_image_node.outputs[0], mix_rgb_node.inputs[1]);
             node_tree.links.new(ambient_map_image_node.outputs[0], mix_rgb_node.inputs[2]);
             
-            node_tree.links.new(mix_rgb_node.outputs[0], principled.inputs[0]);
+            node_tree.links.new(mix_rgb_node.outputs[0], final_base_color.inputs[1]);
 
         self.__mesh.data.materials.append(mat);  
 

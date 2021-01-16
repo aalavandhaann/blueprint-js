@@ -136,7 +136,7 @@ module.exports = Enum;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.defaultFloorTexture = exports.defaultWallTexture = exports.TEXTURE_DEFAULT_REPEAT = exports.WallTypes = exports.VIEW_ISOMETRY = exports.VIEW_LEFT = exports.VIEW_RIGHT = exports.VIEW_FRONT = exports.VIEW_TOP = exports.dimMilliMeter = exports.dimCentiMeter = exports.dimMeter = exports.dimFeetAndInch = exports.dimInch = void 0;
+exports.TEXTURE_NO_PREVIEW = exports.TEXTURE_PROPERTY_COLOR = exports.defaultFloorTexture = exports.defaultWallTexture = exports.TEXTURE_DEFAULT_REPEAT = exports.WallTypes = exports.VIEW_ISOMETRY = exports.VIEW_LEFT = exports.VIEW_RIGHT = exports.VIEW_FRONT = exports.VIEW_TOP = exports.dimMilliMeter = exports.dimCentiMeter = exports.dimMeter = exports.dimFeetAndInch = exports.dimInch = void 0;
 
 var _es6Enum = _interopRequireDefault(require("es6-enum"));
 
@@ -195,6 +195,10 @@ var defaultFloorTexture = {
   normalmap: 'textures/Floor/Marble_Tiles_001/Marble_Tiles_001_normal.jpg'
 };
 exports.defaultFloorTexture = defaultFloorTexture;
+var TEXTURE_PROPERTY_COLOR = 'color';
+exports.TEXTURE_PROPERTY_COLOR = TEXTURE_PROPERTY_COLOR;
+var TEXTURE_NO_PREVIEW = 'textures/NoPreview.jpg';
+exports.TEXTURE_NO_PREVIEW = TEXTURE_NO_PREVIEW;
 },{"es6-enum":"ZBd7"}],"lKFo":[function(require,module,exports) {
 "use strict";
 
@@ -36411,7 +36415,7 @@ if (typeof __THREE_DEVTOOLS__ !== 'undefined') {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.EVENT_PARAMETRIC_GEOMETRY_UPATED = exports.EVENT_UPDATE_TEXTURES = exports.EVENT_KEY_RELEASED = exports.EVENT_KEY_PRESSED = exports.EVENT_ROOM_2D_HOVER = exports.EVENT_WALL_2D_HOVER = exports.EVENT_CORNER_2D_HOVER = exports.EVENT_ROOM_2D_DOUBLE_CLICKED = exports.EVENT_WALL_2D_DOUBLE_CLICKED = exports.EVENT_CORNER_2D_DOUBLE_CLICKED = exports.EVENT_NOTHING_2D_SELECTED = exports.EVENT_2D_SELECTED = exports.EVENT_2D_UNSELECTED = exports.EVENT_ROOM_2D_CLICKED = exports.EVENT_WALL_2D_CLICKED = exports.EVENT_CORNER_2D_CLICKED = exports.EVENT_ROOM_ATTRIBUTES_CHANGED = exports.EVENT_WALL_ATTRIBUTES_CHANGED = exports.EVENT_CORNER_ATTRIBUTES_CHANGED = exports.EVENT_NEW_ROOMS_ADDED = exports.EVENT_ROOM_NAME_CHANGED = exports.EVENT_NOTHING_CLICKED = exports.EVENT_FLOOR_CLICKED = exports.EVENT_ROOM_CLICKED = exports.EVENT_WALL_CLICKED = exports.EVENT_FPS_EXIT = exports.EVENT_CAMERA_VIEW_CHANGE = exports.EVENT_CAMERA_ACTIVE_STATUS = exports.EVENT_CAMERA_MOVED = exports.EVENT_MODE_RESET = exports.EVENT_NO_ITEM_SELECTED = exports.EVENT_ITEM_HOVEROFF = exports.EVENT_ITEM_HOVERON = exports.EVENT_ITEM_MOVE_FINISH = exports.EVENT_ITEM_MOVE = exports.EVENT_ITEM_SELECTED = exports.EVENT_ITEM_REMOVED = exports.EVENT_ITEM_LOADED = exports.EVENT_ITEM_LOADING = exports.EVENT_NEW_ITEM = exports.EVENT_NEW_PARAMETRIC_ITEM = exports.EVENT_EXTERNAL_FLOORPLAN_LOADED = exports.EVENT_GLTF_READY = exports.EVENT_CHANGED = exports.EVENT_SAVED = exports.EVENT_UPDATED = exports.EVENT_LOADING = exports.EVENT_LOADED = exports.EVENT_NEW = exports.EVENT_REDRAW = exports.EVENT_MOVED = exports.EVENT_DELETED = exports.EVENT_ACTION = void 0;
+exports.EVENT_PARAMETRIC_GEOMETRY_UPATED = exports.EVENT_MODIFY_TEXTURE_ATTRIBUTE = exports.EVENT_UPDATE_TEXTURES = exports.EVENT_KEY_RELEASED = exports.EVENT_KEY_PRESSED = exports.EVENT_ROOM_2D_HOVER = exports.EVENT_WALL_2D_HOVER = exports.EVENT_CORNER_2D_HOVER = exports.EVENT_ROOM_2D_DOUBLE_CLICKED = exports.EVENT_WALL_2D_DOUBLE_CLICKED = exports.EVENT_CORNER_2D_DOUBLE_CLICKED = exports.EVENT_NOTHING_2D_SELECTED = exports.EVENT_2D_SELECTED = exports.EVENT_2D_UNSELECTED = exports.EVENT_ROOM_2D_CLICKED = exports.EVENT_WALL_2D_CLICKED = exports.EVENT_CORNER_2D_CLICKED = exports.EVENT_ROOM_ATTRIBUTES_CHANGED = exports.EVENT_WALL_ATTRIBUTES_CHANGED = exports.EVENT_CORNER_ATTRIBUTES_CHANGED = exports.EVENT_NEW_ROOMS_ADDED = exports.EVENT_ROOM_NAME_CHANGED = exports.EVENT_NOTHING_CLICKED = exports.EVENT_FLOOR_CLICKED = exports.EVENT_ROOM_CLICKED = exports.EVENT_WALL_CLICKED = exports.EVENT_FPS_EXIT = exports.EVENT_CAMERA_VIEW_CHANGE = exports.EVENT_CAMERA_ACTIVE_STATUS = exports.EVENT_CAMERA_MOVED = exports.EVENT_MODE_RESET = exports.EVENT_NO_ITEM_SELECTED = exports.EVENT_ITEM_HOVEROFF = exports.EVENT_ITEM_HOVERON = exports.EVENT_ITEM_MOVE_FINISH = exports.EVENT_ITEM_MOVE = exports.EVENT_ITEM_SELECTED = exports.EVENT_ITEM_REMOVED = exports.EVENT_ITEM_LOADED = exports.EVENT_ITEM_LOADING = exports.EVENT_NEW_ITEM = exports.EVENT_NEW_PARAMETRIC_ITEM = exports.EVENT_EXTERNAL_FLOORPLAN_LOADED = exports.EVENT_GLTF_READY = exports.EVENT_CHANGED = exports.EVENT_SAVED = exports.EVENT_UPDATED = exports.EVENT_LOADING = exports.EVENT_LOADED = exports.EVENT_NEW = exports.EVENT_REDRAW = exports.EVENT_MOVED = exports.EVENT_DELETED = exports.EVENT_ACTION = void 0;
 var EVENT_ACTION = 'ACTION_EVENT';
 exports.EVENT_ACTION = EVENT_ACTION;
 var EVENT_DELETED = 'DELETED_EVENT';
@@ -36516,6 +36520,8 @@ var EVENT_KEY_RELEASED = 'KEY_RELEASED_EVENT';
 exports.EVENT_KEY_RELEASED = EVENT_KEY_RELEASED;
 var EVENT_UPDATE_TEXTURES = 'UPDATE_TEXTURES_EVENT';
 exports.EVENT_UPDATE_TEXTURES = EVENT_UPDATE_TEXTURES;
+var EVENT_MODIFY_TEXTURE_ATTRIBUTE = 'MODIFY_TEXTURE_ATTRIBUTE_EVENT';
+exports.EVENT_MODIFY_TEXTURE_ATTRIBUTE = EVENT_MODIFY_TEXTURE_ATTRIBUTE;
 var EVENT_PARAMETRIC_GEOMETRY_UPATED = "PARAMETRIC_GEOMETRY_UPATED_EVENT";
 exports.EVENT_PARAMETRIC_GEOMETRY_UPATED = EVENT_PARAMETRIC_GEOMETRY_UPATED;
 },{}],"q2Ih":[function(require,module,exports) {
@@ -37986,20 +37992,6 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
         item: scope
       });
     }
-    /**
-     * Two separate textures are used for the walls. Based on which side of the wall this {HalfEdge} refers the texture is returned
-     * @return {Object} front/back Two separate textures are used for the walls. Based on which side of the wall this {@link HalfEdge} refers the texture is returned
-     */
-
-  }, {
-    key: "getTexture",
-    value: function getTexture() {
-      if (this.front) {
-        return this.wall.frontTexture;
-      } else {
-        return this.wall.backTexture;
-      }
-    }
   }, {
     key: "setTextureMaps",
     value: function setTextureMaps(texturePack) {
@@ -38022,8 +38014,37 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
         item: this
       });
     }
+  }, {
+    key: "setTextureMapAttribute",
+    value: function setTextureMapAttribute(attribute, value) {
+      if (attribute && value) {
+        var texturePack = this.getTexture();
+        texturePack[attribute] = value;
+        this.dispatchEvent({
+          type: _events.EVENT_MODIFY_TEXTURE_ATTRIBUTE,
+          item: this,
+          attribute: attribute,
+          value: value
+        });
+      }
+    }
+    /**
+     * Two separate textures are used for the walls. Based on which side of the wall this {HalfEdge} refers the texture is returned
+     * @return {Object} front/back Two separate textures are used for the walls. Based on which side of the wall this {@link HalfEdge} refers the texture is returned
+     */
+
+  }, {
+    key: "getTexture",
+    value: function getTexture() {
+      if (this.front) {
+        return this.wall.frontTexture;
+      } else {
+        return this.wall.backTexture;
+      }
+    }
     /**
      * Set a Texture to the wall. Based on the edge side as front or back the texture is applied appropriately to the wall
+     * @deprecated
      * @param {String} textureUrl The path to the texture image
      * @param {boolean} textureStretch Can the texture stretch? If not it will be repeated
      * @param {Number} textureScale The scale value using which the number of repetitions of the texture image is calculated
@@ -45577,19 +45598,8 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
         edge.setTexture(textureUrl, textureStretch, textureScale);
       }
     }
-  }, {
-    key: "getTexture",
-    value: function getTexture() {
-      var uuid = this.getUuid();
-      var tex = this.floorplan.getFloorTexture(uuid);
-
-      if (!tex) {
-        this.floorplan.setFloorTexture(uuid, _constants.defaultFloorTexture);
-      }
-
-      return tex || _constants.defaultFloorTexture;
-    }
     /**
+     * @deprecated
      * textureStretch always true, just an argument for consistency with walls
      */
 
@@ -45630,6 +45640,23 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
       }
     }
   }, {
+    key: "setRoomWallsTextureMapsAttribute",
+    value: function setRoomWallsTextureMapsAttribute(attribute, value) {
+      var edge = this.edgePointer;
+      var iterateWhile = true;
+      edge.setTextureMapAttribute(attribute, value);
+
+      while (iterateWhile) {
+        if (edge.next === this.edgePointer) {
+          break;
+        } else {
+          edge = edge.next;
+        }
+
+        edge.setTextureMapAttribute(attribute, value);
+      }
+    }
+  }, {
     key: "setTextureMaps",
     value: function setTextureMaps(texturePack) {
       var uuid = this.getUuid();
@@ -45647,6 +45674,34 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
         type: _events.EVENT_UPDATE_TEXTURES,
         item: this
       });
+    }
+  }, {
+    key: "setTextureMapAttribute",
+    value: function setTextureMapAttribute(attribute, value) {
+      if (attribute && value) {
+        var uuid = this.getUuid();
+        var texturePack = this.getTexture();
+        texturePack[attribute] = value;
+        this.floorplan.setFloorTexture(uuid, texturePack);
+        this.dispatchEvent({
+          type: _events.EVENT_MODIFY_TEXTURE_ATTRIBUTE,
+          item: this,
+          attribute: attribute,
+          value: value
+        });
+      }
+    }
+  }, {
+    key: "getTexture",
+    value: function getTexture() {
+      var uuid = this.getUuid();
+      var tex = this.floorplan.getFloorTexture(uuid);
+
+      if (!tex) {
+        this.floorplan.setFloorTexture(uuid, _constants.defaultFloorTexture);
+      }
+
+      return tex || _constants.defaultFloorTexture;
     }
   }, {
     key: "generateRoofPlane",
@@ -47698,6 +47753,7 @@ var Floorplan = /*#__PURE__*/function (_EventDispatcher) {
       this.corners = [];
       this.walls = [];
       this.rooms = [];
+      this.metaroomsdata = {};
       this.__externalRooms = [];
       this.__externalCorners = [];
       this.__externalWalls = [];
@@ -51372,6 +51428,7 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
     _classCallCheck(this, Material3D);
 
     _this = _super.call(this, parameters);
+    console.log('BLENDING :: ', _this.blending);
     _this.__scene = scene;
     _this.__reflectsScene = reflectsScene;
     _this.__mirrorCamera = null; // this.roughness = (!textureMapPack.reflective) ? 0.5 : textureMapPack.reflective;
@@ -51506,6 +51563,13 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
   }, {
     key: "__applyNewTextures",
     value: function __applyNewTextures() {
+      this.map = this.__colorTexture = null;
+      this.normalMap = this.__normalTexture = null;
+      this.roughnessMap = this.__roughnessTexture = null;
+      this.aoMap = this.__ambientTexture = null;
+      this.metalnessMap = this.__metalTexture = null;
+      this.displacementMap = this.__bumpTexture = null;
+
       if (this.__textureMapPack.colormap) {
         this.__colorTexture = new _three.TextureLoader().load(this.__textureMapPack.colormap, this.__updateColorMap.bind(this));
       }
@@ -51622,6 +51686,15 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
     get: function get() {
       return this.__reflectsScene;
     }
+  }, {
+    key: "textureColor",
+    get: function get() {
+      return this.__textureMapPack.color;
+    },
+    set: function set(hexstring) {
+      this.__textureMapPack.color = hexstring;
+      this.color = new _three.Color(this.__textureMapPack.color);
+    }
   }]);
 
   return Material3D;
@@ -51686,6 +51759,8 @@ var _utils = require("../core/utils.js");
 var _events = require("../core/events.js");
 
 var _WallMaterial3D = require("../materials/WallMaterial3D.js");
+
+var _constants = require("../core/constants.js");
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -51762,7 +51837,9 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
     _this.visibilityfactor = true;
     _this.__wallMaterial3D = null;
 
-    _this.__updateTexturePack();
+    _this.__updateTexturePack({
+      type: _events.EVENT_UPDATE_TEXTURES
+    });
 
     _this.init();
 
@@ -51771,30 +51848,42 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
 
   _createClass(Edge3D, [{
     key: "__updateTexturePack",
-    value: function __updateTexturePack() {
-      var height = Math.max(this.wall.startElevation, this.wall.endElevation);
-      var width = this.edge.interiorDistance();
-      var texturePack = this.edge.getTexture();
+    value: function __updateTexturePack(evt) {
+      if (evt.type === _events.EVENT_UPDATE_TEXTURES) {
+        var height = Math.max(this.wall.startElevation, this.wall.endElevation);
+        var width = this.edge.interiorDistance();
+        var texturePack = this.edge.getTexture();
 
-      if (!this.__wallMaterial3D) {
-        var side = this.wall.isLocked || this.__options.occludedWalls ? _three.DoubleSide : _three.FrontSide;
+        if (!this.__wallMaterial3D) {
+          var side = this.wall.isLocked || this.__options.occludedWalls ? _three.DoubleSide : _three.FrontSide;
 
-        if (!texturePack.color) {
-          texturePack.color = '#FF0000';
+          if (!texturePack.color) {
+            texturePack.color = '#FF0000';
+          }
+
+          this.__wallMaterial3D = new _WallMaterial3D.WallMaterial3D({
+            color: texturePack.color,
+            side: side,
+            transparent: true,
+            wireframe: false
+          }, texturePack, this.scene);
         }
 
-        this.__wallMaterial3D = new _WallMaterial3D.WallMaterial3D({
-          color: texturePack.color,
-          side: side,
-          transparent: true,
-          wireframe: false
-        }, texturePack, this.scene);
+        this.__wallMaterial3D.textureMapPack = texturePack;
+        this.__wallMaterial3D.dimensions = new _three.Vector2(width, height); // this.__wallMaterial3D.updateDimensions(width, height);
+
+        this.redraw();
+      } else if (evt.type === _events.EVENT_MODIFY_TEXTURE_ATTRIBUTE) {
+        if (this.__wallMaterial3D) {
+          var attribute = evt.attribute;
+          var value = evt.value;
+
+          if (attribute === _constants.TEXTURE_PROPERTY_COLOR) {
+            this.__wallMaterial3D.textureColor = value;
+          }
+        }
       }
 
-      this.__wallMaterial3D.textureMapPack = texturePack;
-      this.__wallMaterial3D.dimensions = new _three.Vector2(width, height); // this.__wallMaterial3D.updateDimensions(width, height);
-
-      this.redraw();
       this.scene.needsUpdate = true;
     }
   }, {
@@ -51821,6 +51910,7 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
     key: "init",
     value: function init() {
       this.edge.addEventListener(_events.EVENT_DELETED, this.__edgeDeletedEvent);
+      this.edge.addEventListener(_events.EVENT_MODIFY_TEXTURE_ATTRIBUTE, this.__updateTexturePackEvent);
       this.edge.addEventListener(_events.EVENT_UPDATE_TEXTURES, this.__updateTexturePackEvent);
       this.edge.addEventListener(_events.EVENT_REDRAW, this.redrawevent);
       this.controls.addEventListener('change', this.visibilityevent);
@@ -52141,7 +52231,7 @@ var Edge3D = /*#__PURE__*/function (_EventDispatcher) {
 }(_three.EventDispatcher);
 
 exports.Edge3D = Edge3D;
-},{"three":"lKFo","../core/utils.js":"qdyh","../core/events.js":"rskn","../materials/WallMaterial3D.js":"SxRr"}],"PF7Y":[function(require,module,exports) {
+},{"three":"lKFo","../core/utils.js":"qdyh","../core/events.js":"rskn","../materials/WallMaterial3D.js":"SxRr","../core/constants.js":"XniJ"}],"PF7Y":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -52201,6 +52291,8 @@ var _configuration = require("../core/configuration.js");
 var _three2 = require("three/build/three.module");
 
 var _FloorMaterial3D = require("../materials/FloorMaterial3D.js");
+
+var _constants = require("../core/constants.js");
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -52262,6 +52354,8 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
 
     _this.room.addEventListener(_events.EVENT_UPDATE_TEXTURES, _this.__materialChangedEvent);
 
+    _this.room.addEventListener(_events.EVENT_MODIFY_TEXTURE_ATTRIBUTE, _this.__materialChangedEvent);
+
     _this.controls.addEventListener('change', _this.__updateReflectionsEvent);
 
     _this.init();
@@ -52288,20 +52382,32 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
     }
   }, {
     key: "__updateTexturePack",
-    value: function __updateTexturePack() {
-      var floorSize = this.room.floorRectangleSize.clone();
-      var texturePack = this.room.getTexture();
+    value: function __updateTexturePack(evt) {
+      if (evt.type === _events.EVENT_UPDATE_TEXTURES) {
+        var floorSize = this.room.floorRectangleSize.clone();
+        var texturePack = this.room.getTexture();
 
-      if (!this.__floorMaterial3D) {
-        this.__floorMaterial3D = new _FloorMaterial3D.FloorMaterial3D({
-          color: texturePack.color,
-          side: _three.DoubleSide
-        }, texturePack, this.scene);
+        if (!this.__floorMaterial3D) {
+          this.__floorMaterial3D = new _FloorMaterial3D.FloorMaterial3D({
+            color: texturePack.color,
+            side: _three.DoubleSide
+          }, texturePack, this.scene);
+        }
+
+        this.__floorMaterial3D.textureMapPack = texturePack; // this.__floorMaterial3D.updateDimensions(floorSize.x, floorSize.y);
+
+        this.__floorMaterial3D.dimensions = floorSize;
+      } else if (evt.type === _events.EVENT_MODIFY_TEXTURE_ATTRIBUTE) {
+        if (this.__floorMaterial3D) {
+          var attribute = evt.attribute;
+          var value = evt.value;
+
+          if (attribute === _constants.TEXTURE_PROPERTY_COLOR) {
+            this.__floorMaterial3D.textureColor = value;
+          }
+        }
       }
 
-      this.__floorMaterial3D.textureMapPack = texturePack; // this.__floorMaterial3D.updateDimensions(floorSize.x, floorSize.y);
-
-      this.__floorMaterial3D.dimensions = floorSize;
       this.scene.needsUpdate = true;
     }
   }, {
@@ -52313,7 +52419,9 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
   }, {
     key: "init",
     value: function init() {
-      this.__updateTexturePack();
+      this.__updateTexturePack({
+        type: _events.EVENT_UPDATE_TEXTURES
+      });
 
       this.redraw();
     }
@@ -52469,7 +52577,7 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
 }(_three.EventDispatcher);
 
 exports.Floor3D = Floor3D;
-},{"three":"lKFo","../core/events.js":"rskn","../core/configuration.js":"q2Ih","three/build/three.module":"lKFo","../materials/FloorMaterial3D.js":"PF7Y"}],"O7Sj":[function(require,module,exports) {
+},{"three":"lKFo","../core/events.js":"rskn","../core/configuration.js":"q2Ih","three/build/three.module":"lKFo","../materials/FloorMaterial3D.js":"PF7Y","../core/constants.js":"XniJ"}],"O7Sj":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -118570,6 +118678,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.RoomPlannerHelper = void 0;
 
+var _constants = require("../core/constants");
+
 var _dimensioning = require("../core/dimensioning");
 
 var _events = require("../core/events");
@@ -118681,6 +118791,27 @@ var RoomPlannerHelper = /*#__PURE__*/function () {
       item.snapToWall(this.__selectedEdgePoint, this.__selectedEdge.wall, this.__selectedEdge);
     }
   }, {
+    key: "setWallColor",
+    value: function setWallColor(color) {
+      if (this.__selectedEdge) {
+        this.__selectedEdge.setTextureMapAttribute(_constants.TEXTURE_PROPERTY_COLOR, color);
+      }
+    }
+  }, {
+    key: "setRoomWallsTextureColor",
+    value: function setRoomWallsTextureColor(color) {
+      if (this.__selectedRoom) {
+        this.__selectedRoom.setRoomWallsTextureMapsAttribute(_constants.TEXTURE_PROPERTY_COLOR, color);
+      }
+    }
+  }, {
+    key: "setRoomFloorColor",
+    value: function setRoomFloorColor(color) {
+      if (this.__selectedRoom) {
+        this.__selectedRoom.setTextureMapAttribute(_constants.TEXTURE_PROPERTY_COLOR, color);
+      }
+    }
+  }, {
     key: "wallThickness",
     set: function set(value) {
       if (this.__selectedEdge) {
@@ -118759,7 +118890,7 @@ var RoomPlannerHelper = /*#__PURE__*/function () {
 }();
 
 exports.RoomPlannerHelper = RoomPlannerHelper;
-},{"../core/dimensioning":"I1ZD","../core/events":"rskn","../items/in_wall_floor_item":"iU4f"}],"OKPM":[function(require,module,exports) {
+},{"../core/constants":"XniJ","../core/dimensioning":"I1ZD","../core/events":"rskn","../items/in_wall_floor_item":"iU4f"}],"OKPM":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

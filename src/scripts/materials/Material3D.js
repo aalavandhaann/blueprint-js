@@ -4,7 +4,7 @@ import { TEXTURE_DEFAULT_REPEAT } from '../core/constants';
 export class Material3D extends MeshStandardMaterial {
     constructor(parameters, textureMapPack, scene, reflectsScene = false) {
         super(parameters);
-
+        console.log('BLENDING :: ',this.blending);
         this.__scene = scene;
         this.__reflectsScene = reflectsScene;
         this.__mirrorCamera = null;
@@ -113,6 +113,14 @@ export class Material3D extends MeshStandardMaterial {
     }
 
     __applyNewTextures() {
+        this.map = this.__colorTexture = null;
+        this.normalMap = this.__normalTexture = null;
+        this.roughnessMap = this.__roughnessTexture = null;
+        this.aoMap = this.__ambientTexture = null;
+        this.metalnessMap = this.__metalTexture = null;
+        this.displacementMap = this.__bumpTexture = null;
+
+
         if (this.__textureMapPack.colormap) {
             this.__colorTexture = new TextureLoader().load(this.__textureMapPack.colormap, this.__updateColorMap.bind(this));
         }
@@ -140,7 +148,7 @@ export class Material3D extends MeshStandardMaterial {
     __scaleUV(uRatio, vRatio) {
         this.__uRatio = uRatio;
         this.__vRatio = vRatio;
-
+        
         this.__updateColorMap();
         this.__updateNormalMap();
         this.__updateRoughnessMap();
@@ -220,5 +228,14 @@ export class Material3D extends MeshStandardMaterial {
 
     get isReflective() {
         return this.__reflectsScene;
+    }
+
+    get textureColor(){
+        return this.__textureMapPack.color;
+    }
+
+    set textureColor(hexstring){
+        this.__textureMapPack.color = hexstring;
+        this.color = new Color(this.__textureMapPack.color);
     }
 }

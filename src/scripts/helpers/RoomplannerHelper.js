@@ -1,3 +1,4 @@
+import { TEXTURE_PROPERTY_COLOR } from "../core/constants";
 import { Dimensioning } from "../core/dimensioning";
 import { EVENT_CORNER_2D_CLICKED, EVENT_NOTHING_2D_SELECTED, EVENT_WALL_2D_CLICKED, EVENT_ROOM_2D_CLICKED, EVENT_NO_ITEM_SELECTED, EVENT_ITEM_SELECTED, EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED } from "../core/events";
 import { InWallFloorItem } from "../items/in_wall_floor_item";
@@ -175,4 +176,21 @@ export class RoomPlannerHelper {
         }
     }
 
+    setWallColor(color){
+        if(this.__selectedEdge){
+            this.__selectedEdge.setTextureMapAttribute(TEXTURE_PROPERTY_COLOR, color);
+        }
+    }
+
+    setRoomWallsTextureColor(color){
+        if(this.__selectedRoom){
+            this.__selectedRoom.setRoomWallsTextureMapsAttribute(TEXTURE_PROPERTY_COLOR, color);
+        }
+    }
+
+    setRoomFloorColor(color){
+        if(this.__selectedRoom){
+            this.__selectedRoom.setTextureMapAttribute(TEXTURE_PROPERTY_COLOR, color);
+        }
+    } 
 }

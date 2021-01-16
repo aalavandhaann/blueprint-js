@@ -1,8 +1,9 @@
 import { EventDispatcher, Vector2, Vector3, MeshBasicMaterial, FrontSide, DoubleSide, BackSide, Shape, Path, ShapeGeometry, Mesh, Geometry, Face3, Box3 } from 'three';
 // import { SubdivisionModifier } from 'three/examples/jsm/modifiers/SubdivisionModifier';
 import { Utils } from '../core/utils.js';
-import { EVENT_REDRAW, EVENT_UPDATE_TEXTURES, EVENT_DELETED } from '../core/events.js';
+import { EVENT_REDRAW, EVENT_UPDATE_TEXTURES, EVENT_DELETED, EVENT_MODIFY_TEXTURE_ATTRIBUTE } from '../core/events.js';
 import { WallMaterial3D } from '../materials/WallMaterial3D.js';
+import { TEXTURE_PROPERTY_COLOR } from '../core/constants.js';
 
 export class Edge3D extends EventDispatcher {
     constructor(scene, edge, controls, opts) {
@@ -43,31 +44,45 @@ export class Edge3D extends EventDispatcher {
         this.visibilityevent = this.__visibility.bind(this); //() => { scope.updateVisibility(); };
         this.showallevent = this.__showAll.bind(this); //() => { scope.showAll(); };
         this.__edgeDeletedEvent = this.__edgeDeleted.bind(this);
+
+
         this.__updateTexturePackEvent = this.__updateTexturePack.bind(this);
 
         this.visibilityfactor = true;
         this.__wallMaterial3D = null;
 
-        this.__updateTexturePack();
+        this.__updateTexturePack({ type: EVENT_UPDATE_TEXTURES });
+
         this.init();
     }
 
-    __updateTexturePack() {
-        let height = Math.max(this.wall.startElevation, this.wall.endElevation);
-        let width = this.edge.interiorDistance();
-        let texturePack = this.edge.getTexture();
+    __updateTexturePack(evt) {
+        if (evt.type === EVENT_UPDATE_TEXTURES) {
+            let height = Math.max(this.wall.startElevation, this.wall.endElevation);
+            let width = this.edge.interiorDistance();
+            let texturePack = this.edge.getTexture();
 
-        if (!this.__wallMaterial3D) {
-            let side = (this.wall.isLocked || this.__options.occludedWalls) ? DoubleSide : FrontSide;
-            if (!texturePack.color) {
-                texturePack.color = '#FF0000';
+            if (!this.__wallMaterial3D) {
+                let side = (this.wall.isLocked || this.__options.occludedWalls) ? DoubleSide : FrontSide;
+                if (!texturePack.color) {
+                    texturePack.color = '#FF0000';
+                }
+                this.__wallMaterial3D = new WallMaterial3D({ color: texturePack.color, side: side, transparent: true, wireframe: false }, texturePack, this.scene);
             }
-            this.__wallMaterial3D = new WallMaterial3D({ color: texturePack.color, side: side, transparent: true, wireframe: false }, texturePack, this.scene);
+            this.__wallMaterial3D.textureMapPack = texturePack;
+            this.__wallMaterial3D.dimensions = new Vector2(width, height);
+            // this.__wallMaterial3D.updateDimensions(width, height);
+            this.redraw();
         }
-        this.__wallMaterial3D.textureMapPack = texturePack;
-        this.__wallMaterial3D.dimensions = new Vector2(width, height);
-        // this.__wallMaterial3D.updateDimensions(width, height);
-        this.redraw();
+        else if(evt.type === EVENT_MODIFY_TEXTURE_ATTRIBUTE){
+            if(this.__wallMaterial3D){
+                let attribute = evt.attribute;
+                let value = evt.value;
+                if(attribute === TEXTURE_PROPERTY_COLOR){
+                    this.__wallMaterial3D.textureColor = value;
+                }
+            }
+        }
         this.scene.needsUpdate = true;
     }
 
@@ -89,7 +104,10 @@ export class Edge3D extends EventDispatcher {
 
     init() {
         this.edge.addEventListener(EVENT_DELETED, this.__edgeDeletedEvent);
+
+        this.edge.addEventListener(EVENT_MODIFY_TEXTURE_ATTRIBUTE, this.__updateTexturePackEvent);
         this.edge.addEventListener(EVENT_UPDATE_TEXTURES, this.__updateTexturePackEvent);
+
         this.edge.addEventListener(EVENT_REDRAW, this.redrawevent);
         this.controls.addEventListener('change', this.visibilityevent);
 

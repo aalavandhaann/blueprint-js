@@ -1,5 +1,5 @@
 import { EventDispatcher, Vector2, Vector3, Matrix4, Face3, Mesh, Geometry, MeshBasicMaterial, Box3, BufferGeometry, Plane } from 'three';
-import { EVENT_REDRAW, EVENT_MOVED, EVENT_UPDATED, EVENT_UPDATE_TEXTURES, EVENT_DELETED } from '../core/events.js';
+import { EVENT_REDRAW, EVENT_MOVED, EVENT_UPDATED, EVENT_UPDATE_TEXTURES, EVENT_DELETED, EVENT_MODIFY_TEXTURE_ATTRIBUTE } from '../core/events.js';
 import { Utils } from '../core/utils.js';
 import { WallTypes, TEXTURE_DEFAULT_REPEAT } from '../core/constants.js';
 
@@ -184,18 +184,6 @@ export class HalfEdge extends EventDispatcher {
         scope.dispatchEvent({ type: EVENT_REDRAW, item: scope });
     }
 
-    /**
-     * Two separate textures are used for the walls. Based on which side of the wall this {HalfEdge} refers the texture is returned
-     * @return {Object} front/back Two separate textures are used for the walls. Based on which side of the wall this {@link HalfEdge} refers the texture is returned
-     */
-    getTexture() {
-        if (this.front) {
-            return this.wall.frontTexture;
-        } else {
-            return this.wall.backTexture;
-        }
-    }
-
     setTextureMaps(texturePack) {
         if (!texturePack.color) {
             texturePack.color = '#FFFFFF';
@@ -212,8 +200,29 @@ export class HalfEdge extends EventDispatcher {
         this.dispatchEvent({ type: EVENT_UPDATE_TEXTURES, item: this });
     }
 
+    setTextureMapAttribute(attribute, value) {
+        if (attribute && value) {
+            let texturePack = this.getTexture();
+            texturePack[attribute] = value;
+            this.dispatchEvent({ type: EVENT_MODIFY_TEXTURE_ATTRIBUTE, item: this, attribute: attribute, value: value });
+        }
+    }
+
+    /**
+     * Two separate textures are used for the walls. Based on which side of the wall this {HalfEdge} refers the texture is returned
+     * @return {Object} front/back Two separate textures are used for the walls. Based on which side of the wall this {@link HalfEdge} refers the texture is returned
+     */
+    getTexture() {
+        if (this.front) {
+            return this.wall.frontTexture;
+        } else {
+            return this.wall.backTexture;
+        }
+    }
+
     /**
      * Set a Texture to the wall. Based on the edge side as front or back the texture is applied appropriately to the wall
+     * @deprecated
      * @param {String} textureUrl The path to the texture image
      * @param {boolean} textureStretch Can the texture stretch? If not it will be repeated
      * @param {Number} textureScale The scale value using which the number of repetitions of the texture image is calculated
@@ -249,7 +258,7 @@ export class HalfEdge extends EventDispatcher {
         return new Vector3(corner.x, 0, corner.y);
     }
 
-    generatePlane(){
+    generatePlane() {
         this.__plane = this.__generateEdgePlane(true, this.__plane);
         // this.__exteriorPlane = this.__plane;
         // if (this.wall.start.getAttachedRooms().length < 2 || this.wall.end.getAttachedRooms().length < 2) {
@@ -264,19 +273,19 @@ export class HalfEdge extends EventDispatcher {
     /**
      * This generates the invisible planes in the scene that are used for interesection testing for the wall items
      */
-    __generateEdgePlane(interior=true, plane=null) {
+    __generateEdgePlane(interior = true, plane = null) {
         let geometry = new Geometry();
         let v1 = null;
         let v2 = null;
 
-        if(interior){
+        if (interior) {
             v1 = this.transformCorner(this.interiorEnd());
             v2 = this.transformCorner(this.interiorStart());
         }
-        else{
+        else {
             v1 = this.transformCorner(this.exteriorStart());
             v2 = this.transformCorner(this.exteriorEnd());
-        }        
+        }
 
         let v3 = v2.clone();
         let v4 = v1.clone();
@@ -297,7 +306,7 @@ export class HalfEdge extends EventDispatcher {
         this.__mathPlane.setFromNormalAndCoplanarPoint(this.__normal.clone(), this.__vertices[0].clone());
 
         geometry.vertices = [v1, v2, v3, v4];
-        
+
         // geometry.faces.push(new Face3(0, 1, 2));
         // geometry.faces.push(new Face3(0, 2, 3));
 
@@ -451,8 +460,8 @@ export class HalfEdge extends EventDispatcher {
      * @return {Vector2} Return an object with attributes x, y
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
-    interiorStart(debug=false) {
-        if(debug){
+    interiorStart(debug = false) {
+        if (debug) {
             console.log('*************************');
             console.log('CALCULATE INTERIOR START');
         }
@@ -472,8 +481,8 @@ export class HalfEdge extends EventDispatcher {
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
     // 
-    interiorEnd(debug=false) {
-        if(debug){
+    interiorEnd(debug = false) {
+        if (debug) {
             console.log('*************************');
             console.log('CALCULATE INTERIOR END');
         }
@@ -493,7 +502,7 @@ export class HalfEdge extends EventDispatcher {
      * @return {Vector2} Return an object with attributes x, y
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
-    exteriorStart(debug=false) {
+    exteriorStart(debug = false) {
         let vec = this.interiorPointByEdges(this.prev, this); //this.interiorPoint(this.prev, true);//
         vec = vec.multiplyScalar(-0.5);
         return this.getStart().location.clone().add(vec);
@@ -509,7 +518,7 @@ export class HalfEdge extends EventDispatcher {
      * @return {Vector2} Return an object with attributes x, y
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
-    exteriorEnd(debug=false) {
+    exteriorEnd(debug = false) {
         let vec = this.interiorPointByEdges(this, this.next); //this.interiorPoint(this.next, false);//
         vec = vec.multiplyScalar(-0.5);
         return this.getEnd().location.clone().add(vec);
@@ -558,7 +567,7 @@ export class HalfEdge extends EventDispatcher {
         return [this.interiorStart(), this.interiorEnd(), this.exteriorEnd(), this.exteriorStart()];
     }
 
-    interiorPointByEdges(v1, v2, debug=false) {
+    interiorPointByEdges(v1, v2, debug = false) {
         if (!v1 || !v2) {
             // throw new Error('Need a valid next or previous edge');            
             console.warn('Need a valid next or previous edge');
@@ -570,27 +579,27 @@ export class HalfEdge extends EventDispatcher {
             w = null,
             u3 = null,
             v3 = null,
-            w3 = null, 
+            w3 = null,
             axis3 = null;
         let dot = 0;
         let angle_u_v_w = 0.0;
 
         u = v1.getEnd().location.clone().sub(v1.getStart().location).normalize();
         v = v2.getEnd().location.clone().sub(v2.getStart().location).normalize();
-        
+
         u = u.multiplyScalar(v2.wall.thickness);
         v = v.multiplyScalar(v1.wall.thickness);
         w = u.clone().add(v);
-        
+
         u3 = new Vector3(u.x, u.y, 0.0);
         v3 = new Vector3(v.x, v.y, 0.0);
         w3 = new Vector3(w.x, w.y, 0.0);
         axis3 = u3.clone().normalize().cross(v3.clone().normalize());
 
-        if(axis3.z < 0){
+        if (axis3.z < 0) {
             v = v.negate();//.multiplyScalar(-1);            
         }
-        else{
+        else {
             u = u.negate();//.multiplyScalar(-1);
         }
 
@@ -601,11 +610,11 @@ export class HalfEdge extends EventDispatcher {
 
         dot = u.clone().normalize().dot(v.clone().normalize());
 
-        if(dot < 0.0){
+        if (dot < 0.0) {
             let uvAngle = Math.acos(dot);
-            let offsetTheta = uvAngle - (Math.PI*0.5);
+            let offsetTheta = uvAngle - (Math.PI * 0.5);
             let v_temp = v.clone();
-            if(dot < (1e-6 - 1.0)){
+            if (dot < (1e-6 - 1.0)) {
                 u3.x += 1e-4;
                 u3.y += 1e-4;
                 v3.x += 1e-4;
@@ -615,27 +624,27 @@ export class HalfEdge extends EventDispatcher {
             v3 = v3.clone().applyAxisAngle(axis3.clone().normalize(), offsetTheta);
             v.x = v3.x;
             v.y = v3.y;
-            if(debug){
+            if (debug) {
                 console.log('AXIS OF ROTATION ::: ', axis3);
                 console.log('U VECTOR ::: ', u);
                 console.log('V BEFORE ::: ', v_temp);
                 console.log('V AFTER ::: ', v);
                 console.log('DOT PRODUCT ::: ', dot);
-                console.log('ANGLE UV ::: ', (uvAngle*180)/Math.PI);
-                console.log('OFFSET THETA ::: ', (offsetTheta*180)/Math.PI);
-            } 
-        }       
-        
+                console.log('ANGLE UV ::: ', (uvAngle * 180) / Math.PI);
+                console.log('OFFSET THETA ::: ', (offsetTheta * 180) / Math.PI);
+            }
+        }
+
         w = u.clone().add(v);
 
-        if(debug){
+        if (debug) {
             console.log('==============================================');
-            console.log('F :: ',u);
-            console.log('G :: ',v);
+            console.log('F :: ', u);
+            console.log('G :: ', v);
             console.log('F FORCE :: ', u.length());
             console.log('G FORCE :: ', v.length());
-            console.log('DOT PRODUCT VALUE  :: ',dot);
-            console.log('ANGLE BETWEEN F AND G  :: ',(Math.acos(dot) * 180.0)/Math.PI);
+            console.log('DOT PRODUCT VALUE  :: ', dot);
+            console.log('ANGLE BETWEEN F AND G  :: ', (Math.acos(dot) * 180.0) / Math.PI);
             console.log('VECTOR ADDITION W LENGTH :: ', w.length());
             console.log('----------------------------------------------');
         }
@@ -647,7 +656,7 @@ export class HalfEdge extends EventDispatcher {
          * This is the resultant of two forces at obtuse angles (angle > 90)
          * So implement the cosine law for the actual vector calculation;
     */
-    interiorPointByEdges_V2(v1, v2, debug=false) {
+    interiorPointByEdges_V2(v1, v2, debug = false) {
         if (!v1 || !v2) {
             // throw new Error('Need a valid next or previous edge');            
             // console.warn('Need a valid next or previous edge');
@@ -662,22 +671,22 @@ export class HalfEdge extends EventDispatcher {
             f3 = null,
             g3 = null,
             axis3 = null;
-        let dot = 0, abs_dot = 0.0, dot_acos=0.0, abs_dot_acos=0.0, magnitude=0.0, theta=0.0;
+        let dot = 0, abs_dot = 0.0, dot_acos = 0.0, abs_dot_acos = 0.0, magnitude = 0.0, theta = 0.0;
 
         f = v1.getEnd().location.clone().sub(v1.getStart().location).normalize();
         g = v2.getEnd().location.clone().sub(v2.getStart().location).normalize();
         o_f = f.clone();
         o_g = g.clone();
-        
+
         dot = f.dot(g);
         abs_dot = -dot;//Equivalent to 180 - degrees(math.cos(dot))
 
-        if(dot > (1.0 - 1e-6) || dot < (1e-6 - 1.0)){
+        if (dot > (1.0 - 1e-6) || dot < (1e-6 - 1.0)) {
             w = f.clone().normalize().multiplyScalar(Math.min(v2.wall.thickness, v1.wall.thickness));
             w = w.rotateAround(new Vector2(0, 0), -Math.PI * 0.5);
-            if(debug){
+            if (debug) {
                 console.log('DOT PRODUCT TRIGGER ', dot);
-            }     
+            }
             return w;
         }
 
@@ -696,27 +705,27 @@ export class HalfEdge extends EventDispatcher {
         g = g.multiplyScalar(v1.wall.thickness);
         o_f = o_f.multiplyScalar(v2.wall.thickness);
         o_g = o_g.multiplyScalar(v1.wall.thickness);
-        
+
 
         dot_acos = Math.acos(dot);
         abs_dot_acos = Math.acos(abs_dot);
         // magnitude = Math.sqrt((Math.pow(f.length(),2) + Math.pow(g.length(), 2)) + (2 * f.length() * g.length() * abs_dot));
-        magnitude = ((f.length()**2 + g.length()**2) + (2 * f.length() * g.length() * abs_dot))**0.5;
+        magnitude = ((f.length() ** 2 + g.length() ** 2) + (2 * f.length() * g.length() * abs_dot)) ** 0.5;
         theta = Math.asin((g.length() * Math.sin(abs_dot_acos)) / magnitude);
         w = (f.clone().rotateAround(new Vector2(), -theta)).normalize().multiplyScalar(magnitude);
 
-        if(debug){
+        if (debug) {
             let w3 = f3.clone().add(g3);
             let angle3 = w3.angleTo(f3);
             console.log('==============================================');
-            console.log('F :: ',f);
-            console.log('G :: ',g);
+            console.log('F :: ', f);
+            console.log('G :: ', g);
             console.log('F FORCE :: ', f.length());
             console.log('G FORCE :: ', g.length());
-            console.log('DOT PRODUCT VALUE  :: ',dot);
-            console.log('ABS DOT PRODUCT VALUE  :: ',abs_dot);
-            console.log('ANGLE ::: ', (angle3 * 180.0)/Math.PI);
-            console.log('ANGLE3 (sum f + g) ', (theta * 180.0)/Math.PI);
+            console.log('DOT PRODUCT VALUE  :: ', dot);
+            console.log('ABS DOT PRODUCT VALUE  :: ', abs_dot);
+            console.log('ANGLE ::: ', (angle3 * 180.0) / Math.PI);
+            console.log('ANGLE3 (sum f + g) ', (theta * 180.0) / Math.PI);
             console.log('CROSS AXIS :: ', axis3);
             console.log('MAGNITUDE VALUE : ', magnitude);
             console.log('VECTOR ADDITION W LENGTH :: ', w.length());
@@ -724,7 +733,7 @@ export class HalfEdge extends EventDispatcher {
         }
         return w;
     }
-    
+
     /**
      * 
      * @param {HalfEdge} v1 
@@ -903,11 +912,11 @@ export class HalfEdge extends EventDispatcher {
         return this.__isOrphan;
     }
 
-    get plane(){
+    get plane() {
         return this.__plane;
     }
 
-    get exteriorPlane(){
+    get exteriorPlane() {
         return this.__exteriorPlane;
     }
 

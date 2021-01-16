@@ -1,6 +1,6 @@
 import { EventDispatcher, Vector2, Vector3, Face3, Geometry, Shape, ShapeGeometry, Mesh, MeshBasicMaterial, DoubleSide, Box3 } from 'three';
 import { Plane, Matrix4 } from 'three';
-import { EVENT_CHANGED, EVENT_ROOM_ATTRIBUTES_CHANGED, EVENT_MOVED, EVENT_UPDATED, EVENT_UPDATE_TEXTURES, EVENT_CORNER_ATTRIBUTES_CHANGED } from '../core/events.js';
+import { EVENT_CHANGED, EVENT_ROOM_ATTRIBUTES_CHANGED, EVENT_MOVED, EVENT_UPDATED, EVENT_UPDATE_TEXTURES, EVENT_CORNER_ATTRIBUTES_CHANGED, EVENT_MODIFY_TEXTURE_ATTRIBUTE } from '../core/events.js';
 import { Region } from '../core/utils.js';
 import { WallTypes, TEXTURE_DEFAULT_REPEAT, defaultFloorTexture } from '../core/constants.js';
 import { Utils } from '../core/utils.js';
@@ -174,7 +174,7 @@ export class Room extends EventDispatcher {
     }
 
     getUuid() {
-        let cornerUuids = Utils.map(this.corners, function(c) { return c.id; });
+        let cornerUuids = Utils.map(this.corners, function (c) { return c.id; });
         cornerUuids.sort();
         return cornerUuids.join();
     }
@@ -197,16 +197,8 @@ export class Room extends EventDispatcher {
         }
     }
 
-    getTexture() {
-        let uuid = this.getUuid();
-        let tex = this.floorplan.getFloorTexture(uuid);
-        if (!tex) {
-            this.floorplan.setFloorTexture(uuid, defaultFloorTexture);
-        }
-        return tex || defaultFloorTexture;
-    }
-
     /**
+     * @deprecated
      * textureStretch always true, just an argument for consistency with walls
      */
     setTexture(textureUrl, textureStretch, textureScale) {
@@ -236,6 +228,22 @@ export class Room extends EventDispatcher {
         }
     }
 
+
+    setRoomWallsTextureMapsAttribute(attribute, value) {
+        let edge = this.edgePointer;
+        let iterateWhile = true;
+        edge.setTextureMapAttribute(attribute, value);
+
+        while (iterateWhile) {
+            if (edge.next === this.edgePointer) {
+                break;
+            } else {
+                edge = edge.next;
+            }
+            edge.setTextureMapAttribute(attribute, value);
+        }
+    }
+
     setTextureMaps(texturePack) {
         let uuid = this.getUuid();
         if (!texturePack.color) {
@@ -246,6 +254,25 @@ export class Room extends EventDispatcher {
         }
         this.floorplan.setFloorTexture(uuid, texturePack);
         this.dispatchEvent({ type: EVENT_UPDATE_TEXTURES, item: this });
+    }
+
+    setTextureMapAttribute(attribute, value) {
+        if (attribute && value) {
+            let uuid = this.getUuid();
+            let texturePack = this.getTexture();
+            texturePack[attribute] = value;
+            this.floorplan.setFloorTexture(uuid, texturePack);
+            this.dispatchEvent({ type: EVENT_MODIFY_TEXTURE_ATTRIBUTE, item: this, attribute: attribute, value: value });
+        }
+    }
+
+    getTexture() {
+        let uuid = this.getUuid();
+        let tex = this.floorplan.getFloorTexture(uuid);
+        if (!tex) {
+            this.floorplan.setFloorTexture(uuid, defaultFloorTexture);
+        }
+        return tex || defaultFloorTexture;
     }
 
     generateRoofPlane() {

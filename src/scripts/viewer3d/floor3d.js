@@ -1,8 +1,9 @@
 import { EventDispatcher, TextureLoader, RepeatWrapping, MeshBasicMaterial, FrontSide, DoubleSide, Vector2, Vector3, Face3, Geometry, Shape, ShapeGeometry, Mesh } from 'three';
-import { EVENT_CHANGED, EVENT_UPDATE_TEXTURES, EVENT_ROOM_ATTRIBUTES_CHANGED } from '../core/events.js';
+import { EVENT_CHANGED, EVENT_UPDATE_TEXTURES, EVENT_ROOM_ATTRIBUTES_CHANGED, EVENT_MODIFY_TEXTURE_ATTRIBUTE } from '../core/events.js';
 import { Configuration, configWallHeight } from '../core/configuration.js';
 import { BufferGeometry } from 'three/build/three.module';
 import { FloorMaterial3D } from '../materials/FloorMaterial3D.js';
+import { TEXTURE_PROPERTY_COLOR } from '../core/constants.js';
 
 export class Floor3D extends EventDispatcher {
     constructor(scene, room, controls, opts) {
@@ -29,7 +30,10 @@ export class Floor3D extends EventDispatcher {
 
         this.room.addEventListener(EVENT_ROOM_ATTRIBUTES_CHANGED, this.changedevent);
         this.room.addEventListener(EVENT_CHANGED, this.changedevent);
+
         this.room.addEventListener(EVENT_UPDATE_TEXTURES, this.__materialChangedEvent);
+        this.room.addEventListener(EVENT_MODIFY_TEXTURE_ATTRIBUTE, this.__materialChangedEvent);
+
         this.controls.addEventListener('change', this.__updateReflectionsEvent);
         this.init();
     }
@@ -46,15 +50,26 @@ export class Floor3D extends EventDispatcher {
         }
     }
 
-    __updateTexturePack() {
-        let floorSize = this.room.floorRectangleSize.clone();
-        let texturePack = this.room.getTexture();
-        if (!this.__floorMaterial3D) {
-            this.__floorMaterial3D = new FloorMaterial3D({ color: texturePack.color, side: DoubleSide }, texturePack, this.scene);
+    __updateTexturePack(evt) {
+        if (evt.type === EVENT_UPDATE_TEXTURES) {
+            let floorSize = this.room.floorRectangleSize.clone();
+            let texturePack = this.room.getTexture();
+            if (!this.__floorMaterial3D) {
+                this.__floorMaterial3D = new FloorMaterial3D({ color: texturePack.color, side: DoubleSide }, texturePack, this.scene);
+            }
+            this.__floorMaterial3D.textureMapPack = texturePack;
+            // this.__floorMaterial3D.updateDimensions(floorSize.x, floorSize.y);
+            this.__floorMaterial3D.dimensions = floorSize;
         }
-        this.__floorMaterial3D.textureMapPack = texturePack;
-        // this.__floorMaterial3D.updateDimensions(floorSize.x, floorSize.y);
-        this.__floorMaterial3D.dimensions = floorSize;
+        else if(evt.type === EVENT_MODIFY_TEXTURE_ATTRIBUTE){
+            if(this.__floorMaterial3D){
+                let attribute = evt.attribute;
+                let value = evt.value;
+                if(attribute === TEXTURE_PROPERTY_COLOR){
+                    this.__floorMaterial3D.textureColor = value;
+                }
+            }
+        }
         this.scene.needsUpdate = true;
     }
 
@@ -64,7 +79,7 @@ export class Floor3D extends EventDispatcher {
     }
 
     init() {
-        this.__updateTexturePack();
+        this.__updateTexturePack({type: EVENT_UPDATE_TEXTURES});
         this.redraw();
     }
 
@@ -136,7 +151,7 @@ export class Floor3D extends EventDispatcher {
 
         shape = new Shape(spoints);
         shapeGeometry = new ShapeGeometry(shape);
-        let cornerIndex = shapeGeometry.vertices.length-1;
+        let cornerIndex = shapeGeometry.vertices.length - 1;
         // console.log('===================================');
         // console.log('COUNTS ::: ', this.room.corners.length, shapeGeometry.vertices.length);
         for (let i = 0; i < shapeGeometry.vertices.length; i++) {
@@ -144,7 +159,7 @@ export class Floor3D extends EventDispatcher {
             let corner = this.room.corners[cornerIndex];
             let vertex = shapeGeometry.vertices[i];
             vertex.z = vertex.y;
-            vertex.y = corner.elevation+0.1;
+            vertex.y = corner.elevation + 0.1;
             cornerIndex--;
             // console.log('CORNER LOCATION ::: ', corner.location);
             // console.log('VERTEX ::: ', vertex);
