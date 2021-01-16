@@ -44,9 +44,9 @@ class HalfEdge3D():
         # print('WALL NAME ', interior_wall_name);
         wall_two = self.__makeWall(interior_wall_name, self.__collection, interiorStart, interiorEnd);
 
-        for f in wall_two.data.polygons:
-            if(f.normal.x < 0 or f.normal.y < 0 or f.normal.z < 0):
-                f.normal.negate();
+        # for f in wall_two.data.polygons:
+        #     if(f.normal.x < 0 or f.normal.y < 0 or f.normal.z < 0):
+        #         f.normal.negate();
 
         # for i,vert in enumerate(wall_two.data.vertices):
         #     if(i > 1 and i < 3):
@@ -171,7 +171,9 @@ class HalfEdge3D():
         edge = bm.edges.new((verts[-1], verts[0]));
         edges.append(edge);
 
-        bmesh.ops.holes_fill(bm, edges=edges, sides=len(edges));
+        f = bm.faces.new(verts);
+
+        # bmesh.ops.holes_fill(bm, edges=edges, sides=len(edges));
 
         return bm;
 

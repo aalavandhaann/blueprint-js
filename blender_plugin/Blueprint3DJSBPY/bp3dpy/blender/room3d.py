@@ -40,8 +40,8 @@ class Room3D():
         
         edge = bm.edges.new((verts[-1], verts[0]));
         edges.append(edge);
-
-        bmesh.ops.holes_fill(bm, edges=edges, sides=len(edges));
+        face = bm.faces.new(verts);
+        # bmesh.ops.holes_fill(bm, edges=edges, sides=len(edges));
         bm.to_mesh(floormesh);
         bm.free();
         collection.objects.link(floorobject);
@@ -78,8 +78,8 @@ class Room3D():
         
         edge = bm.edges.new((verts[-1], verts[0]));
         edges.append(edge);
-
-        bmesh.ops.holes_fill(bm, edges=edges, sides=len(edges));
+        face = bm.faces.new(verts);
+        # bmesh.ops.holes_fill(bm, edges=edges, sides=len(edges));
         bm.to_mesh(roofmesh);
         bm.free();
         collection.objects.link(roofobject);
