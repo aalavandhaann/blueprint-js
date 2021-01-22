@@ -297,13 +297,13 @@ export class Corner extends EventDispatcher {
             }
         }
 
-        this.wallStarts.forEach((wall) => {
-            wall.fireMoved();
-        });
+        // this.wallStarts.forEach((wall) => {
+        //     wall.fireMoved();
+        // });
 
-        this.wallEnds.forEach((wall) => {
-            wall.fireMoved();
-        });
+        // this.wallEnds.forEach((wall) => {
+        //     wall.fireMoved();
+        // });
         this.dispatchEvent({ type: EVENT_MOVED, item: this, position: new Vector2(newX, newY) });
     }
 

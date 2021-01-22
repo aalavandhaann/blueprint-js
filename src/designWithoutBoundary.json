@@ -1,0 +1,404 @@
+{
+    "floorplan": {
+        "version": "2.0.1a",
+        "corners": {
+            "71d4f128-ae80-3d58-9bd2-711c6ce6cdf2": {
+                "x": 0,
+                "y": 0,
+                "elevation": 2.5
+            },
+            "f90da5e3-9e0e-eba7-173d-eb0b071e838e": {
+                "x": 0,
+                "y": 5,
+                "elevation": 2.5
+            },
+            "da026c08-d76a-a944-8e7b-096b752da9ed": {
+                "x": 5,
+                "y": 5,
+                "elevation": 2.5
+            },
+            "4e3d65cb-54c0-0681-28bf-bddcc7bdb571": {
+                "x": 5,
+                "y": 0,
+                "elevation": 2.5
+            }
+        },
+        "walls": [{
+                "corner1": "71d4f128-ae80-3d58-9bd2-711c6ce6cdf2",
+                "corner2": "f90da5e3-9e0e-eba7-173d-eb0b071e838e",
+                "frontTexture": {
+                    "color": "#FFFFFF",
+                    "repeat": 300,
+                    "normalmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_normal.jpg",
+                    "roughnessmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_roughness.jpg",
+                    "colormap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_basecolor.jpg",
+                    "ambientmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_ambientOcclusion.jpg",
+                    "bumpmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_height.png"
+                },
+                "backTexture": {
+                    "repeat": 200,
+                    "colormap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_basecolor.jpg",
+                    "bumpmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_height.png",
+                    "normalmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_normal.jpg",
+                    "roughnessmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_roughness.jpg",
+                    "ambientmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_ambientocclusion.jpg",
+                    "color": "#FFFFFF"
+                },
+                "wallType": "STRAIGHT",
+                "a": {
+                    "x": -176.77669529663686,
+                    "y": 176.7766952966369
+                },
+                "b": {
+                    "x": -176.7766952966369,
+                    "y": 323.22330470336317
+                },
+                "thickness": 0.2
+            },
+            {
+                "corner1": "f90da5e3-9e0e-eba7-173d-eb0b071e838e",
+                "corner2": "da026c08-d76a-a944-8e7b-096b752da9ed",
+                "frontTexture": {
+                    "color": "#FFFFFF",
+                    "repeat": 300,
+                    "normalmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_normal.jpg",
+                    "roughnessmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_roughness.jpg",
+                    "colormap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_basecolor.jpg",
+                    "ambientmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_ambientOcclusion.jpg",
+                    "bumpmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_height.png"
+                },
+                "backTexture": {
+                    "repeat": 200,
+                    "colormap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_basecolor.jpg",
+                    "bumpmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_height.png",
+                    "normalmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_normal.jpg",
+                    "roughnessmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_roughness.jpg",
+                    "ambientmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_ambientocclusion.jpg",
+                    "color": "#FFFFFF"
+                },
+                "wallType": "STRAIGHT",
+                "a": {
+                    "x": 176.7766952966369,
+                    "y": 676.7766952966368
+                },
+                "b": {
+                    "x": 323.22330470336317,
+                    "y": 676.776695296637
+                },
+                "thickness": 0.2
+            },
+            {
+                "corner1": "da026c08-d76a-a944-8e7b-096b752da9ed",
+                "corner2": "4e3d65cb-54c0-0681-28bf-bddcc7bdb571",
+                "frontTexture": {
+                    "color": "#FFFFFF",
+                    "repeat": 300,
+                    "normalmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_normal.jpg",
+                    "roughnessmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_roughness.jpg",
+                    "colormap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_basecolor.jpg",
+                    "ambientmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_ambientOcclusion.jpg",
+                    "bumpmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_height.png"
+                },
+                "backTexture": {
+                    "repeat": 200,
+                    "colormap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_basecolor.jpg",
+                    "bumpmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_height.png",
+                    "normalmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_normal.jpg",
+                    "roughnessmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_roughness.jpg",
+                    "ambientmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_ambientocclusion.jpg",
+                    "color": "#FFFFFF"
+                },
+                "wallType": "STRAIGHT",
+                "a": {
+                    "x": 676.7766952966368,
+                    "y": 323.2233047033631
+                },
+                "b": {
+                    "x": 676.776695296637,
+                    "y": 176.77669529663686
+                },
+                "thickness": 0.2
+            },
+            {
+                "corner1": "4e3d65cb-54c0-0681-28bf-bddcc7bdb571",
+                "corner2": "71d4f128-ae80-3d58-9bd2-711c6ce6cdf2",
+                "frontTexture": {
+                    "color": "#FFFFFF",
+                    "repeat": 300,
+                    "normalmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_normal.jpg",
+                    "roughnessmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_roughness.jpg",
+                    "colormap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_basecolor.jpg",
+                    "ambientmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_ambientOcclusion.jpg",
+                    "bumpmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_height.png"
+                },
+                "backTexture": {
+                    "repeat": 200,
+                    "colormap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_basecolor.jpg",
+                    "bumpmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_height.png",
+                    "normalmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_normal.jpg",
+                    "roughnessmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_roughness.jpg",
+                    "ambientmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_ambientocclusion.jpg",
+                    "color": "#FFFFFF"
+                },
+                "wallType": "STRAIGHT",
+                "a": {
+                    "x": 323.2233047033631,
+                    "y": -176.77669529663686
+                },
+                "b": {
+                    "x": 176.77669529663686,
+                    "y": -176.7766952966369
+                },
+                "thickness": 0.2
+            }
+        ],
+        "rooms": {
+            "71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,4e3d65cb-54c0-0681-28bf-bddcc7bdb571,da026c08-d76a-a944-8e7b-096b752da9ed,f90da5e3-9e0e-eba7-173d-eb0b071e838e": {
+                "name": "A Room"
+            }
+        },
+        "wallTextures": [],
+        "floorTextures": {},
+        "newFloorTextures": {
+            "4e3d65cb-54c0-0681-28bf-bddcc7bdb571,71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,da026c08-d76a-a944-8e7b-096b752da9ed,f90da5e3-9e0e-eba7-173d-eb0b071e838e": {
+                "repeat": 100,
+                "roughnessmap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_roughness.jpg",
+                "ambientmap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_ambientOcclusion.jpg",
+                "normalmap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_normal.jpg",
+                "colormap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_basecolor.jpg",
+                "color": "#FFFFFF",
+                "emissive": "#000000",
+                "reflective": 0.5,
+                "shininess": 0.5,
+            }
+        },
+        "carbonSheet": {},
+        "units": "m"
+    },
+    "items": [{
+            "id": "7d0b3e90-c315-e7a5-a6d9-594757d5b7e4",
+            "itemName": "An Item",
+            "itemType": 3,
+            "position": [
+                10,
+                138.38790186348007,
+                185.34460161835352
+            ],
+            "rotation": [
+                0,
+                1.5707963267948966,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "size": [
+                240,
+                100,
+                50
+            ],
+            "fixed": true,
+            "resizable": true,
+            "modelURL": "models/HollowCube.glb",
+            "isParametric": false,
+            "wall": "71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,f90da5e3-9e0e-eba7-173d-eb0b071e838e",
+            "wallSide": "back",
+            "wallSurfacePoint": [
+                10,
+                138.38790186348007,
+                185.34460161835352
+            ]
+        },
+        {
+            "itemName": "Tennis Table",
+            "itemType": 1,
+            "position": [
+                280,
+                50,
+                350
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "size": [
+                281.598,
+                98.1,
+                172.4
+            ],
+            "fixed": false,
+            "resizable": false,
+            "modelURL": "models/TableTennisTable.glb",
+            "isParametric": false
+        },
+        {
+            "itemName": "Andrea Wox Table",
+            "itemType": 1,
+            "position": [
+                280,
+                25,
+                130
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "size": [
+                161.0,
+                51.8,
+                161.0
+            ],
+            "fixed": false,
+            "resizable": false,
+            "modelURL": "models/AndreaWox_Table_Resized.glb",
+            "isParametric": false
+        },
+        {
+            "itemName": "DoubleChairWithPillow",
+            "itemType": 9,
+            "position": [
+                99.27116005634912,
+                41.36685,
+                49.64319999999989
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "size": [
+                108.85,
+                72.7337,
+                69.2864
+            ],
+            "fixed": false,
+            "resizable": false,
+            "modelURL": "models/DoubleChairWithPillow.glb",
+            "isParametric": false,
+            "wall": "4e3d65cb-54c0-0681-28bf-bddcc7bdb571,71d4f128-ae80-3d58-9bd2-711c6ce6cdf2",
+            "wallSide": "back",
+            "wallSurfacePoint": [
+                99.27116005634912,
+                70.88314014751387,
+                9.999999999999886
+            ]
+        },
+        {
+            "itemName": "Parametric Door 01",
+            "isParametric": true,
+            "baseParametricType": "DOOR",
+            "subParametricData": {
+                "type": 6,
+                "frameColor": 15198183,
+                "doorColor": 15198183,
+                "doorHandleColor": 15790320,
+                "glassColor": 8900331,
+                "frameWidth": 100,
+                "frameHeight": 200,
+                "frameSize": 5,
+                "frameThickness": 20,
+                "doorRatio": 0.5,
+                "openDirection": "RIGHT",
+                "handleType": "HANDLE_01"
+            },
+            "itemType": 7,
+            "position": [
+                252.10994952514454,
+                105,
+                10
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "size": [
+                100,
+                200,
+                20
+            ],
+            "fixed": false,
+            "resizable": false,
+            "wall": "4e3d65cb-54c0-0681-28bf-bddcc7bdb571,71d4f128-ae80-3d58-9bd2-711c6ce6cdf2",
+            "wallSide": "back",
+            "wallSurfacePoint": [
+                252.10994952514454,
+                105,
+                10
+            ]
+        },
+        {
+            "itemName": "Parametric Door 02",
+            "isParametric": true,
+            "baseParametricType": "DOOR",
+            "subParametricData": {
+                "type": 5,
+                "frameColor": 15198183,
+                "doorColor": 15198183,
+                "doorHandleColor": 15790320,
+                "glassColor": 8900331,
+                "frameWidth": 122,
+                "frameHeight": 208,
+                "frameSize": 10.9,
+                "frameThickness": 20,
+                "doorRatio": 0.5,
+                "openDirection": "RIGHT",
+                "handleType": "HANDLE_01"
+            },
+            "itemType": 7,
+            "position": [
+                245.9620664305963,
+                109,
+                490
+            ],
+            "rotation": [
+                0,
+                3.141592653589793,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "size": [
+                100,
+                200,
+                20
+            ],
+            "fixed": false,
+            "resizable": false,
+            "wall": "f90da5e3-9e0e-eba7-173d-eb0b071e838e,da026c08-d76a-a944-8e7b-096b752da9ed",
+            "wallSide": "back",
+            "wallSurfacePoint": [
+                245.9620664305963,
+                109,
+                490
+            ]
+        }
+    ]
+}

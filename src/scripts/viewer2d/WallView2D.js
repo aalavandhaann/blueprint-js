@@ -73,6 +73,7 @@ export class WallDimensions2D extends Graphics {
     }
 
     __drawDimensionLine() {
+        // console.trace('DRAW DIMENSION LINE ::: ', this.__wall.id);
         let wallDirectionNormalized = this.__wall.wallDirectionNormalized();
         let wallAngle = this.__wall.wallDirectionNormalized().angle();
         let p1Start = this.__toPixels(this.__wall.start.location.clone());
@@ -145,9 +146,22 @@ export class Edge2D extends BaseFloorplanViewElement2D {
     }
 
     __getCornerCoordinates() {
-        let sPoint = Dimensioning.cmToPixelVector2D(this.__wall.start.location.clone());
-        let ePoint = Dimensioning.cmToPixelVector2D(this.__wall.end.location.clone());
-        return [sPoint, ePoint];
+        // let sPoint = Dimensioning.cmToPixelVector2D(this.__wall.start.location.clone());
+        // let ePoint = Dimensioning.cmToPixelVector2D(this.__wall.end.location.clone());
+
+        // return [sPoint, ePoint];
+
+        let iStartPoint = Dimensioning.cmToPixelVector2D(this.__edge.interiorStart());
+        let iEndPoint = Dimensioning.cmToPixelVector2D(this.__edge.interiorEnd());
+
+        let eStartPoint = Dimensioning.cmToPixelVector2D(this.__edge.exteriorStart());
+        let eEndPoint = Dimensioning.cmToPixelVector2D(this.__edge.exteriorEnd());
+
+        let vectStart = eStartPoint.clone().sub(iStartPoint);
+        let vectEnd = eEndPoint.clone().sub(iEndPoint);
+
+        return [iStartPoint.add(vectStart.multiplyScalar(0.5)), iEndPoint.add(vectEnd.multiplyScalar(0.5))];
+        
     }
 
     __getPolygonCoordinates(forEdge) {
@@ -202,9 +216,16 @@ export class Edge2D extends BaseFloorplanViewElement2D {
         
         this.clear();
         let lineThickness = 2.5;
+        
+        let pStart = points[2];
+        let pEnd = points[3];
+
+        // let pStart = points[0].clone().add(points[0].clone().sub(points[3]).multiplyScalar(0.5)); 
+        // let pEnd = points[1].clone().add(points[2].clone().sub(points[3]).multiplyScalar(0.5)); 
+
         this.lineStyle(lineThickness, color, 1.0);
-        this.moveTo(points[2].x, points[2].y);
-        this.lineTo(points[3].x, points[3].y);
+        this.moveTo(pStart.x, pStart.y);
+        this.lineTo(pEnd.x, pEnd.y);
 
         this.lineStyle(lineThickness, color, 0.0);
         this.beginFill(color, alpha);
@@ -216,7 +237,7 @@ export class Edge2D extends BaseFloorplanViewElement2D {
                 this.lineTo(pt.x, pt.y);
             }
         }
-            this.endFill();
+        this.endFill();
     }
 
     drawEdge(color = 0xDDDDDD, alpha = 1.0) {
@@ -295,7 +316,6 @@ export class WallView2D extends BaseFloorplanViewElement2D {
         }
         this.addChild(this.__info);
         this.__mouseOut();
-
     }
 
     get viewDimensions() {

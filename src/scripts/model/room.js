@@ -70,8 +70,8 @@ export class Room extends EventDispatcher {
     }
 
     __wallsChanged(evt) {
-        this.updateInteriorCorners();
         this.dispatchEvent({ type: EVENT_CHANGED, item: this });
+        this.updateInteriorCorners();
     }
 
     _roomUpdated() {

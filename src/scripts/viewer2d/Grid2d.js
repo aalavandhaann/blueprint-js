@@ -28,9 +28,9 @@ export class Grid2D extends Graphics {
         let spacing = Dimensioning.cmToPixel(spacingCMS);
         let totalLines = gridSize / spacing;
         let halfSize = gridSize * 0.5;
-        let linewidth = 1.0 / this.__gridScale;
-        let highlightLineWidth = 1.0 / this.__gridScale;
-        let normalColor = 0xEBEBEB;
+        let linewidth = Math.max(1.0 / this.__gridScale, 1.0);
+        let highlightLineWidth = Math.max(2.0 / this.__gridScale, 1.0);
+        let normalColor = 0xE0E0E0;
         let highlightColor = 0xD0D0D0;
         this.clear();
         for (let i = 0; i < totalLines; i++) {

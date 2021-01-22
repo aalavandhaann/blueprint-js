@@ -1,5 +1,5 @@
 import { EventDispatcher, Vector2, Vector3, Matrix4, Face3, Mesh, Geometry, MeshBasicMaterial, Box3, BufferGeometry, Plane } from 'three';
-import { EVENT_REDRAW, EVENT_MOVED, EVENT_UPDATED, EVENT_UPDATE_TEXTURES, EVENT_DELETED, EVENT_MODIFY_TEXTURE_ATTRIBUTE } from '../core/events.js';
+import { EVENT_REDRAW, EVENT_MOVED, EVENT_UPDATED, EVENT_UPDATE_TEXTURES, EVENT_DELETED, EVENT_MODIFY_TEXTURE_ATTRIBUTE, EVENT_CHANGED } from '../core/events.js';
 import { Utils } from '../core/utils.js';
 import { WallTypes, TEXTURE_DEFAULT_REPEAT } from '../core/constants.js';
 
@@ -64,14 +64,14 @@ export class HalfEdge extends EventDispatcher {
          * @property {HalfEdge} next Reference to the next halfedge instance connected to this
          * @type {HalfEdge}
          **/
-        this.next = null;
+        this.__next = null;
 
         /**
          * Reference to the previous halfedge instance connected to this
          * @property {HalfEdge} prev Reference to the previous halfedge instance connected to this
          * @type {HalfEdge}
          **/
-        this.prev = null;
+        this.__prev = null;
 
         /** 
          * The offset to maintain for the front and back walls from the midline of a wall
@@ -151,23 +151,51 @@ export class HalfEdge extends EventDispatcher {
         this.__normal = null; //new Vector3(0, 0, 0);
         this.__mathPlane = null;
 
+        this.__iStart = null;
+        this.__iEnd = null;
+        this.__iCenter = null;
+        this.__iDistance = 0;
+
+
+        this.__eStart = null;
+        this.__eEnd = null;
+        this.__eCenter = null;
+        this.__eDistance = null;
+
         this.offset = wall.thickness / 2.0;
         this.height = wall.height;
 
         this.__wallMovedEvent = this.__wallMoved.bind(this);
         this.__wallUpdatedEvent = this.__wallUpdated.bind(this);
 
+        this.wall.addEventListener(EVENT_MOVED, this.__wallMovedEvent);
+        this.wall.addEventListener(EVENT_UPDATED, this.__wallUpdatedEvent);
+        if(this.room){
+            this.room.addEventListener(EVENT_CHANGED, this.__wallMovedEvent);
+        }
         if (this.front) {
             this.wall.frontEdge = this;
         } else {
             this.wall.backEdge = this;
         }
-        this.wall.addEventListener(EVENT_MOVED, this.__wallMovedEvent);
-        this.wall.addEventListener(EVENT_UPDATED, this.__wallUpdatedEvent);
+        this.__updateInteriorsExteriors();
+    }
+
+    __updateInteriorsExteriors(){
+        this.__iStart = this.__interiorStart();
+        this.__iEnd = this.__interiorEnd();
+        this.__iCenter = this.__interiorCenter();
+        this.__iDistance = this.__interiorDistance();
+
+        this.__eStart = this.__exteriorStart();
+        this.__eEnd = this.__exteriorEnd();
+        this.__eCenter = this.__exteriorCenter();
+        this.__eDistance = this.__exteriorDistance();
     }
 
     __wallMoved(evt) {
         let scope = this;
+        this.__updateInteriorsExteriors();
         // scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
         // scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
         this.generatePlane();
@@ -178,97 +206,12 @@ export class HalfEdge extends EventDispatcher {
     __wallUpdated(evt) {
         let scope = this;
         scope.offset = scope.wall.thickness * 0.5;
+        this.__updateInteriorsExteriors();
         // scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
         // scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
         this.generatePlane();
         scope.dispatchEvent({ type: EVENT_REDRAW, item: scope });
     }
-
-    setTextureMaps(texturePack) {
-        if (!texturePack.color) {
-            texturePack.color = '#FFFFFF';
-        }
-        if (!texturePack.repeat) {
-            texturePack.repeat = TEXTURE_DEFAULT_REPEAT; //For every TEXTURE_DEFAULT_REPEAT cms
-        }
-
-        if (this.front) {
-            this.wall.frontTexture = texturePack;
-        } else {
-            this.wall.backTexture = texturePack;
-        }
-        this.dispatchEvent({ type: EVENT_UPDATE_TEXTURES, item: this });
-    }
-
-    setTextureMapAttribute(attribute, value) {
-        if (attribute && value) {
-            let texturePack = this.getTexture();
-            texturePack[attribute] = value;
-            this.dispatchEvent({ type: EVENT_MODIFY_TEXTURE_ATTRIBUTE, item: this, attribute: attribute, value: value });
-        }
-    }
-
-    /**
-     * Two separate textures are used for the walls. Based on which side of the wall this {HalfEdge} refers the texture is returned
-     * @return {Object} front/back Two separate textures are used for the walls. Based on which side of the wall this {@link HalfEdge} refers the texture is returned
-     */
-    getTexture() {
-        if (this.front) {
-            return this.wall.frontTexture;
-        } else {
-            return this.wall.backTexture;
-        }
-    }
-
-    /**
-     * Set a Texture to the wall. Based on the edge side as front or back the texture is applied appropriately to the wall
-     * @deprecated
-     * @param {String} textureUrl The path to the texture image
-     * @param {boolean} textureStretch Can the texture stretch? If not it will be repeated
-     * @param {Number} textureScale The scale value using which the number of repetitions of the texture image is calculated
-     * @emits {EVENT_REDRAW}
-     */
-    setTexture(textureUrl, textureStretch, textureScale) {
-        let texture = { url: textureUrl, stretch: textureStretch, scale: textureScale };
-        if (this.front) {
-            this.wall.frontTexture = texture;
-        } else {
-            this.wall.backTexture = texture;
-        }
-
-        //this.redrawCallbacks.fire();
-        this.dispatchEvent({ type: EVENT_REDRAW, item: this });
-    }
-
-    /**
-     * Emit the redraw event
-     * @emits {EVENT_REDRAW}
-     */
-    dispatchRedrawEvent() {
-        this.dispatchEvent({ type: EVENT_REDRAW, item: this });
-    }
-
-    /**
-     * Transform the {@link Corner} instance to a Vector3 instance using the x and y position returned as x and z
-     * @param {Corner} corner
-     * @return {Vector3}
-     * @see https://threejs.org/docs/#api/en/math/Vector3
-     */
-    transformCorner(corner) {
-        return new Vector3(corner.x, 0, corner.y);
-    }
-
-    generatePlane() {
-        this.__plane = this.__generateEdgePlane(true, this.__plane);
-        // this.__exteriorPlane = this.__plane;
-        // if (this.wall.start.getAttachedRooms().length < 2 || this.wall.end.getAttachedRooms().length < 2) {
-        //     this.__exteriorPlane = this.__generateEdgePlane(false, this.__exteriorPlane);
-        // }
-        // else{
-        //     this.__exteriorPlane = null;
-        // }
-    }
-
 
     /**
      * This generates the invisible planes in the scene that are used for interesection testing for the wall items
@@ -424,35 +367,11 @@ export class HalfEdge extends EventDispatcher {
         }
     }
 
-    /**
-     * Return the 2D interior location that is at the center/middle. 
-     * @return {Vector2} Return an object with attributes x, y
-     * @see https://threejs.org/docs/#api/en/math/Vector2
-     */
-    interiorCenter() {
-        if (this.wall.wallType === WallTypes.STRAIGHT) {
-            // x, y, x1, y1, x2, y2
-            return new Vector2((this.interiorStart().x + this.interiorEnd().x) / 2.0, (this.interiorStart().y + this.interiorEnd().y) / 2.0);
-        } else if (this.wall.wallType === WallTypes.CURVED) {
-            let c = this.wall.bezier.get(0.5);
-            return new Vector2(c.x, c.y);
+    __factor(vector, inside=true){
+        if(inside){
+            return (vector.length() - 10) / vector.length();
         }
-        return new Vector2((this.interiorStart().x + this.interiorEnd().x) / 2.0, (this.interiorStart().y + this.interiorEnd().y) / 2.0);
-    }
-
-    /**
-     * Return the interior distance of the interior wall 
-     * @return {Number} The distance
-     */
-    interiorDistance() {
-        let start = this.interiorStart();
-        let end = this.interiorEnd();
-        if (this.wall.wallType === WallTypes.STRAIGHT) {
-            return Utils.distance(start, end);
-        } else if (this.wall.wallType === WallTypes.CURVED) {
-            return this.wall.bezier.length();
-        }
-        return Utils.distance(start, end);
+        return 10 / vector.length();
     }
 
     /**
@@ -460,13 +379,15 @@ export class HalfEdge extends EventDispatcher {
      * @return {Vector2} Return an object with attributes x, y
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
-    interiorStart(debug = false) {
+    __interiorStart(debug = false) {
         if (debug) {
             console.log('*************************');
             console.log('CALCULATE INTERIOR START');
         }
         let vec = this.interiorPointByEdges(this.prev, this, debug); //this.interiorPoint(this.prev, true);//        
-        vec = vec.multiplyScalar(0.5);
+        // vec = vec.multiplyScalar(0.5);
+        // vec = vec.multiplyScalar(this.__factor(vec));
+        // vec = vec.clone().normalize().multiplyScalar(vec.length() - 10);
         return this.getStart().location.clone().add(vec);
 
         // let vec = this.halfAngleVector(this.prev, this);
@@ -481,13 +402,14 @@ export class HalfEdge extends EventDispatcher {
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
     // 
-    interiorEnd(debug = false) {
+    __interiorEnd(debug = false) {
         if (debug) {
             console.log('*************************');
             console.log('CALCULATE INTERIOR END');
         }
         let vec = this.interiorPointByEdges(this, this.next, debug); //this.interiorPoint(this.next, false);//
-        vec = vec.multiplyScalar(0.5);
+        // vec = vec.multiplyScalar(0.5);
+        // vec = vec.multiplyScalar(this.__factor(vec));
         return this.getEnd().location.clone().add(vec);
 
         // let vec = this.halfAngleVector(this, this.next);
@@ -496,21 +418,53 @@ export class HalfEdge extends EventDispatcher {
         // return {x:this.getEnd().x + vec.x, y:this.getEnd().y + vec.y};
     }
 
+    /**
+     * Return the 2D interior location that is at the center/middle. 
+     * @return {Vector2} Return an object with attributes x, y
+     * @see https://threejs.org/docs/#api/en/math/Vector2
+     */
+    __interiorCenter() {
+        if (this.wall.wallType === WallTypes.STRAIGHT) {
+            // x, y, x1, y1, x2, y2
+            return new Vector2((this.interiorStart().x + this.interiorEnd().x) / 2.0, (this.interiorStart().y + this.interiorEnd().y) / 2.0);
+        } else if (this.wall.wallType === WallTypes.CURVED) {
+            let c = this.wall.bezier.get(0.5);
+            return new Vector2(c.x, c.y);
+        }
+        return new Vector2((this.interiorStart().x + this.interiorEnd().x) / 2.0, (this.interiorStart().y + this.interiorEnd().y) / 2.0);
+    }
+
+    /**
+     * Return the interior distance of the interior wall 
+     * @return {Number} The distance
+     */
+    __interiorDistance() {
+        let start = this.interiorStart();
+        let end = this.interiorEnd();
+        if (this.wall.wallType === WallTypes.STRAIGHT) {
+            return Utils.distance(start, end);
+        } else if (this.wall.wallType === WallTypes.CURVED) {
+            return this.wall.bezier.length();
+        }
+        return Utils.distance(start, end);
+    }
+
 
     /**
      * Return the 2D exterior location that is at the start. 
      * @return {Vector2} Return an object with attributes x, y
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
-    exteriorStart(debug = false) {
-        let vec = this.interiorPointByEdges(this.prev, this); //this.interiorPoint(this.prev, true);//
-        vec = vec.multiplyScalar(-0.5);
-        return this.getStart().location.clone().add(vec);
+    __exteriorStart(debug = false) {
+        // let vec = this.interiorPointByEdges(this.prev, this); //this.interiorPoint(this.prev, true);//
+        // // vec = vec.multiplyScalar(-0.5);
+        // // vec = vec.multiplyScalar(-this.__factor(vec, false));
+        // return this.getStart().location.clone().add(vec);
 
         // let vec = this.halfAngleVector(this.prev, this);
         // return new Vector2(this.getStart().x - vec.x, this.getStart().y - vec.y);
 
-        // return new Vector2(this.getStart().x, this.getStart().y);
+        return new Vector2(this.getStart().x, this.getStart().y);
     }
 
     /**
@@ -518,15 +472,16 @@ export class HalfEdge extends EventDispatcher {
      * @return {Vector2} Return an object with attributes x, y
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
-    exteriorEnd(debug = false) {
-        let vec = this.interiorPointByEdges(this, this.next); //this.interiorPoint(this.next, false);//
-        vec = vec.multiplyScalar(-0.5);
-        return this.getEnd().location.clone().add(vec);
+    __exteriorEnd(debug = false) {
+        // let vec = this.interiorPointByEdges(this, this.next); //this.interiorPoint(this.next, false);//
+        // // vec = vec.multiplyScalar(-0.5);
+        // // vec = vec.multiplyScalar(-this.__factor(vec, false));
+        // return this.getEnd().location.clone().add(vec);
 
         // let vec = this.halfAngleVector(this, this.next);
         // return new Vector2(this.getEnd().x - vec.x, this.getEnd().y - vec.y);
 
-        // return new Vector2(this.getEnd().x, this.getEnd().y);
+        return new Vector2(this.getEnd().x, this.getEnd().y);
     }
 
     /**
@@ -534,7 +489,7 @@ export class HalfEdge extends EventDispatcher {
      * @return {Vector2} Return an object with attributes x, y
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
-    exteriorCenter() {
+    __exteriorCenter() {
         if (this.wall.wallType === WallTypes.STRAIGHT) {
             // x, y, x1, y1, x2, y2
             return new Vector2((this.exteriorStart().x + this.exteriorEnd().x) / 2.0, (this.exteriorStart().y + this.exteriorEnd().y) / 2.0);
@@ -549,7 +504,7 @@ export class HalfEdge extends EventDispatcher {
      * Return the exterior distance of the exterior wall 
      * @return {Number} The distance
      */
-    exteriorDistance() {
+    __exteriorDistance() {
         let start = this.exteriorStart();
         let end = this.exteriorEnd();
         if (this.wall.wallType === WallTypes.STRAIGHT) {
@@ -558,6 +513,38 @@ export class HalfEdge extends EventDispatcher {
             return this.wall.bezier.length();
         }
         return Utils.distance(start, end);
+    }
+
+    interiorStart(){
+        return this.__iStart.clone();
+    }
+
+    interiorEnd(){
+        return this.__iEnd.clone();
+    }
+
+    interiorCenter(){
+        return this.__iCenter.clone();
+    }
+
+    interiorDistance(){
+        return this.__iDistance;
+    }
+
+    exteriorStart(){
+        return this.__eStart.clone();
+    }
+
+    exteriorEnd(){
+        return this.__eEnd.clone();
+    }
+
+    exteriorCenter(){
+        return this.__eCenter.clone();
+    }
+
+    exteriorDistance(){
+        return this.__eDistance;
     }
 
     /** Get the corners of the half edge.
@@ -570,8 +557,8 @@ export class HalfEdge extends EventDispatcher {
     interiorPointByEdges(v1, v2, debug = false) {
         if (!v1 || !v2) {
             // throw new Error('Need a valid next or previous edge');            
-            console.warn('Need a valid next or previous edge');
-            return this.halfAngleVector(v1, v2).multiplyScalar(2.0);
+            // console.warn('Need a valid next or previous edge');
+            return this.halfAngleVector(v1, v2);//.multiplyScalar(2.0);
         }
 
         let u = null,
@@ -582,18 +569,23 @@ export class HalfEdge extends EventDispatcher {
             w3 = null,
             axis3 = null;
         let dot = 0;
-        let angle_u_v_w = 0.0;
+
+        // let v2Thickness = v2.wall.thickness;
+        // let v1Thickness = v1.wall.thickness;
+
+        let v2Thickness = (v2.wall.frontEdge && v2.wall.backEdge) ? v2.wall.thickness * 0.5 : v2.wall.thickness;
+        let v1Thickness = (v1.wall.frontEdge && v1.wall.backEdge) ? v1.wall.thickness * 0.5 : v1.wall.thickness;
 
         u = v1.getEnd().location.clone().sub(v1.getStart().location).normalize();
         v = v2.getEnd().location.clone().sub(v2.getStart().location).normalize();
 
-        u = u.multiplyScalar(v2.wall.thickness);
-        v = v.multiplyScalar(v1.wall.thickness);
-        w = u.clone().add(v);
+        u = u.multiplyScalar(v2Thickness);
+        v = v.multiplyScalar(v1Thickness);
+        // w = u.clone().add(v);
 
         u3 = new Vector3(u.x, u.y, 0.0);
         v3 = new Vector3(v.x, v.y, 0.0);
-        w3 = new Vector3(w.x, w.y, 0.0);
+        // w3 = new Vector3(w.x, w.y, 0.0);
         axis3 = u3.clone().normalize().cross(v3.clone().normalize());
 
         if (axis3.z < 0) {
@@ -610,16 +602,16 @@ export class HalfEdge extends EventDispatcher {
 
         dot = u.clone().normalize().dot(v.clone().normalize());
 
-        if (dot < 0.0) {
+        if (dot < -0.1) {
             let uvAngle = Math.acos(dot);
             let offsetTheta = uvAngle - (Math.PI * 0.5);
             let v_temp = v.clone();
-            if (dot < (1e-6 - 1.0)) {
-                u3.x += 1e-4;
-                u3.y += 1e-4;
-                v3.x += 1e-4;
-                v3.y += 1e-4;
-                axis3 = u3.clone().normalize().cross(v3.clone().normalize()).negate().normalize();
+            if (dot < (1e-6 - 1.0)) {           
+                v3.x -= 1e-2;
+                v3.y -= 1e-2;
+                v.x = v3.x;
+                v.y = v3.y;
+                axis3 = v3.clone().normalize().cross(u3.clone().normalize()).negate().normalize();
             }
             v3 = v3.clone().applyAxisAngle(axis3.clone().normalize(), offsetTheta);
             v.x = v3.x;
@@ -636,6 +628,13 @@ export class HalfEdge extends EventDispatcher {
         }
 
         w = u.clone().add(v);
+        // dot = u.clone().normalize().dot(v.clone().normalize());
+        // let abs_dot = -dot;//Equivalent to 180 - degrees(math.cos(dot))
+        // let abs_dot_acos = Math.acos(abs_dot);
+        // // let magnitude = Math.sqrt((Math.pow(u.length(),2) + Math.pow(v.length(), 2)) + (2 * u.length() * v.length() * abs_dot));
+        // let magnitude = ((u.length() ** 2 + v.length() ** 2) + (2 * u.length() * v.length() * abs_dot)) ** 0.5;
+        // let theta = Math.asin((v.length() * Math.sin(abs_dot_acos)) / magnitude);
+        // w = (u.clone().rotateAround(new Vector2(), -theta)).normalize().multiplyScalar(magnitude);
 
         if (debug) {
             console.log('==============================================');
@@ -891,6 +890,92 @@ export class HalfEdge extends EventDispatcher {
         return halfAngleVector;
     }
 
+
+    setTextureMaps(texturePack) {
+        if (!texturePack.color) {
+            texturePack.color = '#FFFFFF';
+        }
+        if (!texturePack.repeat) {
+            texturePack.repeat = TEXTURE_DEFAULT_REPEAT; //For every TEXTURE_DEFAULT_REPEAT cms
+        }
+
+        if (this.front) {
+            this.wall.frontTexture = texturePack;
+        } else {
+            this.wall.backTexture = texturePack;
+        }
+        this.dispatchEvent({ type: EVENT_UPDATE_TEXTURES, item: this });
+    }
+
+    setTextureMapAttribute(attribute, value) {
+        if (attribute && value) {
+            let texturePack = this.getTexture();
+            texturePack[attribute] = value;
+            this.dispatchEvent({ type: EVENT_MODIFY_TEXTURE_ATTRIBUTE, item: this, attribute: attribute, value: value });
+        }
+    }
+
+    /**
+     * Two separate textures are used for the walls. Based on which side of the wall this {HalfEdge} refers the texture is returned
+     * @return {Object} front/back Two separate textures are used for the walls. Based on which side of the wall this {@link HalfEdge} refers the texture is returned
+     */
+    getTexture() {
+        if (this.front) {
+            return this.wall.frontTexture;
+        } else {
+            return this.wall.backTexture;
+        }
+    }
+
+    /**
+     * Set a Texture to the wall. Based on the edge side as front or back the texture is applied appropriately to the wall
+     * @deprecated
+     * @param {String} textureUrl The path to the texture image
+     * @param {boolean} textureStretch Can the texture stretch? If not it will be repeated
+     * @param {Number} textureScale The scale value using which the number of repetitions of the texture image is calculated
+     * @emits {EVENT_REDRAW}
+     */
+    setTexture(textureUrl, textureStretch, textureScale) {
+        let texture = { url: textureUrl, stretch: textureStretch, scale: textureScale };
+        if (this.front) {
+            this.wall.frontTexture = texture;
+        } else {
+            this.wall.backTexture = texture;
+        }
+
+        //this.redrawCallbacks.fire();
+        this.dispatchEvent({ type: EVENT_REDRAW, item: this });
+    }
+
+    /**
+     * Emit the redraw event
+     * @emits {EVENT_REDRAW}
+     */
+    dispatchRedrawEvent() {
+        this.dispatchEvent({ type: EVENT_REDRAW, item: this });
+    }
+
+    /**
+     * Transform the {@link Corner} instance to a Vector3 instance using the x and y position returned as x and z
+     * @param {Corner} corner
+     * @return {Vector3}
+     * @see https://threejs.org/docs/#api/en/math/Vector3
+     */
+    transformCorner(corner) {
+        return new Vector3(corner.x, 0, corner.y);
+    }
+
+    generatePlane() {
+        this.__plane = this.__generateEdgePlane(true, this.__plane);
+        // this.__exteriorPlane = this.__plane;
+        // if (this.wall.start.getAttachedRooms().length < 2 || this.wall.end.getAttachedRooms().length < 2) {
+        //     this.__exteriorPlane = this.__generateEdgePlane(false, this.__exteriorPlane);
+        // }
+        // else{
+        //     this.__exteriorPlane = null;
+        // }
+    }
+
     destroy() {
         this.__plane = null;
         // this.wall = null;
@@ -918,6 +1003,24 @@ export class HalfEdge extends EventDispatcher {
 
     get exteriorPlane() {
         return this.__exteriorPlane;
+    }
+
+    get prev(){
+        return this.__prev;
+    }
+
+    set prev(halfEdge){
+        this.__prev = halfEdge;
+        this.__updateInteriorsExteriors();
+    }
+
+    get next(){
+        return this.__next;
+    }
+
+    set next(halfEdge){
+        this.__next = halfEdge;
+        this.__updateInteriorsExteriors();
     }
 
 }

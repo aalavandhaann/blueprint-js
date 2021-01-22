@@ -36609,7 +36609,7 @@ var config = {
   snapToGrid: true,
   dragOnlyX: false,
   dragOnlyY: false,
-  snapTolerance: 25,
+  snapTolerance: 50,
   gridSpacing: 50,
   directionalDrag: true,
   boundsX: 500,
@@ -37864,14 +37864,14 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
      * @type {HalfEdge}
      **/
 
-    _this.next = null;
+    _this.__next = null;
     /**
      * Reference to the previous halfedge instance connected to this
      * @property {HalfEdge} prev Reference to the previous halfedge instance connected to this
      * @type {HalfEdge}
      **/
 
-    _this.prev = null;
+    _this.__prev = null;
     /** 
      * The offset to maintain for the front and back walls from the midline of a wall
      * @property {Number} offset The offset to maintain for the front and back walls from the midline of a wall
@@ -37949,10 +37949,26 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
     _this.__normal = null; //new Vector3(0, 0, 0);
 
     _this.__mathPlane = null;
+    _this.__iStart = null;
+    _this.__iEnd = null;
+    _this.__iCenter = null;
+    _this.__iDistance = 0;
+    _this.__eStart = null;
+    _this.__eEnd = null;
+    _this.__eCenter = null;
+    _this.__eDistance = null;
     _this.offset = wall.thickness / 2.0;
     _this.height = wall.height;
     _this.__wallMovedEvent = _this.__wallMoved.bind(_assertThisInitialized(_this));
     _this.__wallUpdatedEvent = _this.__wallUpdated.bind(_assertThisInitialized(_this));
+
+    _this.wall.addEventListener(_events.EVENT_MOVED, _this.__wallMovedEvent);
+
+    _this.wall.addEventListener(_events.EVENT_UPDATED, _this.__wallUpdatedEvent);
+
+    if (_this.room) {
+      _this.room.addEventListener(_events.EVENT_CHANGED, _this.__wallMovedEvent);
+    }
 
     if (_this.front) {
       _this.wall.frontEdge = _assertThisInitialized(_this);
@@ -37960,18 +37976,31 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
       _this.wall.backEdge = _assertThisInitialized(_this);
     }
 
-    _this.wall.addEventListener(_events.EVENT_MOVED, _this.__wallMovedEvent);
-
-    _this.wall.addEventListener(_events.EVENT_UPDATED, _this.__wallUpdatedEvent);
+    _this.__updateInteriorsExteriors();
 
     return _this;
   }
 
   _createClass(HalfEdge, [{
+    key: "__updateInteriorsExteriors",
+    value: function __updateInteriorsExteriors() {
+      this.__iStart = this.__interiorStart();
+      this.__iEnd = this.__interiorEnd();
+      this.__iCenter = this.__interiorCenter();
+      this.__iDistance = this.__interiorDistance();
+      this.__eStart = this.__exteriorStart();
+      this.__eEnd = this.__exteriorEnd();
+      this.__eCenter = this.__exteriorCenter();
+      this.__eDistance = this.__exteriorDistance();
+    }
+  }, {
     key: "__wallMoved",
     value: function __wallMoved(evt) {
-      var scope = this; // scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
+      var scope = this;
+
+      this.__updateInteriorsExteriors(); // scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
       // scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
+
 
       this.generatePlane();
       scope.dispatchEvent({
@@ -37983,130 +38012,17 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
     key: "__wallUpdated",
     value: function __wallUpdated(evt) {
       var scope = this;
-      scope.offset = scope.wall.thickness * 0.5; // scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
+      scope.offset = scope.wall.thickness * 0.5;
+
+      this.__updateInteriorsExteriors(); // scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
       // scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
+
 
       this.generatePlane();
       scope.dispatchEvent({
         type: _events.EVENT_REDRAW,
         item: scope
       });
-    }
-  }, {
-    key: "setTextureMaps",
-    value: function setTextureMaps(texturePack) {
-      if (!texturePack.color) {
-        texturePack.color = '#FFFFFF';
-      }
-
-      if (!texturePack.repeat) {
-        texturePack.repeat = _constants.TEXTURE_DEFAULT_REPEAT; //For every TEXTURE_DEFAULT_REPEAT cms
-      }
-
-      if (this.front) {
-        this.wall.frontTexture = texturePack;
-      } else {
-        this.wall.backTexture = texturePack;
-      }
-
-      this.dispatchEvent({
-        type: _events.EVENT_UPDATE_TEXTURES,
-        item: this
-      });
-    }
-  }, {
-    key: "setTextureMapAttribute",
-    value: function setTextureMapAttribute(attribute, value) {
-      if (attribute && value) {
-        var texturePack = this.getTexture();
-        texturePack[attribute] = value;
-        this.dispatchEvent({
-          type: _events.EVENT_MODIFY_TEXTURE_ATTRIBUTE,
-          item: this,
-          attribute: attribute,
-          value: value
-        });
-      }
-    }
-    /**
-     * Two separate textures are used for the walls. Based on which side of the wall this {HalfEdge} refers the texture is returned
-     * @return {Object} front/back Two separate textures are used for the walls. Based on which side of the wall this {@link HalfEdge} refers the texture is returned
-     */
-
-  }, {
-    key: "getTexture",
-    value: function getTexture() {
-      if (this.front) {
-        return this.wall.frontTexture;
-      } else {
-        return this.wall.backTexture;
-      }
-    }
-    /**
-     * Set a Texture to the wall. Based on the edge side as front or back the texture is applied appropriately to the wall
-     * @deprecated
-     * @param {String} textureUrl The path to the texture image
-     * @param {boolean} textureStretch Can the texture stretch? If not it will be repeated
-     * @param {Number} textureScale The scale value using which the number of repetitions of the texture image is calculated
-     * @emits {EVENT_REDRAW}
-     */
-
-  }, {
-    key: "setTexture",
-    value: function setTexture(textureUrl, textureStretch, textureScale) {
-      var texture = {
-        url: textureUrl,
-        stretch: textureStretch,
-        scale: textureScale
-      };
-
-      if (this.front) {
-        this.wall.frontTexture = texture;
-      } else {
-        this.wall.backTexture = texture;
-      } //this.redrawCallbacks.fire();
-
-
-      this.dispatchEvent({
-        type: _events.EVENT_REDRAW,
-        item: this
-      });
-    }
-    /**
-     * Emit the redraw event
-     * @emits {EVENT_REDRAW}
-     */
-
-  }, {
-    key: "dispatchRedrawEvent",
-    value: function dispatchRedrawEvent() {
-      this.dispatchEvent({
-        type: _events.EVENT_REDRAW,
-        item: this
-      });
-    }
-    /**
-     * Transform the {@link Corner} instance to a Vector3 instance using the x and y position returned as x and z
-     * @param {Corner} corner
-     * @return {Vector3}
-     * @see https://threejs.org/docs/#api/en/math/Vector3
-     */
-
-  }, {
-    key: "transformCorner",
-    value: function transformCorner(corner) {
-      return new _three.Vector3(corner.x, 0, corner.y);
-    }
-  }, {
-    key: "generatePlane",
-    value: function generatePlane() {
-      this.__plane = this.__generateEdgePlane(true, this.__plane); // this.__exteriorPlane = this.__plane;
-      // if (this.wall.start.getAttachedRooms().length < 2 || this.wall.end.getAttachedRooms().length < 2) {
-      //     this.__exteriorPlane = this.__generateEdgePlane(false, this.__exteriorPlane);
-      // }
-      // else{
-      //     this.__exteriorPlane = null;
-      // }
     }
     /**
      * This generates the invisible planes in the scene that are used for interesection testing for the wall items
@@ -38272,6 +38188,67 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
         return this.wall.frontEdge;
       }
     }
+  }, {
+    key: "__factor",
+    value: function __factor(vector) {
+      var inside = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+      if (inside) {
+        return (vector.length() - 10) / vector.length();
+      }
+
+      return 10 / vector.length();
+    }
+    /**
+     * Return the 2D interior location that is at the start. 
+     * @return {Vector2} Return an object with attributes x, y
+     * @see https://threejs.org/docs/#api/en/math/Vector2
+     */
+
+  }, {
+    key: "__interiorStart",
+    value: function __interiorStart() {
+      var debug = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+      if (debug) {
+        console.log('*************************');
+        console.log('CALCULATE INTERIOR START');
+      }
+
+      var vec = this.interiorPointByEdges(this.prev, this, debug); //this.interiorPoint(this.prev, true);//        
+      // vec = vec.multiplyScalar(0.5);
+      // vec = vec.multiplyScalar(this.__factor(vec));
+      // vec = vec.clone().normalize().multiplyScalar(vec.length() - 10);
+
+      return this.getStart().location.clone().add(vec); // let vec = this.halfAngleVector(this.prev, this);
+      // return new Vector2(this.getStart().x + vec.x, this.getStart().y + vec.y);
+      // return {x:this.getStart().x + vec.x, y:this.getStart().y + vec.y};
+    }
+    /**
+     * Return the 2D interior location that is at the end. 
+     * @return {Vector2} Return an object with attributes x, y
+     * @see https://threejs.org/docs/#api/en/math/Vector2
+     */
+    // 
+
+  }, {
+    key: "__interiorEnd",
+    value: function __interiorEnd() {
+      var debug = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+      if (debug) {
+        console.log('*************************');
+        console.log('CALCULATE INTERIOR END');
+      }
+
+      var vec = this.interiorPointByEdges(this, this.next, debug); //this.interiorPoint(this.next, false);//
+      // vec = vec.multiplyScalar(0.5);
+      // vec = vec.multiplyScalar(this.__factor(vec));
+
+      return this.getEnd().location.clone().add(vec); // let vec = this.halfAngleVector(this, this.next);
+      // return new Vector2(this.getEnd().x + vec.x, this.getEnd().y + vec.y);
+      // return {x:this.getEnd().x + vec.x, y:this.getEnd().y + vec.y};
+    }
     /**
      * Return the 2D interior location that is at the center/middle. 
      * @return {Vector2} Return an object with attributes x, y
@@ -38279,8 +38256,8 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
      */
 
   }, {
-    key: "interiorCenter",
-    value: function interiorCenter() {
+    key: "__interiorCenter",
+    value: function __interiorCenter() {
       if (this.wall.wallType === _constants.WallTypes.STRAIGHT) {
         // x, y, x1, y1, x2, y2
         return new _three.Vector2((this.interiorStart().x + this.interiorEnd().x) / 2.0, (this.interiorStart().y + this.interiorEnd().y) / 2.0);
@@ -38297,8 +38274,8 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
      */
 
   }, {
-    key: "interiorDistance",
-    value: function interiorDistance() {
+    key: "__interiorDistance",
+    value: function __interiorDistance() {
       var start = this.interiorStart();
       var end = this.interiorEnd();
 
@@ -38311,68 +38288,22 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
       return _utils.Utils.distance(start, end);
     }
     /**
-     * Return the 2D interior location that is at the start. 
-     * @return {Vector2} Return an object with attributes x, y
-     * @see https://threejs.org/docs/#api/en/math/Vector2
-     */
-
-  }, {
-    key: "interiorStart",
-    value: function interiorStart() {
-      var debug = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
-      if (debug) {
-        console.log('*************************');
-        console.log('CALCULATE INTERIOR START');
-      }
-
-      var vec = this.interiorPointByEdges(this.prev, this, debug); //this.interiorPoint(this.prev, true);//        
-
-      vec = vec.multiplyScalar(0.5);
-      return this.getStart().location.clone().add(vec); // let vec = this.halfAngleVector(this.prev, this);
-      // return new Vector2(this.getStart().x + vec.x, this.getStart().y + vec.y);
-      // return {x:this.getStart().x + vec.x, y:this.getStart().y + vec.y};
-    }
-    /**
-     * Return the 2D interior location that is at the end. 
-     * @return {Vector2} Return an object with attributes x, y
-     * @see https://threejs.org/docs/#api/en/math/Vector2
-     */
-    // 
-
-  }, {
-    key: "interiorEnd",
-    value: function interiorEnd() {
-      var debug = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
-      if (debug) {
-        console.log('*************************');
-        console.log('CALCULATE INTERIOR END');
-      }
-
-      var vec = this.interiorPointByEdges(this, this.next, debug); //this.interiorPoint(this.next, false);//
-
-      vec = vec.multiplyScalar(0.5);
-      return this.getEnd().location.clone().add(vec); // let vec = this.halfAngleVector(this, this.next);
-      // return new Vector2(this.getEnd().x + vec.x, this.getEnd().y + vec.y);
-      // return {x:this.getEnd().x + vec.x, y:this.getEnd().y + vec.y};
-    }
-    /**
      * Return the 2D exterior location that is at the start. 
      * @return {Vector2} Return an object with attributes x, y
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
 
   }, {
-    key: "exteriorStart",
-    value: function exteriorStart() {
+    key: "__exteriorStart",
+    value: function __exteriorStart() {
       var debug = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-      var vec = this.interiorPointByEdges(this.prev, this); //this.interiorPoint(this.prev, true);//
-
-      vec = vec.multiplyScalar(-0.5);
-      return this.getStart().location.clone().add(vec); // let vec = this.halfAngleVector(this.prev, this);
+      // let vec = this.interiorPointByEdges(this.prev, this); //this.interiorPoint(this.prev, true);//
+      // // vec = vec.multiplyScalar(-0.5);
+      // // vec = vec.multiplyScalar(-this.__factor(vec, false));
+      // return this.getStart().location.clone().add(vec);
+      // let vec = this.halfAngleVector(this.prev, this);
       // return new Vector2(this.getStart().x - vec.x, this.getStart().y - vec.y);
-      // return new Vector2(this.getStart().x, this.getStart().y);
+      return new _three.Vector2(this.getStart().x, this.getStart().y);
     }
     /**
      * Return the 2D exterior location that is at the end. 
@@ -38381,15 +38312,16 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
      */
 
   }, {
-    key: "exteriorEnd",
-    value: function exteriorEnd() {
+    key: "__exteriorEnd",
+    value: function __exteriorEnd() {
       var debug = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-      var vec = this.interiorPointByEdges(this, this.next); //this.interiorPoint(this.next, false);//
-
-      vec = vec.multiplyScalar(-0.5);
-      return this.getEnd().location.clone().add(vec); // let vec = this.halfAngleVector(this, this.next);
+      // let vec = this.interiorPointByEdges(this, this.next); //this.interiorPoint(this.next, false);//
+      // // vec = vec.multiplyScalar(-0.5);
+      // // vec = vec.multiplyScalar(-this.__factor(vec, false));
+      // return this.getEnd().location.clone().add(vec);
+      // let vec = this.halfAngleVector(this, this.next);
       // return new Vector2(this.getEnd().x - vec.x, this.getEnd().y - vec.y);
-      // return new Vector2(this.getEnd().x, this.getEnd().y);
+      return new _three.Vector2(this.getEnd().x, this.getEnd().y);
     }
     /**
      * Return the 2D exterior location that is at the center/middle. 
@@ -38398,8 +38330,8 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
      */
 
   }, {
-    key: "exteriorCenter",
-    value: function exteriorCenter() {
+    key: "__exteriorCenter",
+    value: function __exteriorCenter() {
       if (this.wall.wallType === _constants.WallTypes.STRAIGHT) {
         // x, y, x1, y1, x2, y2
         return new _three.Vector2((this.exteriorStart().x + this.exteriorEnd().x) / 2.0, (this.exteriorStart().y + this.exteriorEnd().y) / 2.0);
@@ -38416,8 +38348,8 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
      */
 
   }, {
-    key: "exteriorDistance",
-    value: function exteriorDistance() {
+    key: "__exteriorDistance",
+    value: function __exteriorDistance() {
       var start = this.exteriorStart();
       var end = this.exteriorEnd();
 
@@ -38428,6 +38360,46 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
       }
 
       return _utils.Utils.distance(start, end);
+    }
+  }, {
+    key: "interiorStart",
+    value: function interiorStart() {
+      return this.__iStart.clone();
+    }
+  }, {
+    key: "interiorEnd",
+    value: function interiorEnd() {
+      return this.__iEnd.clone();
+    }
+  }, {
+    key: "interiorCenter",
+    value: function interiorCenter() {
+      return this.__iCenter.clone();
+    }
+  }, {
+    key: "interiorDistance",
+    value: function interiorDistance() {
+      return this.__iDistance;
+    }
+  }, {
+    key: "exteriorStart",
+    value: function exteriorStart() {
+      return this.__eStart.clone();
+    }
+  }, {
+    key: "exteriorEnd",
+    value: function exteriorEnd() {
+      return this.__eEnd.clone();
+    }
+  }, {
+    key: "exteriorCenter",
+    value: function exteriorCenter() {
+      return this.__eCenter.clone();
+    }
+  }, {
+    key: "exteriorDistance",
+    value: function exteriorDistance() {
+      return this.__eDistance;
     }
     /** Get the corners of the half edge.
      * @returns {Corner[]} An array of x,y pairs.
@@ -38445,8 +38417,8 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
 
       if (!v1 || !v2) {
         // throw new Error('Need a valid next or previous edge');            
-        console.warn('Need a valid next or previous edge');
-        return this.halfAngleVector(v1, v2).multiplyScalar(2.0);
+        // console.warn('Need a valid next or previous edge');
+        return this.halfAngleVector(v1, v2); //.multiplyScalar(2.0);
       }
 
       var u = null,
@@ -38456,16 +38428,19 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
           v3 = null,
           w3 = null,
           axis3 = null;
-      var dot = 0;
-      var angle_u_v_w = 0.0;
+      var dot = 0; // let v2Thickness = v2.wall.thickness;
+      // let v1Thickness = v1.wall.thickness;
+
+      var v2Thickness = v2.wall.frontEdge && v2.wall.backEdge ? v2.wall.thickness * 0.5 : v2.wall.thickness;
+      var v1Thickness = v1.wall.frontEdge && v1.wall.backEdge ? v1.wall.thickness * 0.5 : v1.wall.thickness;
       u = v1.getEnd().location.clone().sub(v1.getStart().location).normalize();
       v = v2.getEnd().location.clone().sub(v2.getStart().location).normalize();
-      u = u.multiplyScalar(v2.wall.thickness);
-      v = v.multiplyScalar(v1.wall.thickness);
-      w = u.clone().add(v);
+      u = u.multiplyScalar(v2Thickness);
+      v = v.multiplyScalar(v1Thickness); // w = u.clone().add(v);
+
       u3 = new _three.Vector3(u.x, u.y, 0.0);
-      v3 = new _three.Vector3(v.x, v.y, 0.0);
-      w3 = new _three.Vector3(w.x, w.y, 0.0);
+      v3 = new _three.Vector3(v.x, v.y, 0.0); // w3 = new Vector3(w.x, w.y, 0.0);
+
       axis3 = u3.clone().normalize().cross(v3.clone().normalize());
 
       if (axis3.z < 0) {
@@ -38480,17 +38455,17 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
       v3.y = v.y;
       dot = u.clone().normalize().dot(v.clone().normalize());
 
-      if (dot < 0.0) {
+      if (dot < -0.1) {
         var uvAngle = Math.acos(dot);
         var offsetTheta = uvAngle - Math.PI * 0.5;
         var v_temp = v.clone();
 
         if (dot < 1e-6 - 1.0) {
-          u3.x += 1e-4;
-          u3.y += 1e-4;
-          v3.x += 1e-4;
-          v3.y += 1e-4;
-          axis3 = u3.clone().normalize().cross(v3.clone().normalize()).negate().normalize();
+          v3.x -= 1e-2;
+          v3.y -= 1e-2;
+          v.x = v3.x;
+          v.y = v3.y;
+          axis3 = v3.clone().normalize().cross(u3.clone().normalize()).negate().normalize();
         }
 
         v3 = v3.clone().applyAxisAngle(axis3.clone().normalize(), offsetTheta);
@@ -38508,7 +38483,13 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
         }
       }
 
-      w = u.clone().add(v);
+      w = u.clone().add(v); // dot = u.clone().normalize().dot(v.clone().normalize());
+      // let abs_dot = -dot;//Equivalent to 180 - degrees(math.cos(dot))
+      // let abs_dot_acos = Math.acos(abs_dot);
+      // // let magnitude = Math.sqrt((Math.pow(u.length(),2) + Math.pow(v.length(), 2)) + (2 * u.length() * v.length() * abs_dot));
+      // let magnitude = ((u.length() ** 2 + v.length() ** 2) + (2 * u.length() * v.length() * abs_dot)) ** 0.5;
+      // let theta = Math.asin((v.length() * Math.sin(abs_dot_acos)) / magnitude);
+      // w = (u.clone().rotateAround(new Vector2(), -theta)).normalize().multiplyScalar(magnitude);
 
       if (debug) {
         console.log('==============================================');
@@ -38771,6 +38752,122 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
       return halfAngleVector;
     }
   }, {
+    key: "setTextureMaps",
+    value: function setTextureMaps(texturePack) {
+      if (!texturePack.color) {
+        texturePack.color = '#FFFFFF';
+      }
+
+      if (!texturePack.repeat) {
+        texturePack.repeat = _constants.TEXTURE_DEFAULT_REPEAT; //For every TEXTURE_DEFAULT_REPEAT cms
+      }
+
+      if (this.front) {
+        this.wall.frontTexture = texturePack;
+      } else {
+        this.wall.backTexture = texturePack;
+      }
+
+      this.dispatchEvent({
+        type: _events.EVENT_UPDATE_TEXTURES,
+        item: this
+      });
+    }
+  }, {
+    key: "setTextureMapAttribute",
+    value: function setTextureMapAttribute(attribute, value) {
+      if (attribute && value) {
+        var texturePack = this.getTexture();
+        texturePack[attribute] = value;
+        this.dispatchEvent({
+          type: _events.EVENT_MODIFY_TEXTURE_ATTRIBUTE,
+          item: this,
+          attribute: attribute,
+          value: value
+        });
+      }
+    }
+    /**
+     * Two separate textures are used for the walls. Based on which side of the wall this {HalfEdge} refers the texture is returned
+     * @return {Object} front/back Two separate textures are used for the walls. Based on which side of the wall this {@link HalfEdge} refers the texture is returned
+     */
+
+  }, {
+    key: "getTexture",
+    value: function getTexture() {
+      if (this.front) {
+        return this.wall.frontTexture;
+      } else {
+        return this.wall.backTexture;
+      }
+    }
+    /**
+     * Set a Texture to the wall. Based on the edge side as front or back the texture is applied appropriately to the wall
+     * @deprecated
+     * @param {String} textureUrl The path to the texture image
+     * @param {boolean} textureStretch Can the texture stretch? If not it will be repeated
+     * @param {Number} textureScale The scale value using which the number of repetitions of the texture image is calculated
+     * @emits {EVENT_REDRAW}
+     */
+
+  }, {
+    key: "setTexture",
+    value: function setTexture(textureUrl, textureStretch, textureScale) {
+      var texture = {
+        url: textureUrl,
+        stretch: textureStretch,
+        scale: textureScale
+      };
+
+      if (this.front) {
+        this.wall.frontTexture = texture;
+      } else {
+        this.wall.backTexture = texture;
+      } //this.redrawCallbacks.fire();
+
+
+      this.dispatchEvent({
+        type: _events.EVENT_REDRAW,
+        item: this
+      });
+    }
+    /**
+     * Emit the redraw event
+     * @emits {EVENT_REDRAW}
+     */
+
+  }, {
+    key: "dispatchRedrawEvent",
+    value: function dispatchRedrawEvent() {
+      this.dispatchEvent({
+        type: _events.EVENT_REDRAW,
+        item: this
+      });
+    }
+    /**
+     * Transform the {@link Corner} instance to a Vector3 instance using the x and y position returned as x and z
+     * @param {Corner} corner
+     * @return {Vector3}
+     * @see https://threejs.org/docs/#api/en/math/Vector3
+     */
+
+  }, {
+    key: "transformCorner",
+    value: function transformCorner(corner) {
+      return new _three.Vector3(corner.x, 0, corner.y);
+    }
+  }, {
+    key: "generatePlane",
+    value: function generatePlane() {
+      this.__plane = this.__generateEdgePlane(true, this.__plane); // this.__exteriorPlane = this.__plane;
+      // if (this.wall.start.getAttachedRooms().length < 2 || this.wall.end.getAttachedRooms().length < 2) {
+      //     this.__exteriorPlane = this.__generateEdgePlane(false, this.__exteriorPlane);
+      // }
+      // else{
+      //     this.__exteriorPlane = null;
+      // }
+    }
+  }, {
     key: "destroy",
     value: function destroy() {
       this.__plane = null; // this.wall = null;
@@ -38807,6 +38904,26 @@ var HalfEdge = /*#__PURE__*/function (_EventDispatcher) {
     key: "exteriorPlane",
     get: function get() {
       return this.__exteriorPlane;
+    }
+  }, {
+    key: "prev",
+    get: function get() {
+      return this.__prev;
+    },
+    set: function set(halfEdge) {
+      this.__prev = halfEdge;
+
+      this.__updateInteriorsExteriors();
+    }
+  }, {
+    key: "next",
+    get: function get() {
+      return this.__next;
+    },
+    set: function set(halfEdge) {
+      this.__next = halfEdge;
+
+      this.__updateInteriorsExteriors();
     }
   }]);
 
@@ -39098,14 +39215,14 @@ var Corner = /*#__PURE__*/function (_EventDispatcher) {
         if (this.floorplan.rooms.length < 10) {
           this.updateAttachedRooms(true);
         }
-      }
+      } // this.wallStarts.forEach((wall) => {
+      //     wall.fireMoved();
+      // });
+      // this.wallEnds.forEach((wall) => {
+      //     wall.fireMoved();
+      // });
 
-      this.wallStarts.forEach(function (wall) {
-        wall.fireMoved();
-      });
-      this.wallEnds.forEach(function (wall) {
-        wall.fireMoved();
-      });
+
       this.dispatchEvent({
         type: _events.EVENT_MOVED,
         item: this,
@@ -42614,7 +42731,7 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
       return this.__frameWidth;
     },
     set: function set(value) {
-      this.__frameWidth = value;
+      this.__frameWidth = value ? value : 100;
 
       this.__updateGeometry();
     }
@@ -42624,7 +42741,7 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
       return this.__frameHeight;
     },
     set: function set(value) {
-      this.__frameHeight = value;
+      this.__frameHeight = value ? value : 200;
 
       this.__updateGeometry();
     }
@@ -42634,7 +42751,7 @@ var ParametricBaseDoor = /*#__PURE__*/function (_EventDispatcher) {
       return this.__frameThickness;
     },
     set: function set(value) {
-      this.__frameThickness = value;
+      this.__frameThickness = value ? value : 20;
 
       this.__updateGeometry();
     }
@@ -45278,6 +45395,11 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
       this.__onWallItems.forEach(function (item) {
         item.newWallEdge();
       });
+
+      this.dispatchEvent({
+        type: _events.EVENT_UPDATED,
+        item: this
+      });
     }
   }, {
     key: "backEdge",
@@ -45297,6 +45419,11 @@ var Wall = /*#__PURE__*/function (_EventDispatcher) {
 
       this.__onWallItems.forEach(function (item) {
         item.newWallEdge();
+      });
+
+      this.dispatchEvent({
+        type: _events.EVENT_UPDATED,
+        item: this
       });
     }
   }]);
@@ -45429,11 +45556,11 @@ var Room = /*#__PURE__*/function (_EventDispatcher) {
   _createClass(Room, [{
     key: "__wallsChanged",
     value: function __wallsChanged(evt) {
-      this.updateInteriorCorners();
       this.dispatchEvent({
         type: _events.EVENT_CHANGED,
         item: this
       });
+      this.updateInteriorCorners();
     }
   }, {
     key: "_roomUpdated",
@@ -51427,8 +51554,8 @@ var Material3D = /*#__PURE__*/function (_MeshStandardMaterial) {
 
     _classCallCheck(this, Material3D);
 
-    _this = _super.call(this, parameters);
-    console.log('BLENDING :: ', _this.blending);
+    _this = _super.call(this, parameters); // console.log('BLENDING :: ',this.blending);
+
     _this.__scene = scene;
     _this.__reflectsScene = reflectsScene;
     _this.__mirrorCamera = null; // this.roughness = (!textureMapPack.reflective) ? 0.5 : textureMapPack.reflective;
@@ -114869,9 +114996,9 @@ var Grid2D = /*#__PURE__*/function (_Graphics) {
 
       var totalLines = gridSize / spacing;
       var halfSize = gridSize * 0.5;
-      var linewidth = 1.0 / this.__gridScale;
-      var highlightLineWidth = 1.0 / this.__gridScale;
-      var normalColor = 0xEBEBEB;
+      var linewidth = Math.max(1.0 / this.__gridScale, 1.0);
+      var highlightLineWidth = Math.max(2.0 / this.__gridScale, 1.0);
+      var normalColor = 0xE0E0E0;
       var highlightColor = 0xD0D0D0;
       this.clear();
 
@@ -115393,19 +115520,25 @@ var CornerView2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
     key: "__drawCornerState",
     value: function __drawCornerState(radius, borderColor, fillColor) {
       this.clear();
-      var alpha = 1.0; //0.1;//
+      var alpha = 0.5; //1.0;//
 
-      if (_detectTouchDevice.isMobile) {
-        this.beginFill(borderColor, alpha);
-        this.drawCircle(0, 0, radius * 2.5);
-        this.endFill();
-      }
+      var useRadius = _detectTouchDevice.isMobile ? radius * 2.5 : radius;
+      var insideRadius = useRadius * 0.55;
+      var xOut = 0; //useRadius * 0.5;//
+
+      var yOut = 0; //useRadius * 0.5;//
+      // if (isMobile) {
+      //     useRadius = radius * 2.5;
+      //     // this.beginFill(borderColor, alpha);
+      //     // this.drawCircle(0, 0, useRadius);
+      //     // this.endFill();
+      // }
 
       this.beginFill(borderColor, alpha);
-      this.drawCircle(0, 0, radius);
+      this.drawCircle(xOut, yOut, useRadius);
       this.endFill();
       this.beginFill(fillColor, alpha);
-      this.drawCircle(0, 0, radius * 0.55);
+      this.drawCircle(xOut, yOut, insideRadius);
       this.endFill();
     }
   }, {
@@ -115686,6 +115819,7 @@ var WallDimensions2D = /*#__PURE__*/function (_Graphics) {
   }, {
     key: "__drawDimensionLine",
     value: function __drawDimensionLine() {
+      // console.trace('DRAW DIMENSION LINE ::: ', this.__wall.id);
       var wallDirectionNormalized = this.__wall.wallDirectionNormalized();
 
       var wallAngle = this.__wall.wallDirectionNormalized().angle();
@@ -115783,11 +115917,20 @@ var Edge2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
   _createClass(Edge2D, [{
     key: "__getCornerCoordinates",
     value: function __getCornerCoordinates() {
-      var sPoint = _dimensioning.Dimensioning.cmToPixelVector2D(this.__wall.start.location.clone());
+      // let sPoint = Dimensioning.cmToPixelVector2D(this.__wall.start.location.clone());
+      // let ePoint = Dimensioning.cmToPixelVector2D(this.__wall.end.location.clone());
+      // return [sPoint, ePoint];
+      var iStartPoint = _dimensioning.Dimensioning.cmToPixelVector2D(this.__edge.interiorStart());
 
-      var ePoint = _dimensioning.Dimensioning.cmToPixelVector2D(this.__wall.end.location.clone());
+      var iEndPoint = _dimensioning.Dimensioning.cmToPixelVector2D(this.__edge.interiorEnd());
 
-      return [sPoint, ePoint];
+      var eStartPoint = _dimensioning.Dimensioning.cmToPixelVector2D(this.__edge.exteriorStart());
+
+      var eEndPoint = _dimensioning.Dimensioning.cmToPixelVector2D(this.__edge.exteriorEnd());
+
+      var vectStart = eStartPoint.clone().sub(iStartPoint);
+      var vectEnd = eEndPoint.clone().sub(iEndPoint);
+      return [iStartPoint.add(vectStart.multiplyScalar(0.5)), iEndPoint.add(vectEnd.multiplyScalar(0.5))];
     }
   }, {
     key: "__getPolygonCoordinates",
@@ -115854,9 +115997,13 @@ var Edge2D = /*#__PURE__*/function (_BaseFloorplanViewEle) {
 
       this.clear();
       var lineThickness = 2.5;
+      var pStart = points[2];
+      var pEnd = points[3]; // let pStart = points[0].clone().add(points[0].clone().sub(points[3]).multiplyScalar(0.5)); 
+      // let pEnd = points[1].clone().add(points[2].clone().sub(points[3]).multiplyScalar(0.5)); 
+
       this.lineStyle(lineThickness, color, 1.0);
-      this.moveTo(points[2].x, points[2].y);
-      this.lineTo(points[3].x, points[3].y);
+      this.moveTo(pStart.x, pStart.y);
+      this.lineTo(pEnd.x, pEnd.y);
       this.lineStyle(lineThickness, color, 0.0);
       this.beginFill(color, alpha);
 
@@ -117803,6 +117950,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
       worldHeight: _this2.__worldHeight,
       interaction: _this2.renderer.plugins.interaction
     });
+    _this2.__tempWallHolder = new _pixi.Graphics();
     _this2.__snapToGrid = false;
     _this2.__keyboard = new _KeyboardManager2D.KeyboardListener2D();
     _this2.__keyListenerEvent = _this2.__keyListener.bind(_assertThisInitialized(_this2));
@@ -117825,9 +117973,8 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
 
     _this2.__floorplanContainer.addChild(_this2.__grid2d);
 
-    _this2.__floorplanContainer.addChild(_this2.__boundaryHolder);
+    _this2.__floorplanContainer.addChild(_this2.__boundaryHolder); // this.__floorplanContainer.addChild(this.__tempWall);
 
-    _this2.__floorplanContainer.addChild(_this2.__tempWall);
 
     _this2.__floorplanContainer.addChild(origin);
 
@@ -117835,7 +117982,11 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
 
     _this2.__floorplanContainer.addChild(_this2.__groupTransformer);
 
+    _this2.__tempWallHolder.addChild(_this2.__tempWall);
+
     _this2.stage.addChild(_this2.__floorplanContainer);
+
+    _this2.stage.addChild(_this2.__tempWallHolder);
 
     _this2.__canvasHolder.appendChild(_this2.view);
 
@@ -118176,7 +118327,9 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
       var y = windowSize.y * 0.5 - floorplanCenter.z * 0.5; // - (bounds*0.5);
 
       this.__floorplanContainer.x = x;
-      this.__floorplanContainer.y = y; // console.log(x, y, floorplanCenter);
+      this.__floorplanContainer.y = y;
+      this.__tempWallHolder.x = x;
+      this.__tempWallHolder.y = y; // console.log(x, y, floorplanCenter);
     }
   }, {
     key: "__zoomed",
@@ -118189,6 +118342,7 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
       var maxZoomOut = Math.max(window.innerWidth, window.innerHeight) / bounds;
       zoom = zoom < maxZoomOut ? maxZoomOut : zoom > 60 ? 60 : zoom;
       this.__floorplanContainer.scale.x = this.__floorplanContainer.scale.y = zoom;
+      this.__tempWallHolder.scale.x = this.__tempWallHolder.scale.y = zoom;
       this.__grid2d.gridScale = this.__floorplanContainer.scale.x;
     }
   }, {
@@ -118205,8 +118359,8 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
       var yValue = Math.min(-topleft.y, xy.y);
       xValue = Math.max(windowSize.x - bottomright.x, xValue);
       yValue = Math.max(windowSize.y - bottomright.y, yValue);
-      this.__floorplanContainer.x = xValue;
-      this.__floorplanContainer.y = yValue; // console.log('---------------------------------------------');
+      this.__floorplanContainer.x = this.__tempWallHolder.x = xValue;
+      this.__floorplanContainer.y = this.__tempWallHolder.y = yValue; // console.log('---------------------------------------------');
       // console.log('CURRENT ZOOM :: ', zoom);
       // console.log('TOP LEFT :: ', topleft);
       // console.log('BOTTOM RIGHT :: ', bottomright);

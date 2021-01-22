@@ -655,6 +655,7 @@ export class Wall extends EventDispatcher {
         this.__onWallItems.forEach((item) => {
             item.newWallEdge();
         });
+        this.dispatchEvent({ type: EVENT_UPDATED, item: this });
     }
 
     get backEdge() {
@@ -672,6 +673,7 @@ export class Wall extends EventDispatcher {
         this.__onWallItems.forEach((item) => {
             item.newWallEdge();
         });
+        this.dispatchEvent({ type: EVENT_UPDATED, item: this });
     }
 }
 

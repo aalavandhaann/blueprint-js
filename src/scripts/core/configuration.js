@@ -31,7 +31,7 @@ export var config = { dimUnit: dimCentiMeter, wallHeight: 250,
     wallThickness: 20, systemUI: false, 
     scale: 1, snapToGrid: true, 
     dragOnlyX: false, dragOnlyY: false, 
-    snapTolerance: 25, gridSpacing: 50, 
+    snapTolerance: 50, gridSpacing: 50, 
     directionalDrag: true, 
     boundsX: 500, boundsY: 500, 
     viewBounds: 5000 };

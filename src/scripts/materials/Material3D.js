@@ -4,7 +4,7 @@ import { TEXTURE_DEFAULT_REPEAT } from '../core/constants';
 export class Material3D extends MeshStandardMaterial {
     constructor(parameters, textureMapPack, scene, reflectsScene = false) {
         super(parameters);
-        console.log('BLENDING :: ',this.blending);
+        // console.log('BLENDING :: ',this.blending);
         this.__scene = scene;
         this.__reflectsScene = reflectsScene;
         this.__mirrorCamera = null;

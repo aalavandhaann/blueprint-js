@@ -135,6 +135,7 @@ export class Viewer2D extends Application {
             worldHeight: this.__worldHeight,
             interaction: this.renderer.plugins.interaction
         });
+        this.__tempWallHolder = new Graphics();
 
         this.__snapToGrid = false;
         this.__keyboard = new KeyboardListener2D();
@@ -161,13 +162,17 @@ export class Viewer2D extends Application {
 
         this.__floorplanContainer.addChild(this.__grid2d);
         this.__floorplanContainer.addChild(this.__boundaryHolder);
-        this.__floorplanContainer.addChild(this.__tempWall);
+        // this.__floorplanContainer.addChild(this.__tempWall);
         this.__floorplanContainer.addChild(origin);
         this.__floorplanContainer.addChild(this.__floorplanElementsHolder);
         this.__floorplanContainer.addChild(this.__groupTransformer);
 
+        this.__tempWallHolder.addChild(this.__tempWall);
+
 
         this.stage.addChild(this.__floorplanContainer);
+        this.stage.addChild(this.__tempWallHolder);
+
         this.__canvasHolder.appendChild(this.view);
 
         this.__floorplanContainer.drag().pinch().wheel();
@@ -435,6 +440,8 @@ export class Viewer2D extends Application {
         let y = (windowSize.y * 0.5)-(floorplanCenter.z*0.5);// - (bounds*0.5);
         this.__floorplanContainer.x = x;
         this.__floorplanContainer.y = y;
+        this.__tempWallHolder.x = x;
+        this.__tempWallHolder.y = y;
         // console.log(x, y, floorplanCenter);
     }
 
@@ -443,7 +450,10 @@ export class Viewer2D extends Application {
         let bounds = Dimensioning.cmToPixel(Configuration.getNumericValue(viewBounds));// * zoom;
         let maxZoomOut = Math.max(window.innerWidth, window.innerHeight) / bounds;
         zoom = (zoom < maxZoomOut) ? maxZoomOut : (zoom > 60) ? 60 : zoom;
+        
         this.__floorplanContainer.scale.x = this.__floorplanContainer.scale.y = zoom;
+        this.__tempWallHolder.scale.x = this.__tempWallHolder.scale.y = zoom;
+
         this.__grid2d.gridScale = this.__floorplanContainer.scale.x;
     }
 
@@ -465,8 +475,8 @@ export class Viewer2D extends Application {
         yValue = Math.max(windowSize.y-bottomright.y, yValue);
         
         
-        this.__floorplanContainer.x = xValue;
-        this.__floorplanContainer.y = yValue;
+        this.__floorplanContainer.x = this.__tempWallHolder.x = xValue;
+        this.__floorplanContainer.y = this.__tempWallHolder.y = yValue;
         // console.log('---------------------------------------------');
         // console.log('CURRENT ZOOM :: ', zoom);
         // console.log('TOP LEFT :: ', topleft);

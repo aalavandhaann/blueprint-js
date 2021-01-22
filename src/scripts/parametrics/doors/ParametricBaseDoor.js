@@ -331,7 +331,7 @@ export class ParametricBaseDoor extends EventDispatcher {
     }
 
     set frameWidth(value) {
-        this.__frameWidth = value;
+        this.__frameWidth = (value) ? value : 100;
         this.__updateGeometry();
     }
 
@@ -340,7 +340,7 @@ export class ParametricBaseDoor extends EventDispatcher {
     }
 
     set frameHeight(value) {
-        this.__frameHeight = value;
+        this.__frameHeight = (value) ? value : 200;
         this.__updateGeometry();
     }
 
@@ -349,7 +349,7 @@ export class ParametricBaseDoor extends EventDispatcher {
     }
 
     set frameThickness(value) {
-        this.__frameThickness = value;
+        this.__frameThickness = (value) ? value : 20;
         this.__updateGeometry();
     }
 
