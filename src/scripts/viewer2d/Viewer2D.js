@@ -61,7 +61,16 @@ class TemporaryWall extends Graphics {
 
 export class Viewer2D extends Application {
     constructor(canvasHolder, floorplan, options) {
-        super({ width: 512, height: 512, });
+        const { pixiAppOptions, pixiViewportOptions } = options;
+        const pixiDefalultAppOpts = {
+            width: 512, 
+            height: 512,
+            resolution: window.devicePixelRatio || 2,
+            antialias: true,
+            transparent: true,
+        };
+
+        super(Object.assign(pixiDefalultAppOpts, pixiAppOptions));
         this.__eventDispatcher = new EventDispatcher();
 
         let opts = { 
@@ -128,13 +137,16 @@ export class Viewer2D extends Application {
 
         this.__floorplanLoadedEvent = this.__center.bind(this);
 
-        this.__floorplanContainer = new Viewport({
+        const pixiViewportDefaultOpts = {
             screenWidth: window.innerWidth,
             screenHeight: window.innerHeight,
             worldWidth: this.__worldWidth,
             worldHeight: this.__worldHeight,
-            interaction: this.renderer.plugins.interaction
-        });
+            interaction: this.renderer.plugins.interaction,
+            passiveWheel: false,
+        };
+
+        this.__floorplanContainer = new Viewport(Object.assign(pixiViewportDefaultOpts, pixiViewportOptions));
         this.__tempWallHolder = new Graphics();
 
         this.__snapToGrid = false;
@@ -596,6 +608,9 @@ export class Viewer2D extends Application {
         this.__currentHeight = h;
 
         this.renderer.resize(w, h);
+        this.renderer.view.style.width = w + 'px';
+        this.renderer.view.style.height = h + 'px';
+        this.renderer.view.style.display = 'block';
         this.__floorplanContainer.resize(w, h, this.__worldWidth, this.__worldHeight);
 
 

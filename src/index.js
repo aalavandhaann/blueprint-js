@@ -80,8 +80,14 @@ let opts = {
             translate: true,
             dimlinecolor: '#3E0000',
             dimarrowcolor: '#FF0000',
-            dimtextcolor: '#000000'
-        }
+            dimtextcolor: '#000000',
+            pixiAppOptions: {
+                resolution: 4,
+            },
+            pixiViewportOptions: {
+                passiveWheel: false,
+            }
+        },
     },
     viewer3d: {
         id: 'bp3djs-viewer3d',
