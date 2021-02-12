@@ -67,9 +67,9 @@ export class Viewer2D extends Application {
             height: 512,
             resolution: window.devicePixelRatio || 2,
             antialias: true,
-            transparent: true,
+            transparent: false,
         };
-
+        // super({width: 512, height: 512});
         super(Object.assign(pixiDefalultAppOpts, pixiAppOptions));
         this.__eventDispatcher = new EventDispatcher();
 

@@ -117883,10 +117883,17 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
 
     _classCallCheck(this, Viewer2D);
 
-    _this2 = _super2.call(this, {
+    var pixiAppOptions = options.pixiAppOptions,
+        pixiViewportOptions = options.pixiViewportOptions;
+    var pixiDefalultAppOpts = {
       width: 512,
-      height: 512
-    });
+      height: 512,
+      resolution: window.devicePixelRatio || 2,
+      antialias: true,
+      transparent: false
+    }; // super({width: 512, height: 512});
+
+    _this2 = _super2.call(this, Object.assign(pixiDefalultAppOpts, pixiAppOptions));
     _this2.__eventDispatcher = new _three.EventDispatcher();
     var opts = {
       'corner-radius': 20,
@@ -117943,13 +117950,15 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
     _this2.__windowResizeEvent = _this2._handleWindowResize.bind(_assertThisInitialized(_this2));
     _this2.__resetFloorplanEvent = _this2.__resetFloorplan.bind(_assertThisInitialized(_this2));
     _this2.__floorplanLoadedEvent = _this2.__center.bind(_assertThisInitialized(_this2));
-    _this2.__floorplanContainer = new _pixiViewport.Viewport({
+    var pixiViewportDefaultOpts = {
       screenWidth: window.innerWidth,
       screenHeight: window.innerHeight,
       worldWidth: _this2.__worldWidth,
       worldHeight: _this2.__worldHeight,
-      interaction: _this2.renderer.plugins.interaction
-    });
+      interaction: _this2.renderer.plugins.interaction,
+      passiveWheel: false
+    };
+    _this2.__floorplanContainer = new _pixiViewport.Viewport(Object.assign(pixiViewportDefaultOpts, pixiViewportOptions));
     _this2.__tempWallHolder = new _pixi.Graphics();
     _this2.__snapToGrid = false;
     _this2.__keyboard = new _KeyboardManager2D.KeyboardListener2D();
@@ -118508,6 +118517,9 @@ var Viewer2D = /*#__PURE__*/function (_Application) {
       this.__currentWidth = w;
       this.__currentHeight = h;
       this.renderer.resize(w, h);
+      this.renderer.view.style.width = w + 'px';
+      this.renderer.view.style.height = h + 'px';
+      this.renderer.view.style.display = 'block';
 
       this.__floorplanContainer.resize(w, h, this.__worldWidth, this.__worldHeight);
 

@@ -82,7 +82,7 @@ let opts = {
             dimarrowcolor: '#FF0000',
             dimtextcolor: '#000000',
             pixiAppOptions: {
-                resolution: 4,
+                resolution: 1,
             },
             pixiViewportOptions: {
                 passiveWheel: false,
