@@ -52629,7 +52629,7 @@ var Floor3D = /*#__PURE__*/function (_EventDispatcher) {
         var corner = this.room.corners[cornerIndex];
         var vertex = shapeGeometry.vertices[i];
         vertex.z = vertex.y;
-        vertex.y = corner.elevation + 0.1;
+        vertex.y = corner.elevation + 0.3;
         cornerIndex--; // console.log('CORNER LOCATION ::: ', corner.location);
         // console.log('VERTEX ::: ', vertex);
       } // console.log('===================================');

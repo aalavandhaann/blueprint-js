@@ -159,7 +159,7 @@ export class Floor3D extends EventDispatcher {
             let corner = this.room.corners[cornerIndex];
             let vertex = shapeGeometry.vertices[i];
             vertex.z = vertex.y;
-            vertex.y = corner.elevation + 0.1;
+            vertex.y = corner.elevation + 0.3;
             cornerIndex--;
             // console.log('CORNER LOCATION ::: ', corner.location);
             // console.log('VERTEX ::: ', vertex);
