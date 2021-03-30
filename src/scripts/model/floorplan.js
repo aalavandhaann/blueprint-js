@@ -51,7 +51,7 @@ export class Floorplan extends EventDispatcher {
         this.rooms = [];
 
 
-        this.__boundary = null;
+        this.__boundary = new Boundary(this);
 
         this.__externalCorners = [];
         this.__externalWalls = [];
@@ -710,7 +710,8 @@ export class Floorplan extends EventDispatcher {
                 }
 
                 floorplan.boundary.points = cmPoints;
-                this.__boundary = new Boundary(this, floorplan.boundary);
+                this.__boundary.addBoundaryRegion(cmPoints);
+                this.__boundary.metadata = floorplan.boundary;
             }
         }
 
@@ -825,23 +826,23 @@ export class Floorplan extends EventDispatcher {
             }
         }
 
-        if('boundary' in floorplan){
-            if(floorplan.boundary.points){
-                let cmPoints = [];
-                for (let i =0;i < floorplan.boundary.points.length;i++){
-                    let point = floorplan.boundary.points[i];
-                    let cmPoint = {
-                        x: Dimensioning.cmFromMeasureRaw(point.x), 
-                        y: Dimensioning.cmFromMeasureRaw(point.y),
-                        elevation: Dimensioning.cmFromMeasureRaw(point.elevation),
-                    };
-                    cmPoints.push(cmPoint);
-                }
+        // if('boundary' in floorplan){
+        //     if(floorplan.boundary.points){
+        //         let cmPoints = [];
+        //         for (let i =0;i < floorplan.boundary.points.length;i++){
+        //             let point = floorplan.boundary.points[i];
+        //             let cmPoint = {
+        //                 x: Dimensioning.cmFromMeasureRaw(point.x), 
+        //                 y: Dimensioning.cmFromMeasureRaw(point.y),
+        //                 elevation: Dimensioning.cmFromMeasureRaw(point.elevation),
+        //             };
+        //             cmPoints.push(cmPoint);
+        //         }
 
-                floorplan.boundary.points = cmPoints;
-                this.__boundary = new Boundary(this, floorplan.boundary);
-            }
-        }
+        //         floorplan.boundary.points = cmPoints;
+        //         this.__boundary = new Boundary(this, floorplan.boundary);
+        //     }
+        // }
 
         Configuration.setValue(configDimUnit, currentUnit);
         this.dispatchEvent({ type: EVENT_EXTERNAL_FLOORPLAN_LOADED, item: this });

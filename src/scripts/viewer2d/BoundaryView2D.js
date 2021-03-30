@@ -35,6 +35,10 @@ export class BoundaryView2D extends BaseFloorplanViewElement2D {
     __drawBoundaryRegion(pointsColor, lineColor){
         this.clear();
 
+        if(!this.__boundary.points.length){
+            return;
+        }
+
         let alpha = 1.0;//0.1;//
         let fillAlpha = 1.0;
         let radius = this.__options['boundary-point-radius'];

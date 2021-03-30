@@ -477,6 +477,13 @@ export class WallView2D extends BaseFloorplanViewElement2D {
                     {
                         return;
                     }
+
+                    if(
+                        this.__floorplan.boundary.intersectsExternalDesign(cornerPoints.start.x, cornerPoints.start.y) ||
+                        this.__floorplan.boundary.intersectsExternalDesign(cornerPoints.end.x, cornerPoints.end.y)
+                        ){
+                        return;
+                    }
                 }
             }
 

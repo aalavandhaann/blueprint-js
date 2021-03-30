@@ -49,6 +49,9 @@ class CornerGroupRectangle extends Graphics {
                 if(!this.__floorplan.boundary.containsPoint(Dimensioning.pixelToCm(co.x), Dimensioning.pixelToCm(co.y))){
                     return;
                 }
+                if(this.__floorplan.boundary.intersectsExternalDesign(Dimensioning.pixelToCm(co.x), Dimensioning.pixelToCm(co.y))){
+                    return;
+                }
             }
             finalPoints.push(co);
         }   
@@ -92,6 +95,9 @@ class CornerGroupRectangle extends Graphics {
 
             if(this.__floorplan.boundary){
                 if(!this.__floorplan.boundary.containsPoint(Dimensioning.pixelToCm(co.x), Dimensioning.pixelToCm(co.y))){
+                    return;
+                }
+                if(this.__floorplan.boundary.intersectsExternalDesign(Dimensioning.pixelToCm(co.x), Dimensioning.pixelToCm(co.y))){
                     return;
                 }
             }
@@ -148,6 +154,9 @@ class CornerGroupRectangle extends Graphics {
 
             if(this.__floorplan.boundary){
                 if(!this.__floorplan.boundary.containsPoint(Dimensioning.pixelToCm(co.x), Dimensioning.pixelToCm(co.y))){
+                    return;
+                }
+                if(this.__floorplan.boundary.intersectsExternalDesign(Dimensioning.pixelToCm(co.x), Dimensioning.pixelToCm(co.y))){
                     return;
                 }
             }

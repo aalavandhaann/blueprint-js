@@ -20,7 +20,7 @@ export class BoundaryView3D extends Mesh{
     }
 
     __drawBoundary(){
-        if(this.__boundary)       {
+        if(this.__boundary && this.__boundary.points.length)       {
             if(this.__boundary.isValid){
                 this.removeFromScene();
                 this.__floorPlane = this.__buildFloor();

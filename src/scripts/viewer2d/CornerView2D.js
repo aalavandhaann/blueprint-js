@@ -97,12 +97,6 @@ export class CornerView2D extends BaseFloorplanViewElement2D {
             cmCo.x = Dimensioning.pixelToCm(cmCo.x);
             cmCo.y = Dimensioning.pixelToCm(cmCo.y);
 
-            if(this.__floorplan.boundary){
-                if(!this.__floorplan.boundary.containsPoint(cmCo.x, cmCo.y)){
-                    return;
-                }
-            }
-
             if (Configuration.getBooleanValue(snapToGrid) || this.__snapToGrid) {
                 cmCo.x = Math.floor(cmCo.x / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
                 cmCo.y = Math.floor(cmCo.y / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
@@ -114,6 +108,14 @@ export class CornerView2D extends BaseFloorplanViewElement2D {
 
             if (!Configuration.getBooleanValue(dragOnlyX) && Configuration.getBooleanValue(dragOnlyY)) {
                 cmCo.x = this.__corner.location.x;
+            }
+            if(this.__floorplan.boundary){
+                if(!this.__floorplan.boundary.containsPoint(cmCo.x, cmCo.y)){
+                    return;
+                }
+                if(this.__floorplan.boundary.intersectsExternalDesign(cmCo.x, cmCo.y)){
+                    return;
+                }
             }
             this.__corner.move(cmCo.x, cmCo.y);
         }

@@ -129,6 +129,15 @@ export class CornerGroup {
         return this.__center.clone();
     }
 
+    get boundary(){
+        let points = [];
+        for (let i =0;i<this.__corners.length;i++){
+            let corner = this.__corners[i];
+            points.push([corner.location.x, corner.location.y]); 
+        }
+        return points;
+    }
+
 }
 export class CornerGroups {
     /**

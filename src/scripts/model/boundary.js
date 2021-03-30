@@ -1,90 +1,141 @@
 import { EventDispatcher } from "three";
 import inside from 'point-in-polygon'
+import alpha_shape from 'alpha-shape'
 
-export default class Boundary extends EventDispatcher{
-    constructor(floorplan, boundaryMetaData){
+import { EVENT_BOUNDARY_UPDATE, EVENT_EXTERNAL_FLOORPLAN_LOADED } from "../core/events"
+
+export default class Boundary extends EventDispatcher {
+    constructor(floorplan, boundaryMetaData = {}) {
         super();
         this.__floorplan = floorplan;
-        this.__metadata = {points:[], style: {type: 'color', color: '#00FF00', repeat: 50, colormap: null}};
+        this.__metadata = { style: { type: 'color', color: '#00FF00', repeat: 50, colormap: null } };
+        this.__boundaryRegions = [];
+        this.__boundaryRegionsRAW = [];
+        this.__roomRegions = [];
+        this.__roomRegionsRaw = [];
+        this.__externalRegions = [];
+        this.__externalRegionsRaw = [];
+        this.__width = 1.0;
+        this.__height = 1.0;
+
+        this.__externalDesignEvent = this.__externalDesignBoundaries.bind(this);
+
 
         for (var opt in this.__metadata) {
             if (this.__metadata.hasOwnProperty(opt) && boundaryMetaData.hasOwnProperty(opt)) {
                 this.__metadata[opt] = boundaryMetaData[opt];
             }
         }
+        this.__isValid = true;
+        this.__floorplan.addEventListener(EVENT_EXTERNAL_FLOORPLAN_LOADED, this.__externalDesignEvent);
+    }
 
-        this.__polygonAsArray = null;
-        this.__width = 0;
-        this.__height = 0;
-        this.__isValid = this.__metadata.points.length > 0;
+    __externalDesignBoundaries(evt) {
+        let i = 0;
+        let pts = [], ptsraw = [];
+        this.__externalRegions = [];
+        this.__externalRegionsRaw = [];
 
-        if(this.__isValid){
-            let minX = Number.MAX_VALUE;
-            let minY = Number.MAX_VALUE;
-            let maxX = -Number.MAX_VALUE;
-            let maxY = -Number.MAX_VALUE;
-            let pts = this.points;
+        for (i = 0; i < this.__floorplan.externalCorners.length; i++) {
+            let c = this.__floorplan.externalCorners[i];
+            pts.push(c.location.clone());
+            ptsraw.push([c.location.x, c.location.y]);
+        }
+        let concave_hull = alpha_shape (0.1, ptsraw);
+        this.__externalRegionsRaw.push(ptsraw);
+        console.log(ptsraw);
+        console.log(concave_hull);
 
-            for (let i =0;i<pts.length;i++){
-                let point = pts[i];
+    }
 
-                minX = Math.min(minX, point.x);
-                minY = Math.min(minY, point.y);
-
-                maxX = Math.max(maxX, point.x);
-                maxY = Math.max(maxY, point.y);
+    containsPoint(x, y, excludeBoundaryIndex = -1) {
+        let flag = true;
+        let i = 0, j = 0;
+        for (i = 0; i < this.__boundaryRegionsRAW.length; i++) {
+            if (i == excludeBoundaryIndex) {
+                continue;
             }
-
-            this.__width = maxX - minX;
-            this.__height = maxY - minY;
-
-            this.__updatePoints();
+            let pts = this.__boundaryRegionsRAW[i];
+            let isInside = inside([x, y], pts);
+            flag &= isInside;
         }
+        return flag;
     }
 
-    __updatePoints(){
-        if(!this.__isValid){
-            return;
+    intersectsExternalDesign(x, y) {
+        let flag = false;
+        let i = 0;
+        for (i = 0; i < this.__externalRegionsRaw.length; i++) {
+            let pts = this.__externalRegionsRaw[i];
+            let isInside = inside([x, y], pts);
+            flag |= isInside;
         }
-        let points = this.points;
-        this.__polygonAsArray = [];
-        for (let i = 0;i<points.length;i++){
-            let point = points[i];
-            this.__polygonAsArray.push([point.x, point.y]);
-        }
+        return flag;
     }
 
-    containsPoint(x, y){
-        if(!this.__isValid){
-            return true;
-        }
-        return inside([x, y], this.__polygonAsArray);
+    update() {
+
     }
 
-    get width(){
+    clearBoundaryRegions() {
+        this.__boundaryRegions = [];
+        this.__boundaryRegionsRAW = []
+    }
+
+    addBoundaryRegion(points) {
+        let minX = Number.MAX_VALUE;
+        let minY = Number.MAX_VALUE;
+        let maxX = -Number.MAX_VALUE;
+        let maxY = -Number.MAX_VALUE;
+        let pts = points;
+        let ptsraw = [];
+        let i = 0;
+        for (i = 0; i < pts.length; i++) {
+            let point = pts[i];
+
+            minX = Math.min(minX, point.x);
+            minY = Math.min(minY, point.y);
+
+            maxX = Math.max(maxX, point.x);
+            maxY = Math.max(maxY, point.y);
+            ptsraw.push([point.x, point.y]);
+        }
+
+        this.__width = maxX - minX;
+        this.__height = maxY - minY;
+
+        this.__boundaryRegions.push(points);
+        this.__boundaryRegionsRAW.push(ptsraw);
+    }
+
+    get width() {
         return this.__width;
     }
 
-    get height(){
+    get height() {
         return this.__height;
     }
 
-    get styleRepeat(){
+    get points() {
+        return (this.__boundaryRegions.length) ? this.__boundaryRegions[0] : [];
+    }
+
+    get styleRepeat() {
         return this.__metadata.style.repeat;
     }
 
     /**
      * return if style type is color or texture
      */
-    get styleType(){
+    get styleType() {
         return this.__metadata.style.type;
     }
 
-    set styleType(type){
+    set styleType(type) {
         this.__metadata.style.type = type;
     }
 
-    get style(){
+    get style() {
         return this.__metadata.style;
     }
 
@@ -92,31 +143,30 @@ export default class Boundary extends EventDispatcher{
      * return a hexacolor string if styleType is color
      * return a path to the ground texture if styleType is texture
      */
-    get styleValue(){
+    get styleValue() {
         return this.__metadata.style.value;
     }
 
-    set styleValue(value){
+    set styleValue(value) {
         this.__metadata.style.value = value;
     }
 
-    get points(){
-        return this.__metadata.points;
-    }
-
-    set points(points){
-        this.__isValid = false;
-        if(!points){
-            console.error('Setting invalid type for boundary points');
-        }
-        this.__metadata.points = points;
-        if(points.length){
-            this.__isValid = points.length > 0;
-        } 
-        this.__updatePoints();       
-    }
-
-    get isValid(){
+    get isValid() {
         return this.__isValid;
+    }
+
+
+    get metadata() {
+        return this.__metadata;
+    }
+
+    set metadata(mdata) {
+        for (let opt in this.__metadata) {
+            if (this.__metadata.hasOwnProperty(opt) && mdata.hasOwnProperty(opt)) {
+                this.__metadata[opt] = mdata[opt];
+                console.log('OPTION :: ', opt, ', VALUE :: ', mdata[opt]);
+            }
+        }
+        this.dispatchEvent({ type: EVENT_BOUNDARY_UPDATE, item: this });
     }
 }
