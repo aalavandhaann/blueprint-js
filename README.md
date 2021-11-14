@@ -107,7 +107,7 @@ This is a customizable application built on three.js that allows users to design
 - `npm run-script app-dev`: Generates the application and serves the app folder with unminified code
 - `npm run-script app-production`: Generates the application and serves the app folder with minified code
 - `npm run-script frameworkonly-dev`: Builds and generates only bp3djs.js (unminified) that can be used in your project with custom design. However ensure you know how to use the framework and its api. The generated framework can be found inside `bin` folder.
-- `npm run-script app-dev`: Builds and generates only bp3djs.js (minified) that can be used in your project with custom design. However ensure you know how to use the framework and its api. The generated framework can be found inside `bin` folder.
+- `npm run-script frameworkonly-production`: Builds and generates only bp3djs.js (minified) that can be used in your project with custom design. However ensure you know how to use the framework and its api. The generated framework can be found inside `bin` folder.
 
 Then, visit `http://localhost:1234` (most probably) in your browser.
 
