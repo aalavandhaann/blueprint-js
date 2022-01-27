@@ -54,7 +54,7 @@
         "pixi.js": "^5.3.3",
         "point-in-polygon": "^1.1.0",
         "quicksettings": "^3.0.1",
-        "three": "^0.118.3",
+        "three": "^0.137.0",
         "three-gltf-exporter": "0.0.1",
         "three-reflector": "^1.0.2",
         "three-reflector2": "0.0.6"
