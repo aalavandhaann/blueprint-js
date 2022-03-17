@@ -38,7 +38,7 @@ Many things have changed with this version,
 
 [**archimesh - Superhero of parametric dimensions**](https://github.com/dfelinto/blender-1/tree/master/archimesh)
 
-And of course to [**parcel**](https://parceljs.org/) and [**npm**](https://www.npmjs.com/) for their ever awesomeness. And also to the tons of other libraries to make this project possible
+And of course to [**parcel**](https://parceljs.org/) and [**npm**](https://www.npmjs.com/) for their ever awesomeness. And also to the tons of other libraries to make this project possible.
 
 # Texture packs and credits to the people behind it
 
