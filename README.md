@@ -1,3 +1,9 @@
+# FOR ANYONE LOOKING FOR COMMERCIAL IMPLEMENTATION OF BLUEPRINT-JS PROJECTS
+## Contact Details
+- Name: Craftpixels (Madz)
+- Email: madz@craftpixels.in
+- Skype: madzindia
+
 # README #
 This is a javascript floorplanner tool based on the existing typescript based project [blueprint3d](https://github.com/furnishup/blueprint3d)
 
