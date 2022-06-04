@@ -1,6 +1,7 @@
 # FOR ANYONE LOOKING FOR COMMERCIAL IMPLEMENTATION OF BLUEPRINT-JS PROJECTS
 ## Contact Details
 - Name: Craftpixels (Madz)
+- Website: [www.craftpixels.in](www.craftpixels.in)
 - Email: madz@craftpixels.in
 - Skype: madzindia
 
