@@ -1,6 +1,6 @@
 import { EventDispatcher, SphereGeometry, ShaderMaterial, Mesh, TextureLoader, Color, DoubleSide } from 'three';
-import { AxesHelper } from 'three';
-import { GridHelper } from 'three';
+import { AxesHelper, GridHelper } from 'three';
+import { Vector3 } from 'three';
 import { Configuration, gridSpacing, viewBounds } from '../core/configuration';
 import { EVENT_CHANGED } from '../core/events';
 
@@ -20,7 +20,7 @@ export class Skybox extends EventDispatcher {
         this.scene = scene;
         this.renderer = renderer;
 
-        this.sphereRadius = 4000;
+        this.sphereRadius = 1;
         this.__gridSize = Configuration.getNumericValue(viewBounds)*5.0;//10000;
         this.widthSegments = 32;
         this.heightSegments = 15;
@@ -41,11 +41,12 @@ export class Skybox extends EventDispatcher {
         this.skyMat = undefined;
 
         this.skyGeo = new SphereGeometry(this.sphereRadius, this.widthSegments, this.heightSegments);
-        this.sky = new Mesh(this.skyGeo, this.skyMat);
+        this.sky = new Mesh(this.skyGeo, this.plainSkyMat);
         //		this.sky.position.x += this.sphereRadius*0.5;
 
         let axesHelper = new AxesHelper(1000);
         this.scene.add(axesHelper);
+        this.scene.add(this.sky);
         // axesHelper.visible = false;
 
         this.__createGridFloors();
@@ -71,7 +72,8 @@ export class Skybox extends EventDispatcher {
     
 
     __updateGrid(evt) {
-        this.__gridSize = Configuration.getNumericValue(viewBounds)*5.0;//10000;
+        this.__gridSize = Configuration.getNumericValue(viewBounds);//*5.0;//10000;
+        this.sky.scale.set(this.__gridSize*0.5, this.__gridSize*0.5, this.__gridSize*0.5)
         this.__createGridFloors();
     }
 

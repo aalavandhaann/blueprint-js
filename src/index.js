@@ -15,8 +15,8 @@ import * as floor_textures_json from './floor_textures.json';
 import * as wall_textures_json from './wall_textures.json';
 // import * as default_room_json from './parametrics_items.json';
 // import * as default_room_json from './empty_room.json';
-import * as default_room_json from './designWithBoundary.json';
-// import * as default_room_json from './designWithoutBoundary.json';
+// import * as default_room_json from './designWithBoundary.json';
+import * as default_room_json from './designWithoutBoundary.json';
 // import * as default_room_json from './LShape.json';
 
 const fps = FPS.of({x: 0, y: 0});
@@ -28,10 +28,10 @@ let startY = 0;
 let panelWidths = 200;
 let uxInterfaceHeight = 450;
 let subPanelsHeight = 460;
-let floor_textures = floor_textures_json['default'];
+let floor_textures = floor_textures_json;//['default'];
 let floor_texture_keys = Object.keys(floor_textures);
 
-let wall_textures = wall_textures_json['default'];
+let wall_textures = wall_textures_json;//['default'];
 let wall_texture_keys = Object.keys(wall_textures);
 
 let blueprint3d = null;

@@ -2,14 +2,13 @@
     "name": "blueprint3d-js",
     "version": "1.0.0",
     "description": "This is the core framework of Blueprint-js for creating floorplans in 2d and 3d",
-    "main": "src/scripts/blueprint.js",
     "scripts": {
-        "app-dev": "parcel src/index.html -d app/",
-        "app-production": "parcel build src/index.html -d app/ --no-source-maps   --experimental-scope-hoisting",
-        "for-git-demo-dev": "parcel build src/index.html -d demo/ --public-url https://aalavandhaann.github.io/blueprint-js/demo/  --no-minify",
-        "for-git-demo-production": "parcel build src/index.html -d demo/ --no-source-maps --public-url https://aalavandhaann.github.io/blueprint-js/demo/",
-        "frameworkonly-dev": "parcel build src/scripts/blueprint.js --global BP3DJS --no-source-maps -d bin/ --target browser --out-file bp3djs.js  --no-minify",
-        "frameworkonly-production": "parcel build src/scripts/blueprint.js  --global BP3DJS --no-source-maps -d bin/ --target browser --out-file bp3djs.js",
+        "app-dev": "parcel src/index.html --dist-dir app/",
+        "app-production": "parcel build src/index.html --dist-dir app/ --no-source-maps --experimental-scope-hoisting",
+        "for-git-demo-dev": "parcel build src/index.html --dist-dir demo/ --public-url https://aalavandhaann.github.io/blueprint-js/demo/  --no-optimize --no-content-hash",
+        "for-git-demo-production": "parcel build src/index.html --dist-dir demo/ --no-source-maps --public-url https://aalavandhaann.github.io/blueprint-js/demo/  --no-content-hash",
+        "frameworkonly-dev": "parcel build src/scripts/blueprint.js --global BP3DJS --no-source-maps --dist-dir bin/ --target browser --out-file bp3djs.js  --no-optimize  --no-content-hash",
+        "frameworkonly-production": "parcel build src/scripts/blueprint.js  --global BP3DJS --no-source-maps --dist-dir bin/ --target browser --out-file bp3djs.js  --no-content-hash",
         "docs": "esdoc"
     },
     "repository": {
@@ -20,20 +19,6 @@
     "license": "ISC",
     "bugs": {
         "url": "https://github.com/aalavandhaann/blueprint-js/issues"
-    },
-    "devDependencies": {
-        "@babel/plugin-transform-runtime": "^7.12.1",
-        "babel-core": "^6.26.3",
-        "babel-plugin-external-helpers": "^6.22.0",
-        "babel-preset-latest": "^6.24.1",
-        "cssnano": "^4.1.10",
-        "esdoc": "^1.0.4",
-        "esdoc-standard-plugin": "^1.0.0",
-        "eslint": "^7.7.0",
-        "eslint-plugin-import": "^2.22.0",
-        "event-stream": ">4.0.0",
-        "livereload": "^0.9.1",
-        "npm-run-all": "^4.0.2"
     },
     "dependencies": {
         "@thi.ng/geom-hull": "0.0.27",
@@ -49,14 +34,20 @@
         "gsap": "^3.5.0",
         "jszip": "^3.5.0",
         "line-intersect": "^2.2.1",
-        "parcel-bundler": "^1.12.4",
+        "node-gyp": "^9.0.0",
         "pixi-viewport": "^4.18.0",
-        "pixi.js": "^5.3.3",
+        "pixi.js": "^6.4.2",
         "point-in-polygon": "^1.1.0",
         "quicksettings": "^3.0.1",
         "three": "^0.118.3",
         "three-gltf-exporter": "0.0.1",
-        "three-reflector": "^1.0.2",
-        "three-reflector2": "0.0.6"
+        "three-reflector": "^1.0.2"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.18.6",
+        "buffer": "^6.0.3",
+        "parcel": "^2.6.2",
+        "process": "^0.11.10",
+        "querystring-es3": "^0.2.1"
     }
 }

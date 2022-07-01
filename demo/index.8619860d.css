@@ -1,0 +1,39 @@
+html {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+div {
+  margin: 0;
+  padding: 0;
+}
+
+#bp3djs-viewer2d, #bp3djs-viewer3d {
+  width: 500px;
+  height: 500px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#bp3djs-controls {
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.qs_color {
+  visibility: hidden;
+  position: absolute;
+  left: 5px;
+}
+
+/*# sourceMappingURL=index.HASH_REF_1479c97b8619860d.css.map */

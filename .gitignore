@@ -1,3 +1,6 @@
+dist/
+build/
+.parcel-cache/
 node_modules/
 gitpush.sh~
 /.babelrc~
@@ -7,3 +10,4 @@ dist/*
 3D-Models-Internet/*
 
 __pycache__
+package-lock.json
