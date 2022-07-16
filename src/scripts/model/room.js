@@ -372,6 +372,12 @@ export class Room extends EventDispatcher {
             if (edge.next === this.edgePointer) {
                 break;
             } else {
+                if(edge.next.wall.thickness !== edge.wall.thickness){
+                    let iEnd = edge.interiorEnd();
+                    let cEnd = edge.getEnd();
+                    this.interiorCorners.push(iEnd);
+                    this.interiorCorners3D.push(new Vector3(iEnd.x, cEnd.elevation, iEnd.y));
+                }
                 edge = edge.next;
             }
         }

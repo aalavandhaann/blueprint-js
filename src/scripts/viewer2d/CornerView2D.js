@@ -109,8 +109,9 @@ export class CornerView2D extends BaseFloorplanViewElement2D {
             if (!Configuration.getBooleanValue(dragOnlyX) && Configuration.getBooleanValue(dragOnlyY)) {
                 cmCo.x = this.__corner.location.x;
             }
+            
             if(this.__floorplan.boundary){
-                if(!this.__floorplan.boundary.containsPoint(cmCo.x, cmCo.y)){
+                if(this.__floorplan.boundary.containsPoint(cmCo.x, cmCo.y)){
                     return;
                 }
                 if(this.__floorplan.boundary.intersectsExternalDesign(cmCo.x, cmCo.y)){

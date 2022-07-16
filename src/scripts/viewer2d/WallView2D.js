@@ -141,7 +141,7 @@ export class Edge2D extends BaseFloorplanViewElement2D {
         super(floorplan, options);
         this.__wall = wall;
         this.__edge = edge;
-        this.__debugMode = false;
+        this.__debugMode = true;
         this.__deactivate();
     }
 
@@ -192,10 +192,24 @@ export class Edge2D extends BaseFloorplanViewElement2D {
         return points;
     }
 
-    __drawEdgeArrow(forEdge, color = 0xDDDDDD, alpha = 1.0) {
+    __drawEdgeArrow(forEdge, color = 0xDDDDDD, alpha = 1.0, toEdge = null) {
         let start = Dimensioning.cmToPixelVector2D(forEdge.getStart().location.clone());
         let end = Dimensioning.cmToPixelVector2D(forEdge.getEnd().location.clone());
         let vect = end.clone().sub(start);
+        if(toEdge){
+            let start2 = Dimensioning.cmToPixelVector2D(toEdge.getStart().location.clone());
+            let end2 = Dimensioning.cmToPixelVector2D(toEdge.getEnd().location.clone());
+            let vect2 = end2.clone().sub(start2);
+            let dot = vect.clone().normalize().dot(vect2.clone().normalize().negate());
+            let radians = Math.acos(dot);
+            vect = vect.normalize().rotateAround(new Vector2(), radians*0.5).multiplyScalar(50.0);
+            // vect = (vect2.sub(vect));
+            console.log('====================================');
+            console.log('DOT PRODUCT ::: ', dot);
+            console.log('ANGLE ::: ', ((Math.acos(dot) * 180.0) / Math.PI));
+            console.log('====================================');
+        }
+        
         let midPoint = start.clone().add(vect.multiplyScalar(0.5));
         let lineThickness = 3.0;
         let arrowSize = 7;
@@ -249,14 +263,18 @@ export class Edge2D extends BaseFloorplanViewElement2D {
         let alpha_new = (this.__debugMode) ? 0.1 : alpha;
         this.__drawEdgePolygon(this.__edge, color, alpha_new);//0.1);//
 
-        if (this.__debugMode) {
-            this.__drawEdgeArrow(this.__edge, 0x000000, alpha);
+        if (this.__debugMode && this.parent.selected) {
+            this.__drawEdgeArrow(this.__edge, 0x00FF00, alpha);
             if (this.__edge.prev) { //Red for previous edge
                 this.__drawEdgeArrow(this.__edge.prev, 0xFF0000, alpha);
+                console.log('EDGE TO PREVIOUS');
+                this.__drawEdgeArrow(this.__edge, 0xF00000, alpha, this.__edge.prev);
             }
             if (this.__edge.next) { //Blue for Next edge
+                console.log('EDGE TO NEXT');
                 this.__drawEdgeArrow(this.__edge.next, 0x0000FF, alpha);
-            }
+                this.__drawEdgeArrow(this.__edge.next, 0x00000F, alpha, this.__edge);
+            }            
         }
 
         if(!this.__debugMode){

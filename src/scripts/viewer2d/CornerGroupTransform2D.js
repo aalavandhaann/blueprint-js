@@ -46,7 +46,7 @@ class CornerGroupRectangle extends Graphics {
             co = co.applyMatrix4(translateMatrix);
             
             if(this.__floorplan.boundary){
-                if(!this.__floorplan.boundary.containsPoint(Dimensioning.pixelToCm(co.x), Dimensioning.pixelToCm(co.y))){
+                if(this.__floorplan.boundary.containsPoint(Dimensioning.pixelToCm(co.x), Dimensioning.pixelToCm(co.y))){
                     return;
                 }
                 if(this.__floorplan.boundary.intersectsExternalDesign(Dimensioning.pixelToCm(co.x), Dimensioning.pixelToCm(co.y))){
@@ -94,7 +94,7 @@ class CornerGroupRectangle extends Graphics {
 
 
             if(this.__floorplan.boundary){
-                if(!this.__floorplan.boundary.containsPoint(Dimensioning.pixelToCm(co.x), Dimensioning.pixelToCm(co.y))){
+                if(this.__floorplan.boundary.containsPoint(Dimensioning.pixelToCm(co.x), Dimensioning.pixelToCm(co.y))){
                     return;
                 }
                 if(this.__floorplan.boundary.intersectsExternalDesign(Dimensioning.pixelToCm(co.x), Dimensioning.pixelToCm(co.y))){
@@ -153,7 +153,7 @@ class CornerGroupRectangle extends Graphics {
             co = co.applyMatrix4(transformMatrix);
 
             if(this.__floorplan.boundary){
-                if(!this.__floorplan.boundary.containsPoint(Dimensioning.pixelToCm(co.x), Dimensioning.pixelToCm(co.y))){
+                if(this.__floorplan.boundary.containsPoint(Dimensioning.pixelToCm(co.x), Dimensioning.pixelToCm(co.y))){
                     return;
                 }
                 if(this.__floorplan.boundary.intersectsExternalDesign(Dimensioning.pixelToCm(co.x), Dimensioning.pixelToCm(co.y))){

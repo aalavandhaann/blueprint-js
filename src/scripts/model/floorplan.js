@@ -1103,6 +1103,8 @@ export class Floorplan extends EventDispatcher {
             }
         });
 
+        this.assignOrphanEdges();
+
         this.__roofPlanesForIntersection.length = 0;
         this.__floorPlanesForIntersection.length = 0;
         this.__wallPlanesForIntersection.length = 0;
@@ -1112,8 +1114,7 @@ export class Floorplan extends EventDispatcher {
         this.__wallPlanesForIntersection.push.apply(this.__wallPlanesForIntersection, this.createWallEdgePlanes());
 
         this.__cornerGroups.createGroups();
-
-        this.assignOrphanEdges();
+        
         this.updateFloorTextures();
 
         this.dispatchEvent({ type: EVENT_UPDATED, item: this });

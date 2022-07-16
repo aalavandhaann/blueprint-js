@@ -49,7 +49,7 @@ export default class Boundary extends EventDispatcher {
     }
 
     containsPoint(x, y, excludeBoundaryIndex = -1) {
-        let flag = true;
+        let flag = (this.__boundaryRegionsRAW.length > 0);
         let i = 0, j = 0;
         for (i = 0; i < this.__boundaryRegionsRAW.length; i++) {
             if (i == excludeBoundaryIndex) {
@@ -164,7 +164,6 @@ export default class Boundary extends EventDispatcher {
         for (let opt in this.__metadata) {
             if (this.__metadata.hasOwnProperty(opt) && mdata.hasOwnProperty(opt)) {
                 this.__metadata[opt] = mdata[opt];
-                console.log('OPTION :: ', opt, ', VALUE :: ', mdata[opt]);
             }
         }
         this.dispatchEvent({ type: EVENT_BOUNDARY_UPDATE, item: this });

@@ -579,10 +579,26 @@ export class HalfEdge extends EventDispatcher {
         u = v1.getEnd().location.clone().sub(v1.getStart().location).normalize();
         v = v2.getEnd().location.clone().sub(v2.getStart().location).normalize();
 
+        let dot_temp = u.dot(v);
+
         u = u.multiplyScalar(v2Thickness);
         v = v.multiplyScalar(v1Thickness);
         // w = u.clone().add(v);
 
+        
+        /**
+         * When two walls are connected with 180 degrees apart, then simply
+         * rotate the vector by 90 degrees clockwise and use it as the interiorPoint
+         */
+        if(dot_temp == 1.0){
+            return u.clone().normalize().rotateAround(new Vector2(), 1.57).multiplyScalar(this.wall.thickness);
+        }
+        // let angle = Math.acos(dot_temp);
+        // if(this == v1){
+        //     return u.clone().rotateAround(new Vector2(), (angle+Math.PI)*0.5).normalize().multiplyScalar(this.wall.thickness);
+        // }
+        // return v.clone().rotateAround(new Vector2(), angle*0.5).normalize().multiplyScalar(this.wall.thickness);
+        
         u3 = new Vector3(u.x, u.y, 0.0);
         v3 = new Vector3(v.x, v.y, 0.0);
         // w3 = new Vector3(w.x, w.y, 0.0);

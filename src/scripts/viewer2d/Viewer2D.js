@@ -343,7 +343,7 @@ export class Viewer2D extends Application {
             }
 
             if(this.__floorplan.boundary){
-                if(!this.__floorplan.boundary.containsPoint(cmCo.x, cmCo.y)){
+                if(this.__floorplan.boundary.containsPoint(cmCo.x, cmCo.y)){
                     return;
                 }
             }
