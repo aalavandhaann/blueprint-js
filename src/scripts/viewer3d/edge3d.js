@@ -3,7 +3,7 @@ import { EventDispatcher, Vector2, Vector3, MeshStandardMaterial, FrontSide, Dou
 import { Utils } from '../core/utils.js';
 import { EVENT_REDRAW, EVENT_UPDATE_TEXTURES, EVENT_DELETED, EVENT_MODIFY_TEXTURE_ATTRIBUTE, EVENT_CAMERA_ACTIVE_STATUS } from '../core/events.js';
 import { WallMaterial3D } from '../materials/WallMaterial3D.js';
-import { TEXTURE_PROPERTY_COLOR, TEXTURE_PROPERTY_REPEAT, TEXTURE_PROPERTY_ROTATE } from '../core/constants.js';
+import { TEXTURE_PROPERTY_COLOR} from '../core/constants.js';
 
 export class Edge3D extends EventDispatcher {
     constructor(scene, edge, controls, opts) {
@@ -82,19 +82,6 @@ export class Edge3D extends EventDispatcher {
                 let value = evt.value;
                 if (attribute === TEXTURE_PROPERTY_COLOR) {
                     this.__wallMaterial3D.textureColor = value;
-                }
-                if (attribute === TEXTURE_PROPERTY_REPEAT) {
-                    this.__wallMaterial3D.repeat = value;
-                }
-                if (attribute === TEXTURE_PROPERTY_ROTATE) {
-                    this.__wallMaterial3D.map.center=new Vector2(0.5,0.5);
-                    this.__wallMaterial3D.map.rotation = value;
-                    //this.__wallMaterial3D.normalMap.rotation = value;
-                    //this.__wallMaterial3D.aoMap.rotation = value;
-                    //this.__wallMaterial3D.roughnessMap.rotation = value;
-                    
-                    
-                    
                 }
             }
         }

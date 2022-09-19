@@ -274,7 +274,6 @@ export class Viewer3D extends Scene {
         }
 
         scope.shouldRender = true;
-
         let floorplanCenter = scope.floorplan.getDimensions(true);
         scope.controls.target = floorplanCenter.clone();
         scope.camera.position.set(floorplanCenter.x, 300, floorplanCenter.z * 5);
