@@ -151,12 +151,11 @@ export class Item extends EventDispatcher {
                     let wallEdge = (this.__metadata.wallSide === 'front') ? wall.frontEdge : wall.backEdge;
                     let wallSurfacePoint = this.__metadata.wallSurfacePoint;
                     this.__currentWallSnapPoint = new Vector3(wallSurfacePoint[0], wallSurfacePoint[1], wallSurfacePoint[2]);
-                    this.__addToAWall(wall, wallEdge);
+                    this.snapToWall(this.__currentWallSnapPoint, wall, wallEdge);
                     break;
                 }
             }
         }
-        //this.__combinedRotation = this.__combineRotations();
     }
 
     __parametricGeometryUpdate(evt, updateForWall = true) {

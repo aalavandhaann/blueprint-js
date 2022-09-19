@@ -35,8 +35,6 @@ export class Physical3DItem extends Mesh {
         this.__options = opts;
         this.__selectedMaterial = new LineBasicMaterial({ color: 0x0000F0, linewidth: 2 });
         this.__boxhelper = new LineSegments(new EdgesGeometry(new BoxBufferGeometry(1, 1, 1)), this.__selectedMaterial);
-        this.__dimensionHelper = new Group();
-        this.__measurementgroup = new Object3D();
         this.__pointLightHelper = null;
         this.__spotLightHelper = null;
         this.__customIntersectionPlanes = []; // Useful for intersecting only wall planes, only floorplanes, only ceiling planes etc
@@ -111,12 +109,6 @@ export class Physical3DItem extends Mesh {
                 gsap.to(this.__boxhelper.rotation, { duration: duration, x: this.__itemModel.rotation.x });
                 gsap.to(this.__boxhelper.rotation, { duration: duration, y: this.__itemModel.rotation.y });
                 gsap.to(this.__boxhelper.rotation, { duration: duration, z: this.__itemModel.rotation.z });
-                if(this.__dimensionHelper){
-                    gsap.to(this.__dimensionHelper.rotation, { duration: duration, x: this.__itemModel.rotation.x });
-                    gsap.to(this.__dimensionHelper.rotation, { duration: duration, y: this.__itemModel.rotation.y });
-                    gsap.to(this.__dimensionHelper.rotation, { duration: duration, z: this.__itemModel.rotation.z });
-                   
-                     } 
             }
              if (evt.property === 'innerRotation') {
                 if (this.__loadedItem) {
@@ -127,16 +119,6 @@ export class Physical3DItem extends Mesh {
                 gsap.to(this.__boxhelper.rotation, { duration: duration, x: this.__itemModel.innerRotation.x });
                 gsap.to(this.__boxhelper.rotation, { duration: duration, y: this.__itemModel.innerRotation.y });
                 gsap.to(this.__boxhelper.rotation, { duration: duration, z: this.__itemModel.innerRotation.z });
-                if(this.__dimensionHelper){
-                    gsap.to(this.__dimensionHelper.rotation, { duration: duration, x: this.__itemModel.innerRotation.x });
-                    gsap.to(this.__dimensionHelper.rotation, { duration: duration, y: this.__itemModel.innerRotation.y });
-                    gsap.to(this.__dimensionHelper.rotation, { duration: duration, z: this.__itemModel.innerRotation.z });
-                }
-                 if(this.__measurementgroup){
-                    gsap.to(this.__measurementgroup.rotation, { duration: duration, x: this.__itemModel.innerRotation.x });
-                    gsap.to(this.__measurementgroup.rotation, { duration: duration, y: this.__itemModel.innerRotation.y });
-                    gsap.to(this.__measurementgroup.rotation, { duration: duration, z: this.__itemModel.innerRotation.z });
-                }
             }
                 
         } else {
@@ -149,12 +131,13 @@ export class Physical3DItem extends Mesh {
                 if (this.__loadedItem) {
                     this.__loadedItem.rotation.set(this.__itemModel.innerRotation.x, this.__itemModel.innerRotation.y, this.__itemModel.innerRotation.z);
                 }
-                this.__boxhelper.rotation.set(this.__itemModel.innerRotation.x, this.__itemModel.innerRotation.y, this.__itemModel.innerRotation.z);
-                if(this.__dimensionHelper){
-                    this.__dimensionHelper.rotation.set(this.__itemModel.innerRotation.x, this.__itemModel.innerRotation.y, this.__itemModel.innerRotation.z);
-                    }
-               this.__measurementgroup.rotation.set(this.__itemModel.innerRotation.x, this.__itemModel.innerRotation.y, this.__itemModel.innerRotation.z);
-                
+                this.__boxhelper.rotation.set(this.__itemModel.innerRotation.x, this.__itemModel.innerRotation.y, this.__itemModel.innerRotation.z);                               
+            }
+            if (evt.property === 'rotation') {
+                if (this.__loadedItem) {
+                    this.__loadedItem.rotation.set(this.__itemModel.rotation.x, this.__itemModel.rotation.y, this.__itemModel.rotation.z);
+                }
+                this.__boxhelper.rotation.set(this.__itemModel.rotation.x, this.__itemModel.rotation.y, this.__itemModel.rotation.z);
             }
         }
         if (evt.property === 'visible') {
@@ -181,6 +164,7 @@ export class Physical3DItem extends Mesh {
         this.__boxhelper.rotation.x = this.__itemModel.innerRotation.x;
         this.__boxhelper.rotation.y = this.__itemModel.innerRotation.y;
         this.__boxhelper.rotation.z = this.__itemModel.innerRotation.z;
+
 
         // this.__boxhelper.position.x = this.__loadedItem.position.x;
         // this.__boxhelper.position.y = this.__loadedItem.position.y;
@@ -237,27 +221,6 @@ export class Physical3DItem extends Mesh {
 
     }
 
-    // Function - Add the textures to the models
-    initColor(parent, type, mtl) {
-        let texturepack = {};
-        let material = new FloorMaterial3D({}, texturepack, parent);
-        material.__multiComponentTextureUpdate(texturepack,parent,mtl);
-    }
-
-    __initialMaterial(){
-        let meshList = [];
-        let meshMap = [];
-        if(this.__itemModel.meshmap.length!=0){
-            this.initColor(this.__loadedItem, '', this.__itemModel.meshmap);
-        }else{
-            this.__loadedItem.children.forEach((mesh) => {
-                meshList.push(mesh.name)
-                meshMap.push({ name: mesh.name, texture: '', color: '', shininess: 10, size: [] })
-            });
-            this.__itemModel.__metadata.mesh = meshList;
-            this.__itemModel.__metadata.meshmap = meshMap;
-        }
-    }
     __gltfLoaded(gltfModel) {
 
         this.__itemModelglb = gltfModel;
@@ -277,10 +240,7 @@ export class Physical3DItem extends Mesh {
                 }
             }
         });
-
-        this.__initialMaterial();
-        this.__initializeChildItem();
-       
+        this.__initializeChildItem();       
         this.dispatchEvent({ type: EVENT_ITEM_LOADED });
     }
 
@@ -527,10 +487,7 @@ export class Physical3DItem extends Mesh {
 
     set selected(flag) {
         this.__selected = flag;
-        this.__boxhelper.visible = flag;
-        this.__dimensionHelper.visible = flag;
-        this.__measurementgroup.visible = flag;
-    }
+        this.__boxhelper.visible = flag;    }
 
     set location(coordinate3d) {
         this.__itemModel.position = coordinate3d;
