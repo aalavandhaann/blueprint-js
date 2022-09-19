@@ -233,7 +233,7 @@ export class Item extends EventDispatcher {
         }
         if (this.__currentWall) {
             this.__currentWall.removeEventListener(EVENT_MOVED, this.__followWallEvent);
-
+            this.__currentWall.removeItem(this);
         }
         if (this.__currentWallEdge) {
             this.__currentWallEdge.removeEventListener(EVENT_DELETED, this.__edgeDeletedEvent);
