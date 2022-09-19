@@ -485,7 +485,7 @@ if (!opts.widget) {
     // settingsViewer3d.addDropDown('Wall Textures', wall_texture_keys, selectWallTexture);
     // settingsViewer3d.addImage('Wall Texture:', wall_textures[wall_texture_keys[0]].colormap, null);
     // settingsViewer3d.addButton('Apply', selectWallTexture);
-
+    console.log('TEXTURE IMAGE :: ', floor_textures[floor_texture_keys[0]].colormap || TEXTURE_NO_PREVIEW);
     settingsSelectedRoom3D.addDropDown('Floor Textures', floor_texture_keys, selectFloorTexture);
     settingsSelectedRoom3D.addImage('Floor Texture:', floor_textures[floor_texture_keys[0]].colormap || TEXTURE_NO_PREVIEW, null);
     settingsSelectedRoom3D.addColor('Floor Texture Color:', floor_textures[floor_texture_keys[0]].color || '#FFFFFF', selectFloorTextureColor);
