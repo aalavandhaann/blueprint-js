@@ -6,6 +6,7 @@ gitpush.sh~
 /.babelrc~
 *.blend1
 dist/*
+app/*
 .cache/*
 3D-Models-Internet/*
 
