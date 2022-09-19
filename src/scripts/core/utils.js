@@ -2,6 +2,10 @@ import { Vector3, Vector2 } from 'three';
 import { Math as THREEMath } from 'three';
 import { checkIntersection } from 'line-intersect';
 
+export const RIGHT = new Vector3(1, 0, 0);
+export const FORWARD = new Vector3(0, 0, 1);
+export const DIAGONAL = new Vector3(1, 0, 1).normalize();
+
 export class Utils {
     /** Determines the distance of a point from a line.
      * @param point The Point coordinates as THREE.Vector2
@@ -165,7 +169,7 @@ export class Utils {
             } else {
                 tSecondCorner = firstCorners[tI + 1];
             }
-            if (Utils.linePolygonIntersect(tFirstCorner.x, tFirstCorner.y, tSecondCorner.x, tSecondCorner.y, secondCorners)) {
+            if (Utils.linePolygonIntersect(tFirstCorner, tSecondCorner, secondCorners)) {
                 return true;
             }
         }
@@ -241,24 +245,24 @@ export class Utils {
       @param startY Y start coord for raycast
 	 */
     static pointInPolygon(point, corners, start) {
-        start = start || new Vector2(0, 0);
-        var startX = start.x || 0;
-        var startY = start.y || 0;
+        var startX = (start) ? start.x : undefined;
+        var startY = (start) ? start.y : undefined;
 
         //ensure that point(startX, startY) is outside the polygon consists of corners
-        var tMinX = 0,
-            tMinY = 0;
+        var tMinX = 99999999999999,
+            tMinY = 99999999999999;
         var tI = 0;
 
         if (startX === undefined || startY === undefined) {
             for (tI = 0; tI < corners.length; tI++) {
                 tMinX = Math.min(tMinX, corners[tI].x);
-                tMinY = Math.min(tMinX, corners[tI].y);
+                tMinY = Math.min(tMinY, corners[tI].y);
             }
             startX = tMinX - 10;
             startY = tMinY - 10;
         }
 
+        start = new Vector2(startX, startY);
         var tIntersects = 0;
         for (tI = 0; tI < corners.length; tI++) {
             var tFirstCorner = corners[tI],
@@ -269,7 +273,7 @@ export class Utils {
                 tSecondCorner = corners[tI + 1];
             }
 
-            if (Utils.lineLineIntersect(start, point, tFirstCorner.x, tFirstCorner.y, tSecondCorner.x, tSecondCorner.y)) {
+            if (Utils.lineLineIntersect(start, point, tFirstCorner, tSecondCorner)) {
                 tIntersects++;
             }
         }
@@ -279,11 +283,9 @@ export class Utils {
 
     /** Checks if all corners of insideCorners are inside the polygon described by outsideCorners */
     static polygonInsidePolygon(insideCorners, outsideCorners, start) {
-        start.x = start.x || 0;
-        start.y = start.y || 0;
-
         for (var tI = 0; tI < insideCorners.length; tI++) {
-            if (!Utils.pointInPolygon(insideCorners[tI].x, insideCorners[tI].y, outsideCorners, start)) {
+            let flag = Utils.pointInPolygon(insideCorners[tI], outsideCorners, start);
+            if (!flag) {
                 return false;
             }
         }
@@ -292,16 +294,72 @@ export class Utils {
 
     /** Checks if any corners of firstCorners is inside the polygon described by secondCorners */
     static polygonOutsidePolygon(insideCorners, outsideCorners, start) {
-        start.x = start.x || 0;
-        start.y = start.y || 0;
-
         for (var tI = 0; tI < insideCorners.length; tI++) {
-            if (Utils.pointInPolygon(insideCorners[tI].x, insideCorners[tI].y, outsideCorners, start)) {
+            if (Utils.pointInPolygon(insideCorners[tI], outsideCorners, start)) {
                 return false;
             }
         }
         return true;
-    }
+    }    
+
+    static polygons2DFrom3D(polygonPoints){
+        function getNormal(points){
+            let a = points[0];
+            let b = points[1];
+            let c = points[2];
+            let ab = b.clone().sub(a).normalize();
+            let ac = c.clone().sub(a).normalize();
+            return ab.cross(ac).normalize();
+        }
+
+        function getUVVectors(normal){
+            let u = null;
+            let v = null;
+            let dot = Math.abs(FORWARD.dot(normal));
+            let dot2 = Math.abs(RIGHT.dot(normal));
+            /**
+             * If the angle between FORWARD and NORMAL is 0 degrees
+             * then FORWARD is the NORMAL itself, in that case 
+             * use the orthogonal vectors RIGHT and cross(RIGHT, FORWARD)
+             */
+            if(dot == 1){
+                return [RIGHT.clone(), RIGHT.clone().cross(normal)];
+            }
+            /**
+             * If the angle between RIGHT and NORMAL is 0 degrees
+             * then RIGHT is the NORMAL itself, in that case 
+             * use the orthogonal vectors FORWARD and cross(FORWARD, FORWARD)
+             */
+            else if(dot2 == 1){
+                return [FORWARD.clone(), FORWARD.clone().cross(normal)];
+            }
+            if(dot < 0.2 || dot > 1.0-1e-6){
+                u = RIGHT.clone().projectOnPlane(normal).normalize();
+            }
+            else{
+                u = FORWARD.clone().projectOnPlane(normal).normalize();
+            }
+            v = u.clone().cross(normal).normalize();
+            return [u, v];
+        }
+
+        function projectOnPlane(point, u, v){
+            return new Vector2(point.dot(u), point.dot(v));
+        }
+
+        function projectAs2DCoords(points, u, v){
+            let points2D = [];
+            points.forEach((point) =>{
+                points2D.push(projectOnPlane(point, u, v));
+            });
+            return points2D;
+        }
+
+        let normal = getNormal(polygonPoints);
+        let [u, v] = getUVVectors(normal);
+        // console.log('U, V, Normal :: ', u, v, normal);
+        return projectAs2DCoords(polygonPoints, u, v);
+    }   
 
     // arrays
 

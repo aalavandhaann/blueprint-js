@@ -1,8 +1,8 @@
 import { EventDispatcher, Vector3, Vector2 } from 'three';
+import { Quaternion, Euler } from 'three';
 import { EVENT_UPDATED, EVENT_PARAMETRIC_GEOMETRY_UPATED, EVENT_MOVED, EVENT_DELETED } from '../core/events';
 import { Utils } from '../core/utils';
 import { BASE_PARAMETRIC_TYPES, ParametricFactory } from '../parametrics/ParametricFactory';
-
 export const UP_VECTOR = new Vector3(0, 1, 0);
 /**
  * An Item is an abstract entity for all things placed in the scene, e.g. at
@@ -34,12 +34,23 @@ export class Item extends EventDispatcher {
         this.__position2d = new Vector2();
         this.__position = new Vector3();
         this.__rotation = new Vector3();
+        this.__innerRotation = new Vector3();
+
+        /**
+         * The below property should be used when setting the rotation of a physicalitem
+         * Also this property is only for rendering the scene and will not be a part of the metadata
+         */
+        this.__combinedRotation = new Vector3();
+
         this.__scale = new Vector3(1, 1, 1);
 
         this.__size = new Vector3(1, 1, 1);
+        this.__mesh = [];
+        this.__meshmap = [];
         this.__halfSize = new Vector3(1, 1, 1);
 
         this.__customIntersectionPlanes = [];
+        this.__customIntersectionPlanes1=[];
 
         /** */
         this.__hover = false; //This is part of application logic only
@@ -55,10 +66,10 @@ export class Item extends EventDispatcher {
         this.__frontVisible = false;
         this.__backVisible = false;
         this.__visible = true;
-        this.__offlineUpdate = false;
+        this.__offlineUpdate = true;
 
         this.__isParametric = false;
-        this.__baseParametricType = BASE_PARAMETRIC_TYPES.DOOR;
+        this.__baseParametricType = null;
         this.__subParametricType = 1;
         this.__parametricClass = null;
 
@@ -71,21 +82,31 @@ export class Item extends EventDispatcher {
         this.__followWallEvent = this.__followWall.bind(this);
         this.__edgeDeletedEvent = this.__edgeDeleted.bind(this);
         this.__parametricGeometryUpdateEvent = this.__parametricGeometryUpdate.bind(this);
+        /** Show rotate option in context menu */
+        this.allowRotate = true;
 
-        this.castShadow = false;
-        this.receiveShadow = false;
+        this.castShadow = true;
+        this.receiveShadow = true;
         this.__initializeMetaData();
     }
 
     __initializeMetaData() {
         this.__fixed = (this.__metadata.fixed) ? this.__metadata.fixed : true;
         this.__resizable = (this.__metadata.resizable) ? this.__metadata.resizable : true;
-        if (this.__metadata.position.length) {
+        this.__mesh = (this.__metadata.mesh) ? this.__metadata.mesh : [];
+        this.__meshmap = (this.__metadata.meshmap) ? this.__metadata.meshmap : [];
+        
+        if (this.__metadata.position && this.__metadata.position.length) {
             this.__position = new Vector3().fromArray(this.__metadata.position).clone();
         }
-        if (this.__metadata.rotation.length) {
-            this.__rotation = new Vector3().fromArray(this.__metadata.rotation).clone();
-        }
+       
+            if (this.__metadata.innerRotation && this.__metadata.innerRotation.length) {
+                this.__innerRotation = new Vector3().fromArray(this.__metadata.innerRotation).clone();
+            } else {
+                this.__innerRotation = new Vector3();
+            }
+        
+
         if (this.__metadata.scale.length) {
             this.__scale = new Vector3().fromArray(this.__metadata.scale).clone();
         }
@@ -93,7 +114,7 @@ export class Item extends EventDispatcher {
             this.__size = new Vector3().fromArray(this.__metadata.size).clone();
             this.__halfSize = this.__size.clone().multiplyScalar(0.5);
         }
-
+     
         if (this.__metadata.isParametric) {
             this.__isParametric = this.__metadata.isParametric;
             switch (this.__metadata.baseParametricType) {
@@ -109,10 +130,13 @@ export class Item extends EventDispatcher {
                 case BASE_PARAMETRIC_TYPES.SHELVES.description:
                     this.__baseParametricType = BASE_PARAMETRIC_TYPES.SHELVES;
                     break;
+                case BASE_PARAMETRIC_TYPES.LIGHTS.description:
+                    this.__baseParametricType = BASE_PARAMETRIC_TYPES.LIGHTS;
+                    break;
             }
             this.__subParametricData = this.__metadata.subParametricData;
             let parametricClass = ParametricFactory.getParametricClass(this.__baseParametricType.description);
-            this.__parametricClass = new(parametricClass.getClass(this.__subParametricData.type))(this.__subParametricData);
+            this.__parametricClass = new (parametricClass.getClass(this.__subParametricData.type))(this.__subParametricData);
             this.__parametricClass.addEventListener(EVENT_PARAMETRIC_GEOMETRY_UPATED, this.__parametricGeometryUpdateEvent);
 
         } else {
@@ -132,6 +156,7 @@ export class Item extends EventDispatcher {
                 }
             }
         }
+        //this.__combinedRotation = this.__combineRotations();
     }
 
     __parametricGeometryUpdate(evt, updateForWall = true) {
@@ -157,6 +182,7 @@ export class Item extends EventDispatcher {
 
     __followWall(evt) {
         if (this.__isWallDependent && this.__currentWall && !this.__offlineUpdate) {
+            
             let point = Utils.cartesianFromBarycenter(this.__currentWallEdge.vertices, this.__barycentricLocation);
             this.snapToWall(point, this.__currentWall, this.__currentWallEdge);
         }
@@ -171,6 +197,8 @@ export class Item extends EventDispatcher {
             this.__currentWallEdge.removeEventListener(EVENT_DELETED, this.__edgeDeletedEvent);
             this.__currentWall.removeItem(this);
         }
+
+        
 
         let barycentricUVW = Utils.barycentricFromCartesian(toWallEdge.vertices, this.__currentWallSnapPoint);
         this.__currentWall = toWall;
@@ -187,10 +215,11 @@ export class Item extends EventDispatcher {
             this.__currentWall.addEventListener(EVENT_MOVED, this.__followWallEvent);
             this.__currentWallEdge.addEventListener(EVENT_DELETED, this.__edgeDeletedEvent);
         }
+        this.combinedRotation = this.__combineRotations();
     }
 
     /** */
-    __moveToPosition() {}
+    __moveToPosition() { }
 
     __getMetaData() {
         return {
@@ -200,15 +229,26 @@ export class Item extends EventDispatcher {
             modelURL: this.metadata.modelUrl,
             position: this.position.toArray(),
             rotation: this.rotation.toArray(),
+            innerRotation: this.innerRotation.toArray(),
             scale: this.scale.toArray(),
             size: this.size.toArray(),
             fixed: this.__fixed,
-            resizable: this.__resizable
+            resizable: this.__resizable,
+            mesh: this.mesh,
+            meshmap: this.meshmap
         };
     }
 
     __metaDataUpdate(propertyname) {
         this.dispatchEvent({ type: EVENT_UPDATED, property: propertyname });
+    }
+
+    __combineRotations() {
+        let quatEuler = new Quaternion().setFromEuler(new Euler(this.innerRotation.x, this.innerRotation.y, this.innerRotation.z));
+        let quatRotation = new Quaternion().setFromEuler(new Euler(this.rotation.x, this.rotation.y, this.rotation.z));
+        let combinedRotation = quatEuler.multiply(quatRotation);
+        let finalEuler = new Euler().setFromQuaternion(combinedRotation);
+        return new Vector3(finalEuler.x, finalEuler.y, finalEuler.z);
     }
 
     updateMetadataExplicit() {
@@ -219,7 +259,9 @@ export class Item extends EventDispatcher {
         this.position = point;
     }
 
-    snapToWall(point, wall, wallEdge) {}
+    snapToWall(point, wall, wallEdge) { }
+
+   
 
     newWallEdge() {
         let wallEdge = (this.__metadata.wallSide === 'front') ? this.__currentWall.frontEdge : this.__currentWall.backEdge;
@@ -286,7 +328,32 @@ export class Item extends EventDispatcher {
         }
         this.__rotation.copy(r);
         this.__metadata.rotation = this.__rotation.toArray();
-        this.__metaDataUpdate('rotation');
+        this.__metaDataUpdate('innerRotation');
+        if(this.__metadata.itemType==1){
+            this.combinedRotation = this.__combineRotations();
+        }
+        
+    }
+
+    get innerRotation() {
+        return this.__innerRotation;
+    }
+
+    set innerRotation(eulerRotation) {
+        this.__innerRotation = eulerRotation.clone();
+        this.__metadata.innerRotation = this.__innerRotation.toArray();
+        this.__metaDataUpdate('innerRotation');
+        this.combinedRotation = this.__combineRotations();
+    }
+
+    get combinedRotation() {
+        return this.__combinedRotation;
+    }
+
+    set combinedRotation(rotation) {
+        this.__combinedRotation = rotation;
+        this.__metaDataUpdate('innerRotation');
+        //this.__metaDataUpdate('combinedRotation');
     }
 
     get scale() {
@@ -294,15 +361,45 @@ export class Item extends EventDispatcher {
     }
 
     set scale(s) {
-            this.__scale.copy(s);
-            this.__metadata.scale = this.__scale.toArray();
-            this.__metaDataUpdate('scale');
-        }
-        /**
-         * This is a read-only property. This can be changed only internally with private and protected acces
-         */
+        this.__scale.copy(s);
+        this.__metadata.scale = this.__scale.toArray();
+        this.__metaDataUpdate('scale');
+    }
+    /**
+     * This is a read-only property. This can be changed only internally with private and protected acces
+     */
+
+     get mesh() {
+        return this.__mesh;
+    }
+
+    set mesh(value) {
+        this.__mesh.copy(value);
+        this.__metadata.mesh = this.__mesh;
+        this.__metaDataUpdate('mesh');
+    }
+
+    get meshmap() {
+        return this.__meshmap;
+    }
+
+    set meshmap(value) {
+        this.__meshmap = value;
+        this.__metadata.meshmap = this.__meshmap;
+        this.__metaDataUpdate('meshmap');
+    }
+    
     get size() {
         return this.__size.clone();
+    }
+
+    set size(value) {
+        this.__size = value;
+        this.__metaDataUpdate('size');
+    }
+
+    get model(){
+        return this.__model;
     }
 
     get modelURL() {
@@ -378,12 +475,21 @@ export class Item extends EventDispatcher {
         return this.__metadata.itemType;
     }
 
+    set itemType(type) {
+        this.__metadata.itemType=type;
+        this.__metaDataUpdate('position');
+    }
+
     get halfSize() {
         return this.__halfSize.clone();
     }
 
     get intersectionPlanes() {
         return this.__customIntersectionPlanes;
+    }
+
+    get intersectionPlanes_wall() {
+        return this.__customIntersectionPlanes1;
     }
 
     get isWallDependent() {

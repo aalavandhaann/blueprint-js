@@ -2,6 +2,7 @@ import { InWallItem } from './in_wall_item.js';
 import { Vector2, Vector3, Matrix4 } from 'three';
 import { UP_VECTOR } from './item.js';
 import { Utils } from '../core/utils.js';
+import { Plane } from 'three/build/three.module.js';
 
 /** */
 export class InWallFloorItem extends InWallItem {
@@ -15,12 +16,24 @@ export class InWallFloorItem extends InWallItem {
     }
 
     snapToWall(point, wall, wallEdge) {
-        point = this.__fitToWallBounds(point, wallEdge);
         let normal = wallEdge.normal;
+        let plane = new Plane(normal);
         let normal2d = new Vector2(normal.x, normal.z);
         let angle = Utils.angle(UP_VECTOR, normal2d);
-        this.rotation = new Vector3(0, angle, 0);
+        
+
+        let tempPoint = new Vector3();
+        let matrix = new Matrix4();
+        
+        matrix.setPosition(wallEdge.center);
+        plane.applyMatrix4(matrix);
+        plane.projectPoint(point, tempPoint);
+        point = tempPoint.clone();
+        point = this.__fitToWallBounds(point, wallEdge);
         point.y = this.halfSize.y + 5;
+        this.rotation = new Vector3(0, angle, 0);
+        this.innerRotation=new Vector3(0, angle, 0);
+
         this.position = point;
         this.__currentWallSnapPoint = point.clone();
         this.__currentWallNormal = normal.clone();

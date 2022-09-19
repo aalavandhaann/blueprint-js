@@ -1,4 +1,5 @@
-import { Vector2, Vector3 } from 'three';
+import { Vector2, Vector3,Quaternion,Euler, Plane } from 'three';
+import { Matrix4 } from 'three/build/three.module.js';
 import { Utils } from '../core/utils.js';
 import { Item, UP_VECTOR } from './item.js';
 
@@ -25,6 +26,7 @@ export class WallItem extends Item {
 
         let startToPlusSizeVector = positionPlusSize.sub(wallEdge.interiorStart());
         let endToMinusSizeVector = positionMinusSize.sub(wallEdge.interiorEnd());
+        
         if (startToPlusSizeVector.length() > wallEdgeVector.length()) {
             let p = wallEdge.interiorEnd().clone().sub(sizeVector);
             return new Vector3(p.x, point.y, p.y);
@@ -41,19 +43,30 @@ export class WallItem extends Item {
     }
 
     snapToWall(point, wall, wallEdge) {
+
         super.snapToWall(point, wall, wallEdge);
-        point = this.__fitToWallBounds(point, wallEdge);
         let normal = wallEdge.normal;
         let normal2d = new Vector2(normal.x, normal.z);
         let angle = Utils.angle(UP_VECTOR, normal2d);
+                
+        let plane = new Plane(normal);
+        let tempPoint = new Vector3();
+        let matrix = new Matrix4();
+        matrix.setPosition(wallEdge.center);
+        plane.applyMatrix4(matrix);
+        plane.projectPoint(point, tempPoint);
+        point = tempPoint.clone();
+        point = this.__fitToWallBounds(point, wallEdge);
+        point = point.clone().add(normal.clone().multiplyScalar(this.halfSize.z));
+
+        
         this.__currentWallNormal = normal.clone();
         this.__currentWallSnapPoint = point.clone();
-
-        point = point.clone().add(normal.clone().multiplyScalar(this.halfSize.z + (wall.thickness * 0.25)));
-
+        this.__addToAWall(wall, wallEdge);
         this.position = point;
         this.rotation = new Vector3(0, angle, 0);
-        this.__addToAWall(wall, wallEdge);
+        this.innerRotation=new Vector3(0, angle, 0);
+        
     }
 
     __parametricGeometryUpdate(evt, updateForWall = true) {
@@ -64,5 +77,24 @@ export class WallItem extends Item {
             this.position = point;
             this.__currentWall.addItem(this);
         }
+    }
+
+    __combineRotations() {
+        let normal = this.__currentWallNormal;
+        if (!this.__currentWallEdge) {
+            return new Vector3();
+        }
+        if (!this.__currentWallNormal) {
+            normal = this.__currentWallEdge.normal.clone().normalize();
+        }
+        let realInnerRotation = new Quaternion().setFromAxisAngle(normal, this.innerRotation.z);
+        let quatRotation = new Quaternion().setFromEuler(new Euler(this.rotation.x, this.rotation.y, this.rotation.z));
+        let combinedRotation = realInnerRotation.multiply(quatRotation);
+        let finalEuler = new Euler().setFromQuaternion(combinedRotation);
+        return new Vector3(finalEuler.x, finalEuler.y, finalEuler.z);
+    }
+
+    get currentWall(){
+        return this.__currentWall;
     }
 }

@@ -16,8 +16,8 @@ import * as wall_textures_json from './wall_textures.json';
 // import * as default_room_json from './parametrics_items.json';
 // import * as default_room_json from './empty_room.json';
 // import * as default_room_json from './designWithBoundary.json';
-// import * as default_room_json from './designWithoutBoundary.json';
-import * as default_room_json from './designWithOrphanWalls.json';
+import * as default_room_json from './designWithoutBoundary.json';
+// import * as default_room_json from './designWithOrphanWalls.json';
 // import * as default_room_json from './LShape.json';
 
 const fps = FPS.of({x: 0, y: 0});
