@@ -5,37 +5,37 @@
             "71d4f128-ae80-3d58-9bd2-711c6ce6cdf2": {
                 "x": 0,
                 "y": 0,
-                "elevation": 2.5
+                "elevation": 3
             },
             "f90da5e3-9e0e-eba7-173d-eb0b071e838e": {
                 "x": 0,
                 "y": 5,
-                "elevation": 2.5
+                "elevation": 3
             },
             "da026c08-d76a-a944-8e7b-096b752da9ed": {
                 "x": 5,
                 "y": 5,
-                "elevation": 2.5
+                "elevation": 3
             },
             "4e3d65cb-54c0-0681-28bf-bddcc7bdb571": {
                 "x": 5,
                 "y": 0,
-                "elevation": 2.5
+                "elevation": 3
             },
             "fed350d6-a751-1f3d-f6ec-eaa27de6bd12": {
                 "x": 7.5,
                 "y": -2.5,
-                "elevation": 2.5
+                "elevation": 3
             },
             "3bec1535-21a7-668e-5d47-229db4d136d2": {
                 "x": 12.5,
                 "y": -2.5,
-                "elevation": 2.5
+                "elevation": 3
             },
             "e3a9cbc3-c4a3-9f90-08f5-d00b6036d79a": {
                 "x": 12.5,
                 "y": 5,
-                "elevation": 2.5
+                "elevation": 3
             }
         },
         "walls": [
@@ -344,7 +344,7 @@
             "3bec1535-21a7-668e-5d47-229db4d136d2,4e3d65cb-54c0-0681-28bf-bddcc7bdb571,da026c08-d76a-a944-8e7b-096b752da9ed,e3a9cbc3-c4a3-9f90-08f5-d00b6036d79a,fed350d6-a751-1f3d-f6ec-eaa27de6bd12": {
                 "color": "#FFFFFF",
                 "emissive": "#181818",
-                "repeat": 300,
+                "repeat": 100,
                 "ambientmap": "textures/Floor/Stone_Tiles_004/Stone_Tiles_004_ambientOcclusion.jpg",
                 "colormap": "textures/Floor/Stone_Tiles_004/Stone_Tiles_004_basecolor.jpg",
                 "roughnessmap": "textures/Floor/Stone_Tiles_004/Stone_Tiles_004_roughness.jpg",
@@ -371,16 +371,16 @@
     "items": [
         {
             "id": "7d0b3e90-c315-e7a5-a6d9-594757d5b7e4",
-            "itemName": "An Item",
+            "itemName": "Window with Curtain",
             "itemType": 3,
             "position": [
-                0,
-                145.98526228525984,
-                252.40325748289172
+                868.4468283385688,
+                158.73167032399962,
+                -250
             ],
             "rotation": [
                 0,
-                1.5707963267948966,
+                0,
                 0
             ],
             "scale": [
@@ -389,20 +389,20 @@
                 1
             ],
             "size": [
-                240,
-                100,
-                50
+                136,
+                195,
+                20
             ],
             "fixed": true,
             "resizable": true,
-            "modelURL": "models/HollowCube.glb",
+            "modelURL": "models/InWallItems/WindowWithCurtain.glb",
             "isParametric": false,
-            "wall": "71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,f90da5e3-9e0e-eba7-173d-eb0b071e838e",
-            "wallSide": "back",
+            "wall": "fed350d6-a751-1f3d-f6ec-eaa27de6bd12,3bec1535-21a7-668e-5d47-229db4d136d2",
+            "wallSide": "front",
             "wallSurfacePoint": [
-                0,
-                145.98526228525984,
-                252.40325748289172
+                868.4468283385688,
+                158.73167032399962,
+                -250
             ],
             "mesh": [
                 "Cube"
@@ -418,7 +418,60 @@
             ],
             "innerRotation": [
                 0,
-                1.5707963267948966,
+                0,
+                0
+            ]
+        },
+        {
+            "id": "7d0b3e90-c315-e7a5-a6d9-594757d5b7e4",
+            "itemName": "Main Door",
+            "itemType": 7,
+            "position": [
+                632.3531265126858,
+                133,
+                500
+            ],
+            "rotation": [
+                0,
+                -3.141592653589793,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "size": [
+                138,
+                266,
+                137
+            ],
+            "fixed": true,
+            "resizable": true,
+            "modelURL": "models/InWallFloorItems/Door.glb",
+            "isParametric": false,
+            "wall": "e3a9cbc3-c4a3-9f90-08f5-d00b6036d79a,da026c08-d76a-a944-8e7b-096b752da9ed",
+            "wallSide": "front",
+            "wallSurfacePoint": [
+                632.3531265126858,
+                133,
+                500
+            ],
+            "mesh": [
+                "Cube"
+            ],
+            "textures": [
+                {
+                    "name": "Cube",
+                    "texture": "",
+                    "color": "",
+                    "shininess": 10,
+                    "size": []
+                }
+            ],
+            "innerRotation": [
+                0,
+                -3.141592653589793,
                 0
             ]
         },
@@ -426,9 +479,9 @@
             "itemName": "Tennis Table",
             "itemType": 1,
             "position": [
-                280,
-                50,
-                350
+                1019.1735537817156,
+                49.05,
+                341.7895865393001
             ],
             "rotation": [
                 0,
@@ -466,9 +519,9 @@
             "itemName": "Andrea Wox Table",
             "itemType": 1,
             "position": [
-                274.0337615377706,
+                196.6076038775616,
                 25.9,
-                135.52448538408794
+                270.75221923647905
             ],
             "rotation": [
                 0,
@@ -506,13 +559,13 @@
             "itemName": "DoubleChairWithPillow",
             "itemType": 9,
             "position": [
-                99.27116005634913,
+                1210.3568,
                 36.36685,
-                39.6432
+                -22.16384637921081
             ],
             "rotation": [
                 0,
-                0,
+                -1.5707963267948966,
                 0
             ],
             "scale": [
@@ -529,12 +582,12 @@
             "resizable": false,
             "modelURL": "models/DoubleChairWithPillow.glb",
             "isParametric": false,
-            "wall": "4e3d65cb-54c0-0681-28bf-bddcc7bdb571,71d4f128-ae80-3d58-9bd2-711c6ce6cdf2",
-            "wallSide": "back",
+            "wall": "3bec1535-21a7-668e-5d47-229db4d136d2,e3a9cbc3-c4a3-9f90-08f5-d00b6036d79a",
+            "wallSide": "front",
             "wallSurfacePoint": [
-                99.27116005634913,
+                1210.3568,
                 36.36685,
-                39.6432
+                -22.16384637921081
             ],
             "mesh": [
                 "Couch001"
@@ -550,7 +603,7 @@
             ],
             "innerRotation": [
                 0,
-                -1.812609019796174e-18,
+                -1.5707963267948966,
                 0
             ]
         }

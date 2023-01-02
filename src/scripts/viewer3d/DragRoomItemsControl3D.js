@@ -49,15 +49,27 @@ export class DragRoomItemsControl3D extends EventDispatcher {
         this.activate();
     }
 
+    __updateMouse(evt){
+        let rect = this.__domElement.getBoundingClientRect();
+        this.__mouse.x = ((evt.clientX - rect.left) / rect.width) * 2 - 1;
+        this.__mouse.y = -((evt.clientY - rect.top) / rect.height) * 2 + 1;
+        this.__mouseClient.x=evt.clientX;
+        this.__mouseClient.y=evt.clientY;
+    }
+
     __pressListener(evt) {
         let time = Date.now();
-        let deltaTime = time - this.__timestamp;
-        
+        let deltaTime = time - this.__timestamp;        
         let wallPlanesThatIntersect = null;
         let floorPlanesThatIntersect = null;
         let minDistance = 1e6
         this.__timestamp = time;
-        evt.preventDefault();
+
+        this.__updateMouse(evt);
+        // evt.preventDefault();
+        this.__domElement.onpointermove = this.__moveListenerEvent;
+        this.__domElement.setPointerCapture(evt.pointerId);
+
         evt = (evt.changedTouches !== undefined) ? evt.changedTouches[0] : evt;
 
         this.__intersections.length = 0;
@@ -120,7 +132,13 @@ export class DragRoomItemsControl3D extends EventDispatcher {
         this.__releasetimestamp = time;
         let wallPlanesThatIntersect = null;
         let floorPlanesThatIntersect = null;
-        evt.preventDefault();
+
+        this.__updateMouse(evt);
+        // evt.preventDefault();
+        this.__domElement.onpointermove = null;
+        this.__domElement.releasePointerCapture(evt.pointerId);
+
+
         evt = (evt.changedTouches !== undefined) ? evt.changedTouches[0] : evt;
         this.__raycaster.setFromCamera(this.__mouse, this.__camera);
         wallPlanesThatIntersect = this.__raycaster.intersectObjects(this.__walls, false);
@@ -155,14 +173,10 @@ export class DragRoomItemsControl3D extends EventDispatcher {
 
 
     __moveListener(evt) {
-        evt.preventDefault();
+        // evt.preventDefault();
         evt = (evt.changedTouches !== undefined) ? evt.changedTouches[0] : evt;
 
-        let rect = this.__domElement.getBoundingClientRect();
-        this.__mouse.x = ((evt.clientX - rect.left) / rect.width) * 2 - 1;
-        this.__mouse.y = -((evt.clientY - rect.top) / rect.height) * 2 + 1;
-        this.__mouseClient.x=evt.clientX;
-        this.__mouseClient.y=evt.clientY;
+        this.__updateMouse(evt);
         this.__raycaster.setFromCamera(this.__mouse, this.__camera);
         if (this.__selected && this.__enabled && this.__selected.visible) {
             //Check if the item has customIntersectionPlanes, otherwise move it freely
@@ -216,29 +230,32 @@ export class DragRoomItemsControl3D extends EventDispatcher {
     }
 
     activate() {
+        this.__domElement.onpointerdown = this.__pressListenerEvent;
+        this.__domElement.onpointerup = this.__releaseListenerEvent;
+        // this.__domElement.addEventListener('pointerdown', this.__pressListenerEvent, false);
+        // this.__domElement.addEventListener('touchstart', this.__pressListenerEvent, false);
 
-        this.__domElement.addEventListener('pointerdown', this.__pressListenerEvent, false);
-        this.__domElement.addEventListener('touchstart', this.__pressListenerEvent, false);
+        // // this.__domElement.addEventListener('pointermove', this.__moveListenerEvent, false);
+        // // this.__domElement.addEventListener('touchmove', this.__moveListenerEvent, false);
 
-        this.__domElement.addEventListener('pointermove', this.__moveListenerEvent, false);
-        this.__domElement.addEventListener('touchmove', this.__moveListenerEvent, false);
-
-        this.__domElement.addEventListener('pointerup', this.__releaseListenerEvent, false);
-        // this.__domElement.addEventListener('mouseleave', this.__releaseListenerEvent, false);//Not necessary
-        this.__domElement.addEventListener('touchend', this.__releaseListenerEvent, false);
+        // this.__domElement.addEventListener('pointerup', this.__releaseListenerEvent, false);
+        // // this.__domElement.addEventListener('mouseleave', this.__releaseListenerEvent, false);//Not necessary
+        // this.__domElement.addEventListener('touchend', this.__releaseListenerEvent, false);
 
     }
 
     deactivate() {
-        this.__domElement.removeEventListener('pointerdown', this.__pressListenerEvent, false);
-        this.__domElement.removeEventListener('touchstart', this.__pressListenerEvent, false);
+        this.__domElement.onpointerdown = null;
+        this.__domElement.onpointerup = null;
+        // this.__domElement.removeEventListener('pointerdown', this.__pressListenerEvent, false);
+        // this.__domElement.removeEventListener('touchstart', this.__pressListenerEvent, false);
 
-        this.__domElement.removeEventListener('pointermove', this.__moveListenerEvent, false);
-        this.__domElement.removeEventListener('touchmove', this.__moveListenerEvent, false);
+        // // this.__domElement.removeEventListener('pointermove', this.__moveListenerEvent, false);
+        // // this.__domElement.removeEventListener('touchmove', this.__moveListenerEvent, false);
 
-        this.__domElement.removeEventListener('pointerup', this.__releaseListenerEvent, false);
-        // this.__domElement.removeEventListener('mouseleave', this.__releaseListenerEvent, false);//Not necessary
-        this.__domElement.removeEventListener('touchend', this.__releaseListenerEvent, false);
+        // this.__domElement.removeEventListener('pointerup', this.__releaseListenerEvent, false);
+        // // this.__domElement.removeEventListener('mouseleave', this.__releaseListenerEvent, false);//Not necessary
+        // this.__domElement.removeEventListener('touchend', this.__releaseListenerEvent, false);
 
         this.__domElement.style.cursor = '';
 
