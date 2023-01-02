@@ -1,5 +1,5 @@
 import { ParametricBaseDoor, DOOR_OPEN_DIRECTIONS } from "./ParametricBaseDoor";
-import { Vector3, Face3 } from "three";
+import { Vector3 } from "three";
 
 export class ParametricDoorType3 extends ParametricBaseDoor {
     constructor(parameters) {

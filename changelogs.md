@@ -15,3 +15,15 @@
 * The current version does not support 3d items and interaction (yet, WIP)
 * All GUI and other items have been removed
 
+## [3.0.0] - 2023-01-02
+### This is the last backup of release with threeJS version (1.118.0)
+
+
+## [3.0.1] - 2023-01-02
+### This version is updated to latest threejs (1.148.0)
+- Major Update: Bump threejs version to latest (1.48.0)
+- Breaking changes and needs more testing
+- Remove all references to Face3 and Geometry as it is depreceated
+- Update all geometries to BufferGeometry
+- DragRoomItemsControls3D: replace mouse events with pointer events
+- WIP: Text elements for itemstatistics

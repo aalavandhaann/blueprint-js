@@ -16,8 +16,6 @@ div {
 }
 
 #bp3djs-viewer2d, #bp3djs-viewer3d {
-  width: 500px;
-  height: 500px;
   position: absolute;
   top: 0;
   left: 0;
@@ -34,6 +32,13 @@ div {
   visibility: hidden;
   position: absolute;
   left: 5px;
+}
+
+.viewer3d-measurement-labels {
+  color: #fff;
+  background: #0009;
+  padding: 2px;
+  font-family: sans-serif;
 }
 
 /*# sourceMappingURL=index.8619860d.css.map */

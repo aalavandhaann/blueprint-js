@@ -1,5 +1,6 @@
 import Enum from "es6-enum";
-import { BufferGeometry, Matrix4, Vector3, DoubleSide, Color, BufferGeometryUtils } from "three";
+import { BufferGeometry, Matrix4, Vector3, DoubleSide, Color } from "three";
+// import { BufferGeometryUtils } from 'three/examples/jsm/utils/BufferGeometryUtils'
 import { EventDispatcher } from "three";
 import { EVENT_PARAMETRIC_GEOMETRY_UPATED } from "../../core/events";
 import { DoorHandleGenerator } from "./doorhandles/DoorHandleGenerator";
@@ -149,7 +150,7 @@ export class ParametricBaseDoor extends EventDispatcher {
             mergeGeometries.push(doorsToGenerate.left);
             // doorGeometry.merge(doorsToGenerate.left);
         }
-        doorGeometry = BufferGeometryUtils.mergeBufferGeometries(mergeGeometries, true);
+        doorGeometry = mergeGeometries;//BufferGeometryUtils.mergeBufferGeometries(mergeGeometries, true);
         doorGeometry.computeVertexNormals();
         // doorGeometry.computeFaceNormals();
         doorGeometry.computeBoundingBox();
