@@ -1,3 +1,7 @@
+# DEMO #
+
+[Cick for example](https://aalavandhaann.github.io/blueprint-js/demo/)
+
 # FOR ANYONE LOOKING FOR COMMERCIAL IMPLEMENTATION OF BLUEPRINT-JS PROJECTS
 ## Contact Details
 - Name: Craftpixels (Madz)
@@ -8,16 +12,16 @@
 # README #
 This is a javascript floorplanner tool based on the existing typescript based project [blueprint3d](https://github.com/furnishup/blueprint3d)
 
-# CURRENT RELEASE AT 2.0.1 #
+# CURRENT RELEASE AT 3.0.1 #
 
 Many things have changed with this version,
-
-    * Now the library is a pure MVC framework
-    * The models contain only about the data
-    * The viewers are respective viewers for the respective dimensions (2d, 3d, 4d? (maybe))
-    * Overall improvement towards the performance
-    * No more canvas for viewer2d, now using pixijs
-    * No more rollup but using parcel bundler now
+    * ~~Now the threejs version used is latest (1.148.0)
+    * ~~Now the library is a pure MVC framework~~
+    * ~~The models contain only about the data~~
+    * ~~The viewers are respective viewers for the respective dimensions (2d, 3d, 4d? (maybe))~~
+    * ~~Overall improvement towards the performance~~
+    * ~~No more canvas for viewer2d, now using pixijs~~
+    * ~~No more rollup but using parcel bundler now~~
     * Refer to previous branches for older working versions
 
 ## What is missing? ##
@@ -73,10 +77,6 @@ And of course to [**parcel**](https://parceljs.org/) and [**npm**](https://www.n
 - [Concrete Wall 002](https://3dtextures.me/2019/10/16/concrete-wall-002/)
 - [Concrete Column 001](https://3dtextures.me/2019/07/15/concrete-column-001/)
 - [Brick Wall 017](https://3dtextures.me/2019/11/21/brick-wall-017/)
-
-## DEMO ##
-
-[Cick for example](https://aalavandhaann.github.io/blueprint-js/demo/)
 
 ## DOCS ##
 Yes, the initiative has begun for the documentation. Of late I have been getting inquiries on using this framework. It is time to have the documentation rolling
