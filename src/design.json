@@ -21,6 +21,21 @@
                 "x": 5,
                 "y": 0,
                 "elevation": 2.5
+            },
+            "fed350d6-a751-1f3d-f6ec-eaa27de6bd12": {
+                "x": 7.5,
+                "y": -2.5,
+                "elevation": 2.5
+            },
+            "3bec1535-21a7-668e-5d47-229db4d136d2": {
+                "x": 12.5,
+                "y": -2.5,
+                "elevation": 2.5
+            },
+            "e3a9cbc3-c4a3-9f90-08f5-d00b6036d79a": {
+                "x": 12.5,
+                "y": 5,
+                "elevation": 2.5
             }
         },
         "walls": [
@@ -104,7 +119,10 @@
                     "roughnessmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_roughness.jpg",
                     "colormap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_basecolor.jpg",
                     "ambientmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_ambientOcclusion.jpg",
-                    "bumpmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_height.png"
+                    "bumpmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_height.png",
+                    "emissive": "#000000",
+                    "reflective": 0.5,
+                    "shininess": 0.5
                 },
                 "backTexture": {
                     "repeat": 200,
@@ -163,11 +181,150 @@
                     "y": -176.7766952966369
                 },
                 "thickness": 0.1
+            },
+            {
+                "corner1": "4e3d65cb-54c0-0681-28bf-bddcc7bdb571",
+                "corner2": "fed350d6-a751-1f3d-f6ec-eaa27de6bd12",
+                "frontTexture": {
+                    "color": "#FFFFFF",
+                    "repeat": 300,
+                    "colormap": "textures/Wall/Indianwall/Wall.png",
+                    "normalmap": "textures/Wall/Indianwall/Wall_normal.jpg",
+                    "rotation": 0,
+                    "emissive": "#000000",
+                    "reflective": 0.5,
+                    "shininess": 0.5
+                },
+                "backTexture": {
+                    "color": "#FFFFFF",
+                    "repeat": 300,
+                    "colormap": "textures/Wall/Indianwall/Wall.png",
+                    "normalmap": "textures/Wall/Indianwall/Wall_normal.jpg",
+                    "rotation": 0,
+                    "emissive": "#000000",
+                    "reflective": 0.5,
+                    "shininess": 0.5
+                },
+                "wallType": "STRAIGHT",
+                "a": {
+                    "x": 676.776695296637,
+                    "y": -1.4210854715202004e-14
+                },
+                "b": {
+                    "x": 750,
+                    "y": -73.22330470336311
+                },
+                "thickness": 0.1
+            },
+            {
+                "corner1": "fed350d6-a751-1f3d-f6ec-eaa27de6bd12",
+                "corner2": "3bec1535-21a7-668e-5d47-229db4d136d2",
+                "frontTexture": {
+                    "color": "#FFFFFF",
+                    "repeat": 300,
+                    "colormap": "textures/Wall/Indianwall/Wall.png",
+                    "normalmap": "textures/Wall/Indianwall/Wall_normal.jpg",
+                    "rotation": 0,
+                    "emissive": "#000000",
+                    "reflective": 0.5,
+                    "shininess": 0.5
+                },
+                "backTexture": {
+                    "color": "#FFFFFF",
+                    "repeat": 300,
+                    "colormap": "textures/Wall/Indianwall/Wall.png",
+                    "normalmap": "textures/Wall/Indianwall/Wall_normal.jpg",
+                    "rotation": 0,
+                    "emissive": "#000000",
+                    "reflective": 0.5,
+                    "shininess": 0.5
+                },
+                "wallType": "STRAIGHT",
+                "a": {
+                    "x": 926.776695296637,
+                    "y": -73.22330470336314
+                },
+                "b": {
+                    "x": 1073.223304703363,
+                    "y": -73.22330470336311
+                },
+                "thickness": 0.1
+            },
+            {
+                "corner1": "3bec1535-21a7-668e-5d47-229db4d136d2",
+                "corner2": "e3a9cbc3-c4a3-9f90-08f5-d00b6036d79a",
+                "frontTexture": {
+                    "color": "#FFFFFF",
+                    "repeat": 300,
+                    "colormap": "textures/Wall/Indianwall/Wall.png",
+                    "normalmap": "textures/Wall/Indianwall/Wall_normal.jpg",
+                    "rotation": 0,
+                    "emissive": "#000000",
+                    "reflective": 0.5,
+                    "shininess": 0.5
+                },
+                "backTexture": {
+                    "color": "#FFFFFF",
+                    "repeat": 300,
+                    "colormap": "textures/Wall/Indianwall/Wall.png",
+                    "normalmap": "textures/Wall/Indianwall/Wall_normal.jpg",
+                    "rotation": 0,
+                    "emissive": "#000000",
+                    "reflective": 0.5,
+                    "shininess": 0.5
+                },
+                "wallType": "STRAIGHT",
+                "a": {
+                    "x": 984.8349570550447,
+                    "y": 15.16504294495536
+                },
+                "b": {
+                    "x": 984.8349570550447,
+                    "y": 234.8349570550447
+                },
+                "thickness": 0.1
+            },
+            {
+                "corner1": "e3a9cbc3-c4a3-9f90-08f5-d00b6036d79a",
+                "corner2": "da026c08-d76a-a944-8e7b-096b752da9ed",
+                "frontTexture": {
+                    "color": "#FFFFFF",
+                    "repeat": 300,
+                    "colormap": "textures/Wall/Indianwall/Wall.png",
+                    "normalmap": "textures/Wall/Indianwall/Wall_normal.jpg",
+                    "rotation": 0,
+                    "emissive": "#000000",
+                    "reflective": 0.5,
+                    "shininess": 0.5
+                },
+                "backTexture": {
+                    "color": "#FFFFFF",
+                    "repeat": 300,
+                    "colormap": "textures/Wall/Indianwall/Wall.png",
+                    "normalmap": "textures/Wall/Indianwall/Wall_normal.jpg",
+                    "rotation": 0,
+                    "emissive": "#000000",
+                    "reflective": 0.5,
+                    "shininess": 0.5
+                },
+                "wallType": "STRAIGHT",
+                "a": {
+                    "x": 984.8349570550447,
+                    "y": 234.8349570550447
+                },
+                "b": {
+                    "x": 765.1650429449553,
+                    "y": 234.83495705504464
+                },
+                "thickness": 0.1
             }
         ],
         "rooms": {
             "71d4f128-ae80-3d58-9bd2-711c6ce6cdf2,4e3d65cb-54c0-0681-28bf-bddcc7bdb571,da026c08-d76a-a944-8e7b-096b752da9ed,f90da5e3-9e0e-eba7-173d-eb0b071e838e": {
                 "name": "A Room"
+            },
+            "da026c08-d76a-a944-8e7b-096b752da9ed,4e3d65cb-54c0-0681-28bf-bddcc7bdb571,fed350d6-a751-1f3d-f6ec-eaa27de6bd12,3bec1535-21a7-668e-5d47-229db4d136d2,e3a9cbc3-c4a3-9f90-08f5-d00b6036d79a": {
+                "name": "A New Room"
             }
         },
         "wallTextures": [],
@@ -181,6 +338,18 @@
                 "colormap": "textures/Floor/Terrazzo_Tiles_001/Terrazzo_Tiles_001_basecolor.jpg",
                 "color": "#FFFFFF",
                 "emissive": "#000000",
+                "reflective": 0.5,
+                "shininess": 0.5
+            },
+            "3bec1535-21a7-668e-5d47-229db4d136d2,4e3d65cb-54c0-0681-28bf-bddcc7bdb571,da026c08-d76a-a944-8e7b-096b752da9ed,e3a9cbc3-c4a3-9f90-08f5-d00b6036d79a,fed350d6-a751-1f3d-f6ec-eaa27de6bd12": {
+                "color": "#FFFFFF",
+                "emissive": "#181818",
+                "repeat": 300,
+                "ambientmap": "textures/Floor/Stone_Tiles_004/Stone_Tiles_004_ambientOcclusion.jpg",
+                "colormap": "textures/Floor/Stone_Tiles_004/Stone_Tiles_004_basecolor.jpg",
+                "roughnessmap": "textures/Floor/Stone_Tiles_004/Stone_Tiles_004_roughness.jpg",
+                "normalmap": "textures/Floor/Stone_Tiles_004/Stone_Tiles_004_normal.jpg",
+                "rotation": 0,
                 "reflective": 0.5,
                 "shininess": 0.5
             }
@@ -197,8 +366,6 @@
         },
         "units": "m",
         "measurement": true,
-        "shadow": true,
-        "roof_shadow": true,
         "magnetic_snap": true
     },
     "items": [
@@ -208,8 +375,8 @@
             "itemType": 3,
             "position": [
                 0,
-                145.98526228525975,
-                252.4032574828916
+                145.98526228525984,
+                252.40325748289172
             ],
             "rotation": [
                 0,
@@ -234,8 +401,8 @@
             "wallSide": "back",
             "wallSurfacePoint": [
                 0,
-                145.98526228525975,
-                252.4032574828916
+                145.98526228525984,
+                252.40325748289172
             ],
             "mesh": [
                 "Cube"
@@ -339,9 +506,9 @@
             "itemName": "DoubleChairWithPillow",
             "itemType": 9,
             "position": [
-                99.27116005634912,
-                41.36685,
-                49.64319999999989
+                99.27116005634913,
+                36.36685,
+                39.6432
             ],
             "rotation": [
                 0,
@@ -365,9 +532,9 @@
             "wall": "4e3d65cb-54c0-0681-28bf-bddcc7bdb571,71d4f128-ae80-3d58-9bd2-711c6ce6cdf2",
             "wallSide": "back",
             "wallSurfacePoint": [
-                99.27116005634912,
-                70.88314014751387,
-                9.999999999999886
+                99.27116005634913,
+                36.36685,
+                39.6432
             ],
             "mesh": [
                 "Couch001"
@@ -380,6 +547,11 @@
                     "shininess": 10,
                     "size": []
                 }
+            ],
+            "innerRotation": [
+                0,
+                -1.812609019796174e-18,
+                0
             ]
         }
     ]

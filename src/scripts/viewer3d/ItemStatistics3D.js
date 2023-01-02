@@ -273,7 +273,6 @@ export class ItemStatistics3D extends Mesh {
     }
 
     __updateDistanceStatistics() {
-
         function excludeThyself(physicalItem, allItems){
             let items = [];
             allItems.forEach((item) =>{

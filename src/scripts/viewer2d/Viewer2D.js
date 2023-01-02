@@ -342,14 +342,10 @@ export class Viewer2D extends Application {
                 cmCo.y = Math.floor(cmCo.y / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
             }
 
-            if(this.__floorplan.boundary){
-                if(this.__floorplan.boundary.containsPoint(cmCo.x, cmCo.y)){
-                    return;
-                }
-            }
-
+            let existingCorners = this.__floorplan.corners.slice(0);
+            let existingRooms = this.__floorplan.rooms.slice(0);
             // This creates the corner already
-            let corner = this.__floorplan.newCorner(cmCo.x, cmCo.y);
+            let corner = this.__floorplan.newCorner(cmCo.x, cmCo.y);            
 
             // further create a newWall based on the newly inserted corners
             // (one in the above line and the other in the previous mouse action
@@ -366,6 +362,13 @@ export class Viewer2D extends Application {
                 this.switchMode(floorplannerModes.MOVE);
             }
 
+            if(existingRooms.length != this.__floorplan.rooms.length){
+                this.__tempWall.visible = false;
+                this.__lastNode = null;
+                this.switchMode(floorplannerModes.MOVE);
+                return;
+            }
+
             if (this.__lastNode === null && this.__mode === floorplannerModes.DRAW) {
                 this.__tempWall.visible = true;
             }
@@ -376,8 +379,6 @@ export class Viewer2D extends Application {
             } else {
                 this.__lastNode = corner;
             }
-
-
         }
     }
 

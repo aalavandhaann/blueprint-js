@@ -1,4 +1,4 @@
-import { EventDispatcher, FrontSide, DoubleSide, Vector2, Vector3, Shape, ShapeGeometry, Mesh, PointLight, BackSide } from 'three';
+import { EventDispatcher, FrontSide, DoubleSide, Vector2, Vector3, Shape, ShapeGeometry, Mesh, PointLight, BackSide, MaxEquation } from 'three';
 import { EVENT_CHANGED, EVENT_UPDATE_TEXTURES, EVENT_ROOM_ATTRIBUTES_CHANGED, EVENT_MODIFY_TEXTURE_ATTRIBUTE } from '../core/events.js';
 import { MeshStandardMaterial } from 'three';
 import {Utils} from '../core/utils.js'
@@ -7,6 +7,8 @@ import { TEXTURE_PROPERTY_COLOR, TEXTURE_PROPERTY_REPEAT, TEXTURE_PROPERTY_ROTAT
 import { PointLightHelper } from 'three';
 import { ShapeUtils } from 'three';
 import { BufferGeometry } from 'three';
+import { SpotLight } from 'three';
+import { Box3 } from 'three';
 
 export class Floor3D extends EventDispatcher {
     constructor(scene, room, controls, opts) {
@@ -115,37 +117,58 @@ export class Floor3D extends EventDispatcher {
     }
 
     addRoomLight(){
-        let position= new Vector3(this.room.areaCenter.x, 240, this.room.areaCenter.y);
-        let light = new PointLight(0xFFFFFF, 300000, 1000);
+        let position = new Vector3(this.room.areaCenter.x, 240, this.room.areaCenter.y);
+        let light = new PointLight(0xFFFFFF, 200000, 1000);
         this.roomLightHelper = new PointLightHelper(light, 50);
+        light.shadow.mapSize = new Vector2(2048, 2048);
+        light.shadow.bias = -0.0005;
+        light.castShadow = true;
         light.position.copy(position);
+        // light.add(light.target);
+        // light.target.copy(light.position);
         return light;
     }
 
     buildFloor() {
         let points = [];
+        let min = new Vector2(Number.MAX_VALUE, Number.MAX_VALUE);
         this.room.interiorCorners.forEach((corner) => {
+            min.x = Math.min(min.x, corner.x);
+            min.y = Math.min(min.y, corner.y);
             points.push(new Vector2(corner.x, corner.y));
         });
 
         let floorSize = this.room.floorRectangleSize.clone();
         let shape = new Shape(points);
-        let geometry = new ShapeGeometry(shape);
-        const uvAttribute = geometry.getAttribute( 'uv' );
-        
-        for (let i = 0;i < uvAttribute.count; i++){
-            let vert = points[i];
-            let uv = Utils.vertexToUv(vert, floorSize);
-            uvAttribute.setXY(i, uv.x, uv.y);
-        }
-
-        geometry.computeVertexNormals();
-        geometry.normalizeNormals();
-
-        let useGeometry = geometry;
+        let useGeometry = new ShapeGeometry(shape);
+        let positionAttribute = null;
+        let uvAttribute = null;
+        let box3 = null;
         let floor = new Mesh(useGeometry, this.__floorMaterial3D);
+        let vec3 = new Vector3();
+
         floor.receiveShadow = true;
         floor.rotation.set(Math.PI * 0.5, 0, 0);
+
+        floor.geometry.computeVertexNormals();
+        floor.geometry.normalizeNormals();
+
+        box3 = new Box3().setFromObject(floor);
+
+        positionAttribute = floor.geometry.getAttribute('position');
+        uvAttribute = floor.geometry.getAttribute( 'uv' );
+        
+        for (let i = 0;i < positionAttribute.count; i++){
+            vec3.fromBufferAttribute(positionAttribute, i);
+            uvAttribute.setXY(i, (vec3.x - box3.min.x) / floorSize.x, (vec3.y - box3.min.y) / floorSize.y);
+            // let vert = points[i];
+            // let uv = Utils.vertexToUv(vert.clone().sub(min), floorSize);
+            // // console.log(vert, uv, floorSize);
+            // uvAttribute.setXY(i, uv.x, uv.y);
+        }
+
+        uvAttribute.needsUpdate = true;
+
         return floor;
     }
 

@@ -229,6 +229,22 @@ export class Room extends EventDispatcher {
             }
             edge.setTextureMaps(texturePack);
         }
+
+        this.floorplan.orphanWalls.forEach((wall)=>{
+            let frontEdge = wall.frontEdge;
+            let backEdge = wall.backEdge;
+
+            if(frontEdge){
+                if(frontEdge.room == this){
+                    frontEdge.setTextureMaps(texturePack);
+                }
+            }
+            if(backEdge){
+                if(backEdge.room == this){
+                    backEdge.setTextureMaps(texturePack);
+                }
+            }
+        });
     }
 
 

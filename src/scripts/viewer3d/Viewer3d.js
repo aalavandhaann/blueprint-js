@@ -248,11 +248,14 @@ export class Viewer3D extends Scene {
             let edge3d = new Edge3D(scope, wallEdges[i], scope.controls, this.__options);
             scope.edges3d.push(edge3d);
         }
-        scope.shouldRender = true;
+        let floorplanDimensions = scope.floorplan.getDimensions();
         let floorplanCenter = scope.floorplan.getDimensions(true);
+        let multiplier = 1.5;
+        let ymultiplier = 0.5;
         scope.controls.target = floorplanCenter.clone();
-        scope.camera.position.set(floorplanCenter.x, 300, floorplanCenter.z * 5);
+        scope.camera.position.set(floorplanDimensions.x*multiplier, floorplanDimensions.length()*ymultiplier, floorplanDimensions.z*multiplier);
         scope.controls.update();
+        scope.shouldRender = true;
     }
 
     getATextRenderer(){
@@ -267,7 +270,7 @@ export class Viewer3D extends Scene {
     getARenderer() {
         let renderer = new WebGLRenderer({ antialias: true, alpha: true });
         renderer.autoClear = true; //true
-        renderer.shadowMap.enabled = false;
+        renderer.shadowMap.enabled = true;
         // renderer.shadowMapAutoUpdate = true;
         renderer.physicallyCorrectLights = true;
         renderer.shadowMap.type = PCFSoftShadowMap;

@@ -8,7 +8,7 @@ gitpush.sh~
 dist/*
 app/*
 .cache/*
-3D-Models-Internet/*
+3D-Models-Internet/
 
 __pycache__
 package-lock.json

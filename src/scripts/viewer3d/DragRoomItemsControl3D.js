@@ -91,12 +91,13 @@ export class DragRoomItemsControl3D extends EventDispatcher {
                  */
                 this.__plane.setFromNormalAndCoplanarPoint(this.__camera.getWorldDirection(this.__plane.normal), this.__worldPosition.setFromMatrixPosition(this.__selected.matrixWorld));
 
-                this.__offset.copy(this.__intersection).sub(this.__worldPosition.setFromMatrixPosition(this.__selected.matrixWorld));
+                this.__offset.copy(this.__intersection).add(this.__worldPosition.setFromMatrixPosition(this.__selected.matrixWorld));
             }
             this.__domElement.style.cursor = 'move';
             
             if(this.__selected.statistics){
-                this.__selected.statistics.turnOffDistances();
+                this.__selected.statistics.turnOnDistances();
+                this.__selected.statistics.updateDistances();
             }   
             this.dispatchEvent({ type: EVENT_ITEM_SELECTED, item: this.__selected });
             return;
@@ -167,7 +168,7 @@ export class DragRoomItemsControl3D extends EventDispatcher {
             //Check if the item has customIntersectionPlanes, otherwise move it freely
             if (this.__selected.intersectionPlanes != undefined && !this.__selected.intersectionPlanes.length) {
                 if (this.__raycaster.ray.intersectPlane(this.__plane, this.__intersection)) {
-                    let location = this.__selected.location.clone().copy(this.__intersection.sub(this.__offset).applyMatrix4(this.__inverseMatrix));
+                    let location = this.__selected.location.clone().copy(this.__intersection.add(this.__offset).applyMatrix4(this.__inverseMatrix));
                     this.__selected.location = location;
                 }
             } else {
@@ -186,6 +187,10 @@ export class DragRoomItemsControl3D extends EventDispatcher {
                         this.__selected.snapToPoint(location, normal, intersectingPlane);
                 }
             }
+            if(this.__selected.statistics){
+                this.__selected.statistics.turnOnDistances();
+                this.__selected.statistics.updateDistances();
+            }    
             /**
              * START OF LINES FOR UPDATING THE DISTANCE OF AN OBJECT CONTINUOSLY
              * CAUTION: THIS MAKES THE APP REALLY SLOW

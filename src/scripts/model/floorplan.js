@@ -36,6 +36,7 @@ export class Floorplan extends EventDispatcher {
          * @type {Wall[]}
          */
         this.walls = [];
+        this.__orphanWalls = [];
         /**
          * List of elements of Corner instance
          * 
@@ -1048,28 +1049,42 @@ export class Floorplan extends EventDispatcher {
      * An internal cleanup method
      */
     assignOrphanEdges() {
+        let scope = this;
+        function isInRoom(start, end){
+            let insideTheRoom = null;
+            scope.rooms.forEach((room) =>{
+                let polygon = room.roomCornerPoints;
+                let isInsideStart = Utils.pointInPolygon2(start, polygon);
+                let isInsideEnd = Utils.pointInPolygon2(end, polygon);
+                if(isInsideStart || isInsideEnd){
+                    insideTheRoom = room;
+                }
+            });
+            return insideTheRoom;
+        }
         // kinda hacky
         // find orphaned wall segments (i.e. not part of rooms) and
         // give them edges
         let orphanWalls = [];
-        this.walls.forEach((wall) => {
-            // if (!wall.backEdge) {
-            //     let back = new HalfEdge(null, wall, false);
-            //     back.generatePlane();
-            // }
-            // if (!wall.frontEdge) {
-            //     let front = new HalfEdge(null, wall, true);
-            //     front.generatePlane();
-            // }
+        let iterateWalls = function(wall){
+            
+        }.bind(this);
+
+        this.walls.forEach((wall)=>{
             if (!wall.backEdge && !wall.frontEdge) {
-                let back = new HalfEdge(null, wall, false);
-                let front = new HalfEdge(null, wall, true);
+                /**
+                 * It is necessary to guess which room might contain this orphan wall
+                 */
+                let room = isInRoom(wall.start, wall.end);                
+                let back = new HalfEdge(room, wall, false);
+                let front = new HalfEdge(room, wall, true);
                 wall.orphan = true;
                 back.generatePlane();
                 front.generatePlane();
                 orphanWalls.push(wall);
             }
         });
+        return orphanWalls;
     }
 
     /**
@@ -1142,7 +1157,7 @@ export class Floorplan extends EventDispatcher {
             scope.metaroomsdata[room.roomByCornersId] = {};
             scope.metaroomsdata[room.roomByCornersId]['name'] = room.name;
         });
-        this.assignOrphanEdges();
+        this.__orphanWalls = this.assignOrphanEdges();
         this.__roofPlanesForIntersection.length = 0;
         this.__floorPlanesForIntersection.length = 0;
         this.__wallPlanesForIntersection.length = 0;
@@ -1326,6 +1341,10 @@ export class Floorplan extends EventDispatcher {
 
     get boundary() {
         return this.__boundary;
+    }
+
+    get orphanWalls(){
+        return this.__orphanWalls;
     }
 }
 export default Floorplan;
