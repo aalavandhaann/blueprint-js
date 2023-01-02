@@ -143,10 +143,10 @@ export class DragRoomItemsControl3D extends EventDispatcher {
         this.__raycaster.setFromCamera(this.__mouse, this.__camera);
         wallPlanesThatIntersect = this.__raycaster.intersectObjects(this.__walls, false);
         floorPlanesThatIntersect = this.__raycaster.intersectObjects(this.__floors, false);
-        if(!wallPlanesThatIntersect.length && !floorPlanesThatIntersect.length){
-            this.dispatchEvent({ type: EVENT_NO_ITEM_SELECTED, item: this.__selected });
-            return;
-        }
+        // if(!wallPlanesThatIntersect.length && !floorPlanesThatIntersect.length && !this.__selected){
+        //     this.dispatchEvent({ type: EVENT_NO_ITEM_SELECTED, item: this.__selected });
+        //     return;
+        // }
         if (this.__selected) {
             if(this.__selected.statistics){
                 this.__selected.statistics.turnOnDistances();

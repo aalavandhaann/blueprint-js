@@ -180,6 +180,7 @@ export class Viewer3D extends Scene {
     __roomItemUnselected(evt) {
         this.controls.enabled = true;
         if (this.__currentItemSelected) {
+            this.dragcontrols.selected = null;
             this.__currentItemSelected.selected = false;
             this.__currentItemSelected = null;
             this.needsUpdate = true;
