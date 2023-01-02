@@ -50,7 +50,6 @@ export class DragRoomItemsControl3D extends EventDispatcher {
     }
 
     __pressListener(evt) {
-        console.log('PRESS');
         let time = Date.now();
         let deltaTime = time - this.__timestamp;
         let wallPlanesThatIntersect = null;
@@ -112,7 +111,6 @@ export class DragRoomItemsControl3D extends EventDispatcher {
     }
 
     __releaseListener(evt) {
-        console.log('RELEASE');
         let time = Date.now();
         let deltaTime = time - this.__releasetimestamp;
         this.__releasetimestamp = time;
@@ -154,7 +152,6 @@ export class DragRoomItemsControl3D extends EventDispatcher {
 
 
     __moveListener(evt) {
-        console.log('MOVE');
         evt.preventDefault();
         evt = (evt.changedTouches !== undefined) ? evt.changedTouches[0] : evt;
 
@@ -165,7 +162,6 @@ export class DragRoomItemsControl3D extends EventDispatcher {
         this.__mouseClient.y=evt.clientY;
         this.__raycaster.setFromCamera(this.__mouse, this.__camera);
         if (this.__selected && this.__enabled && this.__selected.visible) {
-            console.log('MOVE SELECTION ');
             //Check if the item has customIntersectionPlanes, otherwise move it freely
             if (this.__selected.intersectionPlanes != undefined && !this.__selected.intersectionPlanes.length) {
                 if (this.__raycaster.ray.intersectPlane(this.__plane, this.__intersection)) {
@@ -173,7 +169,6 @@ export class DragRoomItemsControl3D extends EventDispatcher {
                     this.__selected.location = location;
                 }
             } else {
-                console.log('SNAP THE ELEMENTS LOGIC');
                 let customIntersectingPlanes = this.__selected.intersectionPlanes;
                 let customIntersectingPlanes1 = this.__selected.intersectionPlanes_wall;
                 customIntersectingPlanes = customIntersectingPlanes.concat(customIntersectingPlanes1);
