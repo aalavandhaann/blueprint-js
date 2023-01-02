@@ -2,28 +2,50 @@ import {
     Mesh, FontLoader, Line, TextGeometry, BufferGeometry, Box3, MathUtils, Group, Object3D,
     ExtrudeBufferGeometry, BoundingBoxHelper, Vector3, VertexColors, ArrowHelper, AxesHelper,
     SphereGeometry, MeshBasicMaterial, Matrix4, sRGBEncoding, LinearEncoding, PointLightHelper,
-    SpotLight, PointLight, SpotLightHelper,TextureLoader,RepeatWrapping,MeshPhongMaterial, Plane
+    SpotLight, PointLight, SpotLightHelper,TextureLoader,RepeatWrapping,MeshPhongMaterial, Plane, CompressedPixelFormat
 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { EVENT_ITEM_LOADED, EVENT_ITEM_LOADING, EVENT_UPDATED, EVENT_PARAMETRIC_GEOMETRY_UPATED } from "../core/events";
 import { Utils } from "../core/utils"
-import { BoxBufferGeometry, LineBasicMaterial, LineSegments, EdgesGeometry, ObjectLoader } from "three";
-import { Dimensioning } from '../core/dimensioning.js';
+import { BoxGeometry, LineBasicMaterial, LineSegments, EdgesGeometry, ObjectLoader } from "three";
 import { FloorMaterial3D } from "../materials/FloorMaterial3D";
 import {ConfigurationHelper} from '../helpers/ConfigurationHelper';
-import gsap from 'gsap';
+import { Configuration,shadowVisible } from '../core/configuration.js';
+import {gsap, Power0} from 'gsap';
 import { Vector2 } from "three/build/three.module";
-import { WallItem } from "../items/wall_item";
-import { InWallItem } from "../items/in_wall_item";
+import { WallFloorItem } from "../items/wall_floor_item";
+import { ItemStatistics3D } from "./ItemStatistics3D";
 // import { Group } from "three/build/three.module";
 
 export class Physical3DItem extends Mesh {
-    constructor(itemModel, opts) {
+    constructor(itemModel, dragControls, opts) {
         super();
+        opts = opts || {};
+        let options = {
+            statistics: {
+                dimension: {
+                    unselectedColor: 0xFFFF00,
+                    selectedColor: 0xFFFF00   
+                },
+                distance: {
+                    unselectedColor: 0xF0F0F0,
+                    selectedColor: 0xF0F0F0   
+                }    
+            }            
+        };
+        for (let opt in options) {
+            if (options.hasOwnProperty(opt) && opts.hasOwnProperty(opt)) {
+                options[opt] = opts[opt];
+            }
+        }
+        let boxHelperMaterial = new LineBasicMaterial({ color: 0x0000F0, linewidth: 2, transparent: true });
+        this.__options = options;
         this.__itemModel = itemModel;
+        this.__dragControls = dragControls;
         this.__box = null;
         this.castShadow = true;
         this.receiveShadow = true;
+        this.__shadowVisible = true;
         this.__center = null;
         this.__size = null;
         this.__itemType = null;
@@ -32,9 +54,34 @@ export class Physical3DItem extends Mesh {
         /** Show rotate option in context menu */
         this.allowRotate = true;
         this.halfSize = this.__itemModel.halfSize;//new Vector3(0, 0, 0);
-        this.__options = opts;
-        this.__selectedMaterial = new LineBasicMaterial({ color: 0x0000F0, linewidth: 2 });
-        this.__boxhelper = new LineSegments(new EdgesGeometry(new BoxBufferGeometry(1, 1, 1)), this.__selectedMaterial);
+
+
+        this.__selectedMaterial = boxHelperMaterial;
+        this.__boxhelper = new LineSegments(new EdgesGeometry(new BoxGeometry(1, 1, 1)), this.__selectedMaterial);
+        this.__boxMaterialAnimator = gsap.fromTo(
+            this.__boxhelper.material, 
+            {
+                opacity: 1.0
+            },
+            { 
+                opacity: 0.0, 
+                duration: 1.0, 
+                repeat: 0, 
+                yoyo: true, 
+                ease: Power0.easeNone, 
+                paused: true,
+                onStart: function(){
+                    this.__boxhelper.visible = true;
+                }.bind(this),
+                onFinish: function(){                
+                    this.__boxhelper.visible = false;
+                    // this.__boxhelper.material.opacity = 0.0;
+                }.bind(this)
+        });
+        this.__itemStatistics = null;
+        
+        this.__dimensionHelper = new Group();
+        this.__measurementgroup = new Object3D();
         this.__pointLightHelper = null;
         this.__spotLightHelper = null;
         this.__customIntersectionPlanes = []; // Useful for intersecting only wall planes, only floorplanes, only ceiling planes etc
@@ -64,7 +111,7 @@ export class Physical3DItem extends Mesh {
     }
 
     __parametricGeometryUpdate(evt) {
-        let mLocal = new Matrix4().getInverse(this.matrixWorld);
+        let mLocal = this.matrixWorld.clone().invert();//new Matrix4().getInverse(this.matrixWorld);
         this.__loadedItem.geometry = this.__itemModel.parametricClass.geometry;
         this.parent.needsUpdate = true;
 
@@ -75,7 +122,7 @@ export class Physical3DItem extends Mesh {
         let m = new Matrix4();
         m = m.makeTranslation(-localCenter.x, -localCenter.y, -localCenter.z);
 
-        this.__boxhelper.geometry = new EdgesGeometry(new BoxBufferGeometry(this.__size.x, this.__size.y, this.__size.z));
+        this.__boxhelper.geometry = new EdgesGeometry(new BoxGeometry(this.__size.x, this.__size.y, this.__size.z));
         // this.__boxhelper.geometry.applyMatrix4(m);
 
         this.__boxhelper.rotation.x = this.__itemModel.combinedRotation.x;
@@ -88,57 +135,19 @@ export class Physical3DItem extends Mesh {
         let duration = 0.25;
         if (!scope.parent) {
             return;
-        }
-        function __tinyUpdate() {
-            if (scope.parent) {
-                scope.parent.needsUpdate = true;
+        }        
+        if (evt.property === 'position') {
+            this.position.set(this.__itemModel.position.x, this.__itemModel.position.y, this.__itemModel.position.z);
+        }        
+        
+        if (evt.property === 'innerRotation') {
+            if (this.__loadedItem) {
+                this.__loadedItem.rotation.set(this.__itemModel.innerRotation.x, this.__itemModel.innerRotation.y, this.__itemModel.innerRotation.z);
             }
-        }
-
-        if (!this.__itemModel.offlineUpdate) {
-            if (evt.property === 'position') {
-                this.position.set(this.__itemModel.position.x, this.__itemModel.position.y, this.__itemModel.position.z);
-                // gsap.to(this.position, { duration: duration, x: this.__itemModel.position.x, onUpdate: __tinyUpdate });
-                // gsap.to(this.position, { duration: duration, y: this.__itemModel.position.y });
-                // gsap.to(this.position, { duration: duration, z: this.__itemModel.position.z });
-            }
-            if (evt.property === 'rotation') {
-                gsap.to(this.__loadedItem.rotation, { duration: duration, x: this.__itemModel.rotation.x, onUpdate: __tinyUpdate });
-                gsap.to(this.__loadedItem.rotation, { duration: duration, y: this.__itemModel.rotation.y });
-                gsap.to(this.__loadedItem.rotation, { duration: duration, z: this.__itemModel.rotation.z });
-                gsap.to(this.__boxhelper.rotation, { duration: duration, x: this.__itemModel.rotation.x });
-                gsap.to(this.__boxhelper.rotation, { duration: duration, y: this.__itemModel.rotation.y });
-                gsap.to(this.__boxhelper.rotation, { duration: duration, z: this.__itemModel.rotation.z });
-            }
-             if (evt.property === 'innerRotation') {
-                if (this.__loadedItem) {
-                    gsap.to(this.__loadedItem.rotation, { duration: duration, x: this.__itemModel.innerRotation.x, onUpdate: __tinyUpdate });
-                    gsap.to(this.__loadedItem.rotation, { duration: duration, y: this.__itemModel.innerRotation.y });
-                    gsap.to(this.__loadedItem.rotation, { duration: duration, z: this.__itemModel.innerRotation.z });
-                }
-                gsap.to(this.__boxhelper.rotation, { duration: duration, x: this.__itemModel.innerRotation.x });
-                gsap.to(this.__boxhelper.rotation, { duration: duration, y: this.__itemModel.innerRotation.y });
-                gsap.to(this.__boxhelper.rotation, { duration: duration, z: this.__itemModel.innerRotation.z });
-            }
-                
-        } else {
-            if (evt.property === 'position') {
-                this.position.set(this.__itemModel.position.x, this.__itemModel.position.y, this.__itemModel.position.z);
-            }
-          
-            
-            if (evt.property === 'innerRotation') {
-                if (this.__loadedItem) {
-                    this.__loadedItem.rotation.set(this.__itemModel.innerRotation.x, this.__itemModel.innerRotation.y, this.__itemModel.innerRotation.z);
-                }
-                this.__boxhelper.rotation.set(this.__itemModel.innerRotation.x, this.__itemModel.innerRotation.y, this.__itemModel.innerRotation.z);                               
-            }
-            if (evt.property === 'rotation') {
-                if (this.__loadedItem) {
-                    this.__loadedItem.rotation.set(this.__itemModel.rotation.x, this.__itemModel.rotation.y, this.__itemModel.rotation.z);
-                }
-                this.__boxhelper.rotation.set(this.__itemModel.rotation.x, this.__itemModel.rotation.y, this.__itemModel.rotation.z);
-            }
+            this.__boxhelper.rotation.set(this.__itemModel.innerRotation.x, this.__itemModel.innerRotation.y, this.__itemModel.innerRotation.z);
+            if(this.__itemStatistics){
+                this.__itemStatistics.rotation.set(this.__itemModel.innerRotation.x, this.__itemModel.innerRotation.y, this.__itemModel.innerRotation.z);
+            }               
         }
         if (evt.property === 'visible') {
             this.visible = this.__itemModel.visible;
@@ -148,6 +157,7 @@ export class Physical3DItem extends Mesh {
     __initializeChildItem() {       
         this.name = 'Physical_' + this.__itemModel.__metadata.itemName;
         this.__box = new Box3().setFromObject(this.__loadedItem);
+        this.__itemStatistics = new ItemStatistics3D(this, this.__dragControls, this.__options.statistics);
         
         this.__center = this.__box.getCenter(new Vector3());
         this.__size = this.__box.getSize(new Vector3());
@@ -156,7 +166,7 @@ export class Physical3DItem extends Mesh {
         this.__loadedItem.castShadow = true;
         this.__loadedItem.receiveShadow = true;
 
-        this.__boxhelper.geometry = new EdgesGeometry(new BoxBufferGeometry(this.__size.x, this.__size.y, this.__size.z));
+        this.__boxhelper.geometry = new EdgesGeometry(new BoxGeometry(this.__size.x, this.__size.y, this.__size.z));
         this.__loadedItem.rotation.x = this.__itemModel.innerRotation.x;
         this.__loadedItem.rotation.y = this.__itemModel.innerRotation.y;
         this.__loadedItem.rotation.z = this.__itemModel.innerRotation.z;
@@ -165,18 +175,14 @@ export class Physical3DItem extends Mesh {
         this.__boxhelper.rotation.y = this.__itemModel.innerRotation.y;
         this.__boxhelper.rotation.z = this.__itemModel.innerRotation.z;
 
-
-        // this.__boxhelper.position.x = this.__loadedItem.position.x;
-        // this.__boxhelper.position.y = this.__loadedItem.position.y;
-        // this.__boxhelper.position.z = this.__loadedItem.position.z;
-
+        this.__itemStatistics.rotation.copy(this.__loadedItem.rotation);
 
         if (this.__itemModel.__metadata.isLight) {
             this.__loadedItem.name = this.__itemModel.__metadata.itemName;
             this.parent.__light3d.push(this.__loadedItem);
         }
 
-        this.geometry = new BoxBufferGeometry(this.__size.x, this.__size.y, this.__size.z, 1, 1, 1);
+        this.geometry = new BoxGeometry(this.__size.x, this.__size.y, this.__size.z, 1, 1, 1);
 
         this.geometry.computeBoundingBox();
         if (this.__itemModel.__metadata.custom != undefined) {
@@ -196,18 +202,18 @@ export class Physical3DItem extends Mesh {
         if (scope.parent) {
             scope.parent.needsUpdate = true;
         }
-        // this.__boxhelper.update();
-        if(this.__itemModel.__metadata.itemType==1){
-            const axesHelper = new AxesHelper( 500 );
-            //this.__loadedItem.add( axesHelper );
-        }
         
+
+        this.__itemStatistics.updateDimensions();
+        this.__itemStatistics.updateDistances();
+        this.__itemStatistics.turnOffDistances();
         this.add(this.__loadedItem);
+        this.add(this.__itemStatistics);
+
         this.dispatchEvent({ type: EVENT_UPDATED });
     }
 
     __loadItemModel() {
-
         this.__itemModel.name = this.__itemModel.__metadata.itemName || null;
         if (!this.__itemModel.modelURL || this.__itemModel.modelURL === undefined || this.__itemModel.modelURL === 'undefined') {
             return;
@@ -216,31 +222,62 @@ export class Physical3DItem extends Mesh {
         if (this.__loadedItem) {
             this.remove(this.__loadedItem);
         }
-
         this.__gltfLoader.load(this.__itemModel.modelURL, this.__gltfLoadedEvent, this.__gltfLoadingProgressEvent);
-
     }
+
+    // Function - Add the textures to the models
+    initColor(parent, type, mtl) {
+        let texturepack = {};
+        let material = new FloorMaterial3D({}, texturepack, parent);
+        material.__multiComponentTextureUpdate(texturepack,parent,mtl);
+    }
+
+    __initialMaterial(){
+        let meshList = [];
+        let meshMap = [];
+        if(this.__itemModel.textures.length!=0){
+            this.initColor(this.__loadedItem, '', this.__itemModel.textures);
+        }else{
+            this.__loadedItem.children.forEach((mesh) => {
+                meshList.push(mesh.name)
+                meshMap.push({ name: mesh.name, texture: '', color: '', shininess: 10, size: [] })
+            });
+            this.__itemModel.__metadata.mesh = meshList;
+            this.__itemModel.__metadata.textures = meshMap;
+        }
+    }
+
 
     __gltfLoaded(gltfModel) {
 
         this.__itemModelglb = gltfModel;
         this.__loadedItem = gltfModel.scene;
-        this.__loadedItem.castShadow = true;
-        this.__loadedItem.receiveShadow = true;
+        this.__loadedItem.castShadow = this.__shadowVisible;
+        this.__loadedItem.receiveShadow = this.__shadowVisible;
         this.__loadedItem.traverse((child) => {
             if (child.isMesh) {
-                child.castShadow = true;
-                child.receiveShadow = true;
-                if (child.material.map) child.material.map.anisotropy = 16;
-
+                child.castShadow = this.__shadowVisible;
+                child.receiveShadow = true;            
             }
             if (child.material) {
-                if (child.material.map) {
-                    child.material.map.encoding = sRGBEncoding;
-                }
+                let materials = (child.material.length) ? child.materials : [child.material];
+                materials.forEach((material) => {
+                    if(material.map){
+                        material.map.encoding = sRGBEncoding;
+                        material.map.anisotropy = 16;
+                    }
+                    if(material.opacity < 1.0-1e-6){
+                        material.transparent = true;
+                        child.castShadow = false;
+                    }
+                });
             }
+            
         });
-        this.__initializeChildItem();       
+
+        this.__initialMaterial();
+        this.__initializeChildItem();
+       
         this.dispatchEvent({ type: EVENT_ITEM_LOADED });
     }
 
@@ -275,7 +312,7 @@ export class Physical3DItem extends Mesh {
      * Also if the noConversionTo3D is true, it returns the plane on the wall in 3D.
      * @returns {Array} of {Vector2} or {Vector3} depending on noConversionTo2D
      */
-    getItemPolygon(position=null, midPoints = false, forWallItem = false, noConversionTo2D=false){
+    getItemPolygon(position=null, midPoints = false, forWallItem = false, noConversionTo2D=false, scale=1.0){
         let coords = [];
         let c1 = new Vector3(-this.halfSize.x, (!forWallItem) ? 0 : -this.halfSize.y, (forWallItem) ? 0 : -this.halfSize.z);
         let c2 = new Vector3(this.halfSize.x, (!forWallItem) ? 0 : -this.halfSize.y, (forWallItem) ? 0 : -this.halfSize.z);
@@ -286,21 +323,31 @@ export class Physical3DItem extends Mesh {
         let midC3C4 = null;
         let midC4C1 = null;
         
-        let transform = new Matrix4();
+        let rotationTransform = new Matrix4();
+        let scaleTransform = new Matrix4();
+        let translateTransform = new Matrix4();
+        
         position = position || this.__itemModel.position;
-
+        scaleTransform.scale(new Vector3(scale, scale, scale));
         if(forWallItem){
-            transform.makeRotationY(this.__itemModel.rotation.y);
+            rotationTransform.makeRotationY(this.__itemModel.rotation.y);
         }
         else{
-            transform.makeRotationY(this.__itemModel.innerRotation.y);
-        }        
-        transform.setPosition(position);
+            rotationTransform.makeRotationY(this.__itemModel.innerRotation.y);
+        }
+        rotationTransform.multiply(scaleTransform);
 
-        c1 = c1.applyMatrix4(transform);
-        c2 = c2.applyMatrix4(transform);
-        c3 = c3.applyMatrix4(transform);
-        c4 = c4.applyMatrix4(transform);        
+        c1 = c1.applyMatrix4(rotationTransform);
+        c2 = c2.applyMatrix4(rotationTransform);
+        c3 = c3.applyMatrix4(rotationTransform);
+        c4 = c4.applyMatrix4(rotationTransform);
+
+        translateTransform.setPosition(new Vector3(position.x, position.y, position.z));
+        
+        c1 = c1.applyMatrix4(translateTransform);
+        c2 = c2.applyMatrix4(translateTransform);
+        c3 = c3.applyMatrix4(translateTransform);
+        c4 = c4.applyMatrix4(translateTransform);        
         
         if(forWallItem){
             coords.push(c1);        
@@ -356,7 +403,7 @@ export class Physical3DItem extends Mesh {
         let myPosition = this.__itemModel.position;
         let myPolygon2D = this.getItemPolygon(myPosition, true);
         let otherPolygon2D = toAlignWith.getItemPolygon(null, true);
-        let minimalDistance = 10.0;//Set a threshold of 10 cms to check closest points
+        let minimalDistance = 9999999.0;//Set a threshold of 10 cms to check closest points
         let finalCoordinate3d = null;        
         myPolygon2D.forEach((coord) => {
             otherPolygon2D.forEach((otherCoord)=>{
@@ -366,8 +413,7 @@ export class Physical3DItem extends Mesh {
                     minimalDistance = distance;
                 }
             });
-        });  
-           
+        });          
         return finalCoordinate3d;
     }
 
@@ -375,14 +421,14 @@ export class Physical3DItem extends Mesh {
         function getCoordinate3D(selected, alignWith, position){
             let vector = null;
             let newPosition = null;
-            vector = selected.clone().sub(position);
+            vector = selected.clone().sub(position).multiplyScalar(1.001);
             newPosition = alignWith.clone().sub(vector);
             return newPosition;
         }
         let myPosition = this.__itemModel.position;
         let myPolygon3D = this.getItemPolygon(null, true, true, true);
         let otherPolygon3D = toAlignWith.getItemPolygon(null, true, true, true);
-        let minimalDistance = 9999999.0;//Set a threshold of 10 cms to check closest points
+        let minimalDistance = 10.0;//Set a threshold of 10 cms to check closest points
         let finalCoordinate3d = null;
         myPolygon3D.forEach((coord) => {
             otherPolygon3D.forEach((otherCoord)=>{
@@ -397,71 +443,81 @@ export class Physical3DItem extends Mesh {
     }
 
     handleFloorItemsPositioning(coordinate3d, normal, intersectingPlane){
+        let coordinate3dOriginal = coordinate3d.clone();
         let withinRoomBounds = false;
         let myPolygon2D = this.getItemPolygon(coordinate3d, false);
         let rooms = this.__itemModel.model.floorplan.getRooms();
         let i = 0;
+        let isBoundToFloor = this.itemModel.isBoundToFloor;
+        let isBoundToRoof = this.itemModel.isBoundToRoof;
         for (i = 0; i < rooms.length; i++) {
             let flag = Utils.polygonInsidePolygon(myPolygon2D, rooms[i].interiorCorners);
             if(flag){
                 withinRoomBounds = true;
             }            
         }
-
-        for (i = 0; i < this.parent.physicalRoomItems.length;i++){
-            let otherObject = this.parent.physicalRoomItems[i];
-            let otherPolygon2D = null;
-            let flag = false;
-            if(otherObject != this && !otherObject.itemModel.isWallDependent){ 
-                otherPolygon2D = otherObject.polygon2D;
-                flag = Utils.polygonOutsidePolygon(myPolygon2D, otherPolygon2D);
-                if(!flag){
-                    let alignedCoordinate = this.getAlignedPositionForFloor(otherObject);
-                    if(alignedCoordinate){
-                        coordinate3d = alignedCoordinate;
-                    }                    
-                    break;
+        if(this.itemModel.snap3D){
+            myPolygon2D = this.getItemPolygon(coordinate3d, false, false, false, 1.25);
+            for (i = 0; i < this.parent.physicalRoomItems.length;i++){
+                let otherObject = this.parent.physicalRoomItems[i];
+                let otherPolygon2D = null;
+                let flag = false;
+                if(otherObject != this && otherObject.itemModel.isBoundToFloor == isBoundToFloor && otherObject.itemModel.isBoundToRoof == isBoundToRoof){ 
+                    otherPolygon2D = otherObject.polygon2D;
+                    flag = Utils.polygonPolygonIntersect(myPolygon2D, otherPolygon2D);
+                    if(flag){
+                        let alignedCoordinate = this.getAlignedPositionForFloor(otherObject);
+                        otherObject.animateBounds();
+                        if(alignedCoordinate){
+                            coordinate3d = alignedCoordinate;
+                        }                    
+                        break;
+                    }
                 }
             }
         }
-        if(withinRoomBounds){
+        if(withinRoomBounds || this.itemModel instanceof WallFloorItem){
+            if(this.__itemModel.isBoundToRoof){
+                coordinate3d.y = coordinate3dOriginal.y;
+            }
             this.__itemModel.snapToPoint(coordinate3d, normal, intersectingPlane, this);
         }   
     }
 
     handleWallItemsPositioning(coordinate3d, normal, intersectingPlane){
-        let myPolygon2D = this.getItemPolygon(coordinate3d, true, true);
+        let myPolygon2D = this.getItemPolygon(coordinate3d, false, true, false, 1.5);
         let i = 0;
         let myWallUUID = (this.itemModel.currentWall) ? this.itemModel.currentWall.uuid : null;
-        // let plane = new Plane(normal);
-        // let projectedPoint = new Vector3();
-        for (i = 0; i < this.parent.physicalRoomItems.length;i++){
-            let otherObject = this.parent.physicalRoomItems[i];
-            let otherWallUUID = (otherObject.itemModel.isWallDependent && otherObject.itemModel.currentWall) ? otherObject.itemModel.currentWall.uuid: null;
-            let otherPolygon2D = null;
-            let flag = false;
-            if(!myWallUUID || !otherWallUUID || myWallUUID != otherWallUUID){
-                continue;
-            }
-            if(otherObject != this){
-                otherPolygon2D = otherObject.polygon2D;
-                flag = Utils.polygonOutsidePolygon(myPolygon2D, otherPolygon2D);
-                if(!flag){
-                    let alignedCoordinate = this.getAlignedPositionForWall(otherObject);
-                    if(alignedCoordinate){
-                        coordinate3d = alignedCoordinate;
+        if(this.itemModel.snap3D){
+            // console.log(myPolygon2D);
+            for (i = 0; i < this.parent.physicalRoomItems.length;i++){
+                let otherObject = this.parent.physicalRoomItems[i];
+                let otherWallUUID = (otherObject.itemModel.isWallDependent && otherObject.itemModel.currentWall) ? otherObject.itemModel.currentWall.uuid: null;
+                let otherPolygon2D = null;
+                let flag = false;
+                if(!myWallUUID || !otherWallUUID || myWallUUID != otherWallUUID){
+                    continue;
+                }
+                if(otherObject != this){
+                    // otherPolygon2D = otherObject.polygon2D;
+                    otherPolygon2D = otherObject.getItemPolygon(null, false, true, false, 1.5);
+                    // console.log(otherPolygon2D);
+                    flag = Utils.polygonPolygonIntersect(myPolygon2D, otherPolygon2D);
+                    if(flag){
+                        let alignedCoordinate = this.getAlignedPositionForWall(otherObject);
+                        if(alignedCoordinate){
+                            coordinate3d = alignedCoordinate;
+                        }
+                        break;
                     }
-                    break;
                 }
             }
         }
-        // plane.projectPoint(coordinate3d, projectedPoint);
-        // console.log(coordinate3d, projectedPoint);
         this.__itemModel.snapToPoint(coordinate3d, normal, intersectingPlane, this);
     }
 
     snapToPoint(coordinate3d, normal, intersectingPlane) {
-        if(this.itemModel.isWallDependent) {
+        if(this.itemModel.isWallDependent){
             this.handleWallItemsPositioning(coordinate3d, normal, intersectingPlane);            
             return;
         }
@@ -470,6 +526,22 @@ export class Physical3DItem extends Mesh {
 
     snapToWall(coordinate3d, wall, wallEdge) {
         this.__itemModel.snapToWall(coordinate3d, wall, wallEdge);
+    }
+
+    animateBounds(){
+        // this.__boxhelper.visible = true;
+        // this.__boxhelper.material.opacity = 1.0;
+        // if(!this.__boxMaterialAnimator.isActive()){
+            this.__boxMaterialAnimator.play(0);
+        // }
+    }
+
+    get loadedItem(){
+        return this.__loadedItem;
+    }
+
+    get statistics(){
+        return this.__itemStatistics;
     }
 
     get worldBox(){
@@ -487,7 +559,11 @@ export class Physical3DItem extends Mesh {
 
     set selected(flag) {
         this.__selected = flag;
-        this.__boxhelper.visible = flag;    }
+        this.__boxhelper.visible = flag;
+        this.__boxhelper.material.opacity = (flag) ? 1.0 : 0.0;        
+        this.__dimensionHelper.visible = flag;
+        this.__measurementgroup.visible = flag;
+    }
 
     set location(coordinate3d) {
         this.__itemModel.position = coordinate3d;
@@ -511,9 +587,13 @@ export class Physical3DItem extends Mesh {
 
     get polygon2D(){
         if(this.itemModel.isWallDependent){
-            return this.getItemPolygon(null, false, true);
+            return this.getItemPolygon(null, false, true, false);
         }
         return this.getItemPolygon();
+    }
+
+    get boxhelper(){
+        return this.__boxhelper;
     }
 }
 

@@ -137,7 +137,7 @@ class CornerGroupRectangle extends Graphics {
 
         let scaleAboutOrigin = TInv.clone().multiply(scaleMatrix).multiply(T); //Now scale about the origin. This matrix has no rotation so scaling along x,y
         let rotateAboutOrigin = TInv.clone().multiply(rotation).multiply(T); //Now rotate about the origin. 
-        let resetRotationAboutOrigin = rotateAboutOrigin.clone().getInverse(rotateAboutOrigin.clone()); //Ensure to reset the rotation of currentRadians
+        let resetRotationAboutOrigin = rotateAboutOrigin.copy(rotateAboutOrigin.clone().invert());//rotateAboutOrigin.clone().getInverse(rotateAboutOrigin.clone()); //Ensure to reset the rotation of currentRadians
 
         /**
          * The final transformation matrix is composition of matrices from right to left

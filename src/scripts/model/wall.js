@@ -186,12 +186,14 @@ export class Wall extends EventDispatcher {
             if (Utils.hasValue(this.__inWallItems, item)) {
                 Utils.removeValue(this.__inWallItems, item);
             }
+            
             this.dispatchEvent({ type: EVENT_MOVED, item: this, position: null });
         }
         if (item instanceof WallItem || item instanceof WallFloorItem) {
             if (Utils.hasValue(this.__onWallItems, item)) {
                 Utils.removeValue(this.__onWallItems, item);
             }
+            
             this.dispatchEvent({ type: EVENT_MOVED, item: this, position: null });
         }
     }
@@ -245,7 +247,7 @@ export class Wall extends EventDispatcher {
         this._bezier.points[3].y = this.end.location.y;
         this._bezier.update();
         if (this.getStart() || this.getEnd()) {
-            (this.getStart() != null) ? this.getStart().floorplan.update(false): (this.getEnd() != null) ? this.getEnd().floorplan.update(false) : false;
+            (this.getStart() != null) ? this.getStart().floorplan.update(false) : (this.getEnd() != null) ? this.getEnd().floorplan.update(false) : false;
         }
         //		this._a_vector = this._a.clone().sub(this.start.location);
         //		this._b_vector = this._b.clone().sub(this.start.location);
@@ -605,7 +607,7 @@ export class Wall extends EventDispatcher {
         } else if (this.end === corner) {
             return this.start;
         } else {
-            console.log('Wall does not connect to corner');
+            // console.log('Wall does not connect to corner');
             return null;
         }
     }

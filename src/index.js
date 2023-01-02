@@ -3,8 +3,10 @@ import FileSaver from 'file-saver';
 import FPS from 'fps-now';
 
 import { BlueprintJS } from './scripts/blueprint.js';
-import { EVENT_LOADED, EVENT_NOTHING_2D_SELECTED, EVENT_CORNER_2D_CLICKED, EVENT_WALL_2D_CLICKED, EVENT_ROOM_2D_CLICKED, EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED, EVENT_NO_ITEM_SELECTED, EVENT_ITEM_SELECTED, EVENT_GLTF_READY } from './scripts/core/events.js';
-import { Configuration, configDimUnit, viewBounds } from './scripts/core/configuration.js';
+import { EVENT_LOADED, EVENT_NOTHING_2D_SELECTED, EVENT_CORNER_2D_CLICKED, EVENT_WALL_2D_CLICKED, 
+    EVENT_ROOM_2D_CLICKED, EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED, EVENT_NO_ITEM_SELECTED, 
+    EVENT_ITEM_SELECTED, EVENT_GLTF_READY } from './scripts/core/events.js';
+import { Configuration, configDimUnit, viewBounds, itemStatistics } from './scripts/core/configuration.js';
 import { dimMeter, TEXTURE_NO_PREVIEW } from './scripts/core/constants.js';
 import QuickSettings from 'quicksettings';
 
@@ -13,12 +15,7 @@ import { ParametricsInterface } from './scripts/ParametricsInterface.js';
 
 import * as floor_textures_json from './floor_textures.json';
 import * as wall_textures_json from './wall_textures.json';
-// import * as default_room_json from './parametrics_items.json';
-// import * as default_room_json from './empty_room.json';
-// import * as default_room_json from './designWithBoundary.json';
-import * as default_room_json from './designWithoutBoundary.json';
-// import * as default_room_json from './designWithOrphanWalls.json';
-// import * as default_room_json from './LShape.json';
+import * as default_room_json from './design.json';
 
 const fps = FPS.of({x: 0, y: 0});
 fps.start();
@@ -351,6 +348,7 @@ Configuration.setValue(viewBounds, 10000);//In CMS
 
 blueprint3d = new BlueprintJS(opts);
 Configuration.setValue(configDimUnit, dimMeter);
+Configuration.setValue(itemStatistics, false);
 
 configurationHelper = blueprint3d.configurationHelper;
 floorplanningHelper = blueprint3d.floorplanningHelper;
@@ -469,6 +467,7 @@ if (!opts.widget) {
     settingsViewer2d.bindBoolean('directionalDrag', configurationHelper.directionalDrag, configurationHelper);
     settingsViewer2d.bindBoolean('dragOnlyX', configurationHelper.dragOnlyX, configurationHelper);
     settingsViewer2d.bindBoolean('dragOnlyY', configurationHelper.dragOnlyY, configurationHelper);
+    settingsViewer2d.bindBoolean('itemStatistics', configurationHelper.itemStatistics, configurationHelper);
     settingsViewer2d.bindRange('snapTolerance', 1, 200, configurationHelper.snapTolerance, 1, configurationHelper);
     settingsViewer2d.bindRange('gridSpacing', 10, 200, configurationHelper.gridSpacing, 1, configurationHelper);
     settingsViewer2d.bindNumber('boundsX', 1, 200, configurationHelper.boundsX, 1, configurationHelper);
@@ -478,14 +477,6 @@ if (!opts.widget) {
     settingsSelectedWall.bindRange('wallThickness', 0.01, 1, floorplanningHelper.wallThickness, 0.01, floorplanningHelper);
     settingsSelectedRoom.bindText('roomName', floorplanningHelper.roomName, floorplanningHelper);
 
-    // settingsViewer3d.addDropDown('Floor Textures', floor_texture_keys, selectFloorTexture);
-    // settingsViewer3d.addImage('Floor Texture:', floor_textures[floor_texture_keys[0]].colormap, null);
-    // settingsViewer3d.addButton('Apply', selectFloorTexture);
-
-    // settingsViewer3d.addDropDown('Wall Textures', wall_texture_keys, selectWallTexture);
-    // settingsViewer3d.addImage('Wall Texture:', wall_textures[wall_texture_keys[0]].colormap, null);
-    // settingsViewer3d.addButton('Apply', selectWallTexture);
-    console.log('TEXTURE IMAGE :: ', floor_textures[floor_texture_keys[0]].colormap || TEXTURE_NO_PREVIEW);
     settingsSelectedRoom3D.addDropDown('Floor Textures', floor_texture_keys, selectFloorTexture);
     settingsSelectedRoom3D.addImage('Floor Texture:', floor_textures[floor_texture_keys[0]].colormap || TEXTURE_NO_PREVIEW, null);
     settingsSelectedRoom3D.addColor('Floor Texture Color:', floor_textures[floor_texture_keys[0]].color || '#FFFFFF', selectFloorTextureColor);

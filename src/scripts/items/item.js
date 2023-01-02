@@ -3,7 +3,9 @@ import { Quaternion, Euler } from 'three';
 import { EVENT_UPDATED, EVENT_PARAMETRIC_GEOMETRY_UPATED, EVENT_MOVED, EVENT_DELETED } from '../core/events';
 import { Utils } from '../core/utils';
 import { BASE_PARAMETRIC_TYPES, ParametricFactory } from '../parametrics/ParametricFactory';
+import { Configuration, magneticSnap } from '../core/configuration.js';
 export const UP_VECTOR = new Vector3(0, 1, 0);
+
 /**
  * An Item is an abstract entity for all things placed in the scene, e.g. at
  * walls or on the floor.
@@ -46,7 +48,7 @@ export class Item extends EventDispatcher {
 
         this.__size = new Vector3(1, 1, 1);
         this.__mesh = [];
-        this.__meshmap = [];
+        this.__textures = [];
         this.__halfSize = new Vector3(1, 1, 1);
 
         this.__customIntersectionPlanes = [];
@@ -58,6 +60,7 @@ export class Item extends EventDispatcher {
         this.__selected = false; //This is part of application logic only
         this.__freePosition = true; //This is part of application logic only
         this.__boundToFloor = false; //This is part of application logic only
+        this.__boundToRoof = false; //This is part of application logic only
         this.__allowRotate = true; //This is part of application logic only
 
         this.__fixed = false; //This is part of application logic and also Metadata
@@ -79,6 +82,8 @@ export class Item extends EventDispatcher {
         this.__currentWallSnapPoint = null;
         this.__isWallDependent = false;
 
+        this.__snap3D = Configuration.getBooleanValue(magneticSnap);
+
         this.__followWallEvent = this.__followWall.bind(this);
         this.__edgeDeletedEvent = this.__edgeDeleted.bind(this);
         this.__parametricGeometryUpdateEvent = this.__parametricGeometryUpdate.bind(this);
@@ -94,17 +99,18 @@ export class Item extends EventDispatcher {
         this.__fixed = (this.__metadata.fixed) ? this.__metadata.fixed : true;
         this.__resizable = (this.__metadata.resizable) ? this.__metadata.resizable : true;
         this.__mesh = (this.__metadata.mesh) ? this.__metadata.mesh : [];
-        this.__meshmap = (this.__metadata.meshmap) ? this.__metadata.meshmap : [];
+        this.__textures = (this.__metadata.textures) ? this.__metadata.textures : [];
+        this.__snap3D = (this.__metadata.snap3D) ? this.__metadata.snap3D : true;
         
         if (this.__metadata.position && this.__metadata.position.length) {
             this.__position = new Vector3().fromArray(this.__metadata.position).clone();
         }
        
-            if (this.__metadata.innerRotation && this.__metadata.innerRotation.length) {
-                this.__innerRotation = new Vector3().fromArray(this.__metadata.innerRotation).clone();
-            } else {
-                this.__innerRotation = new Vector3();
-            }
+        if (this.__metadata.innerRotation) {
+            this.__innerRotation = new Vector3().fromArray(this.__metadata.innerRotation).clone();
+        } else {
+            this.__innerRotation = new Vector3();
+        }
         
 
         if (this.__metadata.scale.length) {
@@ -151,11 +157,12 @@ export class Item extends EventDispatcher {
                     let wallEdge = (this.__metadata.wallSide === 'front') ? wall.frontEdge : wall.backEdge;
                     let wallSurfacePoint = this.__metadata.wallSurfacePoint;
                     this.__currentWallSnapPoint = new Vector3(wallSurfacePoint[0], wallSurfacePoint[1], wallSurfacePoint[2]);
-                    this.snapToWall(this.__currentWallSnapPoint, wall, wallEdge);
+                    this.__addToAWall(wall, wallEdge);
                     break;
                 }
             }
         }
+        //this.__combinedRotation = this.__combineRotations();
     }
 
     __parametricGeometryUpdate(evt, updateForWall = true) {
@@ -226,15 +233,16 @@ export class Item extends EventDispatcher {
             itemName: this.metadata.itemName,
             itemType: this.metadata.itemType,
             modelURL: this.metadata.modelUrl,
+            snap3D: this.metadata.snap3D || true,
             position: this.position.toArray(),
-            rotation: this.rotation.toArray(),
+            rotation: this.innerRotation.toArray(),
             innerRotation: this.innerRotation.toArray(),
             scale: this.scale.toArray(),
             size: this.size.toArray(),
             fixed: this.__fixed,
             resizable: this.__resizable,
             mesh: this.mesh,
-            meshmap: this.meshmap
+            textures: this.textures
         };
     }
 
@@ -364,6 +372,8 @@ export class Item extends EventDispatcher {
         this.__metadata.scale = this.__scale.toArray();
         this.__metaDataUpdate('scale');
     }
+
+
     /**
      * This is a read-only property. This can be changed only internally with private and protected acces
      */
@@ -378,14 +388,14 @@ export class Item extends EventDispatcher {
         this.__metaDataUpdate('mesh');
     }
 
-    get meshmap() {
-        return this.__meshmap;
+    get textures() {
+        return this.__textures;
     }
 
-    set meshmap(value) {
-        this.__meshmap = value;
-        this.__metadata.meshmap = this.__meshmap;
-        this.__metaDataUpdate('meshmap');
+    set textures(value) {
+        this.__textures = value;
+        this.__metadata.textures = this.__textures;
+        this.__metaDataUpdate('textures');
     }
     
     get size() {
@@ -479,6 +489,16 @@ export class Item extends EventDispatcher {
         this.__metaDataUpdate('position');
     }
 
+    get snap3D(){
+        return this.__snap3D;
+    }
+
+    set snap3D(flag){
+        this.__snap3D = flag;
+        this.__metadata.snap3D = flag;
+        this.__metaDataUpdate('snap3D');
+    }
+
     get halfSize() {
         return this.__halfSize.clone();
     }
@@ -493,6 +513,14 @@ export class Item extends EventDispatcher {
 
     get isWallDependent() {
         return this.__isWallDependent;
+    }
+
+    get isBoundToFloor(){
+        return this.__boundToFloor;
+    }
+
+    get isBoundToRoof(){
+        return this.__boundToRoof;
     }
 
     get offlineUpdate() {

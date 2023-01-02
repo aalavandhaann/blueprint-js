@@ -1,8 +1,9 @@
-import { EventDispatcher, Vector2, Vector3, Face3, Geometry, Shape, ShapeGeometry, Mesh, MeshBasicMaterial, DoubleSide, Box3 } from 'three';
+import { EventDispatcher, Vector2, Vector3, Shape, ShapeGeometry, Mesh, MeshBasicMaterial, DoubleSide, Box3, FrontSide } from 'three';
 import { Plane, Matrix4 } from 'three';
 import { EVENT_CHANGED, EVENT_ROOM_ATTRIBUTES_CHANGED, EVENT_MOVED, EVENT_UPDATED, EVENT_UPDATE_TEXTURES, EVENT_CORNER_ATTRIBUTES_CHANGED, EVENT_MODIFY_TEXTURE_ATTRIBUTE } from '../core/events.js';
 import { Region } from '../core/utils.js';
-import { WallTypes, TEXTURE_DEFAULT_REPEAT, defaultFloorTexture } from '../core/constants.js';
+import { WallTypes, TEXTURE_DEFAULT_REPEAT, defaultFloorTexture, TEXTURE_PROPERTY_ROTATE, TEXTURE_PROPERTY_COLOR, TEXTURE_PROPERTY_REPEAT, TEXTURE_PROPERTY_REFLECTIVE, TEXTURE_PROPERTY_SHININESS } from '../core/constants.js';
+// import { / } from '../core/constants';
 import { Utils } from '../core/utils.js';
 import { HalfEdge } from './half_edge.js';
 import { BufferGeometry } from 'three/build/three.module';
@@ -22,6 +23,7 @@ export class Room extends EventDispatcher {
         this.min = null;
         this.max = null;
         this.center = null;
+        this.normal = null;
         this.area = 0.0;
         this.areaCenter = null;
         this._polygonPoints = [];
@@ -209,6 +211,7 @@ export class Room extends EventDispatcher {
     }
 
     setRoomWallsTextureMaps(texturePack) {
+        // console.log(texturePack);
         let edge = this.edgePointer;
         let iterateWhile = true;
         if (!texturePack.color) {
@@ -230,6 +233,7 @@ export class Room extends EventDispatcher {
 
 
     setRoomWallsTextureMapsAttribute(attribute, value) {
+        // console.log(attribute, value);
         let edge = this.edgePointer;
         let iterateWhile = true;
         edge.setTextureMapAttribute(attribute, value);
@@ -245,6 +249,7 @@ export class Room extends EventDispatcher {
     }
 
     setTextureMaps(texturePack) {
+        // console.log("floor texture", texturePack);
         let uuid = this.getUuid();
         if (!texturePack.color) {
             texturePack.color = '#FFFFFF';
@@ -257,13 +262,54 @@ export class Room extends EventDispatcher {
     }
 
     setTextureMapAttribute(attribute, value) {
-        if (attribute && value) {
-            let uuid = this.getUuid();
-            let texturePack = this.getTexture();
-            texturePack[attribute] = value;
-            this.floorplan.setFloorTexture(uuid, texturePack);
-            this.dispatchEvent({ type: EVENT_MODIFY_TEXTURE_ATTRIBUTE, item: this, attribute: attribute, value: value });
+        if (attribute == TEXTURE_PROPERTY_COLOR) {
+            if (attribute && value) {
+                let uuid = this.getUuid();
+                let texturePack = this.getTexture();
+                texturePack[attribute] = value;
+                this.floorplan.setFloorTexture(uuid, texturePack);
+                this.dispatchEvent({ type: EVENT_MODIFY_TEXTURE_ATTRIBUTE, item: this, attribute: attribute, value: value });
+            }
         }
+        if (attribute == TEXTURE_PROPERTY_REPEAT) {
+            if (attribute && value) {
+                let uuid = this.getUuid();
+                let texturePack = this.getTexture();
+                texturePack[attribute] = value;
+                this.floorplan.setFloorTexture(uuid, texturePack);
+                this.dispatchEvent({ type: EVENT_MODIFY_TEXTURE_ATTRIBUTE, item: this, attribute: attribute, value: value });
+            }
+        }
+        if (attribute == TEXTURE_PROPERTY_ROTATE) {
+            if (attribute && value) {
+                let uuid = this.getUuid();
+                let texturePack = this.getTexture();
+                texturePack[attribute] = value;
+                this.floorplan.setFloorTexture(uuid, texturePack);
+                this.dispatchEvent({ type: EVENT_MODIFY_TEXTURE_ATTRIBUTE, item: this, attribute: attribute, value: value });
+            }
+        }
+
+        if (attribute == TEXTURE_PROPERTY_REFLECTIVE) {
+            if (attribute) {
+                let uuid = this.getUuid();
+                let texturePack = this.getTexture();
+                texturePack[attribute] = value;
+                this.floorplan.setFloorTexture(uuid, texturePack);
+                this.dispatchEvent({ type: EVENT_MODIFY_TEXTURE_ATTRIBUTE, item: this, attribute: attribute, value: value });
+            }
+        }
+
+        if (attribute == TEXTURE_PROPERTY_SHININESS) {
+            if (attribute) {
+                let uuid = this.getUuid();
+                let texturePack = this.getTexture();
+                texturePack[attribute] = value;
+                this.floorplan.setFloorTexture(uuid, texturePack);
+                this.dispatchEvent({ type: EVENT_MODIFY_TEXTURE_ATTRIBUTE, item: this, attribute: attribute, value: value });
+            }
+        }
+
     }
 
     getTexture() {
@@ -277,29 +323,31 @@ export class Room extends EventDispatcher {
 
     generateRoofPlane() {
         // setup texture
-        let geometry = new Geometry();
+        let bufferGeometry = new BufferGeometry();
+        let points = [];
+        let vertices = [];
 
         this.corners.forEach((corner) => {
             let vertex = new Vector3(corner.location.x, corner.elevation, corner.location.y);
-            geometry.vertices.push(vertex);
+            vertices.push(vertex);
         });
-        for (let i = 2; i < geometry.vertices.length; i++) {
-            let face = new Face3(0, i - 1, i);
-            geometry.faces.push(face);
+        for (let i = 2; i < vertices.length; i++) {
+            // let face = new Face3(0, i - 1, i);
+            points.push(vertices[0]);
+            points.push(vertices[i-1]);
+            points.push(vertices[i]);
         }
-        // geometry.computeBoundingBox();
-        // geometry.computeFaceNormals();
-
-        if (!this.roofPlane) {
-            let buffGeometry = new BufferGeometry().fromGeometry(geometry);
-            this.roofPlane = new Mesh(buffGeometry, new MeshBasicMaterial({ side: DoubleSide, visible: false }));
+        bufferGeometry.setFromPoints(points);
+        if (!this.roofPlane) {            
+            this.roofPlane = new Mesh(bufferGeometry, new MeshBasicMaterial({ side: DoubleSide, visible: false }));
         } else {
             this.roofPlane.geometry.dispose();
-            this.roofPlane.geometry = new BufferGeometry().fromGeometry(geometry); //this.roofPlane.geometry.fromGeometry(geometry);            
+            this.roofPlane.geometry = bufferGeometry;//new BufferGeometry().fromGeometry(geometry); //this.roofPlane.geometry.fromGeometry(geometry);            
         }
         this.roofPlane.geometry.computeBoundingBox();
-        this.roofPlane.geometry.computeFaceNormals();
-
+        // this.roofPlane.geometry.computeFaceNormals();
+        this.roofPlane.geometry.computeVertexNormals();
+        this.roofPlane.castShadow = false;
         this.roofPlane.room = this;
     }
 
@@ -312,20 +360,22 @@ export class Room extends EventDispatcher {
         let geometry = new ShapeGeometry(shape);
 
         if (!this.floorPlane) {
-            let buffGeometry = new BufferGeometry().fromGeometry(geometry);
+            let buffGeometry = geometry;//new BufferGeometry().fromGeometry(geometry);
             this.floorPlane = new Mesh(buffGeometry, new MeshBasicMaterial({ side: DoubleSide, visible: false }));
         } else {
             this.floorPlane.geometry.dispose();
-            this.floorPlane.geometry = new BufferGeometry().fromGeometry(geometry); //this.floorPlane.geometry.fromGeometry(geometry);
+            this.floorPlane.geometry = geometry//new BufferGeometry().fromGeometry(geometry); //this.floorPlane.geometry.fromGeometry(geometry);
         }
 
         //The below line was originally setting the plane visibility to false
         //Now its setting visibility to true. This is necessary to be detected
         //with the raycaster objects to click walls and floors.
         this.floorPlane.visible = true;
-        this.floorPlane.rotation.set(Math.PI / 2, 0, 0);
+        this.floorPlane.rotation.set(Math.PI * 0.5, 0, 0);
         this.floorPlane.geometry.computeBoundingBox();
-        this.floorPlane.geometry.computeFaceNormals();
+        this.floorPlane.geometry.computeVertexNormals();
+        this.floorPlane.geometry.normalizeNormals();
+        this.floorPlane.geometry.attributes.normal.needsUpdate = true;
         this.floorPlane.room = this; // js monkey patch
 
         let b3 = new Box3();
@@ -333,6 +383,9 @@ export class Room extends EventDispatcher {
         this.min = b3.min.clone();
         this.max = b3.max.clone();
         this.center = this.max.clone().sub(this.min).multiplyScalar(0.5).add(this.min);
+
+        let normalArray = this.floorPlane.geometry.attributes.normal;
+        this.normal = new Vector3((normalArray.getX(0), normalArray.getY(0), normalArray.getZ(0)));
     }
 
     cycleIndex(index) {
@@ -372,12 +425,6 @@ export class Room extends EventDispatcher {
             if (edge.next === this.edgePointer) {
                 break;
             } else {
-                if(edge.next.wall.thickness !== edge.wall.thickness){
-                    let iEnd = edge.interiorEnd();
-                    let cEnd = edge.getEnd();
-                    this.interiorCorners.push(iEnd);
-                    this.interiorCorners3D.push(new Vector3(iEnd.x, cEnd.elevation, iEnd.y));
-                }
                 edge = edge.next;
             }
         }
@@ -587,7 +634,7 @@ export class Room extends EventDispatcher {
                 edge = new HalfEdge(this, wallFrom, false);
             } else {
                 // something horrible has happened
-                console.log('corners arent connected by a wall, uh oh');
+                // console.log('corners arent connected by a wall, uh oh');
             }
 
             /**

@@ -42,5 +42,5 @@ export function log(context, level, message) {
             tPrefix = '[DEBUG] ';
             break;
     }
-    console.log(tPrefix + message);
+    //console.log(tPrefix + message);
 }

@@ -1,8 +1,9 @@
+import { BufferGeometry } from 'three';
 import { Handle_01_vertices, Handle_01_faces } from './Handle_01';
 import { Handle_02_vertices, Handle_02_faces } from './Handle_02';
 import { Handle_03_vertices, Handle_03_faces } from './Handle_03';
 import { Handle_04_vertices, Handle_04_faces } from './Handle_04';
-import { Geometry, Matrix4, Vector3 } from 'three/build/three.module';
+import { Geometry, Matrix4, Vector3 } from 'three';
 
 
 export class DoorHandleGenerator {
@@ -64,49 +65,61 @@ export class DoorHandleGenerator {
     //  Handle model 01
     //  ----------------------------------------------
     static handle_model_01(materialId = 4) {
-        let geometry = new Geometry();
+        let geometry = new BufferGeometry();
         let vertices = [];
         let faces = [];
+
         Handle_01_vertices.forEach((vertex) => {
             vertices.push(vertex.clone());
         });
+        
         Handle_01_faces.forEach((face) => {
-            let face2 = face.clone();
-            face2.materialIndex = materialId;
-            faces.push(face2);
+            face.forEach((vindex)=>{
+                faces.push(vertices[vindex]);
+            });
+            // let face2 = face.clone();
+            // face2.materialIndex = materialId;
+            // faces.push(face2);
         });
-        geometry.vertices = vertices;
-        geometry.faces = faces;
+
+        geometry.setFromPoints(faces);
+        // geometry.vertices = vertices;
+        // geometry.faces = faces;
+
         geometry.computeVertexNormals();
-        geometry.computeFaceNormals();
+        // geometry.computeFaceNormals();
         geometry.computeBoundingBox();
         return geometry;
     }
 
     static handle_model_02(materialId = 4) {
-        let geometry = new Geometry();
+        let geometry = new BufferGeometry();
         let vertices = [];
         let faces = [];
         Handle_02_vertices.forEach((vertex) => {
             vertices.push(vertex.clone());
         });
         Handle_02_faces.forEach((face) => {
-            let face2 = face.clone();
-            face2.materialIndex = materialId;
-            faces.push(face2);
+            face.forEach((vindex)=>{
+                faces.push(vertices[vindex]);
+            });
+            // let face2 = face.clone();
+            // face2.materialIndex = materialId;
+            // faces.push(face2);
         });
-        geometry.vertices = vertices;
-        geometry.faces = faces;
-        geometry.elementsNeedUpdate = true;
+        geometry.setFromPoints(faces);
+        // geometry.vertices = vertices;
+        // geometry.faces = faces;
+        // geometry.elementsNeedUpdate = true;
         geometry.computeVertexNormals();
-        geometry.computeFaceNormals();
+        // geometry.computeFaceNormals();
         geometry.computeBoundingBox();
         return geometry;
     }
 
 
     static handle_model_03(materialId = 4) {
-        let geometry = new Geometry();
+        let geometry = new BufferGeometry();
 
         let vertices = [];
         let faces = [];
@@ -114,20 +127,24 @@ export class DoorHandleGenerator {
             vertices.push(vertex.clone());
         });
         Handle_03_faces.forEach((face) => {
-            let face2 = face.clone();
-            face2.materialIndex = materialId;
-            faces.push(face2);
+            face.forEach((vindex)=>{
+                faces.push(vertices[vindex]);
+            });
+            // let face2 = face.clone();
+            // face2.materialIndex = materialId;
+            // faces.push(face2);
         });
-        geometry.vertices = vertices;
-        geometry.faces = faces;
+        geometry.setFromPoints(faces);
+        // geometry.vertices = vertices;
+        // geometry.faces = faces;
         geometry.computeVertexNormals();
-        geometry.computeFaceNormals();
+        // geometry.computeFaceNormals();
         geometry.computeBoundingBox();
         return geometry;
     }
 
     static handle_model_04(materialId = 4) {
-        let geometry = new Geometry();
+        let geometry = new BufferGeometry();
 
         let vertices = [];
         let faces = [];
@@ -135,14 +152,18 @@ export class DoorHandleGenerator {
             vertices.push(vertex.clone());
         });
         Handle_04_faces.forEach((face) => {
-            let face2 = face.clone();
-            face2.materialIndex = materialId;
-            faces.push(face2);
+            face.forEach((vindex)=>{
+                faces.push(vertices[vindex]);
+            });
+            // let face2 = face.clone();
+            // face2.materialIndex = materialId;
+            // faces.push(face2);
         });
-        geometry.vertices = vertices;
-        geometry.faces = faces;
+        geometry.setFromPoints(faces);
+        // geometry.vertices = vertices;
+        // geometry.faces = faces;
         geometry.computeVertexNormals();
-        geometry.computeFaceNormals();
+        // geometry.computeFaceNormals();
         geometry.computeBoundingBox();
         return geometry;
     }

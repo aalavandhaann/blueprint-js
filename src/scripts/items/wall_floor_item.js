@@ -31,7 +31,7 @@ export class WallFloorItem extends WallItem {
         point = tempPoint.clone();        
         point = this.__fitToWallBounds(point, wallEdge);
         point = point.clone().add(normal.clone().multiplyScalar(this.halfSize.z + (wall.thickness * 0)));
-        point.y = this.halfSize.y + 5;
+        point.y = this.halfSize.y;
         
         this.__currentWallNormal = normal.clone();
         this.__currentWallSnapPoint = point.clone();

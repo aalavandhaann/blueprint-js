@@ -1,9 +1,12 @@
-import { EventDispatcher, TextureLoader, RepeatWrapping, MeshBasicMaterial, FrontSide, DoubleSide, Vector2, Vector3, Face3, Geometry, Shape, ShapeGeometry, Mesh } from 'three';
+import { EventDispatcher, FrontSide, DoubleSide, Vector2, Vector3, Shape, ShapeGeometry, Mesh, PointLight, BackSide } from 'three';
 import { EVENT_CHANGED, EVENT_UPDATE_TEXTURES, EVENT_ROOM_ATTRIBUTES_CHANGED, EVENT_MODIFY_TEXTURE_ATTRIBUTE } from '../core/events.js';
-import { Configuration, configWallHeight } from '../core/configuration.js';
-import { BufferGeometry } from 'three/build/three.module';
+import { MeshStandardMaterial } from 'three';
+import {Utils} from '../core/utils.js'
 import { FloorMaterial3D } from '../materials/FloorMaterial3D.js';
-import { TEXTURE_PROPERTY_COLOR } from '../core/constants.js';
+import { TEXTURE_PROPERTY_COLOR, TEXTURE_PROPERTY_REPEAT, TEXTURE_PROPERTY_ROTATE, TEXTURE_PROPERTY_REFLECTIVE, TEXTURE_PROPERTY_SHININESS } from '../core/constants.js';
+import { PointLightHelper } from 'three';
+import { ShapeUtils } from 'three';
+import { BufferGeometry } from 'three';
 
 export class Floor3D extends EventDispatcher {
     constructor(scene, room, controls, opts) {
@@ -20,6 +23,8 @@ export class Floor3D extends EventDispatcher {
         this.scene = scene;
         this.room = room;
         this.controls = controls;
+        this.roomLight = null;
+        this.roomLightHelper = null;
         this.floorPlane = null;
         this.roofPlane = null;
         this.changedevent = this.redraw.bind(this);
@@ -45,7 +50,7 @@ export class Floor3D extends EventDispatcher {
             this.__floorMaterial3D.envMapCamera.clear(this.scene.renderer);
             this.__floorMaterial3D.envMapCamera.position.set(floorSize.x, 0, floorSize.y);
             this.__floorMaterial3D.envMapCamera.update(this.scene.renderer, this.scene);
-            this.floorPlane.visible = true;
+            // this.floorPlane.visible = true;
             this.__floorMaterial3D.needsUpdate = true;
         }
     }
@@ -55,18 +60,34 @@ export class Floor3D extends EventDispatcher {
             let floorSize = this.room.floorRectangleSize.clone();
             let texturePack = this.room.getTexture();
             if (!this.__floorMaterial3D) {
-                this.__floorMaterial3D = new FloorMaterial3D({ color: texturePack.color, side: DoubleSide }, texturePack, this.scene);
+                // this.__floorMaterial3D = new MeshStandardMaterial({ color: texturePack.color, side: DoubleSide });
+                this.__floorMaterial3D = new FloorMaterial3D({ color: texturePack.color, side: DoubleSide, wireframe: false }, texturePack, this.scene);
             }
             this.__floorMaterial3D.textureMapPack = texturePack;
-            // this.__floorMaterial3D.updateDimensions(floorSize.x, floorSize.y);
+            //this.__floorMaterial3D.updateDimensions(floorSize.x, floorSize.y);
             this.__floorMaterial3D.dimensions = floorSize;
         }
-        else if(evt.type === EVENT_MODIFY_TEXTURE_ATTRIBUTE){
-            if(this.__floorMaterial3D){
+        else if (evt.type === EVENT_MODIFY_TEXTURE_ATTRIBUTE) {
+            if (this.__floorMaterial3D) {
                 let attribute = evt.attribute;
                 let value = evt.value;
-                if(attribute === TEXTURE_PROPERTY_COLOR){
+                if (attribute === TEXTURE_PROPERTY_COLOR) {
                     this.__floorMaterial3D.textureColor = value;
+                }
+                if (attribute === TEXTURE_PROPERTY_REPEAT) {
+                    this.__floorMaterial3D.repeat = value;
+                }
+                if (attribute === TEXTURE_PROPERTY_REPEAT) {
+                    this.__floorMaterial3D.repeat = value;
+                }
+                if (attribute === TEXTURE_PROPERTY_ROTATE) {
+                    this.__floorMaterial3D.map.rotation = value;
+                }
+                if (attribute === TEXTURE_PROPERTY_REFLECTIVE) {
+                    this.__floorMaterial3D.reflective = value;
+                }
+                if (attribute === TEXTURE_PROPERTY_SHININESS) {
+                    this.__floorMaterial3D.shininess = value;
                 }
             }
         }
@@ -79,15 +100,26 @@ export class Floor3D extends EventDispatcher {
     }
 
     init() {
-        this.__updateTexturePack({type: EVENT_UPDATE_TEXTURES});
+        this.__updateTexturePack({ type: EVENT_UPDATE_TEXTURES });
         this.redraw();
     }
 
     redraw() {
         this.removeFromScene();
+        this.roomLight = this.addRoomLight();
         this.floorPlane = this.buildFloor();
+        // this.floorPlane.position.y = 2;
         this.roofPlane = this.buildRoofVaryingHeight();
+        // console.log(this.roofPlane);
         this.addToScene();
+    }
+
+    addRoomLight(){
+        let position= new Vector3(this.room.areaCenter.x, 240, this.room.areaCenter.y);
+        let light = new PointLight(0xFFFFFF, 300000, 1000);
+        this.roomLightHelper = new PointLightHelper(light, 50);
+        light.position.copy(position);
+        return light;
     }
 
     buildFloor() {
@@ -95,38 +127,24 @@ export class Floor3D extends EventDispatcher {
         this.room.interiorCorners.forEach((corner) => {
             points.push(new Vector2(corner.x, corner.y));
         });
+
         let floorSize = this.room.floorRectangleSize.clone();
         let shape = new Shape(points);
         let geometry = new ShapeGeometry(shape);
-
-        geometry.faceVertexUvs[0] = [];
-
-        geometry.faces.forEach((face) => {
-            let vertA = geometry.vertices[face.a];
-            let vertB = geometry.vertices[face.b];
-            let vertC = geometry.vertices[face.c];
-            geometry.faceVertexUvs[0].push([vertexToUv(vertA), vertexToUv(vertB), vertexToUv(vertC)]);
-        });
-
-        function vertexToUv(vertex) {
-            let x = vertex.x / floorSize.x;
-            let y = vertex.y / floorSize.y;
-            return new Vector2(x, y);
+        const uvAttribute = geometry.getAttribute( 'uv' );
+        
+        for (let i = 0;i < uvAttribute.count; i++){
+            let vert = points[i];
+            let uv = Utils.vertexToUv(vert, floorSize);
+            uvAttribute.setXY(i, uv.x, uv.y);
         }
 
-        geometry.faceVertexUvs[1] = geometry.faceVertexUvs[0];
-        geometry.computeFaceNormals();
         geometry.computeVertexNormals();
-        geometry.uvsNeedUpdate = true;
-        let useGeometry = new BufferGeometry().fromGeometry(geometry);
-        // this.__floorMaterial3D.updateDimensions(floorSize.x, floorSize.y);
+        geometry.normalizeNormals();
 
-        this.__floorMaterial3D.dimensions = floorSize;
-        if (this.__floorMaterial3D.envMapCamera) {
-            this.__floorMaterial3D.envMapCamera.position.copy(new Vector3(floorSize.x, 0, floorSize.y));
-        }
-
+        let useGeometry = geometry;
         let floor = new Mesh(useGeometry, this.__floorMaterial3D);
+        floor.receiveShadow = true;
         floor.rotation.set(Math.PI * 0.5, 0, 0);
         return floor;
     }
@@ -134,96 +152,65 @@ export class Floor3D extends EventDispatcher {
     buildRoofVaryingHeight() {
         let side = (this.room.isLocked || this.__options.occludedRoofs) ? DoubleSide : FrontSide;
         // setup texture
-        let roofMaterial = new MeshBasicMaterial({ side: side, color: 0xe5e5e5 });
+        let roofMaterial = new MeshStandardMaterial({ side: side, color: 0xffffff });
 
         let spoints = [];
         let shape = null;
         let shapeGeometry = null;
         let roof = null;
 
-        // this.room.interiorCorners.forEach((corner) => {
-        //     spoints.push(new Vector2(corner.x, corner.y));
-        // });
-
-        this.room.corners.forEach((corner) => {
+        this.room.interiorCorners.forEach((corner) => {
             spoints.push(new Vector2(corner.x, corner.y));
         });
 
         shape = new Shape(spoints);
         shapeGeometry = new ShapeGeometry(shape);
-        let cornerIndex = shapeGeometry.vertices.length - 1;
-        // console.log('===================================');
-        // console.log('COUNTS ::: ', this.room.corners.length, shapeGeometry.vertices.length);
-        for (let i = 0; i < shapeGeometry.vertices.length; i++) {
-            // let index = (this.room.corners.length-i)-1;
-            let corner = this.room.corners[cornerIndex];
-            let vertex = shapeGeometry.vertices[i];
-            vertex.z = vertex.y;
-            vertex.y = corner.elevation + 0.3;
-            cornerIndex--;
-            // console.log('CORNER LOCATION ::: ', corner.location);
-            // console.log('VERTEX ::: ', vertex);
+        const vertices = shapeGeometry.getAttribute('position');
+        for (let i = 0; i < vertices.count; i++){
+            let corner = this.room.corners[i];
+            vertices.setZ(i, vertices.getY(i));
+            vertices.setY(i, corner.elevation + 1.0);
         }
+        shapeGeometry.computeVertexNormals();
+        shapeGeometry.normalizeNormals();
+        shapeGeometry.normalsNeedUpdate = true;
         // console.log('===================================');
         roof = new Mesh(shapeGeometry, roofMaterial);
-
-
-        // let geometry = new Geometry();
-
-        // this.room.corners.forEach((corner) => {
-        //     let vertex = new Vector3(corner.x, corner.elevation, corner.y);
-        //     geometry.vertices.push(vertex);
-        // });
-        // for (let i = 2; i < geometry.vertices.length; i++) {
-        //     let face = new Face3(0, i - 1, i);
-        //     geometry.faces.push(face);
-        // }
-        // let roof = new Mesh(geometry, roofMaterial);
-        // roof.rotation.set(Math.PI / 2, 0, 0);
-        // roof.position.y = Configuration.getNumericValue(configWallHeight);
-        return roof;
-    }
-
-
-    buildRoofUniformHeight() {
-        // setup texture
-        var roofMaterial = new MeshBasicMaterial({ side: FrontSide, color: 0xe5e5e5 });
-        var points = [];
-        this.room.interiorCorners.forEach((corner) => {
-            points.push(new Vector2(corner.x, corner.y));
-        });
-        var shape = new Shape(points);
-        var geometry = new ShapeGeometry(shape);
-        var roof = new Mesh(geometry, roofMaterial);
-        roof.rotation.set(Math.PI / 2, 0, 0);
-        roof.position.y = Configuration.getNumericValue(configWallHeight);
+        roof.castShadow = true;
+        roof.receiveShadow = true;
+        roof.name = 'roof';
         return roof;
     }
 
     addToScene() {
+        this.scene.add(this.roomLight);
+        this.scene.add(this.roomLightHelper);
         this.scene.add(this.floorPlane);
         this.scene.add(this.roofPlane);
-        //scene.add(roofPlane);
+
         // hack so we can do intersect testing
         // this.scene.add(this.room.floorPlane);
         // this.scene.add(this.room.roofPlane);
     }
 
     removeFromScene() {
+        this.scene.remove(this.roomLight);
+        this.scene.remove(this.roomLightHelper);
         this.scene.remove(this.floorPlane);
         this.scene.remove(this.roofPlane);
-        // this.scene.remove(this.room.floorPlane);
-        // this.scene.remove(this.room.roofPlane);
     }
 
     showRoof(flag) {
-        console.log(flag);
-        // this.roofPlane.visible = flag;
+        this.roofPlane.visible = flag;
     }
 
     destroy() {
+        this.room.removeEventListener(EVENT_ROOM_ATTRIBUTES_CHANGED, this.changedevent);
         this.room.removeEventListener(EVENT_CHANGED, this.changedevent);
+
         this.room.removeEventListener(EVENT_UPDATE_TEXTURES, this.__materialChangedEvent);
+        this.room.removeEventListener(EVENT_MODIFY_TEXTURE_ATTRIBUTE, this.__materialChangedEvent);
+
         this.controls.removeEventListener('change', this.__updateReflectionsEvent);
         this.removeFromScene();
     }

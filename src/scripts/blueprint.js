@@ -66,7 +66,7 @@ class BlueprintJS {
             this.floorplanningHelper = new FloorPlannerHelper(this.model.floorplan, this.floorplanner);
         }
 
-        this.view_now = 3;
+        this.view_now = 2;
         this.switchView();
     }
 

@@ -5,8 +5,6 @@ import { WallTypes } from '../core/constants.js';
 //import {Dimensioning} from '../core/dimensioning.js';
 import { Configuration, configWallHeight, cornerTolerance } from '../core/configuration.js';
 
-
-
 /**
  * Corners are used to define Walls.
  */
@@ -416,9 +414,11 @@ export class Corner extends EventDispatcher {
             let vectorB = points[nindex].clone().sub(start).normalize();
             let midVector = vectorA.add(vectorB).multiplyScalar(20.0);
 
-            let diffAngle = Math.abs(angles[next] - angles[i]);
-            diffAngle = (diffAngle > 180) ? 360 - diffAngle : diffAngle;
-            diffAngle = Math.round(diffAngle * 10) / 10;
+            // let diffAngle = Math.abs(angles[next] - angles[i]);
+            // diffAngle = (diffAngle > 180) ? 360 - diffAngle : diffAngle;
+            let diffAngle = angles[next] - angles[i];
+            diffAngle = Math.abs(Math.round(diffAngle * 10) / 10);
+            diffAngle = (diffAngle > 180) ? Math.abs(360- diffAngle) : diffAngle;
             this._startAngles.push(angles[i]);
             this._endAngles.push(angles[next]);
             this._angles.push(diffAngle);
@@ -437,7 +437,7 @@ export class Corner extends EventDispatcher {
         if (!this._hasChanged && !explicit) {
             return;
         }
-        //		console.log('UPDATE ALL ATTACHED ROOMS :: ');
+        
         this.attachedRooms.forEach((room) => {
             room.updateArea();
         });
@@ -448,6 +448,7 @@ export class Corner extends EventDispatcher {
      * @returns {Corner[]} Array of corners.
      */
     adjacentCorners() {
+       
         let retArray = [];
         let i = 0;
         for (i = 0; i < this.wallStarts.length; i++) {
@@ -456,6 +457,7 @@ export class Corner extends EventDispatcher {
         for (i = 0; i < this.wallEnds.length; i++) {
             retArray.push(this.wallEnds[i].getStart());
         }
+        //console.log('adjacentCorners ::',retArray)
         return retArray;
     }
 

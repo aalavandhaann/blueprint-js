@@ -1,4 +1,4 @@
-import { dimCentiMeter } from './constants.js';
+import { dimCentiMeter,dimMeter } from './constants.js';
 import { EventDispatcher } from 'three';
 import { EVENT_CHANGED } from './events.js';
 
@@ -25,16 +25,23 @@ export const snapTolerance = 'snapTolerance'; //In CMS
 export const boundsX = 'boundsX'; //In CMS
 export const boundsY = 'boundsY'; //In CMS
 export const viewBounds = 'viewBounds';//In CMS
+export const shadowVisible = 'shadowVisible';//In CMS
+export const itemStatistics = 'itemStatistics';
+export const roofShadowVisible = 'roofShadowVisible';
+export const magneticSnap = 'magneticSnap';
+
+
 
 
 export var config = { dimUnit: dimCentiMeter, wallHeight: 250, 
-    wallThickness: 20, systemUI: false, 
+    wallThickness: 10, systemUI: false, 
     scale: 1, snapToGrid: true, 
     dragOnlyX: false, dragOnlyY: false, 
     snapTolerance: 50, gridSpacing: 50, 
     directionalDrag: true, 
+    magneticSnap: true, itemStatistics: false,
     boundsX: 500, boundsY: 500, 
-    viewBounds: 5000 };
+    viewBounds: 5000};
 
 export var wallInformation = { exterior: false, interior: false, midline: true, labels: true, exteriorlabel: 'e:', interiorlabel: 'i:', midlinelabel: 'm:' };
 
@@ -69,21 +76,20 @@ export class Configuration extends EventDispatcher {
     static setValue(key, value) {
         //		this.data[key] = value;
         config[key] = value;
-        // if(key !== viewBounds){
-            Configuration.getInstance().dispatchEvent({ type: EVENT_CHANGED, item: Configuration.getInstance(), 'key': key, 'value': value });
-        // }        
+        Configuration.getInstance().dispatchEvent({ type: EVENT_CHANGED, item: Configuration.getInstance(), 'key': key, 'value': value });
     }
 
     /** Get a string configuration parameter. */
     static getStringValue(key) {
         switch (key) {
             case configDimUnit:
-                //			return String(this.data[key]);
                 return String(Configuration.getData()[key]);
             default:
                 throw new Error('Invalid string configuration parameter: ' + key);
         }
     }
+
+
 
     /** Get a numeric configuration parameter. */
     static getNumericValue(key) {
@@ -111,9 +117,12 @@ export class Configuration extends EventDispatcher {
             case directionalDrag:
             case dragOnlyX:
             case dragOnlyY:
+            case magneticSnap:
+            case itemStatistics:
                 return Boolean(Configuration.getData()[key]);
             default:
                 throw new Error('Invalid Boolean configuration parameter: ' + key);
         }
     }
+
 }

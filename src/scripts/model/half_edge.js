@@ -1,7 +1,7 @@
-import { EventDispatcher, Vector2, Vector3, Matrix4, Face3, Mesh, Geometry, MeshBasicMaterial, Box3, BufferGeometry, Plane } from 'three';
+import { EventDispatcher, Vector2, Vector3, Matrix4, Mesh, MeshStandardMaterial, Box3, BufferGeometry, Plane } from 'three';
 import { EVENT_REDRAW, EVENT_MOVED, EVENT_UPDATED, EVENT_UPDATE_TEXTURES, EVENT_DELETED, EVENT_MODIFY_TEXTURE_ATTRIBUTE, EVENT_CHANGED } from '../core/events.js';
 import { Utils } from '../core/utils.js';
-import { WallTypes, TEXTURE_DEFAULT_REPEAT } from '../core/constants.js';
+import { WallTypes, TEXTURE_DEFAULT_REPEAT, TEXTURE_PROPERTY_REPEAT, TEXTURE_PROPERTY_COLOR, TEXTURE_PROPERTY_ROTATE, TEXTURE_PROPERTY_REFLECTIVE, TEXTURE_PROPERTY_SHININESS } from '../core/constants.js';
 
 /**
  * Half Edges are created by Room.
@@ -170,7 +170,7 @@ export class HalfEdge extends EventDispatcher {
 
         this.wall.addEventListener(EVENT_MOVED, this.__wallMovedEvent);
         this.wall.addEventListener(EVENT_UPDATED, this.__wallUpdatedEvent);
-        if(this.room){
+        if (this.room) {
             this.room.addEventListener(EVENT_CHANGED, this.__wallMovedEvent);
         }
         if (this.front) {
@@ -181,7 +181,7 @@ export class HalfEdge extends EventDispatcher {
         this.__updateInteriorsExteriors();
     }
 
-    __updateInteriorsExteriors(){
+    __updateInteriorsExteriors() {
         this.__iStart = this.__interiorStart();
         this.__iEnd = this.__interiorEnd();
         this.__iCenter = this.__interiorCenter();
@@ -217,7 +217,8 @@ export class HalfEdge extends EventDispatcher {
      * This generates the invisible planes in the scene that are used for interesection testing for the wall items
      */
     __generateEdgePlane(interior = true, plane = null) {
-        let geometry = new Geometry();
+        let bufferGeometry = new BufferGeometry();
+        let points = null;
         let v1 = null;
         let v2 = null;
 
@@ -248,22 +249,23 @@ export class HalfEdge extends EventDispatcher {
         this.__mathPlane = new Plane();
         this.__mathPlane.setFromNormalAndCoplanarPoint(this.__normal.clone(), this.__vertices[0].clone());
 
-        geometry.vertices = [v1, v2, v3, v4];
+        points = [
+            v3, v2, v1,
+            v4, v2, v1
+        ]
+        bufferGeometry.setFromPoints(points);
+        // geometry.faces.push(new Face3(2, 1, 0));
+        // geometry.faces.push(new Face3(3, 2, 0));
 
-        // geometry.faces.push(new Face3(0, 1, 2));
-        // geometry.faces.push(new Face3(0, 2, 3));
-
-        geometry.faces.push(new Face3(2, 1, 0));
-        geometry.faces.push(new Face3(3, 2, 0));
-
-        geometry.computeFaceNormals();
-        geometry.computeBoundingBox();
+        bufferGeometry.computeVertexNormals();
+        // bufferGeometry.computeFaceNormals();
+        bufferGeometry.computeBoundingBox();
 
         if (!plane) {
-            plane = new Mesh(new BufferGeometry().fromGeometry(geometry), new MeshBasicMaterial({ visible: true }));
+            plane = new Mesh(bufferGeometry, new MeshStandardMaterial({ visible: true }));
         } else {
             plane.geometry.dispose();
-            plane.geometry = new BufferGeometry().fromGeometry(geometry); //this.__plane.geometry.fromGeometry(geometry);
+            plane.geometry = bufferGeometry; //this.__plane.geometry.fromGeometry(geometry);
         }
 
         //The below line was originally setting the plane visibility to false
@@ -274,7 +276,8 @@ export class HalfEdge extends EventDispatcher {
         plane.wall = this.wall;
 
         plane.geometry.computeBoundingBox();
-        plane.geometry.computeFaceNormals();
+        plane.geometry.computeVertexNormals();
+        // plane.geometry.computeFaceNormals();
 
 
         this.computeTransforms(this.interiorTransform, this.invInteriorTransform, this.interiorStart(), this.interiorEnd());
@@ -285,7 +288,7 @@ export class HalfEdge extends EventDispatcher {
         this.min = b3.min.clone();
         this.max = b3.max.clone();
         this.center = this.max.clone().sub(this.min).multiplyScalar(0.5).add(this.min);
-
+        // plane.castShadow = true;
         return plane;
     }
 
@@ -310,7 +313,8 @@ export class HalfEdge extends EventDispatcher {
         tt.makeTranslation(-v1.x, 0, -v1.y);
         tr.makeRotationY(-angle);
         transform.multiplyMatrices(tr, tt);
-        invTransform.getInverse(transform);
+        invTransform.copy(transform.clone().invert());
+        // invTransform.getInverse(transform);
     }
 
     /** Gets the distance from specified point.
@@ -367,8 +371,8 @@ export class HalfEdge extends EventDispatcher {
         }
     }
 
-    __factor(vector, inside=true){
-        if(inside){
+    __factor(vector, inside = true) {
+        if (inside) {
             return (vector.length() - 10) / vector.length();
         }
         return 10 / vector.length();
@@ -381,17 +385,17 @@ export class HalfEdge extends EventDispatcher {
      */
     __interiorStart(debug = false) {
         if (debug) {
-            console.log('*************************');
-            console.log('CALCULATE INTERIOR START');
+            // console.log('*************************');
+            // console.log('CALCULATE INTERIOR START');
         }
-        let vec = this.interiorPointByEdges(this.prev, this, debug); //this.interiorPoint(this.prev, true);//        
-        // vec = vec.multiplyScalar(0.5);
-        // vec = vec.multiplyScalar(this.__factor(vec));
-        // vec = vec.clone().normalize().multiplyScalar(vec.length() - 10);
-        return this.getStart().location.clone().add(vec);
+        // let vec = this.interiorPointByEdges(this.prev, this, debug); //this.interiorPoint(this.prev, true);//        
+        // // vec = vec.multiplyScalar(0.5);
+        // // vec = vec.multiplyScalar(this.__factor(vec));
+        // // vec = vec.clone().normalize().multiplyScalar(vec.length() - 10);
+        // return this.getStart().location.clone().add(vec);
 
-        // let vec = this.halfAngleVector(this.prev, this);
-        // return new Vector2(this.getStart().x + vec.x, this.getStart().y + vec.y);
+        let vec = this.halfAngleVector(this.prev, this);
+        return new Vector2(this.getStart().x + vec.x, this.getStart().y + vec.y);
 
         // return {x:this.getStart().x + vec.x, y:this.getStart().y + vec.y};
     }
@@ -404,16 +408,16 @@ export class HalfEdge extends EventDispatcher {
     // 
     __interiorEnd(debug = false) {
         if (debug) {
-            console.log('*************************');
-            console.log('CALCULATE INTERIOR END');
+            // console.log('*************************');
+            // console.log('CALCULATE INTERIOR END');
         }
-        let vec = this.interiorPointByEdges(this, this.next, debug); //this.interiorPoint(this.next, false);//
-        // vec = vec.multiplyScalar(0.5);
-        // vec = vec.multiplyScalar(this.__factor(vec));
-        return this.getEnd().location.clone().add(vec);
+        // let vec = this.interiorPointByEdges(this, this.next, debug); //this.interiorPoint(this.next, false);//
+        // // vec = vec.multiplyScalar(0.5);
+        // // vec = vec.multiplyScalar(this.__factor(vec));
+        // return this.getEnd().location.clone().add(vec);
 
-        // let vec = this.halfAngleVector(this, this.next);
-        // return new Vector2(this.getEnd().x + vec.x, this.getEnd().y + vec.y);
+        let vec = this.halfAngleVector(this, this.next);
+        return new Vector2(this.getEnd().x + vec.x, this.getEnd().y + vec.y);
 
         // return {x:this.getEnd().x + vec.x, y:this.getEnd().y + vec.y};
     }
@@ -461,10 +465,10 @@ export class HalfEdge extends EventDispatcher {
         // // vec = vec.multiplyScalar(-this.__factor(vec, false));
         // return this.getStart().location.clone().add(vec);
 
-        // let vec = this.halfAngleVector(this.prev, this);
-        // return new Vector2(this.getStart().x - vec.x, this.getStart().y - vec.y);
+        let vec = this.halfAngleVector(this.prev, this);
+        return new Vector2(this.getStart().x - vec.x, this.getStart().y - vec.y);
 
-        return new Vector2(this.getStart().x, this.getStart().y);
+        // return new Vector2(this.getStart().x, this.getStart().y);
     }
 
     /**
@@ -478,10 +482,10 @@ export class HalfEdge extends EventDispatcher {
         // // vec = vec.multiplyScalar(-this.__factor(vec, false));
         // return this.getEnd().location.clone().add(vec);
 
-        // let vec = this.halfAngleVector(this, this.next);
-        // return new Vector2(this.getEnd().x - vec.x, this.getEnd().y - vec.y);
+        let vec = this.halfAngleVector(this, this.next);
+        return new Vector2(this.getEnd().x - vec.x, this.getEnd().y - vec.y);
 
-        return new Vector2(this.getEnd().x, this.getEnd().y);
+        // return new Vector2(this.getEnd().x, this.getEnd().y);
     }
 
     /**
@@ -515,35 +519,35 @@ export class HalfEdge extends EventDispatcher {
         return Utils.distance(start, end);
     }
 
-    interiorStart(){
+    interiorStart() {
         return this.__iStart.clone();
     }
 
-    interiorEnd(){
+    interiorEnd() {
         return this.__iEnd.clone();
     }
 
-    interiorCenter(){
+    interiorCenter() {
         return this.__iCenter.clone();
     }
 
-    interiorDistance(){
+    interiorDistance() {
         return this.__iDistance;
     }
 
-    exteriorStart(){
+    exteriorStart() {
         return this.__eStart.clone();
     }
 
-    exteriorEnd(){
+    exteriorEnd() {
         return this.__eEnd.clone();
     }
 
-    exteriorCenter(){
+    exteriorCenter() {
         return this.__eCenter.clone();
     }
 
-    exteriorDistance(){
+    exteriorDistance() {
         return this.__eDistance;
     }
 
@@ -578,19 +582,15 @@ export class HalfEdge extends EventDispatcher {
 
         u = v1.getEnd().location.clone().sub(v1.getStart().location).normalize();
         v = v2.getEnd().location.clone().sub(v2.getStart().location).normalize();
-
         let dot_temp = u.dot(v);
-
         u = u.multiplyScalar(v2Thickness);
         v = v.multiplyScalar(v1Thickness);
         // w = u.clone().add(v);
-
-        
         /**
          * When two walls are connected with 180 degrees apart, then simply
          * rotate the vector by 90 degrees clockwise and use it as the interiorPoint
          */
-        if(dot_temp == 1.0){
+         if(dot_temp == 1.0){
             return u.clone().normalize().rotateAround(new Vector2(), 1.57).multiplyScalar(this.wall.thickness);
         }
         // let angle = Math.acos(dot_temp);
@@ -598,7 +598,6 @@ export class HalfEdge extends EventDispatcher {
         //     return u.clone().rotateAround(new Vector2(), (angle+Math.PI)*0.5).normalize().multiplyScalar(this.wall.thickness);
         // }
         // return v.clone().rotateAround(new Vector2(), angle*0.5).normalize().multiplyScalar(this.wall.thickness);
-        
         u3 = new Vector3(u.x, u.y, 0.0);
         v3 = new Vector3(v.x, v.y, 0.0);
         // w3 = new Vector3(w.x, w.y, 0.0);
@@ -622,7 +621,7 @@ export class HalfEdge extends EventDispatcher {
             let uvAngle = Math.acos(dot);
             let offsetTheta = uvAngle - (Math.PI * 0.5);
             let v_temp = v.clone();
-            if (dot < (1e-6 - 1.0)) {           
+            if (dot < (1e-6 - 1.0)) {
                 v3.x -= 1e-2;
                 v3.y -= 1e-2;
                 v.x = v3.x;
@@ -633,13 +632,13 @@ export class HalfEdge extends EventDispatcher {
             v.x = v3.x;
             v.y = v3.y;
             if (debug) {
-                console.log('AXIS OF ROTATION ::: ', axis3);
-                console.log('U VECTOR ::: ', u);
-                console.log('V BEFORE ::: ', v_temp);
-                console.log('V AFTER ::: ', v);
-                console.log('DOT PRODUCT ::: ', dot);
-                console.log('ANGLE UV ::: ', (uvAngle * 180) / Math.PI);
-                console.log('OFFSET THETA ::: ', (offsetTheta * 180) / Math.PI);
+                // console.log('AXIS OF ROTATION ::: ', axis3);
+                // console.log('U VECTOR ::: ', u);
+                // console.log('V BEFORE ::: ', v_temp);
+                // console.log('V AFTER ::: ', v);
+                // console.log('DOT PRODUCT ::: ', dot);
+                // console.log('ANGLE UV ::: ', (uvAngle * 180) / Math.PI);
+                // console.log('OFFSET THETA ::: ', (offsetTheta * 180) / Math.PI);
             }
         }
 
@@ -653,15 +652,15 @@ export class HalfEdge extends EventDispatcher {
         // w = (u.clone().rotateAround(new Vector2(), -theta)).normalize().multiplyScalar(magnitude);
 
         if (debug) {
-            console.log('==============================================');
-            console.log('F :: ', u);
-            console.log('G :: ', v);
-            console.log('F FORCE :: ', u.length());
-            console.log('G FORCE :: ', v.length());
-            console.log('DOT PRODUCT VALUE  :: ', dot);
-            console.log('ANGLE BETWEEN F AND G  :: ', (Math.acos(dot) * 180.0) / Math.PI);
-            console.log('VECTOR ADDITION W LENGTH :: ', w.length());
-            console.log('----------------------------------------------');
+            // console.log('==============================================');
+            // console.log('F :: ', u);
+            // console.log('G :: ', v);
+            // console.log('F FORCE :: ', u.length());
+            // console.log('G FORCE :: ', v.length());
+            // console.log('DOT PRODUCT VALUE  :: ', dot);
+            // console.log('ANGLE BETWEEN F AND G  :: ', (Math.acos(dot) * 180.0) / Math.PI);
+            // console.log('VECTOR ADDITION W LENGTH :: ', w.length());
+            // console.log('----------------------------------------------');
         }
 
         return w;
@@ -700,7 +699,7 @@ export class HalfEdge extends EventDispatcher {
             w = f.clone().normalize().multiplyScalar(Math.min(v2.wall.thickness, v1.wall.thickness));
             w = w.rotateAround(new Vector2(0, 0), -Math.PI * 0.5);
             if (debug) {
-                console.log('DOT PRODUCT TRIGGER ', dot);
+                // console.log('DOT PRODUCT TRIGGER ', dot);
             }
             return w;
         }
@@ -732,19 +731,19 @@ export class HalfEdge extends EventDispatcher {
         if (debug) {
             let w3 = f3.clone().add(g3);
             let angle3 = w3.angleTo(f3);
-            console.log('==============================================');
-            console.log('F :: ', f);
-            console.log('G :: ', g);
-            console.log('F FORCE :: ', f.length());
-            console.log('G FORCE :: ', g.length());
-            console.log('DOT PRODUCT VALUE  :: ', dot);
-            console.log('ABS DOT PRODUCT VALUE  :: ', abs_dot);
-            console.log('ANGLE ::: ', (angle3 * 180.0) / Math.PI);
-            console.log('ANGLE3 (sum f + g) ', (theta * 180.0) / Math.PI);
-            console.log('CROSS AXIS :: ', axis3);
-            console.log('MAGNITUDE VALUE : ', magnitude);
-            console.log('VECTOR ADDITION W LENGTH :: ', w.length());
-            console.log('----------------------------------------------');
+            // console.log('==============================================');
+            // console.log('F :: ', f);
+            // console.log('G :: ', g);
+            // console.log('F FORCE :: ', f.length());
+            // console.log('G FORCE :: ', g.length());
+            // console.log('DOT PRODUCT VALUE  :: ', dot);
+            // console.log('ABS DOT PRODUCT VALUE  :: ', abs_dot);
+            // console.log('ANGLE ::: ', (angle3 * 180.0) / Math.PI);
+            // console.log('ANGLE3 (sum f + g) ', (theta * 180.0) / Math.PI);
+            // console.log('CROSS AXIS :: ', axis3);
+            // console.log('MAGNITUDE VALUE : ', magnitude);
+            // console.log('VECTOR ADDITION W LENGTH :: ', w.length());
+            // console.log('----------------------------------------------');
         }
         return w;
     }
@@ -920,15 +919,50 @@ export class HalfEdge extends EventDispatcher {
         } else {
             this.wall.backTexture = texturePack;
         }
+        
         this.dispatchEvent({ type: EVENT_UPDATE_TEXTURES, item: this });
     }
 
     setTextureMapAttribute(attribute, value) {
-        if (attribute && value) {
-            let texturePack = this.getTexture();
-            texturePack[attribute] = value;
-            this.dispatchEvent({ type: EVENT_MODIFY_TEXTURE_ATTRIBUTE, item: this, attribute: attribute, value: value });
+        if (attribute == TEXTURE_PROPERTY_COLOR) {
+            if (attribute) {
+                let texturePack = this.getTexture();
+                texturePack[attribute] = value;
+                this.dispatchEvent({ type: EVENT_MODIFY_TEXTURE_ATTRIBUTE, item: this, attribute: attribute, value: value });
+            }
         }
+        if (attribute == TEXTURE_PROPERTY_REPEAT) {
+            if (attribute) {
+                let texturePack = this.getTexture();
+                texturePack[attribute] = value;
+                this.dispatchEvent({ type: EVENT_MODIFY_TEXTURE_ATTRIBUTE, item: this, attribute: attribute, value: value });
+            }
+        }
+        if (attribute == TEXTURE_PROPERTY_ROTATE) {
+            if (attribute) {
+                let texturePack = this.getTexture();
+                texturePack[attribute] = value;
+                this.dispatchEvent({ type: EVENT_MODIFY_TEXTURE_ATTRIBUTE, item: this, attribute: attribute, value: value });
+            }
+        }
+
+        if (attribute == TEXTURE_PROPERTY_REFLECTIVE) {
+            if (attribute) {
+                let texturePack = this.getTexture();
+                texturePack[attribute] = value;
+                this.dispatchEvent({ type: EVENT_MODIFY_TEXTURE_ATTRIBUTE, item: this, attribute: attribute, value: value });
+            }
+        }
+
+        if (attribute == TEXTURE_PROPERTY_SHININESS) {
+            if (attribute) {
+                let texturePack = this.getTexture();
+                texturePack[attribute] = value;
+                this.dispatchEvent({ type: EVENT_MODIFY_TEXTURE_ATTRIBUTE, item: this, attribute: attribute, value: value });
+            }
+        }
+
+        
     }
 
     /**
@@ -1021,20 +1055,20 @@ export class HalfEdge extends EventDispatcher {
         return this.__exteriorPlane;
     }
 
-    get prev(){
+    get prev() {
         return this.__prev;
     }
 
-    set prev(halfEdge){
+    set prev(halfEdge) {
         this.__prev = halfEdge;
         this.__updateInteriorsExteriors();
     }
 
-    get next(){
+    get next() {
         return this.__next;
     }
 
-    set next(halfEdge){
+    set next(halfEdge) {
         this.__next = halfEdge;
         this.__updateInteriorsExteriors();
     }

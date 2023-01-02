@@ -43,13 +43,12 @@ export default class Boundary extends EventDispatcher {
         }
         let concave_hull = alpha_shape (0.1, ptsraw);
         this.__externalRegionsRaw.push(ptsraw);
-        console.log(ptsraw);
-        console.log(concave_hull);
+        
 
     }
 
     containsPoint(x, y, excludeBoundaryIndex = -1) {
-        let flag = (this.__boundaryRegionsRAW.length > 0);
+        let flag = true;
         let i = 0, j = 0;
         for (i = 0; i < this.__boundaryRegionsRAW.length; i++) {
             if (i == excludeBoundaryIndex) {
@@ -164,6 +163,7 @@ export default class Boundary extends EventDispatcher {
         for (let opt in this.__metadata) {
             if (this.__metadata.hasOwnProperty(opt) && mdata.hasOwnProperty(opt)) {
                 this.__metadata[opt] = mdata[opt];
+               
             }
         }
         this.dispatchEvent({ type: EVENT_BOUNDARY_UPDATE, item: this });

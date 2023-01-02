@@ -1,4 +1,4 @@
-const { Configuration, gridSpacing, snapTolerance, boundsY, boundsX, dragOnlyY, dragOnlyX, directionalDrag, snapToGrid } = require("../core/configuration");
+const { Configuration, gridSpacing, snapTolerance, boundsY, boundsX, dragOnlyY, dragOnlyX, directionalDrag, snapToGrid, itemStatistics } = require("../core/configuration");
 
 export class ConfigurationHelper {
     constructor() {
@@ -10,6 +10,7 @@ export class ConfigurationHelper {
         this.__boundsY = Configuration.getNumericValue(boundsY);
         this.__snapTolerance = Configuration.getNumericValue(snapTolerance);
         this.__gridSpacing = Configuration.getNumericValue(gridSpacing);
+        this.__itemStatistics = Configuration.getBooleanValue(itemStatistics);
     }
 
     get snapToGrid() {
@@ -78,5 +79,14 @@ export class ConfigurationHelper {
     set gridSpacing(value) {
         this.__gridSpacing = value;
         Configuration.setValue(gridSpacing, value);
+    }
+
+    get itemStatistics(){
+        return this.__itemStatistics;
+    }
+
+    set itemStatistics(flag){
+        this.__itemStatistics = flag;
+        Configuration.setValue(itemStatistics, flag);
     }
 }

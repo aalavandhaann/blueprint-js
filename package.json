@@ -1,6 +1,6 @@
 {
     "name": "blueprint3d-js",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "This is the core framework of Blueprint-js for creating floorplans in 2d and 3d",
     "scripts": {
         "app-dev": "parcel src/index.html --dist-dir app/",
@@ -39,7 +39,7 @@
         "pixi.js": "^6.4.2",
         "point-in-polygon": "^1.1.0",
         "quicksettings": "^3.0.1",
-        "three": "^0.118.0",
+        "three": "^0.148.0",
         "three-gltf-exporter": "0.0.1",
         "three-reflector": "^1.0.2"
     },

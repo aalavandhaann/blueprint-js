@@ -1,8 +1,9 @@
 import Enum from "es6-enum";
-import { BufferGeometry, Matrix4, Vector3, Face3, Geometry, DoubleSide, Color } from "three";
-import { MeshStandardMaterial, EventDispatcher } from "three";
+import { BufferGeometry, Matrix4, Vector3, DoubleSide, Color, BufferGeometryUtils } from "three";
+import { EventDispatcher } from "three";
 import { EVENT_PARAMETRIC_GEOMETRY_UPATED } from "../../core/events";
 import { DoorHandleGenerator } from "./doorhandles/DoorHandleGenerator";
+import {Material3D} from '../../materials/Material3D';
 
 
 export const DOOR_OPEN_DIRECTIONS = Enum('RIGHT', 'LEFT', 'BOTH_SIDES', 'NO_DOORS');
@@ -67,13 +68,13 @@ export class ParametricBaseDoor extends EventDispatcher {
                 this.__handleType = DOOR_HANDLE_TYPES.HANDLE_04; //This value will be set in validatePArameters
                 break;
         }
-        this.__frameMaterial = new MeshStandardMaterial({ color: opts.frameColor, side: DoubleSide });
-        this.__doorMaterial = new MeshStandardMaterial({ color: opts.doorColor, side: DoubleSide, wireframe: false });
-        this.__handleMaterial = new MeshStandardMaterial({ color: '#F0F0FF', side: DoubleSide, wireframe: false });
+        this.__frameMaterial = new Material3D({ color: opts.frameColor, side: DoubleSide });
+        this.__doorMaterial = new Material3D({ color: opts.doorColor, side: DoubleSide, wireframe: false });
+        this.__handleMaterial = new Material3D({ color: '#F0F0FF', side: DoubleSide, wireframe: false });
         this.__rightDoorMaterial = this.__doorMaterial; //new MeshStandardMaterial({ color: '#FF0000', wireframe: false }); //Right is red color
         this.__leftDoorMaterial = this.__doorMaterial; //new MeshStandardMaterial({ color: '#0000FF', wireframe: false }); //Left is blue color
-        this.__doorHandleMaterial = new MeshStandardMaterial({ color: opts.doorHandleColor, wireframe: false, roughness: 0.0, metalness: 0.0 });
-        this.__glassMaterial = new MeshStandardMaterial({ color: opts.glassColor, side: DoubleSide, wireframe: false, transparent: true, opacity: 0.6 });
+        this.__doorHandleMaterial = new Material3D({ color: opts.doorHandleColor, wireframe: false, roughness: 0.0, metalness: 0.0 });
+        this.__glassMaterial = new Material3D({ color: opts.glassColor, side: DoubleSide, wireframe: false, transparent: true, opacity: 0.6 });
         this.__doorFrameMaterialId = 0;
         this.__doorMaterialId = 1;
         this.__leftDoorMaterialId = 2;
@@ -92,15 +93,16 @@ export class ParametricBaseDoor extends EventDispatcher {
         this.__geometry = this.__proceedure();
     }
 
-    __convertFrom4ToFace3(facegroups, materialId = 0) {
+    __convertFrom4ToFace3(facegroups, vertices, materialId = 0) {
         let faces = [];
         for (let i = 0; i < facegroups.length; i += 4) {
-            let f1 = new Face3(facegroups[i], facegroups[i + 1], facegroups[i + 2]);
-            let f2 = new Face3(facegroups[i], facegroups[i + 2], facegroups[i + 3]);
-            f1.materialIndex = materialId;
-            f2.materialIndex = materialId;
-            faces.push(f1);
-            faces.push(f2);
+            // let f1 = new Face3(facegroups[i], facegroups[i + 1], facegroups[i + 2]);
+            // let f2 = new Face3(facegroups[i], facegroups[i + 2], facegroups[i + 3]);
+            // f1.materialIndex = materialId;
+            // f2.materialIndex = materialId;
+            // faces.push(f1);
+            // faces.push(f2);
+            faces.push(vertices[facegroups[i + 1]], vertices[facegroups[i + 1]], vertices[facegroups[i + 2]])
         }
         return faces;
     }
@@ -131,24 +133,28 @@ export class ParametricBaseDoor extends EventDispatcher {
 
     __proceedure() {
         let returnGeometry = null;
-        let doorGeometry = new Geometry();
+        let doorGeometry = new BufferGeometry();
+        let mergeGeometries = [];
         let doorFrameGeometry = this.__shapeMesh();
         let doorsToGenerate = this.__shapeChildren();
-        if (doorFrameGeometry) {
-            doorGeometry.merge(doorFrameGeometry);
+        if (doorFrameGeometry) {            
+            mergeGeometries.push(doorFrameGeometry);
+            // doorGeometry.merge(doorFrameGeometry);
         }
         if (doorsToGenerate.right) {
-            doorGeometry.merge(doorsToGenerate.right);
+            mergeGeometries.push(doorsToGenerate.right);
+            // doorGeometry.merge(doorsToGenerate.right);
         }
         if (doorsToGenerate.left) {
-            doorGeometry.merge(doorsToGenerate.left);
+            mergeGeometries.push(doorsToGenerate.left);
+            // doorGeometry.merge(doorsToGenerate.left);
         }
-
+        doorGeometry = BufferGeometryUtils.mergeBufferGeometries(mergeGeometries, true);
         doorGeometry.computeVertexNormals();
-        doorGeometry.computeFaceNormals();
+        // doorGeometry.computeFaceNormals();
         doorGeometry.computeBoundingBox();
 
-        returnGeometry = new BufferGeometry().fromGeometry(doorGeometry);
+        returnGeometry = doorGeometry;//new BufferGeometry().fromGeometry(doorGeometry);
         returnGeometry.normalizeNormals();
         return returnGeometry;
     }
@@ -200,19 +206,24 @@ export class ParametricBaseDoor extends EventDispatcher {
             new Vector3(-wf + gap, -tf + deep, hf - gap),
             new Vector3(wf - gap, tf * 2, hf - gap)
         ];
-        let geometry = new Geometry();
+        let materialIndex = 0;
+        let geometry = new BufferGeometry();
         let faceIds = [3, 4, 1, 0, 7, 12, 19, 9, 4, 3, 6, 5, 10, 11, 5, 6, 13, 20, 21, 14, 17, 15, 16, 18, 11, 23, 22, 5, 20, 13, 12, 7, 20, 3, 0, 21, 9, 10, 6, 7, 13, 14, 16, 15, 4, 8, 2, 1, 29, 30, 27, 31, 7, 6, 3, 20, 8, 4, 5, 22, 14, 2, 18, 16, 17, 18, 2, 8, 28, 25, 19, 12, 28, 26, 24, 25, 25, 24, 23, 19, 22, 23, 24, 26, 29, 31, 26, 17, 15, 28, 27, 30];
-        let faces = this.__convertFrom4ToFace3(faceIds, 0);
-        let extraFace = new Face3(8, 22, 26);
-        extraFace.materialIndex = 0;
-        faces.push(extraFace);
-        geometry.vertices = verts;
-        geometry.faces = faces;
-        geometry.elementsNeedUpdate = true;
+        let faces = this.__convertFrom4ToFace3(faceIds, verts, 0);
+        // let extraFace = new Face3(8, 22, 26);
+        faces.push(vertices[8], vertices[22], vertices[26])
+        // extraFace.materialIndex = 0;
+        // faces.push(extraFace);
+
+        // geometry.vertices = verts;
+        // geometry.faces = faces;
+        // geometry.elementsNeedUpdate = true;
+
+        geometry.setFromPoints(faces);
         geometry.applyMatrix4(new Matrix4().makeRotationAxis(new Vector3(1, 0, 0), -Math.PI * 0.5));
         geometry.applyMatrix4(new Matrix4().makeTranslation(0, -this.__frameHeight * 0.5, 0));
         geometry.computeVertexNormals();
-        geometry.computeFaceNormals();
+        // geometry.computeFaceNormals();
         geometry.computeBoundingBox();
         return geometry; //new BufferGeometry().fromGeometry(geometry);
     }
@@ -267,14 +278,16 @@ export class ParametricBaseDoor extends EventDispatcher {
 
     __createDoorData(frameWidth, openingDirection, materialId = 1) {
         let doorModelData = this.__createForDoorModel(frameWidth, openingDirection, materialId);
-        let geometry = new Geometry();
+        let geometry = new BufferGeometry();
         let m = new Matrix4();
         let tx = (doorModelData.widthFactor * 0.5) * doorModelData.side;
         let ty = this.__frameHeight * 0.5;
         let tz = -(doorModelData.depth * 0.65);
-        geometry.vertices = doorModelData.vertices;
-        geometry.faces = doorModelData.faces;
-        geometry.elementsNeedUpdate = true;
+
+        geometry.setFromPoints(doorModelData.faces);
+        // geometry.vertices = doorModelData.vertices;
+        // geometry.faces = doorModelData.faces;
+        // geometry.elementsNeedUpdate = true;
 
         m.makeRotationAxis(new Vector3(1, 0, 0), -Math.PI * 0.5);
         // m.multiply(new Matrix4().makeTranslation(0, tz, ty));
@@ -282,7 +295,7 @@ export class ParametricBaseDoor extends EventDispatcher {
         geometry.applyMatrix4(m);
         geometry.elementsNeedUpdate = true;
         geometry.computeVertexNormals();
-        geometry.computeFaceNormals();
+        // geometry.computeFaceNormals();
         geometry.computeBoundingBox();
         return geometry; //new BufferGeometry().fromGeometry(geometry);
     }
@@ -319,11 +332,15 @@ export class ParametricBaseDoor extends EventDispatcher {
 
         let faceids = [4, 5, 1, 0, 5, 6, 2, 1, 6, 7, 3, 2, 7, 4, 0, 3, 0, 1, 2, 3, 7, 6, 5, 4];
         // # Vertex
-        let myvertex = [new Vector3(minx, miny, minz), new Vector3(minx, maxy, minz), new Vector3(maxx, maxy, minz), new Vector3(maxx, miny, minz), new Vector3(minx, miny, maxz), new Vector3(minx, maxy, maxz), new Vector3(maxx, maxy, maxz), new Vector3(maxx, miny, maxz)];
+        let vertices = [
+            new Vector3(minx, miny, minz), new Vector3(minx, maxy, minz), 
+            new Vector3(maxx, maxy, minz), new Vector3(maxx, miny, minz), 
+            new Vector3(minx, miny, maxz), new Vector3(minx, maxy, maxz), 
+            new Vector3(maxx, maxy, maxz), new Vector3(maxx, miny, maxz)];
         // # Faces
-        let myfaces = this.__convertFrom4ToFace3(faceids, materialId);
+        let myfaces = this.__convertFrom4ToFace3(faceids, vertices, materialId);
         // let myfaces = [new Face3(4, 5, 1, 0), new Face3(5, 6, 2, 1), new Face3(6, 7, 3, 2), new Face3(7, 4, 0, 3), new Face3(0, 1, 2, 3), new Face3(7, 6, 5, 4)];
-        return { vertices: myvertex, faces: myfaces, widthFactor: wf, depth: deep, side: side };
+        return { vertices: vertices, faces: myfaces, widthFactor: wf, depth: deep, side: side };
     }
 
     get frameWidth() {

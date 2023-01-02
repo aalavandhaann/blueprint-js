@@ -1,5 +1,5 @@
 import { Vector3, Vector2 } from 'three';
-import { Math as THREEMath } from 'three';
+import { MathUtils as THREEMath } from 'three';
 import { checkIntersection } from 'line-intersect';
 
 export const RIGHT = new Vector3(1, 0, 0);
@@ -7,6 +7,13 @@ export const FORWARD = new Vector3(0, 0, 1);
 export const DIAGONAL = new Vector3(1, 0, 1).normalize();
 
 export class Utils {
+
+    static vertexToUv(vertex, floorSize) {
+        let x = vertex.x / floorSize.x;
+        let y = vertex.y / floorSize.y;
+        return new Vector2(x, y);
+    }
+    
     /** Determines the distance of a point from a line.
      * @param point The Point coordinates as THREE.Vector2
      * @param start The starting coordinates of the line as THREE.Vector2

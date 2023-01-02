@@ -23,8 +23,6 @@ div {
 #bp3djs-viewer2d,
 #bp3djs-viewer3d {
     position: absolute;
-    width: 500px;/*100vw;*/
-    height: 500px;/*100vh;*/
     top: 0;
     left: 0;
 }
@@ -45,3 +43,10 @@ div {
     left: 5px; 
     visibility: hidden; 
   }
+
+.viewer3d-measurement-labels {
+    color: #FFF;
+    font-family: sans-serif;
+    padding: 2px;
+    background: rgba( 0, 0, 0, .6 );
+}

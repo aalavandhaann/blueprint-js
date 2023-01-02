@@ -141,7 +141,7 @@ export class Edge2D extends BaseFloorplanViewElement2D {
         super(floorplan, options);
         this.__wall = wall;
         this.__edge = edge;
-        this.__debugMode = true;
+        this.__debugMode = false;
         this.__deactivate();
     }
 
@@ -312,7 +312,6 @@ export class WallView2D extends BaseFloorplanViewElement2D {
 
         this.interactive = wall.isLocked;
         this.buttonMode = wall.isLocked;
-
         if (wall.isLocked) {
             this.__deactivate();
         }
@@ -454,8 +453,6 @@ export class WallView2D extends BaseFloorplanViewElement2D {
 
     __dragMove(evt) {
         super.__dragMove(evt);
-
-
         if (this.__isDragging) {
             let co = evt.data.getLocalPosition(this.parent);
             let cmCo = new Vector2(co.x, co.y);
@@ -484,25 +481,6 @@ export class WallView2D extends BaseFloorplanViewElement2D {
 
             if (!Configuration.getBooleanValue(dragOnlyX) && Configuration.getBooleanValue(dragOnlyY)) {
                 cmCo.x = this.__wall.location.x;
-            }
-
-            if(this.__floorplan.boundary){
-                if(this.__floorplan.boundary.isValid){
-                    let cornerPoints = this.__getCornerLocation(cmCo);
-                    if(
-                        !this.__floorplan.boundary.containsPoint(cornerPoints.start.x, cornerPoints.start.y) || 
-                        !this.__floorplan.boundary.containsPoint(cornerPoints.end.x, cornerPoints.end.y))
-                    {
-                        return;
-                    }
-
-                    if(
-                        this.__floorplan.boundary.intersectsExternalDesign(cornerPoints.start.x, cornerPoints.start.y) ||
-                        this.__floorplan.boundary.intersectsExternalDesign(cornerPoints.end.x, cornerPoints.end.y)
-                        ){
-                        return;
-                    }
-                }
             }
 
             // this.__wall.move(cmCo.x, cmCo.y);

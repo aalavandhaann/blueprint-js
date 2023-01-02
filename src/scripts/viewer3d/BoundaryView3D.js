@@ -1,5 +1,6 @@
 import { BufferGeometry, DoubleSide, Mesh, Shape, ShapeGeometry, Vector2 } from "three";
 import { FloorMaterial3D } from "../materials/FloorMaterial3D";
+import {Utils} from '../core/utils.js'
 
 export class BoundaryView3D extends Mesh{
     constructor(scene, floorplan, options, boundary){
@@ -38,29 +39,29 @@ export class BoundaryView3D extends Mesh{
         let floorSize = new Vector2(this.__boundary.width, this.__boundary.height);//this.room.floorRectangleSize.clone();
         let shape = new Shape(points);
         let geometry = new ShapeGeometry(shape);
-
-        geometry.faceVertexUvs[0] = [];
-
-        geometry.faces.forEach((face) => {
-            let vertA = geometry.vertices[face.a];
-            let vertB = geometry.vertices[face.b];
-            let vertC = geometry.vertices[face.c];
-            geometry.faceVertexUvs[0].push([vertexToUv(vertA), vertexToUv(vertB), vertexToUv(vertC)]);
-        });
-
-        function vertexToUv(vertex) {
-            let x = vertex.x / floorSize.x;
-            let y = vertex.y / floorSize.y;
-            return new Vector2(x, y);
+        const uvAttribute = geometry.getAttribute('uv');
+        for (let i = 0;i < uvAttribute.count; i++){
+            const uv = new Vector2();
+            uv.fromBufferAttribute(uvAttribute, i);
+            uvAttribute.setXY();
         }
 
+        // geometry.faceVertexUvs[0] = [];
+
+        // geometry.faces.forEach((face) => {
+        //     let vertA = geometry.vertices[face.a];
+        //     let vertB = geometry.vertices[face.b];
+        //     let vertC = geometry.vertices[face.c];
+        //     geometry.faceVertexUvs[0].push([Utils.vertexToUv(vertA, floorSize), Utils.vertexToUv(vertB, floorSize), Utils.vertexToUv(vertC, floorSize)]);
+        // });
+
         geometry.faceVertexUvs[1] = geometry.faceVertexUvs[0];
-        geometry.computeFaceNormals();
+        // geometry.computeFaceNormals();
         geometry.computeVertexNormals();
         geometry.uvsNeedUpdate = true;
         // console.log('COLOR FOR BOUNDARY REGION ::: ', this.__boundary.style.color);
         let material = new FloorMaterial3D({ color: this.__boundary.style.color, side: DoubleSide }, this.__boundary.style, this.__scene);
-        let useGeometry = new BufferGeometry().fromGeometry(geometry);
+        let useGeometry = geometry;//new BufferGeometry().fromGeometry(geometry);
 
         material.dimensions = new Vector2(this.__boundary.width, this.__boundary.height);
 
