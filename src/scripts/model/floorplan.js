@@ -615,8 +615,6 @@ export class Floorplan extends EventDispatcher {
 
         floorplans.units = Configuration.getStringValue(configDimUnit);
         floorplans.measurement = Configuration.getBooleanValue(itemStatistics);
-        floorplans.shadow = Configuration.getBooleanValue(shadowVisible);
-        floorplans.roof_shadow = Configuration.getBooleanValue(roofShadowVisible);
         floorplans.magnetic_snap = Configuration.getBooleanValue(magneticSnap);
         
 

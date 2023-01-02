@@ -267,7 +267,7 @@ function exportDesignAsPackage() {
 
     let designFile = blueprint3d.model.exportSerialized();
     let jsonDesignFile = JSON.parse(designFile);
-    let floorplan = jsonDesignFile.floorplan;
+    let floorplan = jsonDesignFile.floorplan || jsonDesignFile.floorplanner;
     let items = jsonDesignFile.items;
     let images = [];
     let models = [];

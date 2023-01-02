@@ -52,6 +52,7 @@ export class DragRoomItemsControl3D extends EventDispatcher {
     __pressListener(evt) {
         let time = Date.now();
         let deltaTime = time - this.__timestamp;
+        
         let wallPlanesThatIntersect = null;
         let floorPlanesThatIntersect = null;
         let minDistance = 1e6
@@ -70,6 +71,7 @@ export class DragRoomItemsControl3D extends EventDispatcher {
 
         this.__raycaster.setFromCamera(this.__mouse, this.__camera);
         wallPlanesThatIntersect = this.__raycaster.intersectObjects(this.__walls, false);
+        floorPlanesThatIntersect = this.__raycaster.intersectObjects(this.__floors, false);
         this.__intersections = this.__raycaster.intersectObjects(visibleDraggableItems, false);
         if(wallPlanesThatIntersect.length){
             minDistance = wallPlanesThatIntersect[0].distance;
@@ -92,20 +94,21 @@ export class DragRoomItemsControl3D extends EventDispatcher {
                 this.__offset.copy(this.__intersection).sub(this.__worldPosition.setFromMatrixPosition(this.__selected.matrixWorld));
             }
             this.__domElement.style.cursor = 'move';
-            // this.__selected.selected = true;
             
             if(this.__selected.statistics){
                 this.__selected.statistics.turnOffDistances();
             }   
             this.dispatchEvent({ type: EVENT_ITEM_SELECTED, item: this.__selected });
-
-            if (deltaTime < 300) {
-                if (this.__selected.__itemType == 2 || this.__selected.__itemType == 1) {
-                    // this.dispatchEvent({ type: EVENT_ITEM_OPT, item: this.__selected });
-                    // this.__selected = null;
-                }
-            }
             return;
+        }
+        if (deltaTime < 300) {
+            if (wallPlanesThatIntersect.length) {
+                this.dispatchEvent({ type: EVENT_WALL_CLICKED, item: wallPlanesThatIntersect[0].object.edge, point: wallPlanesThatIntersect[0].point, normal: wallPlanesThatIntersect[0].face.normal });
+                return;
+            } else if (floorPlanesThatIntersect.length) {
+                this.dispatchEvent({ type: EVENT_ROOM_CLICKED, item: floorPlanesThatIntersect[0].object.room, point: floorPlanesThatIntersect[0].point, normal: floorPlanesThatIntersect[0].face.normal });
+                return;
+            }
         }
         this.dispatchEvent({ type: EVENT_NO_ITEM_SELECTED, item: this.__selected });
     }
@@ -121,7 +124,6 @@ export class DragRoomItemsControl3D extends EventDispatcher {
         this.__raycaster.setFromCamera(this.__mouse, this.__camera);
         wallPlanesThatIntersect = this.__raycaster.intersectObjects(this.__walls, false);
         floorPlanesThatIntersect = this.__raycaster.intersectObjects(this.__floors, false);
-
         if(!wallPlanesThatIntersect.length && !floorPlanesThatIntersect.length){
             this.dispatchEvent({ type: EVENT_NO_ITEM_SELECTED, item: this.__selected });
             return;
