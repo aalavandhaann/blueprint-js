@@ -103,15 +103,15 @@ export class DragRoomItemsControl3D extends EventDispatcher {
             }
             this.__selected = (this.__transformGroup) ? this.__draggableItems[0] : this.__intersections[0].object;
             if (this.__raycaster.ray.intersectPlane(this.__plane, this.__intersection)) {
-
+                this.__intersection = this.__intersections[0].point;
                 this.__inverseMatrix = this.__selected.parent.matrixWorld.clone().invert();
-                // this.__inverseMatrix.getInverse(this.__selected.parent.matrixWorld);
                 /**
                  * The belwo line for plane setting normal and coplanar point is necessary for touch based events (ref: DragCOntrols.js in three) 
                  */
                 this.__plane.setFromNormalAndCoplanarPoint(this.__camera.getWorldDirection(this.__plane.normal), this.__worldPosition.setFromMatrixPosition(this.__selected.matrixWorld));
 
-                this.__offset.copy(this.__intersection).add(this.__worldPosition.setFromMatrixPosition(this.__selected.matrixWorld));
+                this.__offset.copy(this.__intersection.clone().sub(this.__worldPosition.setFromMatrixPosition(this.__selected.matrixWorld)));
+                // this.__offset.copy(this.__intersection.clone().sub(this.__selected.location));
             }
             this.__domElement.style.cursor = 'move';
             
@@ -181,7 +181,9 @@ export class DragRoomItemsControl3D extends EventDispatcher {
             //Check if the item has customIntersectionPlanes, otherwise move it freely
             if (this.__selected.intersectionPlanes != undefined && !this.__selected.intersectionPlanes.length) {
                 if (this.__raycaster.ray.intersectPlane(this.__plane, this.__intersection)) {
-                    let location = this.__selected.location.clone().copy(this.__intersection.add(this.__offset).applyMatrix4(this.__inverseMatrix));
+                    let location = null;
+                    this.__intersection.copy(intersectionData.point);
+                    location = this.__selected.location.clone().copy(this.__intersection.sub(this.__offset));//.applyMatrix4(this.__inverseMatrix));
                     this.__selected.location = location;
                 }
             } else {
@@ -191,10 +193,14 @@ export class DragRoomItemsControl3D extends EventDispatcher {
                 let customPlanesThatIntersect = this.__raycaster.intersectObjects(customIntersectingPlanes, false);
                 if (customPlanesThatIntersect.length) {
                         let intersectionData = customPlanesThatIntersect[0];
-                        this.__intersection = intersectionData.point;
-                        let location = intersectionData.point;
-                        let normal = intersectionData.face.normal;
-                        let intersectingPlane = intersectionData.object;
+                        let location = null;
+                        let normal = null;
+                        let intersectingPlane = null;
+                        
+                        this.__intersection.copy(intersectionData.point.clone());
+                        location = this.__intersection.clone().sub(this.__offset);
+                        normal = intersectionData.face.normal;
+                        intersectingPlane = intersectionData.object;
                         this.__selected.__measurementgroup.visible =false;
                         this.__selected.__dimensionHelper.visible =false;
                         this.__selected.snapToPoint(location, normal, intersectingPlane);
