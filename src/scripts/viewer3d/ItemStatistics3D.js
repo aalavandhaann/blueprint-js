@@ -1,4 +1,12 @@
+import { Color, Vector2 } from "three";
+import { BoxBufferGeometry } from "three";
 import { Mesh, Object3D, Raycaster } from "three";
+import { BoxGeometry } from "three";
+import { MeshBasicMaterial } from "three";
+import { MeshLambertMaterial } from "three";
+import { Group } from "three";
+import { MeshStandardMaterial } from "three";
+import { CanvasTexture } from "three";
 import { ArrowHelper, Matrix4, Vector3 } from "three";
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import { configDimUnit, Configuration, itemStatistics } from "../core/configuration";
@@ -17,60 +25,121 @@ export class StatisticArrow extends Object3D{
         this.__arrowHeadWidth = headWidth;
 
         textElements = this.__createTextElement();
+        this.__textTexture = textElements['text-texture'];
+        this.__textElementHolder = textElements['label-holder'];
         this.__textElement = textElements['three-element'];
         this.__textDomElement = textElements['dom-element'];
 
         this.__arrow = new ArrowHelper(dir, origin, length, hexColor, headLength, headWidth);
         this.__reverseArrow = new ArrowHelper(this.__reverseArrowDirection, origin, length, hexColor, headLength, headWidth);
         
+        this.__boxAxis = new Vector3(1, 0, 0);//By default width of box spans along x-axis for any 3D space
+        this.__upAxis = new Vector3(0, 1, 0);
+        this.__forwardAxis = new Vector3(0, 0, 1);
         this.__updatedEvent = this.__updated.bind(this);
 
         this.add(this.__arrow);
         this.add(this.__reverseArrow);
-        this.add(this.__textElement);
+        this.add(this.__textElementHolder);
         
 
         Configuration.getInstance().addEventListener(EVENT_CHANGED, this.__updatedEvent);
     }
 
+    __createCanvasElement(canvas=undefined, parentElement=undefined, label = 'label'){
+        // const fixedSize = new Vector2(100, 50);
+        let factor = 1.0;
+        let padding = 20;//in pixels
+        let sizeFactor = 0.25;
+        let context = null;
+        let metrics = null;
+        let fontWidth = null;
+        let actualHeight = null;
+        let textSize = null;
+        let canvasSize = null;
+        if(!canvas){
+            canvas = document.createElement('canvas');
+            parentElement = (parentElement) ? parentElement : document.body;
+            parentElement.appendChild(canvas);
+        }
+        context = canvas.getContext('2d');
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        context.textBaseLine = 'middle';
+        context.textAlign = 'center';
+        context.font = '11px serif';                
+        metrics = context.measureText(label);
+        fontWidth = metrics.width * factor;
+        actualHeight = (metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent) * factor;
+        
+        textSize = new Vector2(fontWidth, actualHeight);
+        canvasSize = new Vector2(textSize.x + padding, textSize.y + padding);
+
+        canvas.width = canvasSize.x;
+        canvas.height = canvasSize.y;
+        
+        context.fillStyle = '#000000';
+        context.fillRect(0, 0, canvasSize.x, canvasSize.y);
+        
+        context.strokeStyle = '#FFFFFF';
+        context.strokeRect(0, 0, canvasSize.x, canvasSize.y);
+        
+        context.fillStyle = '#FFFFFF';
+        context.fillText(label, padding * 0.5, textSize.y + (padding * 0.5));
+        
+        // context.strokeStyle = '#FFFFFF';
+        // context.strokeText(label, padding * 0.5, actualHeight + (padding * 0.5));
+        
+        return {'size': canvasSize.multiplyScalar(sizeFactor), 'canvas': canvas};
+    }
+
     __createTextElement(){
         let parentElement = document.getElementById('viewer3d-measurement-labels');
+        let labelContext = null;
+        let labelElement = null;
+        let labelSize = null;
+        let labelHolder = null;
+        let canvasTexture = null;
+        let canvasMaterial = null;
+        let label3D = new Mesh(new BoxGeometry(10, 10, 10));        
         if(!parentElement){
             parentElement = document.createElement('div');
             parentElement.id = 'viewer3d-measurement-labels'
             document.body.appendChild(parentElement);
         }
-        let labelElement = document.createElement('div');
-        let label3D = new CSS2DObject(labelElement);
-        
-        labelElement.className = 'viewer3d-measurement-labels';
-        labelElement.textContent = 'label';
-        labelElement.style.marginTop = '-1em';
-
+        labelContext = this.__createCanvasElement(undefined, parentElement);
+        labelElement = labelContext['canvas'];
+        labelSize = labelContext['size'];
+        canvasTexture = new CanvasTexture(labelElement);
+        canvasMaterial = new MeshBasicMaterial({map: canvasTexture});
+        labelHolder = new Group();
+        label3D = new Mesh(new BoxGeometry(1, 1, 1), canvasMaterial);
+        label3D.scale.set(labelSize.x, labelSize.y, labelSize.y);
+        canvasTexture.anisotropy = 1;
         parentElement.appendChild(labelElement);
-
-        return {'three-element': label3D, 'dom-element': labelElement};
+        labelHolder.add(label3D);
+        return {'three-element': label3D, 'dom-element': labelElement, 'label-holder': labelHolder, 'text-texture': canvasTexture};
     }
 
     __updated(evt){
-        if(evt.key === configDimUnit){
-            this.setLength();
-        }
         this.setLength();
+        this.__updateText();
         this.__textElement.visible = Configuration.getBooleanValue(itemStatistics);
-    }
-
-    __fontLoaded(font){
-        this.__fontConfig.font = font;
-        this.setLength();
     }
 
     __updateText(evt){
         let label = `${Dimensioning.cmToMeasure(this.__arrowLength)}`;
         let center = this.__arrowDirection.clone().multiplyScalar(this.__arrowLength * 0.5);
-        center.y += 5;
-        this.__textDomElement.textContent = label;
-        this.__textElement.position.copy(center);
+        let useAxis = this.__boxAxis;
+        let dot = this.__arrowDirection.clone().normalize().dot(useAxis);
+        let axis = this.__arrowDirection.clone().normalize().cross(useAxis).normalize();
+        let textInfo = this.__createCanvasElement(this.__textDomElement, undefined, label);
+        let textSize = textInfo['size'];
+        this.__textTexture.needsUpdate = true;
+        this.__textElement.scale.set(textSize.x, textSize.y, textSize.y);
+        this.__textElement.setRotationFromAxisAngle(axis, Math.acos(dot));        
+        this.__textElementHolder.position.copy(center);
     }
 
     setLength(length, headLength, headWidth){

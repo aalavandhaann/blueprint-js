@@ -96,7 +96,6 @@ export class ConfigurationHelper {
     }
 
     set configDimUnit(dimUnitValue){
-        console.info('SET UNITS TO ', dimUnitValue);
         Configuration.setValue(configDimUnit, dimUnitValue);
     }
 }

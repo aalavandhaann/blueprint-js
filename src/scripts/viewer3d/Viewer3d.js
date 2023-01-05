@@ -54,7 +54,6 @@ export class Viewer3D extends Scene {
         this.controls = null;
 
         this.renderer = null;
-        this.textRenderer = null;
         this.controller = null;
 
         this.needsUpdate = false;
@@ -99,7 +98,6 @@ export class Viewer3D extends Scene {
         scope.__environmentCamera.renderTarget.texture.encoding = sRGBEncoding;
 
         scope.renderer = scope.getARenderer();
-        scope.textRenderer = scope.getATextRenderer();
         scope.domElement.appendChild(scope.renderer.domElement);
 
         scope.dragcontrols = new DragRoomItemsControl3D(this.floorplan.wallPlanesForIntersection, this.floorplan.floorPlanesForIntersection, this.physicalRoomItems, scope, scope.renderer.domElement);
@@ -259,15 +257,6 @@ export class Viewer3D extends Scene {
         scope.shouldRender = true;
     }
 
-    getATextRenderer(){
-        let textRenderer = new CSS2DRenderer();
-        textRenderer.setSize(window.innerWidth, window.innerHeight);
-        textRenderer.domElement.style.position = 'absolute';
-        textRenderer.domElement.style.top = '0px';
-        // this.domElement.appendChild(textRenderer.domElement);
-        return textRenderer;
-    }
-
     getARenderer() {
         let renderer = new WebGLRenderer({ antialias: true, alpha: true });
         renderer.autoClear = true; //true
@@ -294,7 +283,6 @@ export class Viewer3D extends Scene {
         this.camera.aspect = elementWidth / elementHeight;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(elementWidth, elementHeight);
-        this.textRenderer.setSize(elementWidth, elementHeight);
         this.needsUpdate = true;
     }
 
@@ -308,7 +296,6 @@ export class Viewer3D extends Scene {
             return;
         }
         scope.renderer.render(scope, scope.camera);
-        scope.textRenderer.render(scope, scope.camera);
         scope.lastRender = Date.now();
         this.needsUpdate = false      
     }

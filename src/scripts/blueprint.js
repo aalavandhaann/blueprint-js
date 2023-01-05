@@ -66,7 +66,7 @@ class BlueprintJS {
             this.floorplanningHelper = new FloorPlannerHelper(this.model.floorplan, this.floorplanner);
         }
 
-        this.view_now = 3;
+        this.view_now = 2;
         this.switchView();
     }
 
@@ -82,8 +82,8 @@ class BlueprintJS {
             this.roomplanner.enabled = false;
         } else if (this.view_now === 2 && !this.options.widget) {
             this.view_now = 3;
-            document.getElementById(this.options.viewer2d.id).style.visibility = "hidden";
-            document.getElementById(this.options.viewer3d.id).style.visibility = "visible";
+            document.getElementById(this.options.viewer2d.id).style.visibility = "hidden";//
+            document.getElementById(this.options.viewer3d.id).style.visibility = "visible";//"hidden";//
             this.roomplanner.enabled = true;
         }
     }
