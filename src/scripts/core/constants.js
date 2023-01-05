@@ -31,7 +31,13 @@ export const TEXTURE_DEFAULT_REFLECTIVE = 0.5;
 export const TEXTURE_DEFAULT_SHININESS = 0.5;
 export const TEXTURE_DEFAULT_ROTATION = 0;
 //export const defaultWallTexture = { color: '#FFFFFF', repeat: TEXTURE_DEFAULT_REPEAT, normalmap: 'textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_normal.jpg', roughnessmap: 'textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_roughness.jpg', colormap: 'textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_basecolor.jpg', ambientmap: 'textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_ambientOcclusion.jpg', bumpmap: 'textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_height.png',rotation:TEXTURE_DEFAULT_ROTATION };
-export const defaultWallTexture = { color: '#FFFFFF', repeat: TEXTURE_DEFAULT_REPEAT, colormap: 'textures/Wall/Indianwall/Wall.png',normalmap:'textures/Wall/Indianwall/Wall_normal.jpg',rotation:TEXTURE_DEFAULT_ROTATION };
+export const defaultWallTexture = {
+    "ambientmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_ambientOcclusion.jpg",
+    "colormap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_basecolor.jpg",
+    "roughnessmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_roughness.jpg",
+    "bumpmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_height.png",
+    "normalmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_normal.jpg",
+    rotation:TEXTURE_DEFAULT_ROTATION };
 export const defaultFloorTexture = { color: '#FFFFFF', emissive: '#181818', repeat: TEXTURE_DEFAULT_REPEAT, ambientmap: 'textures/Floor/Stone_Tiles_004/Stone_Tiles_004_ambientOcclusion.jpg', colormap: 'textures/Floor/Stone_Tiles_004/Stone_Tiles_004_basecolor.jpg', roughnessmap: 'textures/Floor/Stone_Tiles_004/Stone_Tiles_004_roughness.jpg', normalmap: 'textures/Floor/Stone_Tiles_004/Stone_Tiles_004_normal.jpg',rotation:TEXTURE_DEFAULT_ROTATION };
 
 export const TEXTURE_PROPERTY_COLOR = 'color';
