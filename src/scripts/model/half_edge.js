@@ -221,6 +221,10 @@ export class HalfEdge extends EventDispatcher {
         let points = null;
         let v1 = null;
         let v2 = null;
+        let v3 = null;
+        let v4 = null;
+        let ab = null;
+        let ac = null;
 
         if (interior) {
             v1 = this.transformCorner(this.interiorEnd());
@@ -231,13 +235,9 @@ export class HalfEdge extends EventDispatcher {
             v2 = this.transformCorner(this.exteriorEnd());
         }
 
-        let v3 = v2.clone();
-        let v4 = v1.clone();
+        v3 = v2.clone();
+        v4 = v1.clone();
 
-        let ab = null;
-        let ac = null;
-        // v3.y = this.wall.height;
-        // v4.y = this.wall.height;
 
         v3.y = this.wall.startElevation;
         v4.y = this.wall.endElevation;
@@ -251,14 +251,13 @@ export class HalfEdge extends EventDispatcher {
 
         points = [
             v3, v2, v1,
-            v4, v2, v1
+            v4, v3, v1
         ]
         bufferGeometry.setFromPoints(points);
         // geometry.faces.push(new Face3(2, 1, 0));
         // geometry.faces.push(new Face3(3, 2, 0));
 
         bufferGeometry.computeVertexNormals();
-        // bufferGeometry.computeFaceNormals();
         bufferGeometry.computeBoundingBox();
 
         if (!plane) {
