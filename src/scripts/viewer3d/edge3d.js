@@ -1,7 +1,7 @@
 import { EventDispatcher, Vector2, Vector3,MeshBasicMaterial, MeshStandardMaterial, FrontSide, DoubleSide, BackSide, Shape, Path, ShapeGeometry, Mesh, ExtrudeGeometry } from 'three';
 // import { SubdivisionModifier } from 'three/examples/jsm/modifiers/SubdivisionModifier';
 import { Utils } from '../core/utils.js';
-import { EVENT_REDRAW, EVENT_UPDATE_TEXTURES, EVENT_DELETED, EVENT_MODIFY_TEXTURE_ATTRIBUTE, EVENT_CAMERA_ACTIVE_STATUS } from '../core/events.js';
+import { EVENT_REDRAW, EVENT_UPDATE_TEXTURES, EVENT_DELETED, EVENT_MODIFY_TEXTURE_ATTRIBUTE, EVENT_CAMERA_ACTIVE_STATUS, EVENT_NEW_ITEM, EVENT_ITEM_REMOVED } from '../core/events.js';
 import { WallMaterial3D } from '../materials/WallMaterial3D.js';
 import { TEXTURE_PROPERTY_COLOR, TEXTURE_PROPERTY_REPEAT, TEXTURE_PROPERTY_ROTATE, TEXTURE_PROPERTY_REFLECTIVE, TEXTURE_PROPERTY_SHININESS } from '../core/constants.js';
 import { BufferGeometry } from 'three';
@@ -74,7 +74,7 @@ export class Edge3D extends EventDispatcher {
             }
             this.__wallMaterial3D.textureMapPack = texturePack;
             this.__wallMaterial3D.dimensions = new Vector2(width, height);
-            this.redraw();
+            this.redraw(evt);
         }
         else if (evt.type === EVENT_MODIFY_TEXTURE_ATTRIBUTE) {
             if (this.__wallMaterial3D) {
@@ -108,8 +108,8 @@ export class Edge3D extends EventDispatcher {
         this.remove();
     }
 
-    __redraw() {
-        this.redraw();
+    __redraw(evt) {        
+        this.redraw(evt);
     }
 
     __visibility() {
@@ -128,15 +128,24 @@ export class Edge3D extends EventDispatcher {
             this.edge.addEventListener(EVENT_DELETED, this.__edgeDeletedEvent);
             this.edge.addEventListener(EVENT_MODIFY_TEXTURE_ATTRIBUTE, this.__updateTexturePackEvent);
             this.edge.addEventListener(EVENT_UPDATE_TEXTURES, this.__updateTexturePackEvent);
+            
             this.edge.addEventListener(EVENT_REDRAW, this.redrawevent);
+            this.edge.addEventListener(EVENT_NEW_ITEM, this.redrawevent);
+            this.edge.addEventListener(EVENT_ITEM_REMOVED, this.redrawevent);
+
             this.controls.addEventListener(EVENT_CAMERA_ACTIVE_STATUS, this.showallevent);
             this.controls.addEventListener('change', this.visibilityevent);
         }
     }
 
-    redraw() {
+    redraw(evt) {
+        if(!evt){
+            throw new Error(`Event: ${evt} - is undefined. Only with certain events redraw calls are necessary.`);
+        }
         this.removeFromScene();
-        this.updateTexture();
+        if(evt.type !== EVENT_NEW_ITEM && evt.type !== EVENT_ITEM_REMOVED){
+            this.updateTexture(evt);
+        }        
         this.updatePlanes();
         this.addToScene();
     }
@@ -147,22 +156,31 @@ export class Edge3D extends EventDispatcher {
         // }
         let scope = this;
         scope.planes.forEach((plane) => {
+            plane.geometry.dispose();
             scope.scene.remove(plane);
         });
         scope.basePlanes.forEach((plane) => {
+            plane.geometry.dispose();
             scope.scene.remove(plane);
         });
         scope.phantomPlanes.forEach((plane) => {
+            plane.geometry.dispose();
             scope.scene.remove(plane);
         });
-        scope.planes = [];
-        scope.basePlanes = [];
+        scope.planes.length = 0;
+        scope.basePlanes.length = 0;
+        scope.phantomPlanes.length = 0;
     }
 
     remove() {
         this.edge.removeEventListener(EVENT_DELETED, this.__edgeDeletedEvent);
+        this.edge.removeEventListener(EVENT_MODIFY_TEXTURE_ATTRIBUTE, this.__updateTexturePackEvent);
         this.edge.removeEventListener(EVENT_UPDATE_TEXTURES, this.__updateTexturePackEvent);
+
         this.edge.removeEventListener(EVENT_REDRAW, this.redrawevent);
+        this.edge.removeEventListener(EVENT_NEW_ITEM, this.redrawevent);
+        this.edge.removeEventListener(EVENT_ITEM_REMOVED, this.redrawevent);
+        
         this.controls.removeEventListener(EVENT_CAMERA_ACTIVE_STATUS, this.showallevent);
         this.controls.removeEventListener('change', this.visibilityevent);
         this.removeFromScene();
@@ -242,7 +260,7 @@ export class Edge3D extends EventDispatcher {
 
         // setup camera: scope.controls.object refers to the camera of the scene
         let position = scope.controls.object.position.clone();
-        let focus = new Vector3((start.x + end.x) / 2.0, 0, (start.y + end.y) / 2.0);
+        let focus = new Vector3((start.x + end.x) * 0.5, 0, (start.y + end.y) * 0.5);
         let direction = position.sub(focus).normalize();
 
         // find dot
@@ -280,7 +298,7 @@ export class Edge3D extends EventDispatcher {
         });
     }
 
-    updateTexture(callback) {
+    updateTexture(evt) {
         if (this.edge === null) {
             return;
         }

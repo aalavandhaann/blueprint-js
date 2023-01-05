@@ -1,4 +1,4 @@
-import { dimCentiMeter,dimMeter } from './constants.js';
+import { availableDimUnits, dimCentiMeter } from './constants.js';
 import { EventDispatcher } from 'three';
 import { EVENT_CHANGED } from './events.js';
 
@@ -74,7 +74,11 @@ export class Configuration extends EventDispatcher {
 
     /** Set a configuration parameter. */
     static setValue(key, value) {
-        //		this.data[key] = value;
+        if(key == configDimUnit){
+            if(!availableDimUnits.includes(value)){
+                throw new Error(`Unknown dimensional units option: ${value}. Possible values are ${availableDimUnits}`);
+            }
+        }
         config[key] = value;
         Configuration.getInstance().dispatchEvent({ type: EVENT_CHANGED, item: Configuration.getInstance(), 'key': key, 'value': value });
     }

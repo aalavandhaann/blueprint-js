@@ -1,7 +1,10 @@
 import { EventDispatcher, Vector2, Vector3, Plane } from 'three';
 import Bezier from 'bezier-js';
 import { WallTypes, defaultWallTexture } from '../core/constants.js';
-import { EVENT_ACTION, EVENT_MOVED, EVENT_DELETED, EVENT_UPDATED, EVENT_CORNER_ATTRIBUTES_CHANGED } from '../core/events.js';
+import { 
+    EVENT_ACTION, EVENT_MOVED, EVENT_DELETED, 
+    EVENT_UPDATED, EVENT_CORNER_ATTRIBUTES_CHANGED, 
+    EVENT_NEW_ITEM, EVENT_ITEM_REMOVED } from '../core/events.js';
 import { Configuration, configWallThickness, configWallHeight } from '../core/configuration.js';
 import { Utils } from '../core/utils.js';
 import { InWallItem } from '../items/in_wall_item.js';
@@ -165,37 +168,51 @@ export class Wall extends EventDispatcher {
         this.remove();
     }
 
+    /** 
+     * @param {Item} item 
+     * @returns {null}
+     * @description It is not plausible to track an item movement by adding their move listeners.
+     * This happens because of the reason that in-wall-items and in-wall-floor-items are moved by users
+     * in real-time a lot. Due to this factor adding and removing listeners to monitor item movements will 
+     * be a pain in the a**. Instead just keeping adding the item repeatedly to a wall whenever it is moved. 
+     * This will trigger only the item added event.
+     */
+
     addItem(item) {
         if (item instanceof InWallItem || item instanceof InWallFloorItem) {
             if (!Utils.hasValue(this.__inWallItems, item)) {
                 this.__inWallItems.push(item);
-            }
-            this.dispatchEvent({ type: EVENT_MOVED, item: this, position: null });
+            }            
         }
-
         if (item instanceof WallItem || item instanceof WallFloorItem) {
             if (!Utils.hasValue(this.__onWallItems, item)) {
                 this.__onWallItems.push(item);
-            }
-            this.dispatchEvent({ type: EVENT_MOVED, item: this, position: null });
+            }            
         }
+        this.dispatchEvent({ type: EVENT_NEW_ITEM, item: this, position: null, added: item });
     }
 
+    /** 
+     * @param {Item} item 
+     * @returns {null}
+     * @description It is not plausible to track an item movement by adding their move listeners.
+     * This happens because of the reason that in-wall-items and in-wall-floor-items are moved by users
+     * in real-time a lot. Due to this factor adding and removing listeners to monitor item movements will 
+     * be a pain in the a**. Instead just keeping removing the item repeatedly to a wall whenever it is moved. 
+     * This will trigger only the item remove event.
+     */
     removeItem(item) {
         if (item instanceof InWallItem || item instanceof InWallFloorItem) {
             if (Utils.hasValue(this.__inWallItems, item)) {
                 Utils.removeValue(this.__inWallItems, item);
             }
-            
-            this.dispatchEvent({ type: EVENT_MOVED, item: this, position: null });
         }
         if (item instanceof WallItem || item instanceof WallFloorItem) {
             if (Utils.hasValue(this.__onWallItems, item)) {
                 Utils.removeValue(this.__onWallItems, item);
             }
-            
-            this.dispatchEvent({ type: EVENT_MOVED, item: this, position: null });
         }
+        this.dispatchEvent({ type: EVENT_ITEM_REMOVED, item: this, position: null, removed: item });
     }
 
     addCornerMoveListener(corner, remove = false) {
@@ -319,14 +336,10 @@ export class Wall extends EventDispatcher {
 
     fireRedraw() {
         if (this.frontEdge) {
-            //			this.frontEdge.dispatchEvent({type: EVENT_REDRAW});
             this.frontEdge.dispatchRedrawEvent();
-            //this.frontEdge.redrawCallbacks.fire();
         }
         if (this.backEdge) {
-            //			this.backEdge.dispatchEvent({type: EVENT_REDRAW});
             this.backEdge.dispatchRedrawEvent();
-            //this.backEdge.redrawCallbacks.fire();
         }
     }
 

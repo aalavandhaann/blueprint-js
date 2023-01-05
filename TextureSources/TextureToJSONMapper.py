@@ -9,6 +9,7 @@ INPUT_TEXTURES_DIRECTORY = read_write_walls_data[0]
 OUTPUT_JSON_FILE = read_write_walls_data[1]
 
 TEXTURE_SUB_TYPES = ['basecolor', 'normal', 'roughness', 'ambientOcclusion', 'height']
+TEXTURE_SUB_POLYHAVE_TYPES = ['diff', 'nor', 'rough', 'ambientOcclusion', 'disp']
 TEXTURE_SUB_KEY_NAMES = ['colormap', 'normalmap', 'roughnessmap', 'ambientmap', 'bumpmap']
 def getFilesFromDirectory(directorypath, extension=['.obj'], *, exclusions=[], recursive=False):
     found_files = []
@@ -37,7 +38,7 @@ def groupTexturesByDirectory(texturefilesmap):
         
         for i, texture_identifier_name in enumerate(TEXTURE_SUB_TYPES):
             if(texture_identifier_name.lower() in texturefilename.lower()):
-                relative_path = os.path.relpath(tmap['filepath'], start=USE_RELATIVE_PATH_FROM)
+                relative_path = os.path.relpath(tmap['filepath'], start = USE_RELATIVE_PATH_FROM)
                 texture_directories[texturename][TEXTURE_SUB_KEY_NAMES[i]] = relative_path        
 
     return texture_directories;

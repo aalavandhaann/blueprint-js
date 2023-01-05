@@ -1,5 +1,5 @@
 import { EventDispatcher, Vector2, Vector3, Matrix4, Mesh, MeshStandardMaterial, Box3, BufferGeometry, Plane } from 'three';
-import { EVENT_REDRAW, EVENT_MOVED, EVENT_UPDATED, EVENT_UPDATE_TEXTURES, EVENT_DELETED, EVENT_MODIFY_TEXTURE_ATTRIBUTE, EVENT_CHANGED } from '../core/events.js';
+import { EVENT_REDRAW, EVENT_MOVED, EVENT_UPDATED, EVENT_UPDATE_TEXTURES, EVENT_DELETED, EVENT_MODIFY_TEXTURE_ATTRIBUTE, EVENT_CHANGED, EVENT_NEW_ITEM, EVENT_ITEM_REMOVED, EVENT_ITEM_MOVE } from '../core/events.js';
 import { Utils } from '../core/utils.js';
 import { WallTypes, TEXTURE_DEFAULT_REPEAT, TEXTURE_PROPERTY_REPEAT, TEXTURE_PROPERTY_COLOR, TEXTURE_PROPERTY_ROTATE, TEXTURE_PROPERTY_REFLECTIVE, TEXTURE_PROPERTY_SHININESS } from '../core/constants.js';
 
@@ -165,11 +165,15 @@ export class HalfEdge extends EventDispatcher {
         this.offset = wall.thickness / 2.0;
         this.height = wall.height;
 
+        this.__wallItemChangesEvent = this.__wallItemChanges.bind(this);
         this.__wallMovedEvent = this.__wallMoved.bind(this);
         this.__wallUpdatedEvent = this.__wallUpdated.bind(this);
 
         this.wall.addEventListener(EVENT_MOVED, this.__wallMovedEvent);
         this.wall.addEventListener(EVENT_UPDATED, this.__wallUpdatedEvent);
+        this.wall.addEventListener(EVENT_NEW_ITEM, this.__wallItemChangesEvent);
+        this.wall.addEventListener(EVENT_ITEM_REMOVED, this.__wallItemChangesEvent);
+
         if (this.room) {
             this.room.addEventListener(EVENT_CHANGED, this.__wallMovedEvent);
         }
@@ -193,14 +197,28 @@ export class HalfEdge extends EventDispatcher {
         this.__eDistance = this.__exteriorDistance();
     }
 
+    __wallItemChanges(evt){
+        let keys = Object.keys(evt);
+        /**
+         * Ensure to copy the evt object and dispatch that event object. 
+         * Otherwise changing the values of the original evt object will affect 
+         * the evt object parameter being listened by other object to original firing instance
+         */
+        let myEvt = {};
+        keys.forEach((key) =>{
+            myEvt[key] = evt[key];
+        });
+        myEvt.item = this;
+        
+        this.dispatchEvent(myEvt);
+    }
+
     __wallMoved(evt) {
-        let scope = this;
         this.__updateInteriorsExteriors();
         // scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
         // scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
         this.generatePlane();
-        scope.dispatchEvent({ type: EVENT_REDRAW, item: scope });
-
+        this.dispatchRedrawEvent();
     }
 
     __wallUpdated(evt) {
@@ -210,7 +228,7 @@ export class HalfEdge extends EventDispatcher {
         // scope.computeTransforms(scope.interiorTransform, scope.invInteriorTransform, scope.interiorStart(), scope.interiorEnd());
         // scope.computeTransforms(scope.exteriorTransform, scope.invExteriorTransform, scope.exteriorStart(), scope.exteriorEnd());
         this.generatePlane();
-        scope.dispatchEvent({ type: EVENT_REDRAW, item: scope });
+        this.dispatchRedrawEvent();
     }
 
     /**
@@ -993,7 +1011,7 @@ export class HalfEdge extends EventDispatcher {
         }
 
         //this.redrawCallbacks.fire();
-        this.dispatchEvent({ type: EVENT_REDRAW, item: this });
+        this.dispatchRedrawEvent();
     }
 
     /**
@@ -1029,6 +1047,8 @@ export class HalfEdge extends EventDispatcher {
         this.__plane = null;
         // this.wall = null;
         this.__isOrphan = true;
+        this.wall.removeEventListener(EVENT_NEW_ITEM, this.__wallItemChangesEvent);
+        this.wall.removeEventListener(EVENT_ITEM_REMOVED, this.__wallItemChangesEvent);
         this.wall.removeEventListener(EVENT_MOVED, this.__wallMovedEvent);
         this.wall.removeEventListener(EVENT_UPDATED, this.__wallUpdatedEvent);
         this.dispatchEvent({ type: EVENT_DELETED, edge: this });

@@ -7,7 +7,7 @@ import { EVENT_LOADED, EVENT_NOTHING_2D_SELECTED, EVENT_CORNER_2D_CLICKED, EVENT
     EVENT_ROOM_2D_CLICKED, EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED, EVENT_NO_ITEM_SELECTED, 
     EVENT_ITEM_SELECTED, EVENT_GLTF_READY } from './scripts/core/events.js';
 import { Configuration, configDimUnit, viewBounds, itemStatistics } from './scripts/core/configuration.js';
-import { dimMeter, TEXTURE_NO_PREVIEW } from './scripts/core/constants.js';
+import { availableDimUnits, dimMeter, TEXTURE_NO_PREVIEW } from './scripts/core/constants.js';
 import QuickSettings from 'quicksettings';
 
 import { Dimensioning } from './scripts/core/dimensioning.js';
@@ -450,13 +450,14 @@ if (!opts.widget) {
     uxInterface.addButton('Switch Viewer', switchViewer);
     uxInterface.addHTML('Current View', 'Floorplanning');
 
+    uxInterface.bindDropDown('configDimUnit', availableDimUnits, configurationHelper);
+
+
     uxInterface.addFileChooser("Load Design", "Load Design", ".blueprint3d", loadBlueprint3DDesign);
     uxInterface.addButton('Save Design', saveBlueprint3DDesign);
     uxInterface.addButton('Export as GLTF', saveBlueprint3D);
     uxInterface.addButton('Export Project (blueprint-py)', exportDesignAsPackage);
     uxInterface.addButton('Reset', blueprint3d.model.reset.bind(blueprint3d.model));
-
-    uxInterface.addFileChooser("Load Locked Design", "Load Locked Design", ".blueprint3d", loadLockedBlueprint3DDesign);
 
     settingsViewer2d.addButton('Draw Mode', switchViewer2DToDraw);
     settingsViewer2d.addButton('Move Mode', switchViewer2DToMove);

@@ -1,5 +1,5 @@
 import { BaseFloorplanViewElement2D } from './BaseFloorplanViewElement2D.js';
-import { EVENT_MOVED, EVENT_UPDATED, EVENT_DELETED } from '../core/events.js';
+import { EVENT_MOVED, EVENT_UPDATED, EVENT_DELETED, EVENT_CHANGED, EVENT_NEW_ITEM, EVENT_ITEM_REMOVED } from '../core/events.js';
 import { Dimensioning } from '../core/dimensioning.js';
 import { Graphics, Text, Point } from 'pixi.js';
 import { Vector3, Vector2, Color } from 'three';
@@ -25,7 +25,13 @@ export class WallDimensions2D extends Graphics {
         this.__textfield = new Text('Length: ', { fontFamily: 'Arial', fontSize: 14, fill: this.__options.dimtextcolor, align: 'center' });
         this.__textfield.anchor.set(0.5, 0.5);
         this.interactive = this.__textfield.interactive = false;
+        this.__measurementUpdateEvent = this.__measurementUpdate.bind(this);
         this.addChild(this.__textfield);
+        this.update();
+        Configuration.getInstance().addEventListener(EVENT_CHANGED, this.__measurementUpdateEvent.bind(this));
+    }
+
+    __measurementUpdate(evt){
         this.update();
     }
 
@@ -319,6 +325,8 @@ export class WallView2D extends BaseFloorplanViewElement2D {
         this.__wallUpdatedEvent = this.__drawUpdatedWall.bind(this);
         this.__wallDeletedEvent = this.__wallDeleted.bind(this); //this.remove.bind(this);
 
+        this.__wall.addEventListener(EVENT_NEW_ITEM, this.__wallUpdatedEvent);
+        this.__wall.addEventListener(EVENT_ITEM_REMOVED, this.__wallUpdatedEvent);
         this.__wall.addEventListener(EVENT_MOVED, this.__wallUpdatedEvent);
         this.__wall.addEventListener(EVENT_UPDATED, this.__wallUpdatedEvent);
         this.__wall.addEventListener(EVENT_DELETED, this.__wallDeletedEvent);
@@ -350,11 +358,6 @@ export class WallView2D extends BaseFloorplanViewElement2D {
     __getCornerCoordinates() {
         let sPoint = Dimensioning.cmToPixelVector2D(this.__wall.start.location.clone());
         let ePoint = Dimensioning.cmToPixelVector2D(this.__wall.end.location.clone());
-
-        // sPoint.x = Dimensioning.cmToPixel(sPoint.x);
-        // sPoint.y = Dimensioning.cmToPixel(sPoint.y);
-        // ePoint.x = Dimensioning.cmToPixel(ePoint.x);
-        // ePoint.y = Dimensioning.cmToPixel(ePoint.y);
         return [sPoint, ePoint];
     }
 

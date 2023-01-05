@@ -18,6 +18,8 @@ export const dimCentiMeter = 'cm';
 /** Dimensioning in Milli Meter. */
 export const dimMilliMeter = 'mm';
 
+export const availableDimUnits = [dimInch, dimFeetAndInch, dimFeet, dimMeter, dimCentiMeter, dimMilliMeter];
+
 export const VIEW_TOP = 'topview';
 export const VIEW_FRONT = 'frontview';
 export const VIEW_RIGHT = 'rightview';
