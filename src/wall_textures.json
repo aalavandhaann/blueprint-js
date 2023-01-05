@@ -1,81 +1,78 @@
 {
-    "Plain_White_Wall_001": {
-        "repeat": 200,
-        "color": "#FFFFFF",
-        "normalmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_normal.jpg",
-        "ambientmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_ambientOcclusion.jpg",
-        "roughnessmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_roughness.jpg" 
+    "Stone_Wall_012_SD": {
+        "ambientmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_ambientOcclusion.jpg",
+        "colormap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_basecolor.jpg",
+        "roughnessmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_roughness.jpg",
+        "bumpmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_height.png",
+        "normalmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_normal.jpg"
     },
     "Concrete_Wall_005_SD": {
-        "repeat": 200,
-        "colormap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_BaseColor.jpg",
-        "normalmap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Normal.jpg",
         "bumpmap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Height.png",
+        "roughnessmap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Roughness.jpg",
+        "normalmap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Normal.jpg",
         "ambientmap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_AmbientOcclusion.jpg",
-        "roughnessmap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_Roughness.jpg"
-    },
-    "Terracotta_Bricks_002": {
-        "repeat": 200,
-        "normalmap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_normal.jpg",
-        "ambientmap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_ambientOcclusion.jpg",
-        "bumpmap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_height.png",
-        "roughnessmap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_roughness.jpg",
-        "colormap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_basecolor.jpg"
-    },
-    "Concrete-Wall-002": {
-        "repeat": 200,
-        "colormap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_basecolor.jpg",
-        "bumpmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_height.png",
-        "normalmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_normal.jpg",
-        "roughnessmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_roughness.jpg",
-        "ambientmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_ambientocclusion.jpg"
-    },
-    "Concrete_016_SD": {
-        "repeat": 200,
-        "bumpmap": "textures/Wall/Concrete_016_SD/Concrete_016_height.png",
-        "ambientmap": "textures/Wall/Concrete_016_SD/Concrete_016_ambientOcclusion.jpg",
-        "normalmap": "textures/Wall/Concrete_016_SD/Concrete_016_normal.jpg",
-        "roughnessmap": "textures/Wall/Concrete_016_SD/Concrete_016_roughness.jpg",
-        "colormap": "textures/Wall/Concrete_016_SD/Concrete_016_baseColor.jpg"
+        "colormap": "textures/Wall/Concrete_Wall_005_SD/Concrete_Wall_005_BaseColor.jpg"
     },
     "Concrete_Column_001_SD": {
-        "repeat": 200,
-        "ambientmap": "textures/Wall/Concrete_Column_001_SD/Concrete_Column_001_ambientOcclusion.jpg",
         "normalmap": "textures/Wall/Concrete_Column_001_SD/Concrete_Column_001_normal.jpg",
-        "bumpmap": "textures/Wall/Concrete_Column_001_SD/Concrete_Column_001_height.png",
+        "ambientmap": "textures/Wall/Concrete_Column_001_SD/Concrete_Column_001_ambientOcclusion.jpg",
         "roughnessmap": "textures/Wall/Concrete_Column_001_SD/Concrete_Column_001_roughness.jpg",
+        "bumpmap": "textures/Wall/Concrete_Column_001_SD/Concrete_Column_001_height.png",
         "colormap": "textures/Wall/Concrete_Column_001_SD/Concrete_Column_001_basecolor.jpg"
     },
     "Brick_Wall_017_SD": {
-        "repeat": 200,
-        "normalmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_normal.jpg",
         "roughnessmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_roughness.jpg",
-        "colormap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_basecolor.jpg",
+        "bumpmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_height.png",
+        "normalmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_normal.jpg",
         "ambientmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_ambientOcclusion.jpg",
-        "bumpmap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_height.png"
+        "colormap": "textures/Wall/Brick_Wall_017_SD/Brick_Wall_017_basecolor.jpg"
     },
-    "Stone-Wall-015": {
-        "repeat": 200,
-        "colormap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_basecolor.jpg",
-        "normalmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_normal.jpg",
-        "ambientmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_ambientOcclusion.jpg",
-        "bumpmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_height.png",
-        "roughnessmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_roughness.jpg"
+    "WhiteStuccoWall01_MR_2K": {
+        "ambientmap": "textures/Wall/WhiteStuccoWall01_MR_2K/WhiteStuccoWall01_2K_ambientOcclusion.png",
+        "bumpmap": "textures/Wall/WhiteStuccoWall01_MR_2K/WhiteStuccoWall01_2K_height.png",
+        "roughnessmap": "textures/Wall/WhiteStuccoWall01_MR_2K/WhiteStuccoWall01_2K_roughness.png",
+        "colormap": "textures/Wall/WhiteStuccoWall01_MR_2K/WhiteStuccoWall01_2K_basecolor.png",
+        "normalmap": "textures/Wall/WhiteStuccoWall01_MR_2K/WhiteStuccoWall01_2K_normal.png"
     },
-    "Stone_Wall_012_SD": {
-        "repeat": 200,
-        "ambientmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_ambientOcclusion.jpg",
-        "colormap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_basecolor.jpg",
-        "normalmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_normal.jpg",
-        "bumpmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_height.png",
-        "roughnessmap": "textures/Wall/Stone_Wall_012_SD/Stone_Wall_roughness.jpg"
+    "beige_wall_001_2k": {
+        "roughnessmap": "textures/Wall/beige_wall_001_2k/beige_wall_001_roughness.jpg",
+        "colormap": "textures/Wall/beige_wall_001_2k/beige_wall_001_basecolor.jpg",
+        "normalmap": "textures/Wall/beige_wall_001_2k/beige_wall_001_normal.exr",
+        "bumpmap": "textures/Wall/beige_wall_001_2k/beige_wall_001_height.png"
+    },
+    "Concrete-Wall-002": {
+        "ambientmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_ambientocclusion.jpg",
+        "normalmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_normal.jpg",
+        "roughnessmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_roughness.jpg",
+        "bumpmap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_height.png",
+        "colormap": "textures/Wall/Concrete-Wall-002/Concrete_Wall_002_basecolor.jpg"
     },
     "Stylized-Sci-fi Wall-001": {
-        "repeat": 125,
         "normalmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_normal.jpg",
-        "ambientmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_ambientOcclusion.jpg",
         "colormap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_basecolor.jpg",
-        "roughnessmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_roughness.jpg",
-        "bumpmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_height.png"
+        "bumpmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_height.png",
+        "ambientmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_ambientOcclusion.jpg",
+        "roughnessmap": "textures/Wall/Stylized-Sci-fi Wall-001/Stylized_Sci-fi_Wall_001_roughness.jpg"
+    },
+    "Terracotta_Bricks_002": {
+        "normalmap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_normal.jpg",
+        "bumpmap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_height.png",
+        "ambientmap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_ambientOcclusion.jpg",
+        "roughnessmap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_roughness.jpg",
+        "colormap": "textures/Wall/Terracotta_Bricks_002/Bricks_Terracotta_002_basecolor.jpg"
+    },
+    "Concrete_016_SD": {
+        "ambientmap": "textures/Wall/Concrete_016_SD/Concrete_016_ambientOcclusion.jpg",
+        "colormap": "textures/Wall/Concrete_016_SD/Concrete_016_baseColor.jpg",
+        "normalmap": "textures/Wall/Concrete_016_SD/Concrete_016_normal.jpg",
+        "roughnessmap": "textures/Wall/Concrete_016_SD/Concrete_016_roughness.jpg",
+        "bumpmap": "textures/Wall/Concrete_016_SD/Concrete_016_height.png"
+    },
+    "Stone-Wall-015": {
+        "normalmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_normal.jpg",
+        "roughnessmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_roughness.jpg",
+        "colormap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_basecolor.jpg",
+        "ambientmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_ambientOcclusion.jpg",
+        "bumpmap": "textures/Wall/Stone-Wall-015/Wall_Stone_015_height.png"
     }
 }

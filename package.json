@@ -5,7 +5,7 @@
     "scripts": {
         "app-dev": "parcel src/index.html --dist-dir app/",
         "app-production": "parcel build src/index.html --dist-dir app/ --no-source-maps --experimental-scope-hoisting",
-        "for-git-demo-dev": "parcel build src/index.html --dist-dir demo/ --public-url ./  --no-optimize --no-content-hash",
+        "for-git-demo-dev": "parcel build src/index.html --dist-dir demo/ --public-url https://aalavandhaann.github.io/blueprint-js/demo/ --no-content-hash",
         "for-git-demo-production": "parcel build src/index.html --dist-dir demo/ --no-source-maps --public-url https://aalavandhaann.github.io/blueprint-js/demo/  --no-content-hash",
         "frameworkonly-dev": "parcel build src/scripts/blueprint.js --global BP3DJS --no-source-maps --dist-dir bin/ --target browser --out-file bp3djs.js  --no-optimize  --no-content-hash",
         "frameworkonly-production": "parcel build src/scripts/blueprint.js  --global BP3DJS --no-source-maps --dist-dir bin/ --target browser --out-file bp3djs.js  --no-content-hash",

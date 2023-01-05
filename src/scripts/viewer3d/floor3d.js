@@ -118,7 +118,7 @@ export class Floor3D extends EventDispatcher {
 
     addRoomLight(){
         let position = new Vector3(this.room.areaCenter.x, 240, this.room.areaCenter.y);
-        let light = new PointLight(0xFFFFFF, 200000, 1000);
+        let light = new PointLight(0xFFFFFF, 400000, 1000);
         this.roomLightHelper = new PointLightHelper(light, 50);
         light.shadow.mapSize = new Vector2(2048, 2048);
         light.shadow.bias = -0.0005;
