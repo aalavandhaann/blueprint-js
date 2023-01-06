@@ -1,4 +1,14 @@
+import { Color, Vector2 } from "three";
+import { BoxBufferGeometry } from "three";
 import { Mesh, Object3D, Raycaster } from "three";
+import { BoxGeometry } from "three";
+import { MeshBasicMaterial } from "three";
+import { MeshLambertMaterial } from "three";
+import { SpriteMaterial } from "three";
+import { Sprite } from "three";
+import { Group } from "three";
+import { MeshStandardMaterial } from "three";
+import { CanvasTexture } from "three";
 import { ArrowHelper, Matrix4, Vector3 } from "three";
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import { configDimUnit, Configuration, itemStatistics } from "../core/configuration";
@@ -6,7 +16,7 @@ import { Dimensioning } from "../core/dimensioning";
 import { EVENT_CHANGED, EVENT_ITEM_SELECTED, EVENT_NO_ITEM_SELECTED, EVENT_UPDATED } from "../core/events";
 
 export class StatisticArrow extends Object3D{
-    constructor(dir, origin, length, hexColor, headLength, headWidth, textColor = 0xFFFFFF ){
+    constructor(dir, origin, length, hexColor, headLength, headWidth, textColor = '#FFFFFF', textBackgroundColor= '#000000' ){
         super();
         let textElements = null;
         this.__arrowDirection = dir.clone();
@@ -16,61 +26,121 @@ export class StatisticArrow extends Object3D{
         this.__arrowHeadLength = headLength;
         this.__arrowHeadWidth = headWidth;
 
+        this.__textScaleFactor = 1.5;
+        this.__textColor = textColor;
+        this.__textBackgroundColor = textBackgroundColor;
+
         textElements = this.__createTextElement();
+        this.__textTexture = textElements['text-texture'];
+        this.__textElementHolder = textElements['label-holder'];
         this.__textElement = textElements['three-element'];
         this.__textDomElement = textElements['dom-element'];
+        
 
         this.__arrow = new ArrowHelper(dir, origin, length, hexColor, headLength, headWidth);
         this.__reverseArrow = new ArrowHelper(this.__reverseArrowDirection, origin, length, hexColor, headLength, headWidth);
         
+        this.__boxAxis = new Vector3(1, 0, 0);//By default width of box spans along x-axis for any 3D space
+        this.__upAxis = new Vector3(0, 1, 0);
+        this.__forwardAxis = new Vector3(0, 0, 1);
         this.__updatedEvent = this.__updated.bind(this);
 
         this.add(this.__arrow);
         this.add(this.__reverseArrow);
-        this.add(this.__textElement);
+        this.add(this.__textElementHolder);
         
 
         Configuration.getInstance().addEventListener(EVENT_CHANGED, this.__updatedEvent);
     }
 
+    __createCanvasElement(canvas=undefined, parentElement=undefined, label){
+        /**
+         * Dynamic Canvas size as texture is hugely problematic in threejs. So 
+         * freezing to a single size for an efficient and effective canvas rendering.
+         */
+        const fixedSize = new Vector2(100, 30);
+        let padding = 0;//20;//in pixels
+        let sizeFactor = 0.25;
+        let context = null;
+        let textSize = fixedSize.clone();
+        let canvasSize = null;
+        if(!canvas){
+            canvas = document.createElement('canvas');
+            parentElement = (parentElement) ? parentElement : document.body;
+            parentElement.appendChild(canvas);
+        }
+        context = canvas.getContext('2d');
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        
+        context.font = '12px Arial'
+        canvasSize = new Vector2(textSize.x + padding, textSize.y + padding);
+        canvas.width = canvasSize.x;
+        canvas.height = canvasSize.y;
+        
+        context.fillStyle = this.__textBackgroundColor;
+        context.fillRect(0, 0, canvasSize.x, canvasSize.y);
+        
+        context.strokeStyle = this.__textColor;
+        context.strokeRect(0, 0, canvasSize.x, canvasSize.y);
+        
+        context.font = '17px Arial'
+        context.textBaseLine = 'middle';
+        context.textAlign = 'center';
+        context.fillStyle = this.__textColor;
+        context.fillText(label, (textSize.x * 0.5) + (padding * 0.5), (textSize.y * 0.65) + (padding * 0.5));
+        
+        // context.strokeStyle = '#FFFFFF';
+        // context.strokeText(label, padding * 0.5, actualHeight + (padding * 0.5));
+        
+        return {'size': canvasSize.multiplyScalar(sizeFactor), 'canvas': canvas};
+    }
+
     __createTextElement(){
         let parentElement = document.getElementById('viewer3d-measurement-labels');
+        let labelContext = null;
+        let labelElement = null;
+        let labelSize = null;
+        let labelHolder = null;
+        let canvasTexture = null;
+        let canvasMaterial = null;
+        let label3D = null;        
         if(!parentElement){
             parentElement = document.createElement('div');
             parentElement.id = 'viewer3d-measurement-labels'
             document.body.appendChild(parentElement);
         }
-        let labelElement = document.createElement('div');
-        let label3D = new CSS2DObject(labelElement);
+        labelContext = this.__createCanvasElement(undefined, parentElement, "Ashok");
+        labelElement = labelContext['canvas'];
+        labelSize = labelContext['size'];
+        canvasTexture = new CanvasTexture(labelElement);
+        // canvasMaterial = new MeshBasicMaterial({map: canvasTexture});
+        canvasMaterial = new SpriteMaterial({map: canvasTexture});
+
+        labelHolder = new Group();
+        label3D = new Sprite(canvasMaterial);
+        label3D.scale.set(labelSize.x * this.__textScaleFactor, labelSize.y * this.__textScaleFactor, 1);
+        // label3D = new Mesh(new BoxGeometry(1, 1, 1), canvasMaterial);
+        // label3D.scale.set(labelSize.x, labelSize.y, labelSize.y);
         
-        labelElement.className = 'viewer3d-measurement-labels';
-        labelElement.textContent = 'label';
-        labelElement.style.marginTop = '-1em';
-
+        // canvasTexture.anisotropy = 1;
         parentElement.appendChild(labelElement);
-
-        return {'three-element': label3D, 'dom-element': labelElement};
+        labelHolder.add(label3D);
+        return {'three-element': label3D, 'dom-element': labelElement, 'label-holder': labelHolder, 'text-texture': canvasTexture};
     }
 
     __updated(evt){
-        if(evt.key === configDimUnit){
-            this.setLength();
-        }
         this.setLength();
+        this.__updateText();
         this.__textElement.visible = Configuration.getBooleanValue(itemStatistics);
-    }
-
-    __fontLoaded(font){
-        this.__fontConfig.font = font;
-        this.setLength();
     }
 
     __updateText(evt){
         let label = `${Dimensioning.cmToMeasure(this.__arrowLength)}`;
         let center = this.__arrowDirection.clone().multiplyScalar(this.__arrowLength * 0.5);
-        center.y += 5;
-        this.__textDomElement.textContent = label;
-        this.__textElement.position.copy(center);
+        this.__createCanvasElement(this.__textDomElement, undefined, label);                
+        this.__textTexture.needsUpdate = true;
+        this.__textElement.material.needsUpdate = true;
+        this.__textElementHolder.position.copy(center);
     }
 
     setLength(length, headLength, headWidth){
@@ -133,6 +203,13 @@ export class ItemStatistics3D extends Mesh {
                 }                
             }
         }
+
+        let distanceTextBGColor = '#780994';
+        let distanceTextColor = '#ffffff';
+
+        let dimensionsTextBGColor = '#0F0F0F';
+        let dimensionsTextColor = '#F0F0F0';
+
         this.__options = options;
         this.__physicalItem = physicalItem;
         this.__dragControls = dragControls;
@@ -161,58 +238,76 @@ export class ItemStatistics3D extends Mesh {
             new Vector3(), 1,
             this.__options.distance.unselectedColor,
             this.__options.distance.headLength,
-            this.__options.distance.headWidth
+            this.__options.distance.headWidth, 
+            distanceTextColor,
+            distanceTextBGColor
         );
         this.__downArrow = new StatisticArrow(this.__down.clone(),
             new Vector3(), 1,
             this.__options.distance.unselectedColor,
             this.__options.distance.headLength,
-            this.__options.distance.headWidth
+            this.__options.distance.headWidth, 
+            distanceTextColor,
+            distanceTextBGColor
         );
 
         this.__leftArrow = new StatisticArrow(this.__left.clone(),
             new Vector3(), 1,
             this.__options.distance.unselectedColor,
             this.__options.distance.headLength,
-            this.__options.distance.headWidth
+            this.__options.distance.headWidth, 
+            distanceTextColor,
+            distanceTextBGColor
         );
         this.__rightArrow = new StatisticArrow(this.__right.clone(),
             new Vector3(), 1,
             this.__options.distance.unselectedColor,
             this.__options.distance.headLength,
-            this.__options.distance.headWidth
+            this.__options.distance.headWidth, 
+            distanceTextColor,
+            distanceTextBGColor
         );
 
         this.__frontArrow = new StatisticArrow(this.__front.clone(),
             new Vector3(), 1,
             this.__options.distance.unselectedColor,
             this.__options.distance.headLength,
-            this.__options.distance.headWidth
+            this.__options.distance.headWidth, 
+            distanceTextColor,
+            distanceTextBGColor
         );
         this.__backArrow = new StatisticArrow(this.__back.clone(),
             new Vector3(), 1,
             this.__options.distance.unselectedColor,
             this.__options.distance.headLength,
-            this.__options.distance.headWidth
+            this.__options.distance.headWidth, 
+            distanceTextColor,
+            distanceTextBGColor
         );
 
         this.__widthArrow = new StatisticArrow(new Vector3(1, 0, 0),
             new Vector3(), 50,
             this.__options.dimension.unselectedColor,
             this.__options.dimension.headLength,
-            this.__options.dimension.headWidth
+            this.__options.dimension.headWidth,
+            dimensionsTextColor,
+            dimensionsTextBGColor
         );
         this.__heightArrow = new StatisticArrow(new Vector3(0, 1, 0),
             new Vector3(), 1,
             this.__options.dimension.unselectedColor,
             this.__options.dimension.headLength,
-            this.__options.dimension.headWidth
+            this.__options.dimension.headWidth,
+            dimensionsTextColor,
+            dimensionsTextBGColor
         );
         this.__depthArrow = new StatisticArrow(new Vector3(0, 0, -1),
             new Vector3(), 1,
             this.__options.dimension.unselectedColor,
             this.__options.dimension.headLength,
-            this.__options.dimension.headWidth
+            this.__options.dimension.headWidth,
+            dimensionsTextColor,
+            dimensionsTextBGColor
         );
 
         this.__directions = [
