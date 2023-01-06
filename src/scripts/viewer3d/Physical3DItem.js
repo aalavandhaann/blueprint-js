@@ -14,6 +14,8 @@ import { Configuration,shadowVisible } from '../core/configuration.js';
 import {gsap, Power0} from 'gsap';
 import { Vector2 } from "three/build/three.module";
 import { WallFloorItem } from "../items/wall_floor_item";
+import { InWallItem } from '../items/in_wall_item';
+import { InWallFloorItem } from '../items/in_wall_floor_item';
 import { ItemStatistics3D } from "./ItemStatistics3D";
 // import { Group } from "three/build/three.module";
 
@@ -157,6 +159,7 @@ export class Physical3DItem extends Mesh {
     __initializeChildItem() {       
         this.name = 'Physical_' + this.__itemModel.__metadata.itemName;
         this.__box = new Box3().setFromObject(this.__loadedItem);
+        this.__options.statistics['offsetToFront'] = (this.itemModel instanceof InWallItem || this.itemModel instanceof InWallFloorItem)
         this.__itemStatistics = new ItemStatistics3D(this, this.__dragControls, this.__options.statistics);
         
         this.__center = this.__box.getCenter(new Vector3());

@@ -188,7 +188,8 @@ export class ItemStatistics3D extends Mesh {
                 headWidth: 7,
                 unselectedColor: 0xFF0000,
                 selectedColor: 0x00F0F0
-            }
+            },
+            offsetToFront: false,
         };
         for (let opt in options) {
             if (opts.hasOwnProperty(opt)) {
@@ -379,6 +380,7 @@ export class ItemStatistics3D extends Mesh {
             });
             return items;
         }
+        let flag = true;
         let i;
         let intersectionsWithPlanes = [];
         let physicalItems = excludeThyself(this.__physicalItem, this.__physicalItem.parent.physicalRoomItems);
@@ -392,11 +394,12 @@ export class ItemStatistics3D extends Mesh {
             let direction = this.__directions[i].clone();
             let arrow = this.__directionArrows[i];
             let location = direction.clone().multiply(this.__itemHalfSize);
+
             let intersectionData = null;
             let rotMatrix = new Matrix4();
             let worldLocation = location.clone();
-            let transformedDirection = direction.clone();
-
+            let transformedDirection = direction.clone();            
+            flag = false;
 
             rotMatrix.extractRotation(this.matrixWorld);
             transformedDirection.applyMatrix4(rotMatrix);
@@ -411,10 +414,13 @@ export class ItemStatistics3D extends Mesh {
             if(intersections.length){
                 intersectionData = intersections[0];
                 arrow.setLength(intersectionData.distance);
+                flag = true;
+
+            }
+            if(this.__options.offsetToFront){
+                location.z += this.__itemHalfSize.z * 0.75;
             }
             arrow.position.copy(location);
-            let flag = arrow.visible;
-            arrow.visible = false;
             arrow.visible = flag;
         }
     }
