@@ -4,6 +4,8 @@ import { Mesh, Object3D, Raycaster } from "three";
 import { BoxGeometry } from "three";
 import { MeshBasicMaterial } from "three";
 import { MeshLambertMaterial } from "three";
+import { SpriteMaterial } from "three";
+import { Sprite } from "three";
 import { Group } from "three";
 import { MeshStandardMaterial } from "three";
 import { CanvasTexture } from "three";
@@ -14,7 +16,7 @@ import { Dimensioning } from "../core/dimensioning";
 import { EVENT_CHANGED, EVENT_ITEM_SELECTED, EVENT_NO_ITEM_SELECTED, EVENT_UPDATED } from "../core/events";
 
 export class StatisticArrow extends Object3D{
-    constructor(dir, origin, length, hexColor, headLength, headWidth, textColor = 0xFFFFFF ){
+    constructor(dir, origin, length, hexColor, headLength, headWidth, textColor = '#FFFFFF', textBackgroundColor= '#000000' ){
         super();
         let textElements = null;
         this.__arrowDirection = dir.clone();
@@ -24,11 +26,16 @@ export class StatisticArrow extends Object3D{
         this.__arrowHeadLength = headLength;
         this.__arrowHeadWidth = headWidth;
 
+        this.__textScaleFactor = 1.5;
+        this.__textColor = textColor;
+        this.__textBackgroundColor = textBackgroundColor;
+
         textElements = this.__createTextElement();
         this.__textTexture = textElements['text-texture'];
         this.__textElementHolder = textElements['label-holder'];
         this.__textElement = textElements['three-element'];
         this.__textDomElement = textElements['dom-element'];
+        
 
         this.__arrow = new ArrowHelper(dir, origin, length, hexColor, headLength, headWidth);
         this.__reverseArrow = new ArrowHelper(this.__reverseArrowDirection, origin, length, hexColor, headLength, headWidth);
@@ -46,16 +53,16 @@ export class StatisticArrow extends Object3D{
         Configuration.getInstance().addEventListener(EVENT_CHANGED, this.__updatedEvent);
     }
 
-    __createCanvasElement(canvas=undefined, parentElement=undefined, label = 'label'){
-        // const fixedSize = new Vector2(100, 50);
-        let factor = 1.0;
-        let padding = 20;//in pixels
+    __createCanvasElement(canvas=undefined, parentElement=undefined, label){
+        /**
+         * Dynamic Canvas size as texture is hugely problematic in threejs. So 
+         * freezing to a single size for an efficient and effective canvas rendering.
+         */
+        const fixedSize = new Vector2(100, 30);
+        let padding = 0;//20;//in pixels
         let sizeFactor = 0.25;
         let context = null;
-        let metrics = null;
-        let fontWidth = null;
-        let actualHeight = null;
-        let textSize = null;
+        let textSize = fixedSize.clone();
         let canvasSize = null;
         if(!canvas){
             canvas = document.createElement('canvas');
@@ -63,30 +70,24 @@ export class StatisticArrow extends Object3D{
             parentElement.appendChild(canvas);
         }
         context = canvas.getContext('2d');
-
         context.clearRect(0, 0, canvas.width, canvas.height);
-
-        context.textBaseLine = 'middle';
-        context.textAlign = 'center';
-        context.font = '11px serif';                
-        metrics = context.measureText(label);
-        fontWidth = metrics.width * factor;
-        actualHeight = (metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent) * factor;
         
-        textSize = new Vector2(fontWidth, actualHeight);
+        context.font = '12px Arial'
         canvasSize = new Vector2(textSize.x + padding, textSize.y + padding);
-
         canvas.width = canvasSize.x;
         canvas.height = canvasSize.y;
         
-        context.fillStyle = '#000000';
+        context.fillStyle = this.__textBackgroundColor;
         context.fillRect(0, 0, canvasSize.x, canvasSize.y);
         
-        context.strokeStyle = '#FFFFFF';
+        context.strokeStyle = this.__textColor;
         context.strokeRect(0, 0, canvasSize.x, canvasSize.y);
         
-        context.fillStyle = '#FFFFFF';
-        context.fillText(label, padding * 0.5, textSize.y + (padding * 0.5));
+        context.font = '17px Arial'
+        context.textBaseLine = 'middle';
+        context.textAlign = 'center';
+        context.fillStyle = this.__textColor;
+        context.fillText(label, (textSize.x * 0.5) + (padding * 0.5), (textSize.y * 0.65) + (padding * 0.5));
         
         // context.strokeStyle = '#FFFFFF';
         // context.strokeText(label, padding * 0.5, actualHeight + (padding * 0.5));
@@ -102,21 +103,26 @@ export class StatisticArrow extends Object3D{
         let labelHolder = null;
         let canvasTexture = null;
         let canvasMaterial = null;
-        let label3D = new Mesh(new BoxGeometry(10, 10, 10));        
+        let label3D = null;        
         if(!parentElement){
             parentElement = document.createElement('div');
             parentElement.id = 'viewer3d-measurement-labels'
             document.body.appendChild(parentElement);
         }
-        labelContext = this.__createCanvasElement(undefined, parentElement);
+        labelContext = this.__createCanvasElement(undefined, parentElement, "Ashok");
         labelElement = labelContext['canvas'];
         labelSize = labelContext['size'];
         canvasTexture = new CanvasTexture(labelElement);
-        canvasMaterial = new MeshBasicMaterial({map: canvasTexture});
+        // canvasMaterial = new MeshBasicMaterial({map: canvasTexture});
+        canvasMaterial = new SpriteMaterial({map: canvasTexture});
+
         labelHolder = new Group();
-        label3D = new Mesh(new BoxGeometry(1, 1, 1), canvasMaterial);
-        label3D.scale.set(labelSize.x, labelSize.y, labelSize.y);
-        canvasTexture.anisotropy = 1;
+        label3D = new Sprite(canvasMaterial);
+        label3D.scale.set(labelSize.x * this.__textScaleFactor, labelSize.y * this.__textScaleFactor, 1);
+        // label3D = new Mesh(new BoxGeometry(1, 1, 1), canvasMaterial);
+        // label3D.scale.set(labelSize.x, labelSize.y, labelSize.y);
+        
+        // canvasTexture.anisotropy = 1;
         parentElement.appendChild(labelElement);
         labelHolder.add(label3D);
         return {'three-element': label3D, 'dom-element': labelElement, 'label-holder': labelHolder, 'text-texture': canvasTexture};
@@ -131,14 +137,9 @@ export class StatisticArrow extends Object3D{
     __updateText(evt){
         let label = `${Dimensioning.cmToMeasure(this.__arrowLength)}`;
         let center = this.__arrowDirection.clone().multiplyScalar(this.__arrowLength * 0.5);
-        let useAxis = this.__boxAxis;
-        let dot = this.__arrowDirection.clone().normalize().dot(useAxis);
-        let axis = this.__arrowDirection.clone().normalize().cross(useAxis).normalize();
-        let textInfo = this.__createCanvasElement(this.__textDomElement, undefined, label);
-        let textSize = textInfo['size'];
+        this.__createCanvasElement(this.__textDomElement, undefined, label);                
         this.__textTexture.needsUpdate = true;
-        this.__textElement.scale.set(textSize.x, textSize.y, textSize.y);
-        this.__textElement.setRotationFromAxisAngle(axis, Math.acos(dot));        
+        this.__textElement.material.needsUpdate = true;
         this.__textElementHolder.position.copy(center);
     }
 
@@ -202,6 +203,13 @@ export class ItemStatistics3D extends Mesh {
                 }                
             }
         }
+
+        let distanceTextBGColor = '#780994';
+        let distanceTextColor = '#ffffff';
+
+        let dimensionsTextBGColor = '#0F0F0F';
+        let dimensionsTextColor = '#F0F0F0';
+
         this.__options = options;
         this.__physicalItem = physicalItem;
         this.__dragControls = dragControls;
@@ -230,58 +238,76 @@ export class ItemStatistics3D extends Mesh {
             new Vector3(), 1,
             this.__options.distance.unselectedColor,
             this.__options.distance.headLength,
-            this.__options.distance.headWidth
+            this.__options.distance.headWidth, 
+            distanceTextColor,
+            distanceTextBGColor
         );
         this.__downArrow = new StatisticArrow(this.__down.clone(),
             new Vector3(), 1,
             this.__options.distance.unselectedColor,
             this.__options.distance.headLength,
-            this.__options.distance.headWidth
+            this.__options.distance.headWidth, 
+            distanceTextColor,
+            distanceTextBGColor
         );
 
         this.__leftArrow = new StatisticArrow(this.__left.clone(),
             new Vector3(), 1,
             this.__options.distance.unselectedColor,
             this.__options.distance.headLength,
-            this.__options.distance.headWidth
+            this.__options.distance.headWidth, 
+            distanceTextColor,
+            distanceTextBGColor
         );
         this.__rightArrow = new StatisticArrow(this.__right.clone(),
             new Vector3(), 1,
             this.__options.distance.unselectedColor,
             this.__options.distance.headLength,
-            this.__options.distance.headWidth
+            this.__options.distance.headWidth, 
+            distanceTextColor,
+            distanceTextBGColor
         );
 
         this.__frontArrow = new StatisticArrow(this.__front.clone(),
             new Vector3(), 1,
             this.__options.distance.unselectedColor,
             this.__options.distance.headLength,
-            this.__options.distance.headWidth
+            this.__options.distance.headWidth, 
+            distanceTextColor,
+            distanceTextBGColor
         );
         this.__backArrow = new StatisticArrow(this.__back.clone(),
             new Vector3(), 1,
             this.__options.distance.unselectedColor,
             this.__options.distance.headLength,
-            this.__options.distance.headWidth
+            this.__options.distance.headWidth, 
+            distanceTextColor,
+            distanceTextBGColor
         );
 
         this.__widthArrow = new StatisticArrow(new Vector3(1, 0, 0),
             new Vector3(), 50,
             this.__options.dimension.unselectedColor,
             this.__options.dimension.headLength,
-            this.__options.dimension.headWidth
+            this.__options.dimension.headWidth,
+            dimensionsTextColor,
+            dimensionsTextBGColor
         );
         this.__heightArrow = new StatisticArrow(new Vector3(0, 1, 0),
             new Vector3(), 1,
             this.__options.dimension.unselectedColor,
             this.__options.dimension.headLength,
-            this.__options.dimension.headWidth
+            this.__options.dimension.headWidth,
+            dimensionsTextColor,
+            dimensionsTextBGColor
         );
         this.__depthArrow = new StatisticArrow(new Vector3(0, 0, -1),
             new Vector3(), 1,
             this.__options.dimension.unselectedColor,
             this.__options.dimension.headLength,
-            this.__options.dimension.headWidth
+            this.__options.dimension.headWidth,
+            dimensionsTextColor,
+            dimensionsTextBGColor
         );
 
         this.__directions = [
