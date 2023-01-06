@@ -110,8 +110,8 @@ export class DragRoomItemsControl3D extends EventDispatcher {
                  */
                 this.__plane.setFromNormalAndCoplanarPoint(this.__camera.getWorldDirection(this.__plane.normal), this.__worldPosition.setFromMatrixPosition(this.__selected.matrixWorld));
 
-                this.__offset.copy(this.__intersection.clone().sub(this.__worldPosition.setFromMatrixPosition(this.__selected.matrixWorld)));
-                // this.__offset.copy(this.__intersection.clone().sub(this.__selected.location));
+                // this.__offset.copy(this.__intersection.clone().sub(this.__worldPosition.setFromMatrixPosition(this.__selected.matrixWorld)));
+                this.__offset.copy(this.__intersection.clone().sub(this.__selected.location));
             }
             this.__domElement.style.cursor = 'move';
             
@@ -163,7 +163,7 @@ export class DragRoomItemsControl3D extends EventDispatcher {
                 if (wallPlanesThatIntersect.length) {
                     this.dispatchEvent({ type: EVENT_WALL_CLICKED, item: wallPlanesThatIntersect[0].object.edge, point: wallPlanesThatIntersect[0].point, normal: wallPlanesThatIntersect[0].face.normal });
                 } else if (floorPlanesThatIntersect.length) {
-                    this.dispatchEvent({ type: EVENT_ROOM_CLICKED, item: floorPlanesThatIntersect[0].object.room, point: floorPlanesThatIntersect[0].point, normal: floorPlanesThatIntersect[0].face.normal });
+                    this.dispatchEvent({ type: EVENT_ROOM_CLICKED, item: floorPlanesThatIntersect[0].object.room, point: floorPlanesThatIntersect[0].point, normal: floorPlanesThatIntersect[0].face.normal.clone().applyMatrix4(floorPlanesThatIntersect[0].object.matrixWorld) });
                 }
             }
         }

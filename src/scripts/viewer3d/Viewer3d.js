@@ -16,6 +16,7 @@ import { DragRoomItemsControl3D } from './DragRoomItemsControl3D.js';
 import { Configuration, viewBounds,shadowVisible } from '../core/configuration.js';
 import {ConfigurationHelper} from '../helpers/ConfigurationHelper';
 import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
+import { Vector3 } from 'three';
 
 export const states = { UNSELECTED: 0, SELECTED: 1, DRAGGING: 2, ROTATING: 3, ROTATING_FREE: 4, PANNING: 5 };
 
@@ -143,11 +144,34 @@ export class Viewer3D extends Scene {
         scope.renderer.setAnimationLoop(scope.render.bind(this));
         scope.render();
     }
+
+    __focusOnWallOrRoom(normal, center, distance, y=0){
+        let cameraPosition = center.clone().add(normal.clone().multiplyScalar(distance));        
+        this.controls.target = center.clone();
+        this.camera.position.copy(cameraPosition);
+        this.controls.update();
+        this.needsUpdate = true;
+    }
     __wallSelected(evt) {
+        let edge = evt.item;
+        let y = Math.max(edge.wall.startElevation, edge.wall.endElevation) * 0.5;
+        let center2d = edge.interiorCenter();
+        let center = new Vector3(center2d.x, y, center2d.y);
+        let distance = edge.interiorDistance() * 0.5;
+        let normal = evt.normal;
+
+        this.__focusOnWallOrRoom(normal, center, distance, y);
         this.dispatchEvent(evt);
     }
 
     __roomSelected(evt) {
+        let room = evt.item;
+        let y = room.corners[0].elevation;
+        let normal = room.normal.clone();
+        let center2d = room.areaCenter.clone();
+        let center = new Vector3(center2d.x, 0, center2d.y);
+        let distance = y * 3.0;
+        this.__focusOnWallOrRoom(normal, center, distance, y);
         this.dispatchEvent(evt);
     }
 
@@ -159,7 +183,6 @@ export class Viewer3D extends Scene {
         this.__currentItemSelected = evt.item;
         this.__currentItemSelected.selected = true;
         this.needsUpdate = true;
-        // this.controls.needsUpdate = true;
         if (this.__currentItemSelected.itemModel != undefined) {
             evt.itemModel = this.__currentItemSelected.itemModel;
         }

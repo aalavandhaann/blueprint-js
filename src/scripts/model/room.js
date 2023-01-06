@@ -401,7 +401,7 @@ export class Room extends EventDispatcher {
         this.center = this.max.clone().sub(this.min).multiplyScalar(0.5).add(this.min);
 
         let normalArray = this.floorPlane.geometry.attributes.normal;
-        this.normal = new Vector3((normalArray.getX(0), normalArray.getY(0), normalArray.getZ(0)));
+        this.normal = new Vector3(0, normalArray.getZ(0), 0);
     }
 
     cycleIndex(index) {
