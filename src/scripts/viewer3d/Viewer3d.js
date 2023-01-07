@@ -157,7 +157,7 @@ export class Viewer3D extends Scene {
         let y = Math.max(edge.wall.startElevation, edge.wall.endElevation) * 0.5;
         let center2d = edge.interiorCenter();
         let center = new Vector3(center2d.x, y, center2d.y);
-        let distance = edge.interiorDistance() * 0.5;
+        let distance = edge.interiorDistance() * 1.5;
         let normal = evt.normal;
 
         this.__focusOnWallOrRoom(normal, center, distance, y);
@@ -217,7 +217,6 @@ export class Viewer3D extends Scene {
         let physicalRoomItem = new Physical3DItem(evt.item, this.dragcontrols, this.__options);
         this.add(physicalRoomItem);
         this.__physicalRoomItems.push(physicalRoomItem);
-        console.log('SET ROOM ITEM SELECTED');
         this.__roomItemSelected({ type: EVENT_ITEM_SELECTED, item: physicalRoomItem });
         // this.dragcontrols.enabled = true;
         // this.dragcontrols.selected = physicalRoomItem;

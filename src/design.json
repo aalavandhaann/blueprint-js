@@ -389,7 +389,7 @@
             }
         },
         "units": "m",
-        "measurement": true,
+        "measurement": false,
         "magnetic_snap": true
     },
     "items": [
@@ -581,7 +581,7 @@
         },
         {
             "itemName": "DoubleChairWithPillow",
-            "itemType": 9,
+            "itemType": 1,
             "position": [
                 1210.3568,
                 36.36685,
@@ -629,6 +629,60 @@
                 0,
                 -1.5707963267948966,
                 0
+            ]
+        },
+        {
+            "itemName": "Parametric Door",
+            "isParametric": true,
+            "baseParametricType": "DOOR",
+            "subParametricData": {
+                "type": 1,
+                "frameColor": 16711680,
+                "doorColor": 11007,
+                "doorHandleColor": 57389,
+                "glassColor": 16711680,
+                "frameWidth": 130,
+                "frameHeight": 250,
+                "frameSize": 5,
+                "frameThickness": 20,
+                "doorRatio": 0.5,
+                "openDirection": "BOTH_SIDES",
+                "handleType": "HANDLE_02"
+            },
+            "itemType": 7,
+            "position": [
+                500,
+                130,
+                205.61414368866642
+            ],
+            "rotation": [
+                0,
+                1.5707963267948966,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "size": [
+                100,
+                200,
+                20
+            ],
+            "fixed": false,
+            "resizable": false,
+            "wall": "da026c08-d76a-a944-8e7b-096b752da9ed,4e3d65cb-54c0-0681-28bf-bddcc7bdb571",
+            "innerRotation": [
+                0,
+                1.5707963267948966,
+                0
+            ],
+            "wallSide": "front",
+            "wallSurfacePoint": [
+                500,
+                125,
+                205.61414368866642
             ]
         }
     ]

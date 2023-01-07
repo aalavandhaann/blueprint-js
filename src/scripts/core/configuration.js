@@ -39,7 +39,7 @@ export var config = { dimUnit: dimCentiMeter, wallHeight: 250,
     dragOnlyX: false, dragOnlyY: false, 
     snapTolerance: 50, gridSpacing: 50, 
     directionalDrag: true, 
-    magneticSnap: true, itemStatistics: false,
+    magneticSnap: true, itemStatistics: true,
     boundsX: 500, boundsY: 500, 
     viewBounds: 5000};
 

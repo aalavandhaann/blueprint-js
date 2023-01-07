@@ -1,6 +1,6 @@
 import Enum from "es6-enum";
-import { BufferGeometry, Matrix4, Vector3, DoubleSide, Color } from "three";
-// import { BufferGeometryUtils } from 'three/examples/jsm/utils/BufferGeometryUtils'
+import { BufferGeometry, Matrix4, Vector3, DoubleSide, Color, BufferGeometryUtils } from "three";
+import { mergeBufferGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { EventDispatcher } from "three";
 import { EVENT_PARAMETRIC_GEOMETRY_UPATED } from "../../core/events";
 import { DoorHandleGenerator } from "./doorhandles/DoorHandleGenerator";
@@ -85,13 +85,14 @@ export class ParametricBaseDoor extends EventDispatcher {
         this.__material = [
             this.__frameMaterial,
             this.__doorMaterial,
-            this.__leftDoorMaterial,
-            this.__rightDoorMaterial,
+            this.__doorHandleMaterial,
+            this.__doorMaterial,
             this.__doorHandleMaterial,
             this.__glassMaterial
         ];
         this.__doorMaterial.normalScale.set(100, 100, 100);
         this.__geometry = this.__proceedure();
+        this.needsUpdate = true;
     }
 
     __convertFrom4ToFace3(facegroups, vertices, materialId = 0) {
@@ -103,7 +104,8 @@ export class ParametricBaseDoor extends EventDispatcher {
             // f2.materialIndex = materialId;
             // faces.push(f1);
             // faces.push(f2);
-            faces.push(vertices[facegroups[i + 1]], vertices[facegroups[i + 1]], vertices[facegroups[i + 2]])
+            faces.push(vertices[facegroups[i]], vertices[facegroups[i + 1]], vertices[facegroups[i + 2]]);
+            faces.push(vertices[facegroups[i]], vertices[facegroups[i + 2]], vertices[facegroups[i + 3]]);
         }
         return faces;
     }
@@ -134,23 +136,39 @@ export class ParametricBaseDoor extends EventDispatcher {
 
     __proceedure() {
         let returnGeometry = null;
-        let doorGeometry = new BufferGeometry();
-        let mergeGeometries = [];
+        let doorGeometry = null;
+        let tempGeometry = null;
+
         let doorFrameGeometry = this.__shapeMesh();
         let doorsToGenerate = this.__shapeChildren();
-        if (doorFrameGeometry) {            
+
+        
+
+        let doorGeometries = []; // Sometimes there can 1 door or 2 door or no door        
+        let mergeGeometries = [];
+
+        if(doorFrameGeometry){
             mergeGeometries.push(doorFrameGeometry);
-            // doorGeometry.merge(doorFrameGeometry);
         }
+
         if (doorsToGenerate.right) {
-            mergeGeometries.push(doorsToGenerate.right);
+            doorGeometries.push(doorsToGenerate.right);
             // doorGeometry.merge(doorsToGenerate.right);
         }
         if (doorsToGenerate.left) {
-            mergeGeometries.push(doorsToGenerate.left);
+            doorGeometries.push(doorsToGenerate.left);
             // doorGeometry.merge(doorsToGenerate.left);
         }
-        doorGeometry = mergeGeometries;//BufferGeometryUtils.mergeBufferGeometries(mergeGeometries, true);
+
+        if(doorGeometries.length){
+            tempGeometry = mergeBufferGeometries([doorGeometries[0]], true);//Maintain all door geometries as same group for material assignment purposes
+            if(doorGeometries[1]){
+                tempGeometry = mergeBufferGeometries([tempGeometry, doorGeometries[1]], true);//Maintain all door geometries as same group for material assignment purposes
+            }       
+            mergeGeometries.push(tempGeometry);     
+        }
+
+        doorGeometry = mergeBufferGeometries(mergeGeometries, true);
         doorGeometry.computeVertexNormals();
         // doorGeometry.computeFaceNormals();
         doorGeometry.computeBoundingBox();
@@ -207,12 +225,12 @@ export class ParametricBaseDoor extends EventDispatcher {
             new Vector3(-wf + gap, -tf + deep, hf - gap),
             new Vector3(wf - gap, tf * 2, hf - gap)
         ];
-        let materialIndex = 0;
+        // let materialIndex = 0;
         let geometry = new BufferGeometry();
         let faceIds = [3, 4, 1, 0, 7, 12, 19, 9, 4, 3, 6, 5, 10, 11, 5, 6, 13, 20, 21, 14, 17, 15, 16, 18, 11, 23, 22, 5, 20, 13, 12, 7, 20, 3, 0, 21, 9, 10, 6, 7, 13, 14, 16, 15, 4, 8, 2, 1, 29, 30, 27, 31, 7, 6, 3, 20, 8, 4, 5, 22, 14, 2, 18, 16, 17, 18, 2, 8, 28, 25, 19, 12, 28, 26, 24, 25, 25, 24, 23, 19, 22, 23, 24, 26, 29, 31, 26, 17, 15, 28, 27, 30];
         let faces = this.__convertFrom4ToFace3(faceIds, verts, 0);
         // let extraFace = new Face3(8, 22, 26);
-        faces.push(vertices[8], vertices[22], vertices[26])
+        faces.push(verts[8], verts[22], verts[26])
         // extraFace.materialIndex = 0;
         // faces.push(extraFace);
 
@@ -269,9 +287,9 @@ export class ParametricBaseDoor extends EventDispatcher {
             let doorRatio = (doorSide === 'Right') ? 1.0 - this.doorRatio : this.doorRatio;
             let front_handle = DoorHandleGenerator.generate_handle(this.__handleType.description, 'Front', doorSide, doorRatio, this.frameWidth, this.frameSize, this.frameThickness, this.__openDirection.description, this.__doorHandleMaterialId);
             let back_handle = DoorHandleGenerator.generate_handle(this.__handleType.description, 'Back', doorSide, doorRatio, this.frameWidth, this.frameSize, this.frameThickness, this.__openDirection.description, this.__doorHandleMaterialId);
-
-            aDoorGeometry.merge(front_handle);
-            aDoorGeometry.merge(back_handle);
+            aDoorGeometry = mergeBufferGeometries([aDoorGeometry, front_handle, back_handle], true);
+            // aDoorGeometry.merge(front_handle);
+            // aDoorGeometry.merge(back_handle);
         }
 
         return aDoorGeometry;

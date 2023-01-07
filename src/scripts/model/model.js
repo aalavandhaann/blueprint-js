@@ -184,11 +184,6 @@ export class Model extends EventDispatcher {
          */
         let eulerAngle = item.itemModel.innerRotation.clone().add(new Vector3(x, y, z));
         item.itemModel.innerRotation = eulerAngle;
-        /* Measurement Realtime Update */
-        if(item.statistics){ 
-            item.statistics.updateDistances();
-            item.statistics.turnOnDistances();
-        } 
     }
 
     get roomItems() {

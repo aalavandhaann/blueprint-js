@@ -206,13 +206,12 @@ export class Physical3DItem extends Mesh {
             scope.parent.needsUpdate = true;
         }
         
-
-        this.__itemStatistics.updateDimensions();
         this.__itemStatistics.updateDistances();
+        this.__itemStatistics.updateDimensions();
+        this.__itemStatistics.turnOffDimensions();
         this.__itemStatistics.turnOffDistances();
         this.add(this.__loadedItem);
         this.add(this.__itemStatistics);
-
         this.dispatchEvent({ type: EVENT_UPDATED });
     }
 

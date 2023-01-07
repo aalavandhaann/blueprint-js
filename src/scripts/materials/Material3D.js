@@ -8,6 +8,7 @@ export class Material3D extends MeshPhysicalMaterial {
         this.__scene = scene;
         this.__reflectsScene = reflectsScene;
         this.__mirrorCamera = null;
+        textureMapPack = (textureMapPack) ? textureMapPack : {};
         // this.roughness = (!textureMapPack.reflective) ? 0.5 : textureMapPack.reflective;
         this.__repeat = (!textureMapPack.repeat) ? textureMapPack.repeat : (textureMapPack.repeat==0) ? 0 : TEXTURE_DEFAULT_REPEAT;
         this.__reflective = (textureMapPack.reflective) ? textureMapPack.reflective : (textureMapPack.reflective==0) ? 0 : TEXTURE_DEFAULT_REFLECTIVE;

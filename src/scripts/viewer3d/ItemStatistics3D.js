@@ -11,6 +11,7 @@ import { MeshStandardMaterial } from "three";
 import { CanvasTexture } from "three";
 import { ArrowHelper, Matrix4, Vector3 } from "three";
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
+import { computeMikkTSpaceTangents } from "three/examples/jsm/utils/BufferGeometryUtils";
 import { configDimUnit, Configuration, itemStatistics } from "../core/configuration";
 import { Dimensioning } from "../core/dimensioning";
 import { EVENT_CHANGED, EVENT_ITEM_SELECTED, EVENT_NO_ITEM_SELECTED, EVENT_UPDATED } from "../core/events";
@@ -26,7 +27,7 @@ export class StatisticArrow extends Object3D{
         this.__arrowHeadLength = headLength;
         this.__arrowHeadWidth = headWidth;
 
-        this.__textScaleFactor = 1.5;
+        this.__textScaleFactor = 2.75;
         this.__textColor = textColor;
         this.__textBackgroundColor = textBackgroundColor;
 
@@ -131,7 +132,7 @@ export class StatisticArrow extends Object3D{
     __updated(evt){
         this.setLength();
         this.__updateText();
-        this.__textElement.visible = Configuration.getBooleanValue(itemStatistics);
+        // this.__textElement.visible = Configuration.getBooleanValue(itemStatistics);
     }
 
     __updateText(evt){
@@ -170,6 +171,19 @@ export class StatisticArrow extends Object3D{
     setTextColor(color){
         this.__textColor = color;
         this.__textMaterial.color = color;
+    }
+
+    get visible(){
+        return this.visible;
+    }
+
+    set visible(flag){
+        super.visible = flag;
+        if(this.__arrow){
+            this.__arrow.visible = flag;
+            this.__reverseArrow.visible = flag;
+            this.__textElementHolder.visible = flag;
+        }        
     }
 }
 
@@ -338,7 +352,7 @@ export class ItemStatistics3D extends Mesh {
 
         this.__deselectEvent = this.__deselected.bind(this);
         this.__configurationChangedEvent = this.__configurationChanged.bind(this);
-        this.visible = Configuration.getBooleanValue(itemStatistics);
+        // this.visible = Configuration.getBooleanValue(itemStatistics);
         this.__dragControls.addEventListener(EVENT_NO_ITEM_SELECTED, this.__deselectEvent);
         this.__dragControls.addEventListener(EVENT_ITEM_SELECTED, this.__deselectEvent);
         Configuration.getInstance().addEventListener(EVENT_CHANGED, this.__configurationChangedEvent);
@@ -383,6 +397,9 @@ export class ItemStatistics3D extends Mesh {
         let flag = true;
         let i;
         let intersectionsWithPlanes = [];
+        if(!this.__physicalItem.parent){
+            return;
+        }
         let physicalItems = excludeThyself(this.__physicalItem, this.__physicalItem.parent.physicalRoomItems);
         intersectionsWithPlanes = intersectionsWithPlanes.concat(this.__model.floorplan.floorPlanesForIntersection);
         intersectionsWithPlanes = intersectionsWithPlanes.concat(this.__model.floorplan.wallPlanesForIntersection);
@@ -426,9 +443,15 @@ export class ItemStatistics3D extends Mesh {
     }
 
     __deselected(evt){
-        if(!this.__physicalItem.selected){
+        if(!(evt.item == this.parent) || !evt.item){
+            this.turnOffDimensions();
             this.turnOffDistances();
-        }        
+            return;
+        }
+        if(this.__physicalItem == evt.item){
+            this.turnOnDistances();
+            this.turnOnDimensions();
+        }
     }
 
     __configurationChanged(evt) {
@@ -455,12 +478,6 @@ export class ItemStatistics3D extends Mesh {
         });
     }
 
-    turnOnDistances(){
-        this.__directionArrows.forEach((arrow) =>{
-            arrow.visible = true;
-        });
-    }
-
     turnOffDimensions(){
         this.__widthArrow.visible = false;
         this.__heightArrow.visible = false;
@@ -471,5 +488,11 @@ export class ItemStatistics3D extends Mesh {
         this.__widthArrow.visible = true;
         this.__heightArrow.visible = true;
         this.__depthArrow.visible = true;
+    }
+
+    turnOnDistances(){
+        this.__directionArrows.forEach((arrow) =>{
+            arrow.visible = true;
+        });
     }
 }

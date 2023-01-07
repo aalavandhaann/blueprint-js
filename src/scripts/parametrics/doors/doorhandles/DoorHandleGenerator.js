@@ -3,7 +3,7 @@ import { Handle_01_vertices, Handle_01_faces } from './Handle_01';
 import { Handle_02_vertices, Handle_02_faces } from './Handle_02';
 import { Handle_03_vertices, Handle_03_faces } from './Handle_03';
 import { Handle_04_vertices, Handle_04_faces } from './Handle_04';
-import { Geometry, Matrix4, Vector3 } from 'three';
+import { Matrix4, Vector3 } from 'three';
 
 
 export class DoorHandleGenerator {

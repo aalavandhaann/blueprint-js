@@ -5,6 +5,8 @@ import {
 import { EVENT_ITEM_MOVE, EVENT_ITEM_MOVE_FINISH, EVENT_NO_ITEM_SELECTED, EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED, EVENT_ITEM_SELECTED } from '../core/events';
 import { IS_TOUCH_DEVICE } from '../../DeviceInfo';
 import {ConfigurationHelper} from '../helpers/ConfigurationHelper';
+import { Configuration, snapToGrid, snapTolerance } from '../core/configuration';
+import { Dimensioning } from '../core/dimensioning';
 /**
  * This is a custom implementation of the DragControls class
  * In this class the raycaster intersection will not check for children
@@ -53,8 +55,9 @@ export class DragRoomItemsControl3D extends EventDispatcher {
         let rect = this.__domElement.getBoundingClientRect();
         this.__mouse.x = ((evt.clientX - rect.left) / rect.width) * 2 - 1;
         this.__mouse.y = -((evt.clientY - rect.top) / rect.height) * 2 + 1;
-        this.__mouseClient.x=evt.clientX;
-        this.__mouseClient.y=evt.clientY;
+
+        this.__mouseClient.x=this.__mouse.x;//evt.clientX;
+        this.__mouseClient.y=this.__mouse.y;//evt.clientY;
     }
 
     __pressListener(evt) {
@@ -116,7 +119,6 @@ export class DragRoomItemsControl3D extends EventDispatcher {
             this.__domElement.style.cursor = 'move';
             
             if(this.__selected.statistics){
-                this.__selected.statistics.turnOnDistances();
                 this.__selected.statistics.updateDistances();
             }   
             this.dispatchEvent({ type: EVENT_ITEM_SELECTED, item: this.__selected });
@@ -148,7 +150,6 @@ export class DragRoomItemsControl3D extends EventDispatcher {
         // }
         if (this.__selected) {
             if(this.__selected.statistics){
-                this.__selected.statistics.turnOnDistances();
                 this.__selected.statistics.updateDistances();
             }            
             this.__roomplanner.forceRender();
@@ -196,6 +197,13 @@ export class DragRoomItemsControl3D extends EventDispatcher {
                         let location = null;
                         let normal = null;
                         let intersectingPlane = null;
+
+                        //Convert to grid snapped values if snapping is on
+                        if (Configuration.getBooleanValue(snapToGrid)) {
+                            intersectionData.point.x = Math.floor(intersectionData.point.x / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
+                            intersectionData.point.y = Math.floor(intersectionData.point.y / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
+                            intersectionData.point.z = Math.floor(intersectionData.point.z / Configuration.getNumericValue(snapTolerance)) * Configuration.getNumericValue(snapTolerance);
+                        }
                         
                         this.__intersection.copy(intersectionData.point.clone());
                         location = this.__intersection.clone().sub(this.__offset);
@@ -207,17 +215,8 @@ export class DragRoomItemsControl3D extends EventDispatcher {
                 }
             }
             if(this.__selected.statistics){
-                this.__selected.statistics.turnOnDistances();
                 this.__selected.statistics.updateDistances();
             }    
-            /**
-             * START OF LINES FOR UPDATING THE DISTANCE OF AN OBJECT CONTINUOSLY
-             * CAUTION: THIS MAKES THE APP REALLY SLOW
-             */
-            // if(this.__selected.statistics){
-            //     // this.__selected.statistics.turnOnDistances();
-            //     this.__selected.statistics.updateDistances();
-            // } 
             //END OF LINES FOR  UPDATING THE DISTANCE OF AN OBJECT CONTINUOSLY
             this.dispatchEvent({ type: EVENT_ITEM_MOVE, item: this.__selected });
             // return;
