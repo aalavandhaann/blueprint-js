@@ -5,7 +5,7 @@ import {
     SpotLight, PointLight, SpotLightHelper,TextureLoader,RepeatWrapping,MeshPhongMaterial, Plane, CompressedPixelFormat
 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { EVENT_ITEM_LOADED, EVENT_ITEM_LOADING, EVENT_UPDATED, EVENT_PARAMETRIC_GEOMETRY_UPATED } from "../core/events";
+import { EVENT_ITEM_LOADED, EVENT_ITEM_LOADING, EVENT_UPDATED, EVENT_PARAMETRIC_GEOMETRY_UPATED, EVENT_ITEM_REMOVED } from "../core/events";
 import { Utils } from "../core/utils"
 import { BoxGeometry, LineBasicMaterial, LineSegments, EdgesGeometry, ObjectLoader } from "three";
 import { FloorMaterial3D } from "../materials/FloorMaterial3D";
@@ -93,8 +93,10 @@ export class Physical3DItem extends Mesh {
         this.__gltfLoadedEvent = this.__gltfLoaded.bind(this);
         this.__itemUpdatedEvent = this.__itemUpdated.bind(this);
         this.__parametricGeometryUpdateEvent = this.__parametricGeometryUpdate.bind(this);
+        this.__disposeEvent = this.dispose.bind(this);
 
         this.__itemModel.addEventListener(EVENT_UPDATED, this.__itemUpdatedEvent);
+        this.__itemModel.addEventListener(EVENT_ITEM_REMOVED, this.__disposeEvent);
         this.add(this.__boxhelper);
         this.selected = false;
         this.position.copy(this.__itemModel.position);
@@ -298,8 +300,8 @@ export class Physical3DItem extends Mesh {
     }
 
     dispose() {
-        this.__itemModel.dispose();
         this.__itemModel.removeEventListener(EVENT_UPDATED, this.__itemUpdatedEvent);
+        this.__itemModel.removeEventListener(EVENT_ITEM_REMOVED, this.__disposeEvent);
         this.parent.remove(this);
     }
 

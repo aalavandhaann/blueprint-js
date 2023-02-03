@@ -173,6 +173,15 @@ export class Floor3D extends EventDispatcher {
     }
 
     buildRoofVaryingHeight() {
+        function getCornerForVertex(vertex2d){
+            for(let i =0;i < this.room.interiorCorners.length; i++){
+                let iCorner = this.room.interiorCorners[i];
+                if(vertex2d.clone().sub(iCorner).length() < 1e-3){
+                    return i;
+                }
+            }
+            return 0;
+        }
         let side = (this.room.isLocked || this.__options.occludedRoofs) ? DoubleSide : FrontSide;
         // setup texture
         let roofMaterial = new MeshStandardMaterial({ side: side, color: 0xffffff });
@@ -190,9 +199,18 @@ export class Floor3D extends EventDispatcher {
         shapeGeometry = new ShapeGeometry(shape);
         const vertices = shapeGeometry.getAttribute('position');
         for (let i = 0; i < vertices.count; i++){
-            let corner = this.room.corners[i];
-            vertices.setZ(i, vertices.getY(i));
-            vertices.setY(i, corner.elevation + 1.0);
+            let cornerIndex;
+            let corner;
+            let interiorCorner;
+            vertices.setZ(i, vertices.getY(i));           
+            /**
+             * The threejs vertex ordering is messed up so we need to iterate through all corners 
+             * to find which is closest and assign its elevation to this vertex
+             */
+            cornerIndex = getCornerForVertex.bind(this)(new Vector2(vertices.getX(i), vertices.getZ(i)));            
+            interiorCorner  = this.room.interiorCorners[cornerIndex];
+            corner = this.room.corners[cornerIndex];
+            vertices.setY(i, corner.elevation + 1.0);          
         }
         shapeGeometry.computeVertexNormals();
         shapeGeometry.normalizeNormals();

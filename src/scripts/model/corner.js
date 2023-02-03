@@ -635,25 +635,13 @@ export class Corner extends EventDispatcher {
             if (this.distanceFromWall(wall) < cornerTolerance && !this.isWallConnected(wall)) {
                 // update position to be on wall
                 let intersection;
-                if (wall.wallType === WallTypes.STRAIGHT) {
-                    intersection = Utils.closestPointOnLine(new Vector2(this.x, this.y), wall.getStart(), wall.getEnd());
-                } else if (wall.wallType === WallTypes.CURVED) {
-                    intersection = wall.bezier.project(new Vector2(this.x, this.y));
-                }
-
-                if (wall.wallType === WallTypes.STRAIGHT) {
-                    // merge this corner into wall by breaking wall into two parts
-                    let newWall = this.floorplan.newWall(this, wall.getEnd());
-                    wall.setEnd(this);
-                    newWall.clearAttachedRooms();
-                    wall.clearAttachedRooms();
-                } else if (wall.wallType === WallTypes.CURVED) {
-                    // merge this corner into wall by breaking wall into two parts				
-                    let newWall = this.floorplan.newWall(this, wall.getEnd());
-                    wall.setEnd(this);
-                    newWall.clearAttachedRooms();
-                    wall.clearAttachedRooms();
-                }
+                intersection = Utils.closestPointOnLine(new Vector2(this.x, this.y), wall.getStart(), wall.getEnd());
+                // merge this corner into wall by breaking wall into two parts
+                let newWall = this.floorplan.newWall(this, wall.getEnd());
+                wall.setEnd(this);
+                newWall.clearAttachedRooms();
+                wall.clearAttachedRooms();
+                
                 //The below line is crashing because of recursive. This function mergeWithIntersected is called 
                 //From move(newX, newY) method. Now if we call move(newX, newY) from inside this method
                 //It will lead to recursion. So ensure in the move(newX, newY) method mergeWithIntersected is not called

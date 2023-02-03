@@ -1,6 +1,6 @@
 import { EventDispatcher, Vector3, Vector2 } from 'three';
 import { Quaternion, Euler } from 'three';
-import { EVENT_UPDATED, EVENT_PARAMETRIC_GEOMETRY_UPATED, EVENT_MOVED, EVENT_DELETED } from '../core/events';
+import { EVENT_UPDATED, EVENT_PARAMETRIC_GEOMETRY_UPATED, EVENT_MOVED, EVENT_DELETED, EVENT_ITEM_REMOVED } from '../core/events';
 import { Utils } from '../core/utils';
 import { BASE_PARAMETRIC_TYPES, ParametricFactory } from '../parametrics/ParametricFactory';
 import { Configuration, magneticSnap } from '../core/configuration.js';
@@ -287,6 +287,7 @@ export class Item extends EventDispatcher {
         if (this.__currentWallEdge) {
             this.__currentWallEdge.removeEventListener(EVENT_DELETED, this.__edgeDeletedEvent);
         }
+        this.dispatchEvent({type: EVENT_ITEM_REMOVED, item: this});
 
     }
 

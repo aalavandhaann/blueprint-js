@@ -224,8 +224,10 @@ export class Viewer3D extends Scene {
     }
 
     __resetDesign(evt) {
-        this.addRoomItems();
-        this.addRoomsAndWalls();
+        this.dragcontrols.selected = null;
+        this.__physicalRoomItems.length = 0;
+        this.edges3d.length = 0;
+        this.floors3d.length = 0;
     }
 
     addRoomItems(evt) {
@@ -248,6 +250,14 @@ export class Viewer3D extends Scene {
     addRoomsAndWalls() {
         let scope = this;
         let i = 0;
+        let floorplanDimensions;
+        let floorplanCenter;
+        let multiplier;
+        let ymultiplier;
+        let wallEdges;
+        let rooms;
+        let threeFloor;
+        let edge3d;
         scope.floors3d.forEach((floor) => {
             floor.destroy();
             floor = null;
@@ -258,25 +268,28 @@ export class Viewer3D extends Scene {
         });
         scope.edges3d = [];
         scope.floors3d = [];
-        let wallEdges = scope.floorplan.wallEdges();
-        let rooms = scope.floorplan.getRooms();
+        wallEdges = scope.floorplan.wallEdges();
+        rooms = scope.floorplan.getRooms();
         // draw floors
         for (i = 0; i < rooms.length; i++) {
-            let threeFloor = new Floor3D(scope, rooms[i], scope.controls, this.__options);
+            threeFloor = new Floor3D(scope, rooms[i], scope.controls, this.__options);
             scope.floors3d.push(threeFloor);
         }
         for (i = 0; i < wallEdges.length; i++) {
-            let edge3d = new Edge3D(scope, wallEdges[i], scope.controls, this.__options);
+            edge3d = new Edge3D(scope, wallEdges[i], scope.controls, this.__options);
             scope.edges3d.push(edge3d);
         }
-        let floorplanDimensions = scope.floorplan.getDimensions();
-        let floorplanCenter = scope.floorplan.getDimensions(true);
-        let multiplier = 1.5;
-        let ymultiplier = 0.5;
-        scope.controls.target = floorplanCenter.clone();
-        scope.camera.position.set(floorplanDimensions.x*multiplier, floorplanDimensions.length()*ymultiplier, floorplanDimensions.z*multiplier);
-        scope.controls.update();
-        scope.shouldRender = true;
+        floorplanDimensions = scope.floorplan.getDimensions();
+        floorplanCenter = scope.floorplan.getDimensions(true);
+        multiplier = 1.5;
+        ymultiplier = 0.5;
+        
+        if(scope.floorplan.corners.length){
+            scope.controls.target = floorplanCenter.clone();
+            scope.camera.position.set(floorplanDimensions.x*multiplier, floorplanDimensions.length()*ymultiplier, floorplanDimensions.z*multiplier);
+            scope.controls.update();
+            scope.shouldRender = true;
+        }        
     }
 
     getARenderer() {

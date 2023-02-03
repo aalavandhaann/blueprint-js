@@ -74,7 +74,9 @@ export class Model extends EventDispatcher {
     }
 
     reset() {
-        // console.log("rest button");
+        this.__roomItems.forEach((item) =>{
+            item.dispose();
+        });
         this.floorplan.reset();
         this.__roomItems.length = 0;
         this.__lightItems.length = 0;

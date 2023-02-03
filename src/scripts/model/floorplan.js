@@ -272,8 +272,8 @@ export class Floorplan extends EventDispatcher {
         // it needs to be checked if it is cutting other walls
         // If it cuts then all those walls have to removed and introduced as
         // new walls along with this new wall
-        var cStart = new Vector2(start.getX(), start.getY());
-        var cEnd = new Vector2(end.getX(), end.getY());
+        var cStart = new Vector2(start.x, start.y);
+        var cEnd = new Vector2(end.x, end.y);
         var line = { p1: cStart, p2: cEnd };
         var newCorners = [];
 
@@ -282,14 +282,7 @@ export class Floorplan extends EventDispatcher {
             var bstart = { x: twall.getStartX(), y: twall.getStartY() };
             var bend = { x: twall.getEndX(), y: twall.getEndY() };
             var iPoint;
-            if (twall.wallType === WallTypes.CURVED) {
-                iPoint = twall.bezier.intersects(line);
-                if (iPoint.length) {
-                    iPoint = twall.bezier.get(iPoint[0]);
-                }
-            } else {
-                iPoint = Utils.lineLineIntersectPoint(cStart, cEnd, bstart, bend);
-            }
+            iPoint = Utils.lineLineIntersectPoint(cStart, cEnd, bstart, bend);
             if (iPoint) {
                 var nCorner = this.newCorner(iPoint.x, iPoint.y);
                 newCorners.push(nCorner);
