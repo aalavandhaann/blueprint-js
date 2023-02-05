@@ -136,8 +136,10 @@ export class StatisticArrow extends Object3D{
     }
 
     __updateText(evt){
-        let label = `${Dimensioning.cmToMeasure(this.__arrowLength)}`;
+        let value = Dimensioning.cmToMeasure(this.__arrowLength);
+        let label = `${value}`;
         let center = this.__arrowDirection.clone().multiplyScalar(this.__arrowLength * 0.5);
+        this.__textElementHolder.visible = this.visible;
         this.__createCanvasElement(this.__textDomElement, undefined, label);                
         this.__textTexture.needsUpdate = true;
         this.__textElement.material.needsUpdate = true;
@@ -411,11 +413,17 @@ export class ItemStatistics3D extends Mesh {
             let direction = this.__directions[i].clone();
             let arrow = this.__directionArrows[i];
             let location = direction.clone().multiply(this.__itemHalfSize);
-
             let intersectionData = null;
             let rotMatrix = new Matrix4();
-            let worldLocation = location.clone();
-            let transformedDirection = direction.clone();            
+            let worldLocation;
+            let transformedDirection;            
+
+            if(this.__options.offsetToFront){
+                location.z += this.__itemHalfSize.z;
+            }
+
+            worldLocation = location.clone();
+            transformedDirection = direction.clone();            
             flag = false;
 
             rotMatrix.extractRotation(this.matrixWorld);
@@ -434,9 +442,9 @@ export class ItemStatistics3D extends Mesh {
                 flag = true;
 
             }
-            if(this.__options.offsetToFront){
-                location.z += this.__itemHalfSize.z * 0.75;
-            }
+            // if(this.__options.offsetToFront){
+            //     location.z += this.__itemHalfSize.z * 0.75;
+            // }
             arrow.position.copy(location);
             arrow.visible = flag;
         }
