@@ -442,9 +442,6 @@ export class ItemStatistics3D extends Mesh {
                 flag = true;
 
             }
-            // if(this.__options.offsetToFront){
-            //     location.z += this.__itemHalfSize.z * 0.75;
-            // }
             arrow.position.copy(location);
             arrow.visible = flag;
         }
