@@ -271,8 +271,8 @@ export class Edge3D extends EventDispatcher {
         scope.planes.forEach((plane) => {
             // plane.material.transparent = !scope.visible;
             // plane.material.opacity = (scope.visible) ? 1.0 : 0.001;
-            plane.visible = scope.visible;
-            //plane.material.visible=scope.visible;
+            // plane.visible = scope.visible;
+            plane.material.visible=scope.visible;
         });
         scope.updateObjectVisibility();
     }

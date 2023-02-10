@@ -1,7 +1,7 @@
 import { EventDispatcher, Vector2, Vector3, Matrix4, Mesh, MeshStandardMaterial, Box3, BufferGeometry, Plane } from 'three';
 import { EVENT_REDRAW, EVENT_MOVED, EVENT_UPDATED, EVENT_UPDATE_TEXTURES, EVENT_DELETED, EVENT_MODIFY_TEXTURE_ATTRIBUTE, EVENT_CHANGED, EVENT_NEW_ITEM, EVENT_ITEM_REMOVED, EVENT_ITEM_MOVE } from '../core/events.js';
 import { Utils } from '../core/utils.js';
-import { WallTypes, TEXTURE_DEFAULT_REPEAT, TEXTURE_PROPERTY_REPEAT, TEXTURE_PROPERTY_COLOR, TEXTURE_PROPERTY_ROTATE, TEXTURE_PROPERTY_REFLECTIVE, TEXTURE_PROPERTY_SHININESS } from '../core/constants.js';
+import { WallTypes, TEXTURE_DEFAULT_REPEAT, TEXTURE_PROPERTY_REPEAT, TEXTURE_PROPERTY_COLOR, TEXTURE_PROPERTY_ROTATE, TEXTURE_PROPERTY_REFLECTIVE, TEXTURE_PROPERTY_SHININESS, WALL_STANDARD_THICKNESS, WALL_OFFSET_THICKNESS } from '../core/constants.js';
 
 /**
  * Half Edges are created by Room.
@@ -405,14 +405,11 @@ export class HalfEdge extends EventDispatcher {
             // console.log('*************************');
             // console.log('CALCULATE INTERIOR START');
         }
-        // let vec = this.interiorPointByEdges(this.prev, this, debug); //this.interiorPoint(this.prev, true);//        
-        // // vec = vec.multiplyScalar(0.5);
-        // // vec = vec.multiplyScalar(this.__factor(vec));
-        // // vec = vec.clone().normalize().multiplyScalar(vec.length() - 10);
-        // return this.getStart().location.clone().add(vec);
+        let vec = this.interiorPointByEdges(this, this.prev, debug);
+        return this.getStart().location.clone().add(vec);
 
-        let vec = this.halfAngleVector(this.prev, this);
-        return new Vector2(this.getStart().x + vec.x, this.getStart().y + vec.y);
+        // let vec = this.halfAngleVector(this.prev, this);
+        // return new Vector2(this.getStart().x + vec.x, this.getStart().y + vec.y);
 
         // return {x:this.getStart().x + vec.x, y:this.getStart().y + vec.y};
     }
@@ -428,13 +425,11 @@ export class HalfEdge extends EventDispatcher {
             // console.log('*************************');
             // console.log('CALCULATE INTERIOR END');
         }
-        // let vec = this.interiorPointByEdges(this, this.next, debug); //this.interiorPoint(this.next, false);//
-        // // vec = vec.multiplyScalar(0.5);
-        // // vec = vec.multiplyScalar(this.__factor(vec));
-        // return this.getEnd().location.clone().add(vec);
+        let vec = this.interiorPointByEdges(this.next, this, debug);
+        return this.getEnd().location.clone().add(vec);
 
-        let vec = this.halfAngleVector(this, this.next);
-        return new Vector2(this.getEnd().x + vec.x, this.getEnd().y + vec.y);
+        // let vec = this.halfAngleVector(this, this.next);
+        // return new Vector2(this.getEnd().x + vec.x, this.getEnd().y + vec.y);
 
         // return {x:this.getEnd().x + vec.x, y:this.getEnd().y + vec.y};
     }
@@ -477,15 +472,21 @@ export class HalfEdge extends EventDispatcher {
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
     __exteriorStart(debug = false) {
-        // let vec = this.interiorPointByEdges(this.prev, this); //this.interiorPoint(this.prev, true);//
-        // // vec = vec.multiplyScalar(-0.5);
-        // // vec = vec.multiplyScalar(-this.__factor(vec, false));
-        // return this.getStart().location.clone().add(vec);
+        let vec = this.getEnd().location.clone().sub(this.getStart().location).normalize();
+        let point = this.getStart().location.clone();
+        vec.rotateAround(new Vector2(), -2.356194490192345);
+        vec.multiplyScalar(WALL_OFFSET_THICKNESS);
+        if(this.wall.attachedRooms.length > 1){
+            vec.multiplyScalar(0);
+        }
+        point.add(vec);
+        // let vec = this.interiorPointByEdges(this, this.prev);
+        // return this.getStart().location.clone().add(vec.negate().normalize().multiplyScalar(WALL_OFFSET_THICKNESS)); 
 
-        let vec = this.halfAngleVector(this.prev, this);
-        return new Vector2(this.getStart().x - vec.x, this.getStart().y - vec.y);
+        // let vec = this.halfAngleVector(this.prev, this);
+        // return new Vector2(this.getStart().x - vec.x, this.getStart().y - vec.y);
 
-        // return new Vector2(this.getStart().x, this.getStart().y);
+        return point;//new Vector2(this.getStart().x, this.getStart().y);
     }
 
     /**
@@ -494,15 +495,23 @@ export class HalfEdge extends EventDispatcher {
      * @see https://threejs.org/docs/#api/en/math/Vector2
      */
     __exteriorEnd(debug = false) {
-        // let vec = this.interiorPointByEdges(this, this.next); //this.interiorPoint(this.next, false);//
-        // // vec = vec.multiplyScalar(-0.5);
-        // // vec = vec.multiplyScalar(-this.__factor(vec, false));
-        // return this.getEnd().location.clone().add(vec);
+        let vec = this.getEnd().location.clone().sub(this.getStart().location).normalize();
+        let point = this.getEnd().location.clone();
+        vec.rotateAround(new Vector2(), -0.7853981633974483);
+        vec.multiplyScalar(WALL_OFFSET_THICKNESS);
+        if(this.wall.attachedRooms.length > 1){
+            vec.multiplyScalar(0);
+        }
+        point.add(vec);
 
-        let vec = this.halfAngleVector(this, this.next);
-        return new Vector2(this.getEnd().x - vec.x, this.getEnd().y - vec.y);
+        // let vec = this.interiorPointByEdges(this.next, this);
+        // return this.getEnd().location.clone().add(vec.negate().normalize().multiplyScalar(WALL_OFFSET_THICKNESS));
 
-        // return new Vector2(this.getEnd().x, this.getEnd().y);
+
+        // let vec = this.halfAngleVector(this, this.next);
+        // return new Vector2(this.getEnd().x - vec.x, this.getEnd().y - vec.y);
+
+        return point;//new Vector2(this.getEnd().x, this.getEnd().y);
     }
 
     /**
@@ -575,112 +584,64 @@ export class HalfEdge extends EventDispatcher {
         return [this.interiorStart(), this.interiorEnd(), this.exteriorEnd(), this.exteriorStart()];
     }
 
+    /**
+     * 
+     * @param {HalfEdge} v1 
+     * @param {HalfEdge} v2 
+     * @param {Boolean} debug 
+     * @returns {Vector2}
+     * @description Find wall ends based on line-line intersections
+     */
     interiorPointByEdges(v1, v2, debug = false) {
+        function orthoNormalizedVector(vect, thickness=1){
+            let cloneVect = vect.clone();
+            cloneVect.rotateAround(new Vector2(), Math.PI * 0.5);
+            cloneVect.normalize();
+            cloneVect.multiplyScalar(thickness);
+            return cloneVect;
+        }
         if (!v1 || !v2) {
             // throw new Error('Need a valid next or previous edge');            
             // console.warn('Need a valid next or previous edge');
             return this.halfAngleVector(v1, v2);//.multiplyScalar(2.0);
         }
+        let multiplier = 5.0;
+        let v1Thickness = v1.wall.thickness - WALL_OFFSET_THICKNESS;
+        let v2Thickness = v2.wall.thickness - WALL_OFFSET_THICKNESS;
+        
+        let u = v1.getEnd().location.clone().sub(v1.getStart().location);
+        let v = v2.getEnd().location.clone().sub(v2.getStart().location);
 
-        let u = null,
-            v = null,
-            w = null,
-            u3 = null,
-            v3 = null,
-            w3 = null,
-            axis3 = null;
-        let dot = 0;
+        let startV1 = v1.getStart().location.clone().add(u.clone().negate().multiplyScalar(multiplier));
+        let endV1 = v1.getEnd().location.clone().add(u.clone().multiplyScalar(multiplier));
 
-        // let v2Thickness = v2.wall.thickness;
-        // let v1Thickness = v1.wall.thickness;
+        let startV2 = v2.getStart().location.clone().add(v.clone().negate().multiplyScalar(multiplier));
+        let endV2 = v2.getEnd().location.clone().add(v.clone().multiplyScalar(multiplier));
 
-        let v2Thickness = (v2.wall.frontEdge && v2.wall.backEdge) ? v2.wall.thickness * 0.5 : v2.wall.thickness;
-        let v1Thickness = (v1.wall.frontEdge && v1.wall.backEdge) ? v1.wall.thickness * 0.5 : v1.wall.thickness;
+        let orthoU = orthoNormalizedVector(u, v1Thickness);
+        let orthoV = orthoNormalizedVector(v, v2Thickness);
 
-        u = v1.getEnd().location.clone().sub(v1.getStart().location).normalize();
-        v = v2.getEnd().location.clone().sub(v2.getStart().location).normalize();
-        let dot_temp = u.dot(v);
-        u = u.multiplyScalar(v2Thickness);
-        v = v.multiplyScalar(v1Thickness);
-        // w = u.clone().add(v);
-        /**
-         * When two walls are connected with 180 degrees apart, then simply
-         * rotate the vector by 90 degrees clockwise and use it as the interiorPoint
-         */
-         if(dot_temp == 1.0){
-            return u.clone().normalize().rotateAround(new Vector2(), 1.57).multiplyScalar(this.wall.thickness);
+        let lineAStart = startV1.clone().add(orthoU);
+        let lineAEnd = endV1.clone().add(orthoU);
+        let lineBStart = startV2.clone().add(orthoV);
+        let lineBEnd = endV2.clone().add(orthoV);
+        
+        let intersection = Utils.lineLineIntersectPoint(lineAStart, lineAEnd, lineBStart, lineBEnd);
+        
+        
+        // let myU = this.getEnd().location.clone().sub(this.getStart().location);
+        // let myOrtho = orthoNormalizedVector(myU);
+        // return myOrtho.multiplyScalar(this.wall.thickness);
+
+        // console.log(this.getStart().location, this.getEnd().location);
+        // console.log(v1.getStart().location, v1.getEnd().location);
+        // console.log(lineAStart, lineAEnd);
+        // console.log('Line - line Intersection ', intersection);
+
+        if(!intersection){
+            return orthoU.normalize().multiplyScalar(this.wall.thickness - WALL_OFFSET_THICKNESS);
         }
-        // let angle = Math.acos(dot_temp);
-        // if(this == v1){
-        //     return u.clone().rotateAround(new Vector2(), (angle+Math.PI)*0.5).normalize().multiplyScalar(this.wall.thickness);
-        // }
-        // return v.clone().rotateAround(new Vector2(), angle*0.5).normalize().multiplyScalar(this.wall.thickness);
-        u3 = new Vector3(u.x, u.y, 0.0);
-        v3 = new Vector3(v.x, v.y, 0.0);
-        // w3 = new Vector3(w.x, w.y, 0.0);
-        axis3 = u3.clone().normalize().cross(v3.clone().normalize());
-
-        if (axis3.z < 0) {
-            v = v.negate();//.multiplyScalar(-1);            
-        }
-        else {
-            u = u.negate();//.multiplyScalar(-1);
-        }
-
-        u3.x = u.x;
-        u3.y = u.y;
-        v3.x = v.x;
-        v3.y = v.y;
-
-        dot = u.clone().normalize().dot(v.clone().normalize());
-
-        if (dot < -0.1) {
-            let uvAngle = Math.acos(dot);
-            let offsetTheta = uvAngle - (Math.PI * 0.5);
-            let v_temp = v.clone();
-            if (dot < (1e-6 - 1.0)) {
-                v3.x -= 1e-2;
-                v3.y -= 1e-2;
-                v.x = v3.x;
-                v.y = v3.y;
-                axis3 = v3.clone().normalize().cross(u3.clone().normalize()).negate().normalize();
-            }
-            v3 = v3.clone().applyAxisAngle(axis3.clone().normalize(), offsetTheta);
-            v.x = v3.x;
-            v.y = v3.y;
-            if (debug) {
-                // console.log('AXIS OF ROTATION ::: ', axis3);
-                // console.log('U VECTOR ::: ', u);
-                // console.log('V BEFORE ::: ', v_temp);
-                // console.log('V AFTER ::: ', v);
-                // console.log('DOT PRODUCT ::: ', dot);
-                // console.log('ANGLE UV ::: ', (uvAngle * 180) / Math.PI);
-                // console.log('OFFSET THETA ::: ', (offsetTheta * 180) / Math.PI);
-            }
-        }
-
-        w = u.clone().add(v);
-        // dot = u.clone().normalize().dot(v.clone().normalize());
-        // let abs_dot = -dot;//Equivalent to 180 - degrees(math.cos(dot))
-        // let abs_dot_acos = Math.acos(abs_dot);
-        // // let magnitude = Math.sqrt((Math.pow(u.length(),2) + Math.pow(v.length(), 2)) + (2 * u.length() * v.length() * abs_dot));
-        // let magnitude = ((u.length() ** 2 + v.length() ** 2) + (2 * u.length() * v.length() * abs_dot)) ** 0.5;
-        // let theta = Math.asin((v.length() * Math.sin(abs_dot_acos)) / magnitude);
-        // w = (u.clone().rotateAround(new Vector2(), -theta)).normalize().multiplyScalar(magnitude);
-
-        if (debug) {
-            // console.log('==============================================');
-            // console.log('F :: ', u);
-            // console.log('G :: ', v);
-            // console.log('F FORCE :: ', u.length());
-            // console.log('G FORCE :: ', v.length());
-            // console.log('DOT PRODUCT VALUE  :: ', dot);
-            // console.log('ANGLE BETWEEN F AND G  :: ', (Math.acos(dot) * 180.0) / Math.PI);
-            // console.log('VECTOR ADDITION W LENGTH :: ', w.length());
-            // console.log('----------------------------------------------');
-        }
-
-        return w;
+        return intersection.sub(v1.getStart());
     }
 
     /**

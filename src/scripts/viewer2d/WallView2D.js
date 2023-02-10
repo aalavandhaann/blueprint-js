@@ -202,24 +202,30 @@ export class Edge2D extends BaseFloorplanViewElement2D {
         let start = Dimensioning.cmToPixelVector2D(forEdge.getStart().location.clone());
         let end = Dimensioning.cmToPixelVector2D(forEdge.getEnd().location.clone());
         let vect = end.clone().sub(start);
-        if(toEdge){
-            let start2 = Dimensioning.cmToPixelVector2D(toEdge.getStart().location.clone());
-            let end2 = Dimensioning.cmToPixelVector2D(toEdge.getEnd().location.clone());
-            let vect2 = end2.clone().sub(start2);
-            let dot = vect.clone().normalize().dot(vect2.clone().normalize().negate());
-            let radians = Math.acos(dot);
-            vect = vect.normalize().rotateAround(new Vector2(), radians*0.5).multiplyScalar(50.0);
-            // vect = (vect2.sub(vect));
-            console.log('====================================');
-            console.log('DOT PRODUCT ::: ', dot);
-            console.log('ANGLE ::: ', ((Math.acos(dot) * 180.0) / Math.PI));
-            console.log('====================================');
-        }
-        
+
         let midPoint = start.clone().add(vect.multiplyScalar(0.5));
         let lineThickness = 3.0;
         let arrowSize = 7;
         let dotSize = 5;
+
+        if(toEdge){
+            let start2 = Dimensioning.cmToPixelVector2D(toEdge.getStart().location.clone());
+            let end2 = Dimensioning.cmToPixelVector2D(toEdge.getEnd().location.clone());
+            let vect2 = end2.clone().sub(start2);
+
+            let u = (toEdge === forEdge.prev) ? vect.clone() : vect.clone().negate();
+            let v = (toEdge === forEdge.prev) ? vect2.clone().negate() : vect2.clone();
+            let resultant;
+            u.normalize().multiplyScalar(toEdge.wall.thickness*1);
+            v.normalize().multiplyScalar(forEdge.wall.thickness*1);
+            resultant = u.add(v);
+            if(toEdge !== forEdge.prev){
+                start.copy(end.clone());
+            }
+            midPoint = start.clone().add(resultant);            
+        }
+        
+        
 
         this.lineStyle(lineThickness, color, alpha);
         this.moveTo(start.x, start.y);
@@ -270,16 +276,17 @@ export class Edge2D extends BaseFloorplanViewElement2D {
         this.__drawEdgePolygon(this.__edge, color, alpha_new);//0.1);//
 
         if (this.__debugMode && this.parent.selected) {
+            // this.__edge.interiorPointByEdges(this.__edge, this.__edge.prev);
             this.__drawEdgeArrow(this.__edge, 0x00FF00, alpha);
             if (this.__edge.prev) { //Red for previous edge
-                this.__drawEdgeArrow(this.__edge.prev, 0xFF0000, alpha);
                 console.log('EDGE TO PREVIOUS');
+                this.__drawEdgeArrow(this.__edge.prev, 0xFF0000, alpha);
                 this.__drawEdgeArrow(this.__edge, 0xF00000, alpha, this.__edge.prev);
             }
             if (this.__edge.next) { //Blue for Next edge
                 console.log('EDGE TO NEXT');
                 this.__drawEdgeArrow(this.__edge.next, 0x0000FF, alpha);
-                this.__drawEdgeArrow(this.__edge.next, 0x00000F, alpha, this.__edge);
+                this.__drawEdgeArrow(this.__edge, 0x00000F, alpha, this.__edge.next);
             }            
         }
 

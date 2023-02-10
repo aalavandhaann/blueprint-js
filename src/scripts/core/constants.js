@@ -26,6 +26,10 @@ export const VIEW_RIGHT = 'rightview';
 export const VIEW_LEFT = 'leftview';
 export const VIEW_ISOMETRY = 'isometryview';
 
+export const WALL_STANDARD_THICKNESS = 20;//in cm
+export const WALL_OFFSET_THICKNESS = 15;//in cm
+export const WALL_STANDARD_HEIGHT = 300;//in cm
+
 export const WallTypes = Enum('STRAIGHT', 'CURVED');
 
 export const TEXTURE_DEFAULT_REPEAT = 300;

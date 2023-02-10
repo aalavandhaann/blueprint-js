@@ -1,4 +1,4 @@
-import { availableDimUnits, dimCentiMeter } from './constants.js';
+import { availableDimUnits, dimCentiMeter, WALL_STANDARD_HEIGHT, WALL_STANDARD_THICKNESS } from './constants.js';
 import { EventDispatcher } from 'three';
 import { EVENT_CHANGED } from './events.js';
 
@@ -33,8 +33,8 @@ export const magneticSnap = 'magneticSnap';
 
 
 
-export var config = { dimUnit: dimCentiMeter, wallHeight: 250, 
-    wallThickness: 10, systemUI: false, 
+export var config = { dimUnit: dimCentiMeter, wallHeight: WALL_STANDARD_HEIGHT, 
+    wallThickness: WALL_STANDARD_THICKNESS, systemUI: false, 
     scale: 1, snapToGrid: true, 
     dragOnlyX: false, dragOnlyY: false, 
     snapTolerance: 50, gridSpacing: 50, 

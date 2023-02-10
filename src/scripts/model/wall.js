@@ -655,6 +655,10 @@ export class Wall extends EventDispatcher {
         this.__attachedRooms = [];
     }
 
+    get attachedRooms(){
+        return this.__attachedRooms;
+    }
+
     get frontEdge() {
         return this.__frontEdge;
     }

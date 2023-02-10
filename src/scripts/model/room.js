@@ -656,11 +656,11 @@ export class Room extends EventDispatcher {
             /**
              * Ensure the room contains the list of wall pointers
              */
-            if (!this.__walls.includes(wallTo) && wallTo) {
+            if (wallTo && !this.__walls.includes(wallTo)) {
                 this.__walls.push(wallTo);
                 wallTo.addRoom(this);
             }
-            if (!this.__walls.includes(wallFrom) && wallFrom) {
+            if (wallFrom && !this.__walls.includes(wallFrom)) {
                 this.__walls.push(wallFrom);
                 wallFrom.addRoom(this);
             }

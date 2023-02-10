@@ -1,4 +1,4 @@
-import { TEXTURE_PROPERTY_COLOR } from "../core/constants";
+import { TEXTURE_PROPERTY_COLOR, WALL_STANDARD_HEIGHT, WALL_STANDARD_THICKNESS } from "../core/constants";
 import { Dimensioning } from "../core/dimensioning";
 import { EVENT_CORNER_2D_CLICKED, EVENT_NOTHING_2D_SELECTED, EVENT_WALL_2D_CLICKED, EVENT_ROOM_2D_CLICKED, EVENT_NO_ITEM_SELECTED, EVENT_ITEM_SELECTED, EVENT_WALL_CLICKED, EVENT_ROOM_CLICKED } from "../core/events";
 import { InWallFloorItem } from "../items/in_wall_floor_item";
@@ -9,8 +9,8 @@ export class RoomPlannerHelper {
         this.__floorplan = floorplan;
         this.__roomplanner = roomplanner;
 
-        this.__wallThickness = Dimensioning.cmToMeasureRaw(20);
-        this.__cornerElevation = Dimensioning.cmToMeasureRaw(250);
+        this.__wallThickness = Dimensioning.cmToMeasureRaw(WALL_STANDARD_THICKNESS);
+        this.__cornerElevation = Dimensioning.cmToMeasureRaw(WALL_STANDARD_HEIGHT);
         this.__roomName = 'A New Room';
 
         this.__selectedEdge = null;

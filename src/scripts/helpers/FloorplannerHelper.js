@@ -1,3 +1,4 @@
+import { WALL_OFFSET_THICKNESS, WALL_STANDARD_HEIGHT } from "../core/constants";
 import { Dimensioning } from "../core/dimensioning";
 import { EVENT_CORNER_2D_CLICKED, EVENT_NOTHING_2D_SELECTED, EVENT_WALL_2D_CLICKED, EVENT_ROOM_2D_CLICKED } from "../core/events";
 
@@ -6,8 +7,8 @@ export class FloorPlannerHelper {
         this.__floorplan = floorplan;
         this.__floorplanner = floorplanner;
 
-        this.__wallThickness = Dimensioning.cmToMeasureRaw(20);
-        this.__cornerElevation = Dimensioning.cmToMeasureRaw(250);
+        this.__wallThickness = Dimensioning.cmToMeasureRaw(WALL_OFFSET_THICKNESS);
+        this.__cornerElevation = Dimensioning.cmToMeasureRaw(WALL_STANDARD_HEIGHT);
         this.__roomName = 'A New Room';
 
         /**

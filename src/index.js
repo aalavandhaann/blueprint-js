@@ -475,7 +475,7 @@ if (!opts.widget) {
     settingsViewer2d.bindNumber('boundsY', 1, 200, configurationHelper.boundsY, 1, configurationHelper);
 
     settingsSelectedCorner.bindRange('cornerElevation', 1, 500, floorplanningHelper.cornerElevation, 1, floorplanningHelper);
-    settingsSelectedWall.bindRange('wallThickness', 0.01, 1, floorplanningHelper.wallThickness, 0.01, floorplanningHelper);
+    settingsSelectedWall.bindRange('wallThickness', 0.2, 1, floorplanningHelper.wallThickness, 0.01, floorplanningHelper);
     settingsSelectedRoom.bindText('roomName', floorplanningHelper.roomName, floorplanningHelper);
 
     settingsSelectedRoom3D.addDropDown('Floor Textures', floor_texture_keys, selectFloorTexture);

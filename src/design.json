@@ -72,7 +72,7 @@
                     "x": -176.7766952966369,
                     "y": 323.22330470336317
                 },
-                "thickness": 0.1
+                "thickness": 0.2
             },
             {
                 "corner1": "f90da5e3-9e0e-eba7-173d-eb0b071e838e",
@@ -107,7 +107,7 @@
                     "x": 323.22330470336317,
                     "y": 676.776695296637
                 },
-                "thickness": 0.1
+                "thickness": 0.2
             },
             {
                 "corner1": "da026c08-d76a-a944-8e7b-096b752da9ed",
@@ -145,7 +145,7 @@
                     "x": 676.776695296637,
                     "y": 176.77669529663686
                 },
-                "thickness": 0.1
+                "thickness": 0.2
             },
             {
                 "corner1": "4e3d65cb-54c0-0681-28bf-bddcc7bdb571",
@@ -180,7 +180,7 @@
                     "x": 176.77669529663686,
                     "y": -176.7766952966369
                 },
-                "thickness": 0.1
+                "thickness": 0.2
             },
             {
                 "corner1": "4e3d65cb-54c0-0681-28bf-bddcc7bdb571",
@@ -220,7 +220,7 @@
                     "x": 750,
                     "y": -73.22330470336311
                 },
-                "thickness": 0.1
+                "thickness": 0.2
             },
             {
                 "corner1": "fed350d6-a751-1f3d-f6ec-eaa27de6bd12",
@@ -260,7 +260,7 @@
                     "x": 1073.223304703363,
                     "y": -73.22330470336311
                 },
-                "thickness": 0.1
+                "thickness": 0.2
             },
             {
                 "corner1": "3bec1535-21a7-668e-5d47-229db4d136d2",
@@ -300,7 +300,7 @@
                     "x": 984.8349570550447,
                     "y": 234.8349570550447
                 },
-                "thickness": 0.1
+                "thickness": 0.2
             },
             {
                 "corner1": "e3a9cbc3-c4a3-9f90-08f5-d00b6036d79a",
@@ -340,7 +340,7 @@
                     "x": 765.1650429449553,
                     "y": 234.83495705504464
                 },
-                "thickness": 0.1
+                "thickness": 0.2
             }
         ],
         "rooms": {
@@ -644,7 +644,7 @@
                 "frameWidth": 130,
                 "frameHeight": 250,
                 "frameSize": 5,
-                "frameThickness": 20,
+                "frameThickness": 25,
                 "doorRatio": 0.5,
                 "openDirection": "BOTH_SIDES",
                 "handleType": "HANDLE_02"
