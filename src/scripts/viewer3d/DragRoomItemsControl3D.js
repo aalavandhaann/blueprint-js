@@ -6,7 +6,9 @@ import { EVENT_ITEM_MOVE, EVENT_ITEM_MOVE_FINISH, EVENT_NO_ITEM_SELECTED, EVENT_
 import { IS_TOUCH_DEVICE } from '../../DeviceInfo';
 import {ConfigurationHelper} from '../helpers/ConfigurationHelper';
 import { Configuration, snapToGrid, snapTolerance } from '../core/configuration';
-import { Dimensioning } from '../core/dimensioning';
+import { InWallItem } from '../items/in_wall_item';
+import { InWallFloorItem } from '../items/in_wall_floor_item';
+import { WALL_STANDARD_THICKNESS } from '../core/constants';
 /**
  * This is a custom implementation of the DragControls class
  * In this class the raycaster intersection will not check for children
@@ -66,6 +68,7 @@ export class DragRoomItemsControl3D extends EventDispatcher {
         let wallPlanesThatIntersect = null;
         let floorPlanesThatIntersect = null;
         let minDistance = 1e6
+        let deltaMinDistance = 0;
         let visibleDraggableItems = [];
 
         this.__timestamp = time;
@@ -100,7 +103,9 @@ export class DragRoomItemsControl3D extends EventDispatcher {
             minDistance = wallPlanesThatIntersect[0].distance;
         }
         if (this.__intersections.length) {
-            if(this.__intersections[0].distance > minDistance){
+            deltaMinDistance = this.__intersections[0].distance - minDistance;
+            // if(this.__intersections[0].distance > minDistance){
+            if(deltaMinDistance > WALL_STANDARD_THICKNESS*5){
                 this.dispatchEvent({ type: EVENT_NO_ITEM_SELECTED, item: this.__selected });
                 return;
             }
