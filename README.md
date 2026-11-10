@@ -2,16 +2,14 @@
 
 [Cick for example](https://aalavandhaann.github.io/blueprint-js/demo/)
 
-please contact arun.ramu@fueristech.com for enquiries related to commercial implementations
-
-Introducing Amaippu
+# Introducing Amaippu #
 
 <p align="center">
   <a href="https://amaippu.com/">
     <img src="https://amaippu.com/favicon.ico" alt="Amaippu" width="80"/>
   </a>
 </p><p align="center">
-  **Build. Design. Create Architectural Reality.**
+  ***Build. Design. Create Architectural Reality.***
 </p>"Amaippu" (https://amaippu.com/) is an AI-powered, web-based architectural design and engineering platform that brings together parametric modelling, 2D/3D floorplan creation, generative AI, real-time visualization, and immersive architectural experiences.
 
 Built around the idea of making architectural design more intelligent, accessible, and computationally driven, Amaippu aims to bridge the gap between conceptual design and digital architectural realization.
