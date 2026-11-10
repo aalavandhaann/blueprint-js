@@ -4,6 +4,47 @@
 
 please contact arun.ramu@fueristech.com for enquiries related to commercial implementations
 
+Introducing Amaippu
+
+<p align="center">
+  <a href="https://amaippu.com/">
+    <img src="https://amaippu.com/favicon.ico" alt="Amaippu" width="80"/>
+  </a>
+</p><p align="center">
+  **Build. Design. Create Architectural Reality.**
+</p>"Amaippu" (https://amaippu.com/) is an AI-powered, web-based architectural design and engineering platform that brings together parametric modelling, 2D/3D floorplan creation, generative AI, real-time visualization, and immersive architectural experiences.
+
+Built around the idea of making architectural design more intelligent, accessible, and computationally driven, Amaippu aims to bridge the gap between conceptual design and digital architectural realization.
+
+The platform brings together a collection of integrated tools designed to streamline architectural workflows, allowing designers, architects, and developers to move from floorplan concepts to detailed, interactive 3D environments.
+
+The Amaippu Ecosystem
+
+Amaippu comprises several interconnected modules:
+
+- Chithiram – An intelligent 2D/3D floorplan editor for creating dimensionally accurate architectural layouts and instantly visualizing them as 3D spaces.
+- Suthiram – A parametric modelling system for generating and configuring reusable architectural components and structures.
+- Varnam – An AI-powered material and texture generation system for architectural visualization.
+- Buddhi – An AI-driven engineering intelligence layer for assisting with architectural and engineering workflows.
+- Avatharam – A real-time 3D visualization and rendering environment.
+- Bhramam – An immersive WebVR experience for exploring architectural designs and spaces.
+
+Our Vision
+
+We envision a future where architectural design is not constrained by disconnected software tools and repetitive modelling workflows.
+
+Amaippu seeks to establish an integrated computational design environment where geometry, engineering intelligence, generative AI, and immersive visualization work together.
+
+Our goal is to make sophisticated architectural design capabilities accessible through the web, while enabling parametric flexibility, reusable digital assets, and intelligent design workflows.
+
+Explore Amaippu
+
+- Website: https://amaippu.com/
+- Platform: https://amaippu.com/
+- Contact: amaippu@amaippu.com
+
+Amaippu — Building the future of architectural engineering workflows.
+
 # README #
 This is a javascript floorplanner tool based on the existing typescript based project [blueprint3d](https://github.com/furnishup/blueprint3d)
 
